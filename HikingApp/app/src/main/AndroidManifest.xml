@@ -1,9 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="team7.sweng.epfl.ch.hikingapp">
+    package="ch.epfl.sweng.team7.hikingapp">
 
     <application android:allowBackup="true" android:label="@string/app_name"
-        android:icon="@mipmap/ic_launcher" android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme">
 
     </application>
 
