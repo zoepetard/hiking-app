@@ -7,6 +7,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MapActivity extends FragmentActivity {
 
@@ -61,5 +63,20 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        displayTestPoints();
+    }
+
+    private void displayTestPoints() {
+        LatLng origin = new LatLng(0,0);
+        LatLng accra = new LatLng(5.615986, -0.171533);
+        LatLng saoTome = new LatLng(0.362365, 6.558835);
+
+        PolylineOptions testTriangle = new PolylineOptions()
+                .add(origin)
+                .add(accra)
+                .add(saoTome)
+                .add(origin);
+
+        Polyline polyline = mMap.addPolyline(testTriangle);
     }
 }
