@@ -62,20 +62,19 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        LatLng origin = new LatLng(0,0);
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         displayTestPoints();
     }
 
     private void displayTestPoints() {
         LatLng origin = new LatLng(0,0);
-        LatLng Accra = new LatLng(5.615986, -0.171533);
-        LatLng SaoTome = new LatLng(0.362365, 6.558835);
+        LatLng accra = new LatLng(5.615986, -0.171533);
+        LatLng saoTome = new LatLng(0.362365, 6.558835);
 
         PolylineOptions testTriangle = new PolylineOptions()
                 .add(origin)
-                .add(Accra)
-                .add(SaoTome)
+                .add(accra)
+                .add(saoTome)
                 .add(origin);
 
         Polyline polyline = mMap.addPolyline(testTriangle);
