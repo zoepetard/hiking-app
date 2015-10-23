@@ -1,15 +1,11 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
