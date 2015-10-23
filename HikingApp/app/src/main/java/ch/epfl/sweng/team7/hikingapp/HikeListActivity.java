@@ -1,32 +1,34 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Point;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 public class HikeListActivity extends Activity {
 
+
+    //Displays a list of x nearby hikes, with a map, the distance and the rating.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hike_list);
 
         int nearbyHikes = 5;
-
         TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
 
         for (int i = 0; i < nearbyHikes; i++) {
             TableRow hikeRow = getHikeRow(i);
-            hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+            hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
         }
     }
 
@@ -52,6 +54,7 @@ public class HikeListActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Creates and returns a TableRow with information about a hike.
     public TableRow getHikeRow(int i) {
 
         Point size = new Point();
@@ -61,7 +64,7 @@ public class HikeListActivity extends Activity {
 
         TableRow hikeRow = new TableRow(this);
         hikeRow.setTag("hikeRow" + Integer.toString(i));
-        hikeRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        hikeRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
         GridLayout.Spec row1 = GridLayout.spec(0);
         GridLayout.Spec row2 = GridLayout.spec(1);
@@ -86,6 +89,7 @@ public class HikeListActivity extends Activity {
 
         //name row
         GridLayout.LayoutParams nameRow = new GridLayout.LayoutParams(row1, col2);
+        //nameRow.width = screenWidth*2/3;
         TextView nameText = new TextView(this);
         nameText.setText("Hike #" + Integer.toString(i));
         nameText.setLayoutParams(nameRow);
@@ -93,6 +97,7 @@ public class HikeListActivity extends Activity {
 
         //distance row
         GridLayout.LayoutParams distanceRow = new GridLayout.LayoutParams(row2, col2);
+        //distanceRow.width = screenWidth*2/3;
         TextView distanceText = new TextView(this);
         distanceText.setText("Distance: " + Integer.toString((i+1)*5) + "km");
         distanceText.setLayoutParams(distanceRow);
@@ -100,6 +105,7 @@ public class HikeListActivity extends Activity {
 
         //rating row
         GridLayout.LayoutParams ratingRow = new GridLayout.LayoutParams(row3, col2);
+        //ratingRow.width = screenWidth*2/3;
         TextView ratingText = new TextView(this);
         ratingText.setText("Rating: " + Integer.toString(i));
         ratingText.setLayoutParams(ratingRow);
@@ -108,4 +114,5 @@ public class HikeListActivity extends Activity {
         hikeRow.addView(gridLayout);
         return hikeRow;
     }
+
 }
