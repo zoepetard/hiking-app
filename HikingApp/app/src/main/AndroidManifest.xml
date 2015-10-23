@@ -29,6 +29,10 @@
             android:name=".MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
+        <activity
+            android:name=".HikeListActivity"
+            android:label="@string/title_activity_hike_list" >
+        </activity>
     </application>
 
 </manifest>
