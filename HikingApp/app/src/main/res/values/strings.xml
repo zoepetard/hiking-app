@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">HikingApp</string>
     <string name="title_activity_map">Map</string>
+    <string name="title_activity_hike_list">HikeListActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
