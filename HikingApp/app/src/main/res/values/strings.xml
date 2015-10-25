@@ -10,7 +10,6 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="title_text">Google sign in</string>
     <!-- Sign-in status messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signing_in">Signing in…</string>
@@ -28,6 +27,8 @@
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
+    <string name="change_name">Change Nickname</string>
+    <string name="goto_map">Go To Map</string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>

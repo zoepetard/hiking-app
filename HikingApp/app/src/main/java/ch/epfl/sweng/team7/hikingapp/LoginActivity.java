@@ -90,6 +90,8 @@ public class LoginActivity extends Activity implements
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.change_name_button).setOnClickListener(this);
+        findViewById(R.id.goto_map_button).setOnClickListener(this);
 
         // Large sign-in
         ((SignInButton) findViewById(R.id.sign_in_button)).setSize(SignInButton.SIZE_WIDE);
@@ -135,6 +137,7 @@ public class LoginActivity extends Activity implements
             // Set button visibility
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+            findViewById(R.id.change_display_name_and_goto_map).setVisibility(View.VISIBLE);
         } else {
             // Show signed-out message and clear email field
             mStatus.setText(R.string.signed_out);
@@ -144,6 +147,7 @@ public class LoginActivity extends Activity implements
             findViewById(R.id.sign_in_button).setEnabled(true);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+            findViewById(R.id.change_display_name_and_goto_map).setVisibility(View.GONE);
         }
     }
 
@@ -335,6 +339,12 @@ public class LoginActivity extends Activity implements
             case R.id.disconnect_button:
                 onDisconnectClicked();
                 break;
+            case R.id.change_name_button:
+                onChangeNameClicked();
+                break;
+            case R.id.goto_map_button:
+                onGotoMapClicked();
+                break;
         }
     }
     // [END on_click]
@@ -377,4 +387,14 @@ public class LoginActivity extends Activity implements
         showSignedOutUI();
     }
     // [END on_disconnect_clicked]
+
+    private void onChangeNameClicked() {
+        Intent i = new Intent(this, ChangeNicknameActivity.class);
+        startActivity(i);
+    }
+
+    private void onGotoMapClicked() {
+        Intent i = new Intent(this, MapActivity.class);
+        startActivity(i);
+    }
 }
