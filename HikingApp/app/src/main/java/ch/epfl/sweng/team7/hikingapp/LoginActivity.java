@@ -47,6 +47,9 @@ public class LoginActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    public final static String EXTRA_NAME =
+            "ch.epfl.sweng.team7.hikingapp.NAME";
+
     private static final String TAG = "LoginActivity";
 
     /* RequestCode for resolutions involving sign-in */
@@ -395,6 +398,11 @@ public class LoginActivity extends Activity implements
 
     private void onGotoMapClicked() {
         Intent i = new Intent(this, MapActivity.class);
+        TextView textView = (TextView) findViewById(R.id.status);
+        String name = textView.getText().toString();
+        int colon = name.indexOf(":");
+        name = name.substring(colon + 2);
+        i.putExtra(EXTRA_NAME, name);
         startActivity(i);
     }
 }

@@ -29,10 +29,14 @@
     <string name="disconnect">Disconnect</string>
     <string name="change_name">Change Nickname</string>
     <string name="goto_map">Go To Map</string>
+    <string name="button_done">Done</string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
 
     <!-- Rationale for asking for Contacts -->
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
+    <string name="title_activity_change_nickname">ChangeNicknameActivity</string>
+
+    <string name="edit_nickname">Choose a new nickname</string>
 </resources>
