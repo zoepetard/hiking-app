@@ -31,8 +31,10 @@ proguard/
 # Android Studio Navigation editor temp files
 .navigation/
 
-# Idea files
+# Misc
 .idea/misc.xml
+
+# Workspace
 .idea/workspace.xml
 
 ### Android Patch ###
