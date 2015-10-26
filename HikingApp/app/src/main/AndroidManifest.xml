@@ -52,6 +52,10 @@
             android:name=".ChangeNicknameActivity"
             android:label="@string/title_activity_change_nickname" >
         </activity>
+        <activity
+            android:name=".HikeInfoActivity"
+            android:label="@string/title_activity_hike_info">
+        </activity>
     </application>
 
 </manifest>
