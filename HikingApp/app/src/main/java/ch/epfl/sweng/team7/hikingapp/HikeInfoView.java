@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-/*
+/**
 
 Class which controls and updates the visual part of the view, not the interaction.
 

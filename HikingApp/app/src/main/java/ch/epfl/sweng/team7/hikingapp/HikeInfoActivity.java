@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 
-public class HikeInfoActivity extends Activity {
+public final class HikeInfoActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +37,12 @@ public class HikeInfoActivity extends Activity {
         for(int i = 0; i<hikeInfoView.imageViews.size(); i++){
 
             ImageView imgView = hikeInfoView.imageViews.get(i);
-            imgView.setOnClickListener(new imageViewClickListener());
+            imgView.setOnClickListener(new ImageViewClickListener());
 
         }
-
     }
 
-    private class imageViewClickListener implements View.OnClickListener {
+    private class ImageViewClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             // do something
