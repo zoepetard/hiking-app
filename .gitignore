@@ -33,6 +33,7 @@ proguard/
 
 # Idea files
 .idea/misc.xml
+.idea/workspace.xml
 
 ### Android Patch ###
 gen-external-apklibs
