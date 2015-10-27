@@ -1,4 +1,4 @@
-package gpsTracker.listener;
+package ch.epfl.sweng.team7.gpsTracker.listener;
 
 import android.location.Location;
 

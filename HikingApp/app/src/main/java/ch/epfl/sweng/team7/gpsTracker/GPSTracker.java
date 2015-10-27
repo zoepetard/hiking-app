@@ -1,4 +1,4 @@
-package gpsTracker;
+package ch.epfl.sweng.team7.gpsTracker;
 
 import android.content.Context;
 import android.location.Location;
@@ -6,9 +6,9 @@ import android.location.LocationManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import gpsTracker.exceptions.GPSServiceNotAvailableException;
-import gpsTracker.exceptions.NoPositionTrackedException;
-import gpsTracker.listener.GPSLocationListener;
+import ch.epfl.sweng.team7.gpsTracker.exceptions.GPSServiceNotAvailableException;
+import ch.epfl.sweng.team7.gpsTracker.exceptions.NoPositionTrackedException;
+import ch.epfl.sweng.team7.gpsTracker.listener.GPSLocationListener;
 
 /**
  * Class used to fetch device's GPS-related information

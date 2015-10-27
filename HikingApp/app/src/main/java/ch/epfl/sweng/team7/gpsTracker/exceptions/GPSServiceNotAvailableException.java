@@ -1,4 +1,4 @@
-package gpsTracker.exceptions;
+package ch.epfl.sweng.team7.gpsTracker.exceptions;
 
 /**
  * Exception thrown by GPSTracker to prevent GPS access without GPS service
