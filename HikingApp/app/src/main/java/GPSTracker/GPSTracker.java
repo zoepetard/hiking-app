@@ -1,27 +1,30 @@
 package GPSTracker;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.location.LocationListener;
 
 import GPSTracker.Exceptions.GPSServiceNotAvailable;
 import GPSTracker.Exceptions.NoPositionTrackedException;
+import GPSTracker.Listener.GPSLocationListener;
 
 /**
  * Class used to fetch device's GPS-related information
  * (such has latitude, longitude and altitude)
  */
-public class GPSTracker implements LocationListener {
+public class GPSTracker {
+
+    private static final long UPDATE_MIN_TIME_INTERVAL = 5000L;
+    private static final float UPDATE_MIN_DISTANCE = 15.0f;
 
     private Context activityContext = null;
     private LocationManager locationManager = null;
-
-    //updated automatically when user's location changes
-    private Location currentLocation = null;
+    private GPSLocationListener locationListener = null;
 
     /**
      * Class' constructor
@@ -31,7 +34,13 @@ public class GPSTracker implements LocationListener {
     public GPSTracker(Context activityContext) throws GPSServiceNotAvailable {
         this.activityContext = activityContext;
         locationManager = (LocationManager) activityContext.getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) throw new GPSServiceNotAvailable();
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            throw new GPSServiceNotAvailable();
+
+        if (checkUserPermission()) {
+            locationListener = new GPSLocationListener(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        }
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, UPDATE_MIN_TIME_INTERVAL, UPDATE_MIN_DISTANCE, (LocationListener)locationListener);
     }
 
     /**
@@ -40,6 +49,8 @@ public class GPSTracker implements LocationListener {
      * @throws NoPositionTrackedException exception thrown when there is no position tracked yet
      */
     public LatLng getLatLng() throws NoPositionTrackedException {
+
+        Location currentLocation = fetchCurrentLocation();
 
         /* This check is redundant, because an instance of
          * this class cannot be created if there is no GPS service.
@@ -55,33 +66,21 @@ public class GPSTracker implements LocationListener {
 
     @Override
     public String toString() {
+        Location currentLocation = fetchCurrentLocation();
         if (currentLocation == null) {
             return "No position tracked yet";
         }
         return currentLocation.toString();
     }
 
-    /*///////////////////////////////////////////
-    ///////// Interface's default methods ///////
-    ///////////////////////////////////////////*/
-
-    @Override
-    public void onLocationChanged(Location location) {
-        this.currentLocation = location;
+    private Location fetchCurrentLocation() {
+        return (locationListener != null)?locationListener.getCurLocation():null;
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+    private boolean checkUserPermission() {
+        if (activityContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && activityContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
     }
 }
