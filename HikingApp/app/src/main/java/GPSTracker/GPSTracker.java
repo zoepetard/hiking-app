@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import GPSTracker.Exceptions.NoPositionTrackedException;
+
 public class GPSTracker implements LocationListener {
 
     private Context activityContext = null;
