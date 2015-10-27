@@ -22,6 +22,7 @@ public class GPSTracker implements LocationListener {
     public GPSTracker(Context activityContext) throws GPSServiceNotAvailable {
         this.activityContext = activityContext;
         locationManager = (LocationManager) activityContext.getSystemService(Context.LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) throw new GPSServiceNotAvailable();
     }
 
     public LatLng getLatLng() throws NoPositionTrackedException {
