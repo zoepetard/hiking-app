@@ -1,7 +1,6 @@
 package GPSTracker.Listener;
 
 import android.location.Location;
-import android.os.Bundle;
 
 import com.google.android.gms.location.LocationListener;
 
