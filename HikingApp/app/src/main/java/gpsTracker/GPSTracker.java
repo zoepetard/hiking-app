@@ -1,16 +1,14 @@
-package gps_tracker;
+package gpsTracker;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import gps_tracker.exceptions.GPSServiceNotAvailableException;
-import gps_tracker.exceptions.NoPositionTrackedException;
-import gps_tracker.listener.GPSLocationListener;
+import gpsTracker.exceptions.GPSServiceNotAvailableException;
+import gpsTracker.exceptions.NoPositionTrackedException;
+import gpsTracker.listener.GPSLocationListener;
 
 /**
  * Class used to fetch device's GPS-related information

@@ -1,4 +1,4 @@
-package gps_tracker.exceptions;
+package gpsTracker.exceptions;
 
 /**
  * Exception thrown by GPSTracker to prevent a null location access
