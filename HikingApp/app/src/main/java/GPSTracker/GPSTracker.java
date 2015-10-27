@@ -10,12 +10,11 @@ public class GPSTracker implements LocationListener {
 
     private Context activityContext = null;
     private LocationManager locationManager = null;
-    private LocationListener locationListener = null;
 
     public GPSTracker(Context activityContext) {
         this.activityContext = activityContext;
         locationManager = (LocationManager) activityContext.getSystemService(Context.LOCATION_SERVICE);
-        
+
     }
 
     @Override
