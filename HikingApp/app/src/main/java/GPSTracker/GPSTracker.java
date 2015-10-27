@@ -30,6 +30,11 @@ public class GPSTracker implements LocationListener {
     }
 
     @Override
+    public String toString() {
+        return currentLocation.toString();
+    }
+
+    @Override
     public void onLocationChanged(Location location) {
         this.currentLocation = location;
     }
