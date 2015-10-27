@@ -1,5 +1,8 @@
 package GPSTracker.Exceptions;
 
+/**
+ * Exception thrown by GPSTracker to prevent a null location access
+ */
 public class NoPositionTrackedException extends Exception {
 
     public NoPositionTrackedException() {
