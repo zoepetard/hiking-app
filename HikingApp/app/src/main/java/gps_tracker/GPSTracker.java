@@ -8,7 +8,7 @@ import android.location.LocationManager;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import gps_tracker.exceptions.GPSServiceNotAvailable;
+import gps_tracker.exceptions.GPSServiceNotAvailableException;
 import gps_tracker.exceptions.NoPositionTrackedException;
 import gps_tracker.listener.GPSLocationListener;
 
@@ -28,13 +28,13 @@ public class GPSTracker {
     /**
      * Class' constructor
      * @param activityContext the context (or activity) from which the GPSTracker was instantiated from
-     * @throws GPSServiceNotAvailable exception thrown if GPS service is not available
+     * @throws GPSServiceNotAvailableException exception thrown if GPS service is not available
      */
-    public GPSTracker(Context activityContext) throws GPSServiceNotAvailable {
+    public GPSTracker(Context activityContext) throws GPSServiceNotAvailableException {
         this.activityContext = activityContext;
         locationManager = (LocationManager) activityContext.getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            throw new GPSServiceNotAvailable();
+            throw new GPSServiceNotAvailableException();
 
         if (checkUserPermission()) {
             locationListener = new GPSLocationListener(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
