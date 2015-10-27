@@ -51,13 +51,7 @@ public class GPSTracker {
     public LatLng getLatLng() throws NoPositionTrackedException {
 
         Location currentLocation = fetchCurrentLocation();
-
-        /* This check is redundant, because an instance of
-         * this class cannot be created if there is no GPS service.
-         * Knowing there is GPS service, when this method is called,
-         * means that onLocationChange method was called at least
-         * once - so there should be a location already stored.
-         */
+        
         if (currentLocation == null) {
             throw new NoPositionTrackedException();
         }
