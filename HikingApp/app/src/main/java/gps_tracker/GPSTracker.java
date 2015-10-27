@@ -36,8 +36,10 @@ public class GPSTracker {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             throw new GPSServiceNotAvailableException();
 
-        if (checkUserPermission()) {
+        try {
             locationListener = new GPSLocationListener(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        } catch (SecurityException e) {
+            //TODO display a warning saying that the GPS service cannot be accessed
         }
         //TODO call requestLocationUpdates to set up automatic position updating
     }
@@ -68,12 +70,5 @@ public class GPSTracker {
 
     private Location fetchCurrentLocation() {
         return (locationListener != null)?locationListener.getCurLocation():null;
-    }
-
-    private boolean checkUserPermission() {
-        if (activityContext.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && activityContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        return false;
     }
 }
