@@ -34,8 +34,7 @@ proguard/
 # Misc
 .idea/misc.xml
 
-# Workspace
-.idea/workspace.xml
+
 
 ### Android Patch ###
 gen-external-apklibs
