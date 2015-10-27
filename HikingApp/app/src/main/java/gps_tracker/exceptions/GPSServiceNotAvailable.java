@@ -1,4 +1,4 @@
-package GPSTracker.Exceptions;
+package gps_tracker.exceptions;
 
 /**
  * Exception thrown by GPSTracker to prevent GPS access without GPS service

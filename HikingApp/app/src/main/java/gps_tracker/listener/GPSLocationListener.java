@@ -1,4 +1,4 @@
-package GPSTracker.Listener;
+package gps_tracker.listener;
 
 import android.location.Location;
 
