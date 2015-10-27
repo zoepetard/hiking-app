@@ -40,7 +40,7 @@ public class GPSTracker {
         if (checkUserPermission()) {
             locationListener = new GPSLocationListener(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         }
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, UPDATE_MIN_TIME_INTERVAL, UPDATE_MIN_DISTANCE, (LocationListener)locationListener);
+        //TODO call requestLocationUpdates to set up automatic position updating
     }
 
     /**
@@ -51,7 +51,7 @@ public class GPSTracker {
     public LatLng getLatLng() throws NoPositionTrackedException {
 
         Location currentLocation = fetchCurrentLocation();
-        
+
         if (currentLocation == null) {
             throw new NoPositionTrackedException();
         }
