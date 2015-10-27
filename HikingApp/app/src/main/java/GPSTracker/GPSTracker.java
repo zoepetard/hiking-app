@@ -31,6 +31,9 @@ public class GPSTracker implements LocationListener {
 
     @Override
     public String toString() {
+        if (currentLocation == null) {
+            return "No position tracked yet";
+        }
         return currentLocation.toString();
     }
 
