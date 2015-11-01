@@ -1,5 +1,8 @@
 /*
  * Copyright 2015 EPFL. All rights reserved.
+ *
+ * Created by simon.schuetz on 01 Nov 2015
+ * based on HikingApp QuizQuestion class
  */
 
 package ch.epfl.sweng.team7.database;
@@ -17,13 +20,18 @@ import java.util.List;
  */
 public class TrackData {
     // TODO implement
+    private int mTrackId;   // Database track ID of this track
+    private int mOwnerId;   // Database user ID of owner
+    private long mDate;     // A UTC time stamp
+    private List<TrackPoint> trackPoints;   // Points of the track, in chronological order
+
+    // TODO remove
     private long mId;
     private String mOwner;
     private String mBody;
     private List<String> mAnswers;
     private int mSolutionIndex;
     private List<String> mTags;
-
     /**
      * Creates a new QuizQuestion instance from the question elements provided
      * as arguments.
