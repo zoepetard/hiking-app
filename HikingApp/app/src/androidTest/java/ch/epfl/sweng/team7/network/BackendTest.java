@@ -40,6 +40,7 @@ public class BackendTest extends TestCase {
     /**
      * Test the {@link DefaultNetworkProvider}
      */
+    @Test
     public void testCanOpenNetwork() throws IOException {
 
         // Create a URL
@@ -52,12 +53,10 @@ public class BackendTest extends TestCase {
         connection.disconnect();
     }
 
-    // TODO the remaining code is for QuizClient testing, and needs to be changed to test
-    // TODO the behavior of the NetworkDatabaseClient.
     /**
      * Test the {@link NetworkDatabaseClient}
      */
-    @Test
+    //@Test
     public void testGetTrack() throws Exception {
         long trackId = 1;
 
@@ -68,6 +67,8 @@ public class BackendTest extends TestCase {
         assertEquals(trackId, trackData.getTrackId());
     }
 
+    // TODO the remaining code is for QuizClient testing, and needs to be changed to test
+    // TODO the behavior of the NetworkDatabaseClient.
     /**
      * Test the {@link NetworkQuizClient} for failure of URL parser
      */
