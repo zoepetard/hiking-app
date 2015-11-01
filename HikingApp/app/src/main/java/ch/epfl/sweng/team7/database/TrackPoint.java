@@ -7,6 +7,10 @@
 package ch.epfl.sweng.team7.database;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.Date;
 
 /**
@@ -31,5 +35,10 @@ public class TrackPoint {
      */
     public Date getTime() {
         return mTime;
+    }
+
+    public static TrackPoint parseFromJSON(JSONArray jsonArray) throws JSONException {
+        //throw new JSONException("Not implemented");
+        return new TrackPoint(null, null);
     }
 }

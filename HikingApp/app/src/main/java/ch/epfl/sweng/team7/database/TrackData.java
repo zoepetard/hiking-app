@@ -7,6 +7,9 @@
 
 package ch.epfl.sweng.team7.database;
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -98,39 +101,16 @@ public class TrackData {
      * @throws JSONException in case of malformed JSON.
      */
     public static TrackData parseFromJSON(JSONObject jsonObject) throws JSONException {
-        // TODO
-        //throw new JSONException("TODO: implement");
 
-        // Check that Strings are correct.
-        /*if (!(jsonObject.get("question") instanceof String) ||
-                !(jsonObject.get("owner") instanceof String)) {
-            throw new JSONException("Invalid question structure");
-        }
-
-        JSONArray jsonAnswers = jsonObject.getJSONArray("answers");
-        List<String> answers = new ArrayList<String>();
-        for (int i = 0; i < jsonAnswers.length(); ++i) {
-            // Check that Strings are correct.
-            if (!(jsonAnswers.get(i) instanceof String)) {
-                throw new JSONException("Invalid question structure");
-            }
-            answers.add(jsonAnswers.getString(i));
-        }
-
-        JSONArray jsonTags = jsonObject.getJSONArray("tags");
-        List<String> tags = new ArrayList<String>();
-        for (int i = 0; i < jsonTags.length(); ++i) {
-            if (!(jsonTags.get(i) instanceof String)) {
-                throw new JSONException("Invalid question structure");
-            }
-            tags.add(jsonTags.getString(i));
-        }*/
-        Date date = new Date(); // TODO parse date
+        JSONArray jsonTrackPoints = jsonObject.getJSONArray("track_data");
+        Log.e("DEBUG", "Found "+jsonTrackPoints.length()+" points.");
         List<TrackPoint> trackPoints = new ArrayList<>();
-        trackPoints.add(new TrackPoint(null, null));
-        trackPoints.add(new TrackPoint(null, null));// TODO parse points
+        for (int i = 0; i < jsonTrackPoints.length(); ++i) {
+            trackPoints.add(TrackPoint.parseFromJSON(jsonTrackPoints.getJSONArray(i)));
+        }
 
         try {
+            Date date = new Date(jsonObject.getLong("date"));
             return new TrackData(
                     jsonObject.getLong("track_id"),
                     jsonObject.getLong("owner_id"),
