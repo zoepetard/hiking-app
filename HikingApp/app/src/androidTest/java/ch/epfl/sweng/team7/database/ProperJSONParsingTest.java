@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /** Tests whether the app correctly handles proper JSON */
 @RunWith(AndroidJUnit4.class)
@@ -118,4 +119,29 @@ public class ProperJSONParsingTest {
         }
     }
 
+    /** test that parsing back from TrackData to JSON works */
+    @Test
+    public void testParseBackToJSON() throws Exception {
+        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        JSONObject j = t.toJSON();
+
+        assertEquals("Track ID does not match",
+                t.getTrackId(), j.getLong("track_id"));
+        assertEquals("Owner ID does not match",
+                t.getOwnerId(), j.getLong("owner_id"));
+        assertEquals("Date does not match",
+                t.getDate().getTime(), j.getLong("date"));
+
+        List<TrackPoint> tp = t.getTrackPoints();
+        assertEquals("Point Size does not match",
+                tp.size(), j.getJSONArray("track_data").length());
+        for(int i = 0; i < tp.size(); ++i) {
+            assertTrue("TrackPoints latitude does not match",
+                    (tp.get(i).getPosition().latitude - j.getJSONArray("track_data").getJSONArray(i).getDouble(0)) < 1e-10);
+            assertTrue("TrackPoints longitude does not match",
+                    (tp.get(i).getPosition().longitude - j.getJSONArray("track_data").getJSONArray(i).getDouble(1)) < 1e-10);
+            assertTrue("TrackPoints date does not match",
+                    (tp.get(i).getTime().getTime() - j.getJSONArray("track_data").getJSONArray(i).getLong(2)) < 1e-10);
+        }
+    }
 }

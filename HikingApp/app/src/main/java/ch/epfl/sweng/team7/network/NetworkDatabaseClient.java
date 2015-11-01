@@ -54,7 +54,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
     public ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(long trackId) throws DatabaseClientException {
         try {
             URL url = new URL(mServerUrl + "/get_track/");
-            HttpURLConnection conn = openConnection(url, "GET");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("track_id", Long.toString(trackId));
+            conn.connect();
             String stringTrackData = fetchResponse(conn);
             JSONObject jsonTrackData = new JSONObject(stringTrackData);
             return TrackData.parseFromJSON(jsonTrackData);
@@ -96,8 +98,21 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    public int postTrack(ch.epfl.sweng.team7.database.TrackData track) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented."); // TODO implement
+    public long postTrack(ch.epfl.sweng.team7.database.TrackData track) throws DatabaseClientException {
+        try {
+            URL url = new URL(mServerUrl + "/post_track/");
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = track.toJSON().toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            String stringTrackData = fetchResponse(conn);
+            JSONObject jsonTrackId = new JSONObject(stringTrackData);
+            return jsonTrackId.getLong("track_id");
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
     }
     
     /**
@@ -107,14 +122,13 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @return a valid HttpConnection
      * @throws IOException
      */
-    private HttpURLConnection openConnection(URL url, String method) throws IOException {
+    private HttpURLConnection getConnection(URL url, String method) throws IOException {
         HttpURLConnection conn = mNetworkProvider.getConnection(url);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setRequestProperty("Content-Type", JSON_CONTENT + ";" + ENCODING);
         conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.setRequestMethod(method);
-        conn.connect();
         return conn;
     }
     
@@ -127,7 +141,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     private String fetchResponse(HttpURLConnection conn) throws IOException {
         int responseCode = conn.getResponseCode();
         StringBuilder result = new StringBuilder();
-        if(responseCode != HttpURLConnection.HTTP_OK) {
+        if(responseCode != HttpURLConnection.HTTP_CREATED) {
             throw new IOException("Unexpected HTTP Response Code: "+responseCode);
         }
 

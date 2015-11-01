@@ -5,6 +5,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.TestCase;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,17 +55,54 @@ public class BackendTest extends TestCase {
     }
 
     /**
-     * Test the {@link NetworkDatabaseClient}
+     * Test the {@link NetworkDatabaseClient} get_track function
+     * This test assumes that the server is online and returns good results.
      */
-    //@Test
+    @Test
     public void testGetTrack() throws Exception {
-        long trackId = 1;
+        final long trackId = 1;
 
-        // This test assumes that the server is online and returns good results.
         NetworkDatabaseClient dbClient = new NetworkDatabaseClient(
                 SERVER_URL, new DefaultNetworkProvider());
         TrackData trackData = dbClient.fetchSingleTrack(trackId);
         assertEquals(trackId, trackData.getTrackId());
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_track function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostTrack() throws Exception {
+        TrackData trackData = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+
+        NetworkDatabaseClient dbClient = new NetworkDatabaseClient(
+                SERVER_URL, new DefaultNetworkProvider());
+        long trackId = dbClient.postTrack(trackData);
+        assertEquals(trackId, trackData.getTrackId());
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_track and get_track functions
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostAndGetTrack() throws Exception {
+        TrackData trackData = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        NetworkDatabaseClient dbClient = new NetworkDatabaseClient(
+                SERVER_URL, new DefaultNetworkProvider());
+
+        // post a track
+        final long trackId = dbClient.postTrack(trackData);
+        assertEquals(trackId, trackData.getTrackId());
+
+        // retrieve the same track
+        TrackData serverTrackData = dbClient.fetchSingleTrack(trackId);
+
+        // Compare
+        assertEquals(serverTrackData.getOwnerId(), trackData.getOwnerId());
+        assertEquals(serverTrackData.getDate(), trackData.getDate());
+        assertEquals(serverTrackData.getTrackPoints(), trackData.getTrackPoints());
     }
 
     // TODO the remaining code is for QuizClient testing, and needs to be changed to test

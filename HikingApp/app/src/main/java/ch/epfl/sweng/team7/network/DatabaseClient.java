@@ -55,5 +55,5 @@ public interface DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    int postTrack(ch.epfl.sweng.team7.database.TrackData track) throws DatabaseClientException;
+    long postTrack(ch.epfl.sweng.team7.database.TrackData track) throws DatabaseClientException;
 }
