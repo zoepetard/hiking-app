@@ -14,9 +14,21 @@ DEFAULT_NAME = 'some_global_string'
 class Track(ndb.Model):
     '''Models an individual Track entry.'''
     # TODO add indexed=False to properties that should not be indexed
-    track_id = ndb.IntegerProperty()
+    # Management (set by backend)
     author = ndb.UserProperty()
-    date = ndb.DateTimeProperty(auto_now_add=True)
     last_changed = ndb.DateTimeProperty(auto_now_add=True)
+    bounding_botleft = ndb.GeoPtProperty()
+    bounding_toprght = ndb.GeoPtProperty()
+    
+    # Header
+    user_id = ndb.IntegerProperty()
+    track_id = ndb.IntegerProperty()
+    date = ndb.DateTimeProperty(auto_now_add=True)
     start_point = ndb.GeoPtProperty()
     finish_point = ndb.GeoPtProperty()
+    
+    # Data
+    track_data = ndb.JsonProperty(repeated=True,indexed=False)
+    
+    # DEBUG
+    some_string = ndb.StringProperty()
