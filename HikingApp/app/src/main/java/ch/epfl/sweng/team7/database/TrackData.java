@@ -99,7 +99,7 @@ public class TrackData {
      */
     public static TrackData parseFromJSON(JSONObject jsonObject) throws JSONException {
         // TODO
-        throw new JSONException("TODO: implement");
+        //throw new JSONException("TODO: implement");
 
         // Check that Strings are correct.
         /*if (!(jsonObject.get("question") instanceof String) ||
@@ -124,20 +124,22 @@ public class TrackData {
                 throw new JSONException("Invalid question structure");
             }
             tags.add(jsonTags.getString(i));
-        }
+        }*/
+        Date date = new Date(); // TODO parse date
+        List<TrackPoint> trackPoints = new ArrayList<>();
+        trackPoints.add(new TrackPoint(null, null));
+        trackPoints.add(new TrackPoint(null, null));// TODO parse points
 
         try {
             return new TrackData(
-                    jsonObject.getLong("id"),
-                    jsonObject.getString("owner"),
-                    jsonObject.getString("question"),
-                    answers,
-                    jsonObject.getInt("solutionIndex"),
-                    tags);
+                    jsonObject.getLong("track_id"),
+                    jsonObject.getLong("owner_id"),
+                    date,
+                    trackPoints);
         } catch (IllegalArgumentException e) {
-            throw new JSONException("Invalid question structure");
+            throw new JSONException("Invalid question structure: "+e.getMessage());
         } catch (NullPointerException e) {
             throw new JSONException("Invalid question structure");
-        }*/
+        }
     }
 }
