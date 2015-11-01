@@ -1,17 +1,41 @@
 package ch.epfl.sweng.team7.network;
 
+import android.support.test.runner.AndroidJUnit4;
+import android.test.suitebuilder.annotation.LargeTest;
+
 import junit.framework.TestCase;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import ch.epfl.sweng.team7.database.TrackData;
 
 
 /**
  * A {@link TestCase} implementation for JUnit that
  * tests communication with a SwEng quiz server.
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class BackendTest extends TestCase {
+
+    private static final String PROPER_JSON_ONETRACK = "{\n"
+            + "  \"track_id\": 268,\n"
+            + "  \"owner_id\": 153,\n"
+            + "  \"date\": 123201,\n"
+            + "  \"track_data\": [\n"
+            + "    [0.0, 0.0, 123201],\n"
+            + "    [0.1, 0.1, 123202],\n"
+            + "    [0.2, 0.0, 123203],\n"
+            + "    [0.3,89.9, 123204],\n"
+            + "    [0.4, 0.0, 123205]\n"
+            + "  ]\n"
+            + "}\n";
+    public static final String SERVER_URL = "http://10.0.3.2:8080";
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -33,15 +57,16 @@ public class BackendTest extends TestCase {
     /**
      * Test the {@link NetworkDatabaseClient}
      */
-    /*public void testGetRandomQuestion() throws DatabaseClientException {
+    @Test
+    public void testGetTrack() throws Exception {
+        long trackId = 1;
 
         // This test assumes that the server is online and returns good results.
         NetworkDatabaseClient dbClient = new NetworkDatabaseClient(
-                "https://sweng-quiz.appspot.com/quizquestions/random",
-                new DefaultNetworkProvider());
-        TrackData trackData = dbClient.fetchSingleTrack(0);
-        assertEquals(1, trackData.getSolutionIndex());
-    }*/
+                SERVER_URL, new DefaultNetworkProvider());
+        TrackData trackData = dbClient.fetchSingleTrack(trackId);
+        assertEquals(trackId, trackData.getTrackId());
+    }
 
     /**
      * Test the {@link NetworkQuizClient} for failure of URL parser

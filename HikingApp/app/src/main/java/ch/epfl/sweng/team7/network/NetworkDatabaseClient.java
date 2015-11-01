@@ -17,29 +17,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
+
+import ch.epfl.sweng.team7.database.TrackData;
 
 
 /**
  * Class to get and post tracks in the server
- * TODO communicate: renamed from ClientSide
  */
 public class NetworkDatabaseClient implements DatabaseClient {
-    
-    int CONNECT_TIMEOUT = 1000;
-    String JSON_CONTENT = "application/json";
-    String WEB = "http://localhost:8080";
-    String ENCODING = ";charset=utf-8";
-    String json = "";
-    JSONObject jObjTrack = null;
-    HttpURLConnection conn;
+
+    private final static int CONNECT_TIMEOUT = 1000;
+    private final static String JSON_CONTENT = "application/json";
+    private final static String ENCODING = "charset=utf-8";
 
     private final String mServerUrl;
     private final NetworkProvider mNetworkProvider;
+
 
     public NetworkDatabaseClient(String serverUrl, NetworkProvider networkProvider) {
         mServerUrl = serverUrl;
@@ -55,8 +51,18 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      * or the trackId did not match a valid track.
      */
-    public ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(int trackId) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented."); // TODO implement
+    public ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(long trackId) throws DatabaseClientException {
+        try {
+            URL url = new URL(mServerUrl + "/get_track/");
+            HttpURLConnection conn = openConnection(url, "GET");
+            String stringTrackData = fetchResponse(conn);
+            JSONObject jsonTrackData = new JSONObject(stringTrackData);
+            return TrackData.parseFromJSON(jsonTrackData);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
     }
 
     /**
@@ -95,108 +101,51 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
     
     /**
-     * Method to post a track in json format to the server
-     * @param track
-     * @return the response from the server
-     * @throws IOException
-     */
-    private String postTrack(JSONObject track) throws IOException {
-        
-        URL url = new URL(WEB);
-        String message = track.toString();
-        //Try to connect to the server
-        HttpURLConnection conn = null;
-        conn = connProperties(url, conn, "POST");
-        
-        
-        
-        OutputStreamWriter writer = null;
-        
-        //send the track trhu the urlconnection
-        try {
-            writer = new OutputStreamWriter(conn.getOutputStream());
-            writer.write(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            writer.close();
-        }
-        
-        return checkResponseCode(conn);
-    }
-    
-    
-    /**
-     * Method to request some track from the server
-     * @param trackId
-     * @return
-     * @throws IOException
-     */
-    private JSONObject getTrack(int trackId) throws IOException {
-        String trackAtServer = "?" + Integer.toString(trackId);
-        
-        URL url = new URL(WEB+trackAtServer);
-        //Try to connect to the server
-        HttpURLConnection conn = null;
-        conn = connProperties(url, conn, "GET");
-        
-        //Get the response code and the response from the server
-        json = checkResponseCode(conn);
-        
-        //create a Track from the response of the server
-        try {
-            jObjTrack  = new JSONObject(json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jObjTrack;
-        
-    }
-    
-    /**
      * Method to set the properties of the connection to the server
-     * @param url
-     * @param conn
-     * @return
+     * @param url the server url
+     * @param method "GET" or "POST"
+     * @return a valid HttpConnection
+     * @throws IOException
      */
-    private HttpURLConnection connProperties(URL url, HttpURLConnection conn, String method){
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private HttpURLConnection openConnection(URL url, String method) throws IOException {
+        HttpURLConnection conn = mNetworkProvider.getConnection(url);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
-        conn.setRequestProperty("Content-Type", JSON_CONTENT + ENCODING);
+        conn.setRequestProperty("Content-Type", JSON_CONTENT + ";" + ENCODING);
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        try {
-            conn.setRequestMethod(method);
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        }
+        conn.setRequestMethod(method);
+        conn.connect();
         return conn;
     }
     
     /**
      * Method to check the response code of the server and return the message that the server sends
-     * @param conn
-     * @return
+     * @param conn an open HttpURLConnection
+     * @return the string that was read from the connection
      * @throws IOException
      */
-    private String checkResponseCode(HttpURLConnection conn) throws IOException {
+    private String fetchResponse(HttpURLConnection conn) throws IOException {
         int responseCode = conn.getResponseCode();
         StringBuilder result = new StringBuilder();
-        if(responseCode == HttpURLConnection.HTTP_OK) {
-            InputStream input = conn.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        if(responseCode != HttpURLConnection.HTTP_OK) {
+            throw new IOException("Unexpected HTTP Response Code: "+responseCode);
+        }
+
+        String contentType = conn.getContentType();
+        if (contentType == null) {
+            throw new IOException("HTTP content type unset");
+        } else if(contentType.compareTo(JSON_CONTENT) != 0) {
+            throw new IOException("Invalid HTTP content type: " + contentType);
+        }
+
+        InputStream input = conn.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             
-            String line;
-            while ((line = reader.readLine()) != null) {
-                result.append(line + "\n");
-            }
-        }else System.out.println("Error en response code GET");
-        
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.append(line + "\n");
+        }
+
         conn.disconnect();
         return result.toString();
     }

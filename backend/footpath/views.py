@@ -28,7 +28,7 @@ def get_track(request):
         track_string = track_to_json(track)
         all_tracks += track_string + '\n'
         
-    return HttpResponse(all_tracks, content_type='application/javascript')
+    return HttpResponse(all_tracks, content_type='application/json')
     #return HttpResponse(serializers.serialize("json", random_track), content_type='application/json')
     
 def post_track(request):

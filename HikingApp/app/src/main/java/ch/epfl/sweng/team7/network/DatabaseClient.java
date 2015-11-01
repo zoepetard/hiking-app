@@ -26,7 +26,7 @@ public interface DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      * or the trackId did not match a valid track.
      */
-    ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(int trackId) throws DatabaseClientException;
+    ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(long trackId) throws DatabaseClientException;
 
     /**
      * Fetch multiple tracks from the server
