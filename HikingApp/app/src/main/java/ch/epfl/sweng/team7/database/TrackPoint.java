@@ -19,7 +19,6 @@ import java.util.Date;
 public class TrackPoint {
     private LatLng mPosition;
     private Date mTime;         // UTC Timestamp
-    // potentially more data, like links to text and pictures
 
     public TrackPoint(LatLng position, Date time) {
         mPosition = position;
@@ -37,6 +36,11 @@ public class TrackPoint {
         return mTime;
     }
 
+    /**
+     * @return JSONArray [double lat, double lng, long date]. Storing a JSON array instead of
+     *                   a full JSON object reduces the communication/storage data size of a track.
+     * @throws JSONException
+     */
     public JSONArray toJSON() throws JSONException {
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(mPosition.latitude).put(mPosition.longitude).put(mTime.getTime());

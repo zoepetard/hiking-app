@@ -7,10 +7,11 @@
 
 package ch.epfl.sweng.team7.network;
 
-
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
+
+import ch.epfl.sweng.team7.database.TrackData;
 
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
@@ -21,22 +22,22 @@ public interface DatabaseClient {
     /**
      * Fetch a single track from the server
      * @param trackId The numeric ID of one track in the database
-     * @return A {@link ch.epfl.sweng.team7.database.TrackData} object encapsulating one track
+     * @return A {@link TrackData} object encapsulating one track
      * @throws DatabaseClientException in case the track could not be
      * retrieved for any reason external to the application (network failure, etc.)
      * or the trackId did not match a valid track.
      */
-    ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(long trackId) throws DatabaseClientException;
+    TrackData fetchSingleTrack(long trackId) throws DatabaseClientException;
 
     /**
      * Fetch multiple tracks from the server
      * @param trackIds The numeric IDs of multiple tracks in the database
-     * @return A list of {@link ch.epfl.sweng.team7.database.TrackData} objects encapsulating multiple tracks
+     * @return A list of {@link TrackData} objects encapsulating multiple tracks
      * @throws DatabaseClientException in case the track could not be
      * retrieved for any reason external to the application (network failure, etc.)
      * or the trackId did not match a valid track.
      */
-    List<ch.epfl.sweng.team7.database.TrackData> fetchMultipleTracks(List<Integer> trackIds) throws DatabaseClientException;
+    List<TrackData> fetchMultipleTracks(List<Integer> trackIds) throws DatabaseClientException;
 
     /**
      * Get all tracks in a rectangular window on the map
@@ -55,5 +56,5 @@ public interface DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    long postTrack(ch.epfl.sweng.team7.database.TrackData track) throws DatabaseClientException;
+    long postTrack(TrackData track) throws DatabaseClientException;
 }

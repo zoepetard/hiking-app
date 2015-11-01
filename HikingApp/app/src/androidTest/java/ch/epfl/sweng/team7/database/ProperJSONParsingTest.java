@@ -1,7 +1,6 @@
 package ch.epfl.sweng.team7.database;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,11 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 /** Tests whether the app correctly handles proper JSON */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
 public class ProperJSONParsingTest {
 
     private static final String PROPER_JSON_ONETRACK = "{\n"
@@ -36,6 +33,7 @@ public class ProperJSONParsingTest {
     private static final long EXPECTED_TRACK_ID = 268L;
     private static final long EXPECTED_OWNER_ID = 153L;
     private static final long EXPECTED_DATE = 123201;
+    private static final double EPS_DOUBLE = 1e-10;
     private List<Double> properTrackPointsX;
     private List<Double> properTrackPointsY;
     private List<Long> properTrackPointsT;
@@ -102,9 +100,9 @@ public class ProperJSONParsingTest {
         List<TrackPoint> tp = t.getTrackPoints();
         for(int i = 0; i < tp.size(); ++i) {
             assertEquals("TrackPoints latitude does not match",
-                    properTrackPointsX.get(i), tp.get(i).getPosition().latitude);
+                    properTrackPointsX.get(i), tp.get(i).getPosition().latitude, EPS_DOUBLE);
             assertEquals("TrackPoints longitude does not match",
-                    properTrackPointsY.get(i), tp.get(i).getPosition().longitude);
+                    properTrackPointsY.get(i), tp.get(i).getPosition().longitude, EPS_DOUBLE);
         }
     }
 
@@ -136,12 +134,15 @@ public class ProperJSONParsingTest {
         assertEquals("Point Size does not match",
                 tp.size(), j.getJSONArray("track_data").length());
         for(int i = 0; i < tp.size(); ++i) {
-            assertTrue("TrackPoints latitude does not match",
-                    (tp.get(i).getPosition().latitude - j.getJSONArray("track_data").getJSONArray(i).getDouble(0)) < 1e-10);
-            assertTrue("TrackPoints longitude does not match",
-                    (tp.get(i).getPosition().longitude - j.getJSONArray("track_data").getJSONArray(i).getDouble(1)) < 1e-10);
-            assertTrue("TrackPoints date does not match",
-                    (tp.get(i).getTime().getTime() - j.getJSONArray("track_data").getJSONArray(i).getLong(2)) < 1e-10);
+            assertEquals("TrackPoints latitude does not match",
+                    tp.get(i).getPosition().latitude,
+                    j.getJSONArray("track_data").getJSONArray(i).getDouble(0), EPS_DOUBLE);
+            assertEquals("TrackPoints longitude does not match",
+                    tp.get(i).getPosition().longitude,
+                    j.getJSONArray("track_data").getJSONArray(i).getDouble(1), EPS_DOUBLE);
+            assertEquals("TrackPoints date does not match",
+                    tp.get(i).getTime().getTime(),
+                    j.getJSONArray("track_data").getJSONArray(i).getLong(2), EPS_DOUBLE);
         }
     }
 }

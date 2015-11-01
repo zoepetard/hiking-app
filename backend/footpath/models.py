@@ -79,3 +79,17 @@ def build_track_from_json(json_string):
     if(t.from_json(json_string)):
         return t
     return None
+    
+def build_sample_track(track_id, owner_id):
+    return build_track_from_json("{\n"\
+            + "  \"track_id\": "+repr(track_id)+",\n"\
+            + "  \"owner_id\": "+repr(owner_id)+",\n"\
+            + "  \"date\": 123201,\n"\
+            + "  \"track_data\": [\n"\
+            + "    [0.0, 0.0, 123201],\n"\
+            + "    [0.1, 0.1, 123202],\n"\
+            + "    [0.2, 0.0, 123203],\n"\
+            + "    [0.3,89.9, 123204],\n"\
+            + "    [0.4, 0.0, 123205]\n"\
+            + "  ]\n"\
+            + "}")

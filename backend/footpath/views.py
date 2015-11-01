@@ -14,13 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 def get_track(request):
-    track_id = request.GET.get('track_id', 0)
-    logger.error('Request for track id '+repr(track_id))
+    logger.error(repr(request))
+    request_track_id = int(request.META.get('HTTP_TRACK_ID', -1))
+    logger.error('Request for track id '+repr(request_track_id))
     
     #random_track = Track.query().order(-Track.date)
-    track = Track.query(Track.track_id == track_id).fetch()
-    if track and track.size() > 0:
-        track_string = track[0].to_json()
+    tracks = Track.query(Track.track_id == request_track_id).fetch(1)
+    logger.error('found '+repr(len(tracks))+' entries for track '+repr(request_track_id))
+    if tracks!=None and len(tracks) > 0:
+        track_string = tracks[0].to_json()
             
         logger.error('Return string '+repr(track_string))
         return HttpResponse(track_string, content_type='application/json')
@@ -31,7 +33,7 @@ def get_track(request):
 def get_tracks(request):
     
     #random_track = Track.query().order(-Track.date)
-    tracks = Track.query().fetch(100)
+    tracks = Track.query().fetch()
     
     #response_text = type(tracks)
     
@@ -39,8 +41,16 @@ def get_tracks(request):
     for track in tracks:#random_track = tracks[0]
         track_string = track.to_json() #track_to_json(track)
         all_tracks += track_string + '\n'
-        
-    return HttpResponse(all_tracks, content_type='application/json')
+            
+    # TODO remove: testing functionality
+    track_one = Track.query(Track.track_id == 1).fetch()
+    if(len(track_one) < 1):
+        build_sample_track(1, 1).put()
+    elif(len(track_one) > 1):
+        for old_track in track_one[1:]:
+            old_track.key.delete()
+    
+    return HttpResponse(all_tracks, content_type='application/javascript')
     #return HttpResponse(serializers.serialize("json", random_track), content_type='application/json')
     
 def post_track(request):
@@ -50,7 +60,7 @@ def post_track(request):
         track = build_track_from_json(request.body)
         if track:
             # Temporary: Remove old tracks with the same ID (to avoid ID collision)  
-            old_tracks = Track.query(Track.track_id == track.track_id).fetch(100)
+            old_tracks = Track.query(Track.track_id == track.track_id).fetch()
             for old_track in old_tracks:
                 old_track.key.delete()
                 

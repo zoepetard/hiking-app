@@ -16,17 +16,18 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Encapsulates the data in a quiz question returned by the SwEng server.
- *
+ * Encapsulates the data of a hike/track, as represented in the backend server.
+ * Additional annotations will be added here rather than in the TrackPoint class, to simplify
+ * serialization and reduce data rate in communication.
  */
 public class TrackData {
-    private static final long TRACK_ID_UNKNOWN = -1;
+    public static final long TRACK_ID_UNKNOWN = -1;
 
-    // TODO implement
     private long mTrackId;   // Database track ID of this track
     private long mOwnerId;   // Database user ID of owner
     private Date mDate;      // A UTC time stamp
     private List<TrackPoint> mTrackPoints;   // Points of the track, in chronological order
+
     /**
      * Creates a new TrackData instance from the data provided as arguments.
      * @param trackId the database ID (user id) of the track, TRACK_ID_UNKNOWN if unknown
@@ -92,6 +93,18 @@ public class TrackData {
     }
 
     /**
+     * Sets the Track ID. This function will usually be called after a track has been posted
+     * and the server has assigned a new track ID.
+     * @param trackId The new track ID
+     * @throws IllegalArgumentException on negative inputs
+     */
+    public void setTrackId(long trackId) throws IllegalArgumentException {
+        if (trackId < 0 && trackId != TRACK_ID_UNKNOWN) {
+            throw new IllegalArgumentException("Track ID must be positive");
+        }
+        mTrackId = trackId;
+    }
+    /**
      * @return a JSON object representing this track
      * @throws JSONException
      */
@@ -139,9 +152,9 @@ public class TrackData {
                     date,
                     trackPoints);
         } catch (IllegalArgumentException e) {
-            throw new JSONException("Invalid question structure: "+e.getMessage());
+            throw new JSONException("Invalid track structure: "+e.getMessage());
         } catch (NullPointerException e) {
-            throw new JSONException("Invalid question structure");
+            throw new JSONException("Invalid track structure");
         }
     }
 }

@@ -8,6 +8,8 @@
 
 package ch.epfl.sweng.team7.network;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
@@ -46,18 +48,19 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Fetch a single track from the server
      * @param trackId The numeric ID of one track in the database
-     * @return A {@link ch.epfl.sweng.team7.database.TrackData} object encapsulating one track
+     * @return A {@link TrackData} object encapsulating one track
      * @throws DatabaseClientException in case the track could not be
      * retrieved for any reason external to the application (network failure, etc.)
      * or the trackId did not match a valid track.
      */
-    public ch.epfl.sweng.team7.database.TrackData fetchSingleTrack(long trackId) throws DatabaseClientException {
+    public TrackData fetchSingleTrack(long trackId) throws DatabaseClientException {
         try {
             URL url = new URL(mServerUrl + "/get_track/");
             HttpURLConnection conn = getConnection(url, "GET");
             conn.setRequestProperty("track_id", Long.toString(trackId));
+            Log.e("DEBUG", conn.toString());
             conn.connect();
-            String stringTrackData = fetchResponse(conn);
+            String stringTrackData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonTrackData = new JSONObject(stringTrackData);
             return TrackData.parseFromJSON(jsonTrackData);
         } catch (IOException e) {
@@ -70,12 +73,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Fetch multiple tracks from the server
      * @param trackIds The numeric IDs of multiple tracks in the database
-     * @return A list of {@link ch.epfl.sweng.team7.database.TrackData} objects encapsulating multiple tracks
+     * @return A list of {@link TrackData} objects encapsulating multiple tracks
      * @throws DatabaseClientException in case the track could not be
      * retrieved for any reason external to the application (network failure, etc.)
      * or the trackId did not match a valid track.
      */
-    public List<ch.epfl.sweng.team7.database.TrackData> fetchMultipleTracks(List<Integer> trackIds) throws DatabaseClientException {
+    public List<TrackData> fetchMultipleTracks(List<Integer> trackIds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
     }
 
@@ -98,14 +101,14 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    public long postTrack(ch.epfl.sweng.team7.database.TrackData track) throws DatabaseClientException {
+    public long postTrack(TrackData track) throws DatabaseClientException {
         try {
             URL url = new URL(mServerUrl + "/post_track/");
             HttpURLConnection conn = getConnection(url, "POST");
             byte[] outputInBytes = track.toJSON().toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
-            String stringTrackData = fetchResponse(conn);
+            String stringTrackData = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             JSONObject jsonTrackId = new JSONObject(stringTrackData);
             return jsonTrackId.getLong("track_id");
         } catch (IOException e) {
@@ -127,7 +130,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setRequestProperty("Content-Type", JSON_CONTENT + ";" + ENCODING);
         conn.setDoInput(true);
-        conn.setDoOutput(true);
+        conn.setDoOutput(method.compareTo("POST") == 0);
         conn.setRequestMethod(method);
         return conn;
     }
@@ -138,10 +141,10 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @return the string that was read from the connection
      * @throws IOException
      */
-    private String fetchResponse(HttpURLConnection conn) throws IOException {
+    private String fetchResponse(HttpURLConnection conn, int expectedResponseCode) throws IOException {
         int responseCode = conn.getResponseCode();
         StringBuilder result = new StringBuilder();
-        if(responseCode != HttpURLConnection.HTTP_CREATED) {
+        if(responseCode != expectedResponseCode) {
             throw new IOException("Unexpected HTTP Response Code: "+responseCode);
         }
 
