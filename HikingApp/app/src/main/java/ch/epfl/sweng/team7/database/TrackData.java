@@ -89,7 +89,7 @@ public class TrackData {
     /**
      * Returns a list of the question answers.
      */
-    public List<TrackPoint> getTrackPoint() {
+    public List<TrackPoint> getTrackPoints() {
         return new ArrayList<TrackPoint>(mTrackPoints);
     }
 
@@ -102,14 +102,13 @@ public class TrackData {
      */
     public static TrackData parseFromJSON(JSONObject jsonObject) throws JSONException {
 
-        JSONArray jsonTrackPoints = jsonObject.getJSONArray("track_data");
-        Log.e("DEBUG", "Found "+jsonTrackPoints.length()+" points.");
-        List<TrackPoint> trackPoints = new ArrayList<>();
-        for (int i = 0; i < jsonTrackPoints.length(); ++i) {
-            trackPoints.add(TrackPoint.parseFromJSON(jsonTrackPoints.getJSONArray(i)));
-        }
-
         try {
+            JSONArray jsonTrackPoints = jsonObject.getJSONArray("track_data");
+            List<TrackPoint> trackPoints = new ArrayList<>();
+            for (int i = 0; i < jsonTrackPoints.length(); ++i) {
+                trackPoints.add(TrackPoint.parseFromJSON(jsonTrackPoints.getJSONArray(i)));
+            }
+
             Date date = new Date(jsonObject.getLong("date"));
             return new TrackData(
                     jsonObject.getLong("track_id"),

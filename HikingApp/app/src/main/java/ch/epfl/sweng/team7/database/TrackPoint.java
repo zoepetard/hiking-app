@@ -37,8 +37,15 @@ public class TrackPoint {
         return mTime;
     }
 
+    /**
+     * Parse a TrackPoint from an appropriate JSON object
+     * @param jsonArray [double lat, double lng, long date]
+     * @return a valid TrackPoint object
+     * @throws JSONException
+     */
     public static TrackPoint parseFromJSON(JSONArray jsonArray) throws JSONException {
-        //throw new JSONException("Not implemented");
-        return new TrackPoint(null, null);
+        LatLng latLng = new LatLng(jsonArray.getDouble(0), jsonArray.getDouble(1));
+        Date date = new Date(jsonArray.getLong(2));
+        return new TrackPoint(latLng, date);
     }
 }

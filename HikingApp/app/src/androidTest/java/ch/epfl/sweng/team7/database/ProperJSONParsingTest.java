@@ -34,6 +34,7 @@ public class ProperJSONParsingTest {
 
     private static final long EXPECTED_TRACK_ID = 268L;
     private static final long EXPECTED_OWNER_ID = 153L;
+    private static final long EXPECTED_DATE = 123201;
     private List<Double> properTrackPointsX;
     private List<Double> properTrackPointsY;
     private List<Long> properTrackPointsT;
@@ -51,7 +52,7 @@ public class ProperJSONParsingTest {
         properTrackPointsY.add(0.1);
         properTrackPointsY.add(0.0);
         properTrackPointsY.add(89.9);
-        properTrackPointsY.add(0.4);
+        properTrackPointsY.add(0.0);
         properTrackPointsT = new ArrayList<Long>();
         properTrackPointsT.add(123201L);
         properTrackPointsT.add(123202L);
@@ -74,6 +75,47 @@ public class ProperJSONParsingTest {
         TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
         assertEquals("Owner ID does not match",
                 EXPECTED_OWNER_ID, t.getOwnerId());
+    }
+
+    /** test that date is correctly parsed */
+    @Test
+    public void testProperDate() throws JSONException {
+        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        assertEquals("Date does not match",
+                EXPECTED_DATE, t.getDate().getTime());
+    }
+
+    /** test that trackpoints are correctly parsed */
+    @Test
+    public void testProperTrackPointSize() throws JSONException {
+        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        List<TrackPoint> tp = t.getTrackPoints();
+        assertEquals("TrackPoints size does not match",
+                properTrackPointsT.size(), tp.size());
+    }
+
+    /** test that trackpoints are correctly parsed */
+    @Test
+    public void testProperTrackPointLatLng() throws JSONException {
+        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        List<TrackPoint> tp = t.getTrackPoints();
+        for(int i = 0; i < tp.size(); ++i) {
+            assertEquals("TrackPoints latitude does not match",
+                    properTrackPointsX.get(i), tp.get(i).getPosition().latitude);
+            assertEquals("TrackPoints longitude does not match",
+                    properTrackPointsY.get(i), tp.get(i).getPosition().longitude);
+        }
+    }
+
+    /** test that trackpoints are correctly parsed */
+    @Test
+    public void testProperTrackPointDate() throws JSONException {
+        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        List<TrackPoint> tp = t.getTrackPoints();
+        for(int i = 0; i < tp.size(); ++i) {
+            assertEquals("TrackPoints date does not match",
+                    properTrackPointsT.get(i).longValue(), tp.get(i).getTime().getTime());
+        }
     }
 
 }
