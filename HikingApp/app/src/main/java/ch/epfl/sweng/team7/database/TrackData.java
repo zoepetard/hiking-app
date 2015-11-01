@@ -7,11 +7,11 @@
 
 package ch.epfl.sweng.team7.database;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,115 +19,90 @@ import java.util.List;
  *
  */
 public class TrackData {
-    // TODO implement
-    private int mTrackId;   // Database track ID of this track
-    private int mOwnerId;   // Database user ID of owner
-    private long mDate;     // A UTC time stamp
-    private List<TrackPoint> trackPoints;   // Points of the track, in chronological order
+    private static final long TRACK_ID_UNKNOWN = -1;
 
-    // TODO remove
-    private long mId;
-    private String mOwner;
-    private String mBody;
-    private List<String> mAnswers;
-    private int mSolutionIndex;
-    private List<String> mTags;
+    // TODO implement
+    private long mTrackId;   // Database track ID of this track
+    private long mOwnerId;   // Database user ID of owner
+    private Date mDate;      // A UTC time stamp
+    private List<TrackPoint> mTrackPoints;   // Points of the track, in chronological order
     /**
-     * Creates a new QuizQuestion instance from the question elements provided
-     * as arguments.
-     * @param id the numeric ID of the question
-     * @param owner the name of the owner of the question
-     * @param body the question body
-     * @param answers a list of two or more possible question answers
-     * @param solutionIndex the index in the answer list of the correct answer
-     * @param tags a list of zero or more tags associated to the question
+     * Creates a new TrackData instance from the data provided as arguments.
+     * @param trackId the database ID (user id) of the track, TRACK_ID_UNKNOWN if unknown
+     * @param ownerId the owner ID (user id) of the track
+     * @param date the time/date when this hike was done
+     * @param trackPoints the list of points on this track, must be >= 1 point
+     * @throws IllegalArgumentException
      */
-    public TrackData(long id, String owner, String body, List<String> answers,
-            int solutionIndex, List<String> tags) {
-        if (owner == null) {
-            throw new NullPointerException("Owner is null");
+    public TrackData(long trackId, long ownerId, Date date, List<TrackPoint> trackPoints) {
+
+        // Argument checks
+        if (trackId < 0 && trackId != TRACK_ID_UNKNOWN) {
+            throw new IllegalArgumentException("Track ID must be positive");
         }
-        if (body == null) {
-            throw new NullPointerException("Body is null");
+        if (ownerId < 0) {
+            throw new IllegalArgumentException("Owner ID must be positive");
         }
-        if (answers.size() < 2) {
-            throw new IllegalArgumentException("Answer list must be size two or more");
+        if (date == null) {
+            throw new IllegalArgumentException("Date not specified");
         }
-        for (String answer: answers) {
-            if (answer == null) {
-                throw new NullPointerException("Answer is null");
-            }
+        if (date.compareTo(new Date()) > 0) {
+            throw new IllegalArgumentException("Date is in the future");
         }
-        if (solutionIndex < 0 || solutionIndex >= answers.size()) {
-            throw new IllegalArgumentException("Invalid solutionIndex value");
+        if (trackPoints == null) {
+            throw new IllegalArgumentException("TrackPoints not specified");
         }
-        for (String tag: tags) {
-            if (tag == null) {
-                throw new NullPointerException("Tag is null");
-            }
+        if (trackPoints.size() < 1) {
+            throw new IllegalArgumentException("Track must contain at least one point");
         }
-        
-        mId = id;
-        mOwner = owner;
-        mBody = body;
-        mAnswers = new ArrayList<String>(answers);
-        mSolutionIndex = solutionIndex;
-        mTags = new ArrayList<String>(tags);
+
+        mTrackId = trackId;
+        mOwnerId = ownerId;
+        mDate = date;
+        mTrackPoints = trackPoints;
     }
     
     /**
-     * Returns the question ID.
+     * Returns the track ID.
      */
-    public long getID() {
-        return mId;
+    public long getTrackId() {
+        return mTrackId;
     }
     
     /**
-     * Returns the question owner.
+     * Returns the owner ID.
      */
-    public String getOwner() {
-        return mOwner;
+    public long getOwnerId() {
+        return mOwnerId;
     }
     
     /**
-     * Returns the question body.
+     * Returns the date.
      */
-    public String getBody() {
-        return mBody;
+    public Date getDate() {
+        return (Date) mDate.clone();
     }
     
     /**
      * Returns a list of the question answers.
      */
-    public List<String> getAnswers() {
-        return new ArrayList<String>(mAnswers);
-    }
-    
-    /**
-     * Returns the index of the solution in the answer list.
-     */
-    public int getSolutionIndex() {
-        return mSolutionIndex;
-    }
-    
-    /**
-     * Returns a (possibly empty) list of question tags.
-     */
-    public List<String> getTags() {
-        return new ArrayList<String>(mTags);
+    public List<TrackPoint> getTrackPoint() {
+        return new ArrayList<TrackPoint>(mTrackPoints);
     }
 
     /**
-     * Creates a new QuizQuestion object by parsing a JSON object in the format
-     * returned by the quiz server.
+     * Creates a new TrackData object by parsing a JSON object in the format
+     * returned by the server.
      * @param jsonObject a {@link JSONObject} encoding.
-     * @return a new QuizQuestion object.
+     * @return a new TrackData object.
      * @throws JSONException in case of malformed JSON.
      */
     public static TrackData parseFromJSON(JSONObject jsonObject) throws JSONException {
+        // TODO
+        throw new JSONException("TODO: implement");
 
         // Check that Strings are correct.
-        if (!(jsonObject.get("question") instanceof String) ||
+        /*if (!(jsonObject.get("question") instanceof String) ||
                 !(jsonObject.get("owner") instanceof String)) {
             throw new JSONException("Invalid question structure");
         }
@@ -163,6 +138,6 @@ public class TrackData {
             throw new JSONException("Invalid question structure");
         } catch (NullPointerException e) {
             throw new JSONException("Invalid question structure");
-        }
+        }*/
     }
 }

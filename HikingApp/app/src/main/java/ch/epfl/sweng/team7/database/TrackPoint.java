@@ -7,16 +7,17 @@
 package ch.epfl.sweng.team7.database;
 
 import com.google.android.gms.maps.model.LatLng;
+import java.util.Date;
 
 /**
  * Stores data for one point in a track representing a hike.
  */
 public class TrackPoint {
     private LatLng mPosition;
-    private long mTime;         // UTC Timestamp
+    private Date mTime;         // UTC Timestamp
     // potentially more data, like links to text and pictures
 
-    public TrackPoint(LatLng position, long time) {
+    public TrackPoint(LatLng position, Date time) {
         mPosition = position;
         mTime = time;
     }
@@ -28,7 +29,7 @@ public class TrackPoint {
     /**
      * @return Time of this point as UTC timestamp
      */
-    public long getTime() {
+    public Date getTime() {
         return mTime;
     }
 }
