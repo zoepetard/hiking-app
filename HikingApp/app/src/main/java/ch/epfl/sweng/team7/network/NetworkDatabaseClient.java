@@ -1,3 +1,11 @@
+/*
+ * Copyright 2015 EPFL. All rights reserved.
+ *
+ * Created by simon.schuetz on 01 Nov 2015
+ * based on HikingApp ClientSide and
+ * SwEngHomework3 NetworkQuizClient class
+ */
+
 package ch.epfl.sweng.team7.network;
 
 import com.google.android.gms.maps.model.LatLngBounds;

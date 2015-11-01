@@ -1,5 +1,8 @@
 /*
  * Copyright 2015 EPFL. All rights reserved.
+ *
+ * Created by simon.schuetz on 01 Nov 2015
+ * based on SwEngHomework3 QuizClientException class
  */
 
 package ch.epfl.sweng.team7.network;
