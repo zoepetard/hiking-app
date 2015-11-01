@@ -7,8 +7,6 @@
 
 package ch.epfl.sweng.team7.database;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,6 +89,31 @@ public class TrackData {
      */
     public List<TrackPoint> getTrackPoints() {
         return new ArrayList<TrackPoint>(mTrackPoints);
+    }
+
+    /**
+     * @return a JSON object representing this track
+     * @throws JSONException
+     */
+    public JSONObject toJSON() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("track_id", mTrackId);
+        jsonObject.put("owner_id", mOwnerId);
+        jsonObject.put("date", mDate.getTime());
+        jsonObject.put("track_data", parseTrackPointsList(mTrackPoints));
+        return jsonObject;
+    }
+
+    /**
+     * @return a JSON array of the input
+     * @throws JSONException
+     */
+    private JSONArray parseTrackPointsList(List<TrackPoint> trackPoints) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for(int i = 0; i < trackPoints.size(); ++i) {
+            jsonArray.put(trackPoints.get(i).toJSON());
+        }
+        return jsonArray;
     }
 
     /**

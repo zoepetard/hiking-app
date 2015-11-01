@@ -37,6 +37,12 @@ public class TrackPoint {
         return mTime;
     }
 
+    public JSONArray toJSON() throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(mPosition.latitude).put(mPosition.longitude).put(mTime.getTime());
+        return jsonArray;
+    }
+
     /**
      * Parse a TrackPoint from an appropriate JSON object
      * @param jsonArray [double lat, double lng, long date]
