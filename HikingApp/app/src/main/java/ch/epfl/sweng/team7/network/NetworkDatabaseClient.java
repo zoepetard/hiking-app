@@ -8,8 +8,6 @@
 
 package ch.epfl.sweng.team7.network;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
@@ -58,7 +56,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
             URL url = new URL(mServerUrl + "/get_track/");
             HttpURLConnection conn = getConnection(url, "GET");
             conn.setRequestProperty("track_id", Long.toString(trackId));
-            Log.e("DEBUG", conn.toString());
             conn.connect();
             String stringTrackData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonTrackData = new JSONObject(stringTrackData);

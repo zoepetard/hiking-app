@@ -37,7 +37,7 @@ public class BackendTest extends TestCase {
             + "  ]\n"
             + "}\n";
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://10.0.3.2:8080";
+    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
 
     /**
      * Test the {@link DefaultNetworkProvider}
