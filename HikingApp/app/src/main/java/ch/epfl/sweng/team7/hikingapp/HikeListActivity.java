@@ -90,6 +90,12 @@ public class HikeListActivity extends Activity {
         TextView nameText = new TextView(this);
         nameText.setText("Hike #" + Integer.toString(i + 1));
         nameText.setLayoutParams(nameRow);
+        nameText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                startActivity(intent);
+            }
+        });
         gridLayout.addView(nameText,nameRow);
 
         //distance row
