@@ -13,7 +13,8 @@
         android:text="@string/back_to_map"
         android:id="@+id/backToMapButton"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:onClick="backToMap" />
 
     <ScrollView
         android:layout_width="match_parent"
