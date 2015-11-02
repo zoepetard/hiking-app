@@ -1,10 +1,12 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -13,7 +15,7 @@ import android.widget.TextView;
 public class HikeListActivity extends Activity {
 
 
-    //Displays a list of x nearby hikes, with a map, the distance and the rating.
+    //Displays a list of nearby hikes, with a map, the distance and the rating.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,15 +87,19 @@ public class HikeListActivity extends Activity {
 
         //name row
         GridLayout.LayoutParams nameRow = new GridLayout.LayoutParams(row1, col2);
-        //nameRow.width = screenWidth*2/3;
         TextView nameText = new TextView(this);
-        nameText.setText("Hike #" + Integer.toString(i));
+        nameText.setText("Hike #" + Integer.toString(i + 1));
         nameText.setLayoutParams(nameRow);
+        nameText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                startActivity(intent);
+            }
+        });
         gridLayout.addView(nameText,nameRow);
 
         //distance row
         GridLayout.LayoutParams distanceRow = new GridLayout.LayoutParams(row2, col2);
-        //distanceRow.width = screenWidth*2/3;
         TextView distanceText = new TextView(this);
         distanceText.setText("Distance: " + Integer.toString((i+1)*5) + "km");
         distanceText.setLayoutParams(distanceRow);
@@ -101,7 +107,6 @@ public class HikeListActivity extends Activity {
 
         //rating row
         GridLayout.LayoutParams ratingRow = new GridLayout.LayoutParams(row3, col2);
-        //ratingRow.width = screenWidth*2/3;
         TextView ratingText = new TextView(this);
         ratingText.setText("Rating: " + Integer.toString(i));
         ratingText.setLayoutParams(ratingRow);
@@ -109,6 +114,11 @@ public class HikeListActivity extends Activity {
 
         hikeRow.addView(gridLayout);
         return hikeRow;
+    }
+
+    public void backToMap(View view) {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
     }
 
 }
