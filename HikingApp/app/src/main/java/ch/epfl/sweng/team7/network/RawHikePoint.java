@@ -4,7 +4,7 @@
  * Created by simon.schuetz on 01 Nov 2015.
  */
 
-package ch.epfl.sweng.team7.database;
+package ch.epfl.sweng.team7.network;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -14,13 +14,13 @@ import org.json.JSONException;
 import java.util.Date;
 
 /**
- * Stores data for one point in a track representing a hike.
+ * Stores data for one point in a hike.
  */
-public class TrackPoint {
+public class RawHikePoint {
     private LatLng mPosition;
     private Date mTime;         // UTC Timestamp
 
-    public TrackPoint(LatLng position, Date time) {
+    public RawHikePoint(LatLng position, Date time) {
         mPosition = position;
         mTime = time;
     }
@@ -38,7 +38,7 @@ public class TrackPoint {
 
     /**
      * @return JSONArray [double lat, double lng, long date]. Storing a JSON array instead of
-     *                   a full JSON object reduces the communication/storage data size of a track.
+     *                   a full JSON object reduces the communication/storage data size of a hike.
      * @throws JSONException
      */
     public JSONArray toJSON() throws JSONException {
@@ -48,14 +48,14 @@ public class TrackPoint {
     }
 
     /**
-     * Parse a TrackPoint from an appropriate JSON object
+     * Parse a RawHikePoint from an appropriate JSON object
      * @param jsonArray [double lat, double lng, long date]
-     * @return a valid TrackPoint object
+     * @return a valid RawHikePoint object
      * @throws JSONException
      */
-    public static TrackPoint parseFromJSON(JSONArray jsonArray) throws JSONException {
+    public static RawHikePoint parseFromJSON(JSONArray jsonArray) throws JSONException {
         LatLng latLng = new LatLng(jsonArray.getDouble(0), jsonArray.getDouble(1));
         Date date = new Date(jsonArray.getLong(2));
-        return new TrackPoint(latLng, date);
+        return new RawHikePoint(latLng, date);
     }
 }

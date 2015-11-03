@@ -11,17 +11,20 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawHikePoint;
+
 import static junit.framework.Assert.assertEquals;
 
 /** Tests whether the app correctly handles proper JSON */
 @RunWith(AndroidJUnit4.class)
 public class ProperJSONParsingTest {
 
-    private static final String PROPER_JSON_ONETRACK = "{\n"
-            + "  \"track_id\": 268,\n"
+    private static final String PROPER_JSON_ONEHIKE = "{\n"
+            + "  \"hike_id\": 268,\n"
             + "  \"owner_id\": 153,\n"
             + "  \"date\": 123201,\n"
-            + "  \"track_data\": [\n"
+            + "  \"hike_data\": [\n"
             + "    [0.0, 0.0, 123201],\n"
             + "    [0.1, 0.1, 123202],\n"
             + "    [0.2, 0.0, 123203],\n"
@@ -30,48 +33,48 @@ public class ProperJSONParsingTest {
             + "  ]\n"
             + "}\n";
 
-    private static final long EXPECTED_TRACK_ID = 268L;
+    private static final long EXPECTED_HIKE_ID = 268L;
     private static final long EXPECTED_OWNER_ID = 153L;
     private static final long EXPECTED_DATE = 123201;
     private static final double EPS_DOUBLE = 1e-10;
-    private List<Double> properTrackPointsX;
-    private List<Double> properTrackPointsY;
-    private List<Long> properTrackPointsT;
+    private List<Double> properHikePointsX;
+    private List<Double> properHikePointsY;
+    private List<Long> properHikePointsT;
 
     @Before
     public void setUp() throws Exception {
-        properTrackPointsX = new ArrayList<Double>();
-        properTrackPointsX.add(0.0);
-        properTrackPointsX.add(0.1);
-        properTrackPointsX.add(0.2);
-        properTrackPointsX.add(0.3);
-        properTrackPointsX.add(0.4);
-        properTrackPointsY = new ArrayList<Double>();
-        properTrackPointsY.add(0.0);
-        properTrackPointsY.add(0.1);
-        properTrackPointsY.add(0.0);
-        properTrackPointsY.add(89.9);
-        properTrackPointsY.add(0.0);
-        properTrackPointsT = new ArrayList<Long>();
-        properTrackPointsT.add(123201L);
-        properTrackPointsT.add(123202L);
-        properTrackPointsT.add(123203L);
-        properTrackPointsT.add(123204L);
-        properTrackPointsT.add(123205L);
+        properHikePointsX = new ArrayList<Double>();
+        properHikePointsX.add(0.0);
+        properHikePointsX.add(0.1);
+        properHikePointsX.add(0.2);
+        properHikePointsX.add(0.3);
+        properHikePointsX.add(0.4);
+        properHikePointsY = new ArrayList<Double>();
+        properHikePointsY.add(0.0);
+        properHikePointsY.add(0.1);
+        properHikePointsY.add(0.0);
+        properHikePointsY.add(89.9);
+        properHikePointsY.add(0.0);
+        properHikePointsT = new ArrayList<Long>();
+        properHikePointsT.add(123201L);
+        properHikePointsT.add(123202L);
+        properHikePointsT.add(123203L);
+        properHikePointsT.add(123204L);
+        properHikePointsT.add(123205L);
     }
 
-    /** test that track ID is correctly parsed */
+    /** test that hike ID is correctly parsed */
     @Test
-    public void testProperTrackId() throws JSONException {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
-        assertEquals("Track ID does not match",
-                EXPECTED_TRACK_ID, t.getTrackId());
+    public void testProperHikeId() throws JSONException {
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        assertEquals("Hike ID does not match",
+                EXPECTED_HIKE_ID, t.getHikeId());
     }
 
     /** test that owner ID is correctly parsed */
     @Test
     public void testProperOwnerId() throws JSONException {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         assertEquals("Owner ID does not match",
                 EXPECTED_OWNER_ID, t.getOwnerId());
     }
@@ -79,70 +82,70 @@ public class ProperJSONParsingTest {
     /** test that date is correctly parsed */
     @Test
     public void testProperDate() throws JSONException {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         assertEquals("Date does not match",
                 EXPECTED_DATE, t.getDate().getTime());
     }
 
-    /** test that trackpoints are correctly parsed */
+    /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperTrackPointSize() throws JSONException {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
-        List<TrackPoint> tp = t.getTrackPoints();
-        assertEquals("TrackPoints size does not match",
-                properTrackPointsT.size(), tp.size());
+    public void testProperHikePointSize() throws JSONException {
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        List<RawHikePoint> tp = t.getHikePoints();
+        assertEquals("HikePoints size does not match",
+                properHikePointsT.size(), tp.size());
     }
 
-    /** test that trackpoints are correctly parsed */
+    /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperTrackPointLatLng() throws JSONException {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
-        List<TrackPoint> tp = t.getTrackPoints();
+    public void testProperHikePointLatLng() throws JSONException {
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
-            assertEquals("TrackPoints latitude does not match",
-                    properTrackPointsX.get(i), tp.get(i).getPosition().latitude, EPS_DOUBLE);
-            assertEquals("TrackPoints longitude does not match",
-                    properTrackPointsY.get(i), tp.get(i).getPosition().longitude, EPS_DOUBLE);
+            assertEquals("HikePoints latitude does not match",
+                    properHikePointsX.get(i), tp.get(i).getPosition().latitude, EPS_DOUBLE);
+            assertEquals("HikePoints longitude does not match",
+                    properHikePointsY.get(i), tp.get(i).getPosition().longitude, EPS_DOUBLE);
         }
     }
 
-    /** test that trackpoints are correctly parsed */
+    /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperTrackPointDate() throws JSONException {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
-        List<TrackPoint> tp = t.getTrackPoints();
+    public void testProperHikePointDate() throws JSONException {
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
-            assertEquals("TrackPoints date does not match",
-                    properTrackPointsT.get(i).longValue(), tp.get(i).getTime().getTime());
+            assertEquals("HikePoints date does not match",
+                    properHikePointsT.get(i).longValue(), tp.get(i).getTime().getTime());
         }
     }
 
-    /** test that parsing back from TrackData to JSON works */
+    /** test that parsing back from RawHikeData to JSON works */
     @Test
     public void testParseBackToJSON() throws Exception {
-        TrackData t = TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         JSONObject j = t.toJSON();
 
-        assertEquals("Track ID does not match",
-                t.getTrackId(), j.getLong("track_id"));
+        assertEquals("Hike ID does not match",
+                t.getHikeId(), j.getLong("hike_id"));
         assertEquals("Owner ID does not match",
                 t.getOwnerId(), j.getLong("owner_id"));
         assertEquals("Date does not match",
                 t.getDate().getTime(), j.getLong("date"));
 
-        List<TrackPoint> tp = t.getTrackPoints();
+        List<RawHikePoint> tp = t.getHikePoints();
         assertEquals("Point Size does not match",
-                tp.size(), j.getJSONArray("track_data").length());
+                tp.size(), j.getJSONArray("hike_data").length());
         for(int i = 0; i < tp.size(); ++i) {
-            assertEquals("TrackPoints latitude does not match",
+            assertEquals("HikePoints latitude does not match",
                     tp.get(i).getPosition().latitude,
-                    j.getJSONArray("track_data").getJSONArray(i).getDouble(0), EPS_DOUBLE);
-            assertEquals("TrackPoints longitude does not match",
+                    j.getJSONArray("hike_data").getJSONArray(i).getDouble(0), EPS_DOUBLE);
+            assertEquals("HikePoints longitude does not match",
                     tp.get(i).getPosition().longitude,
-                    j.getJSONArray("track_data").getJSONArray(i).getDouble(1), EPS_DOUBLE);
-            assertEquals("TrackPoints date does not match",
+                    j.getJSONArray("hike_data").getJSONArray(i).getDouble(1), EPS_DOUBLE);
+            assertEquals("HikePoints date does not match",
                     tp.get(i).getTime().getTime(),
-                    j.getJSONArray("track_data").getJSONArray(i).getLong(2), EPS_DOUBLE);
+                    j.getJSONArray("hike_data").getJSONArray(i).getLong(2), EPS_DOUBLE);
         }
     }
 }
