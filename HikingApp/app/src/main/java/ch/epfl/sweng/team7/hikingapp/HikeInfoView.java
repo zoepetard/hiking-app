@@ -2,10 +2,16 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 
@@ -27,11 +33,17 @@ public class HikeInfoView {
     TextView hikeElevation;
     View view;
     Context context;
-    ArrayList<ImageView> imageViews; // List to store the imageviews that are created for the scrollview to make them accessible in controller.
+    ArrayList<ImageView> imageViews; // make ImageViews accessible in controller.
+    Button backButton;
+    ImageView fullScreenImage;
+    ImageView mapPreview;
+    GraphView hikeGraph;
+    HorizontalScrollView imageScrollView;
+
 
     public HikeInfoView (View view, Context context) {  // add model as argument when creating that
 
-        // Initializing UI element in the layout for the HikeInfoView.
+        // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
 
         hikeName = (TextView) view.findViewById(R.id.hikeinfo_name);
@@ -45,11 +57,22 @@ public class HikeInfoView {
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
+        // Back button
+        backButton = (Button) view.findViewById(R.id.back_button_fullscreen_image);
+
+        fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
+
+        mapPreview = (ImageView) view.findViewById(R.id.map_preview_imageview);
+
+        hikeGraph = (GraphView) view.findViewById(R.id.hike_graph);
+
+        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
+
         update();
 
     }
 
-    // method to update in UI elements
+    // method to update info in UI elements
     public void update(){
 
          /*
@@ -63,6 +86,20 @@ public class HikeInfoView {
         float rating = 3;
         int elevationMin = 1500;
         int elevationMax = 2100;
+
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 1500),
+                new DataPoint(1, 1800),
+                new DataPoint(2, 1900),
+                new DataPoint(3, 2100),
+                new DataPoint(4, 2000)
+        });
+
+        hikeGraph.removeAllSeries(); // remove placeholder series
+        hikeGraph.setTitle("Elevation");
+        hikeGraph.getGridLabelRenderer().setHorizontalAxisTitle("Hours");
+
+        hikeGraph.addSeries(series);
 
         /*
         END
@@ -85,7 +122,6 @@ public class HikeInfoView {
     // create imageviews and add them to the scrollview
     private void loadImageScrollView(){
 
-
         imageViews = new ArrayList<>();
 
         // TEMPORARY
@@ -105,15 +141,13 @@ public class HikeInfoView {
 
         // creating an ImageView and applying layout parameters
         ImageView imageView = new ImageView(context.getApplicationContext());
-
-        //
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         imageView.setAdjustViewBounds(true); // set this to true to preserve aspect ratio of image.
-        layoutParams.setMargins(10,10,10,10); // Margin around each image
-
+        layoutParams.setMargins(10, 10, 10, 10); // Margin around each image
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
         imageView.setImageResource(img);
+        imageViews.add(imageView);
 
         return imageView;
 
