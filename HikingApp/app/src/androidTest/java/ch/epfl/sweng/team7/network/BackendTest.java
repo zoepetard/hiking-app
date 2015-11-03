@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.network;
 
 import android.support.test.runner.AndroidJUnit4;
+import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.TestCase;
 
@@ -13,8 +14,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import ch.epfl.sweng.team7.database.TrackData;
-
 
 /**
  * Tests whether communication with the backend
@@ -22,13 +21,14 @@ import ch.epfl.sweng.team7.database.TrackData;
  * backend server is not available.
  */
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class BackendTest extends TestCase {
 
-    private static final String PROPER_JSON_ONETRACK = "{\n"
-            + "  \"track_id\": 143,\n"
+    private static final String PROPER_JSON_ONEHIKE = "{\n"
+            + "  \"hike_id\": 143,\n"
             + "  \"owner_id\": 48,\n"
             + "  \"date\": 123201,\n"
-            + "  \"track_data\": [\n"
+            + "  \"hike_data\": [\n"
             + "    [0.0, 0.0, 123201],\n"
             + "    [0.1, 0.1, 123202],\n"
             + "    [0.2, 0.0, 123203],\n"
@@ -56,72 +56,72 @@ public class BackendTest extends TestCase {
     }
 
     /**
-     * Test the {@link NetworkDatabaseClient} get_track function
+     * Test the {@link NetworkDatabaseClient} get_hike function
      * This test assumes that the server is online and returns good results.
      */
     @Test
-    public void testGetTrack() throws Exception {
-        final long trackId = 1;
+    public void testGetHike() throws Exception {
+        final long hikeId = 1;
         DatabaseClient dbClient = createDatabaseClient();
-        TrackData trackData = dbClient.fetchSingleTrack(trackId);
-        assertEquals(trackId, trackData.getTrackId());
+        RawHikeData hikeData = dbClient.fetchSingleHike(hikeId);
+        assertEquals(hikeId, hikeData.getHikeId());
     }
 
     /**
-     * Test the {@link NetworkDatabaseClient} post_track function
+     * Test the {@link NetworkDatabaseClient} post_hike function
      * This test assumes that the server is online and returns good results.
      */
     @Test
-    public void testPostTrack() throws Exception {
+    public void testPostHike() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
-        TrackData trackData = createTrackData();
-        trackData.setTrackId(2);
-        final long trackId = dbClient.postTrack(trackData);
-        assertEquals(trackId, trackData.getTrackId());
+        RawHikeData hikeData = createHikeData();
+        hikeData.setHikeId(2);
+        final long hikeId = dbClient.postHike(hikeData);
+        assertEquals(hikeId, hikeData.getHikeId());
     }
 
     /**
-     * Test the {@link NetworkDatabaseClient} post_track and get_track functions
+     * Test the {@link NetworkDatabaseClient} post_hike and get_hike functions
      * This test assumes that the server is online and returns good results.
      */
     @Test
-    public void testPostAndGetTrack() throws Exception {
+    public void testPostAndGetHike() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
-        TrackData trackData = createTrackData();
+        RawHikeData hikeData = createHikeData();
 
-        // post a track
-        trackData.setTrackId(3);
-        final long trackId = dbClient.postTrack(trackData);
-        assertEquals(trackId, trackData.getTrackId());
+        // post a hike
+        hikeData.setHikeId(3);
+        final long hikeId = dbClient.postHike(hikeData);
+        assertEquals(hikeId, hikeData.getHikeId());
 
         Thread.sleep(1000);
 
-        // retrieve the same track
-        TrackData serverTrackData = dbClient.fetchSingleTrack(trackId);
+        // retrieve the same hike
+        RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
 
         // Compare
-        assertEquals(serverTrackData.getOwnerId(), trackData.getOwnerId());
-        assertEquals(serverTrackData.getDate(), trackData.getDate());
-        assertEquals(serverTrackData.getTrackPoints().size(), trackData.getTrackPoints().size());
-        for(int i = 0; i < trackData.getTrackPoints().size(); ++i) {
-            assertEquals(trackData.getTrackPoints().get(i).getPosition().latitude,
-                    serverTrackData.getTrackPoints().get(i).getPosition().latitude, EPS_DOUBLE);
-            assertEquals(trackData.getTrackPoints().get(i).getPosition().longitude,
-                    serverTrackData.getTrackPoints().get(i).getPosition().longitude, EPS_DOUBLE);
-            assertEquals(trackData.getTrackPoints().get(i).getTime(),
-                    serverTrackData.getTrackPoints().get(i).getTime());
+        assertEquals(serverHikeData.getOwnerId(), hikeData.getOwnerId());
+        assertEquals(serverHikeData.getDate(), hikeData.getDate());
+        assertEquals(serverHikeData.getHikePoints().size(), hikeData.getHikePoints().size());
+        for(int i = 0; i < hikeData.getHikePoints().size(); ++i) {
+            assertEquals(hikeData.getHikePoints().get(i).getPosition().latitude,
+                    serverHikeData.getHikePoints().get(i).getPosition().latitude, EPS_DOUBLE);
+            assertEquals(hikeData.getHikePoints().get(i).getPosition().longitude,
+                    serverHikeData.getHikePoints().get(i).getPosition().longitude, EPS_DOUBLE);
+            assertEquals(hikeData.getHikePoints().get(i).getTime(),
+                    serverHikeData.getHikePoints().get(i).getTime());
         }
     }
 
     // TODO test backend reaction to malformed input
-    // TODO test other backend interface (like post_tracks)
+    // TODO test other backend interface (like post_hikes)
 
     /**
-     * Create a valid TrackData object
-     * @return a TrackData object
+     * Create a valid HikeData object
+     * @return a HikeData object
      */
-    private static TrackData createTrackData() throws JSONException {
-        return TrackData.parseFromJSON(new JSONObject(PROPER_JSON_ONETRACK));
+    private static RawHikeData createHikeData() throws JSONException {
+        return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
     }
 
     /**

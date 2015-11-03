@@ -13,60 +13,66 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_track(request):
-    logger.error(repr(request))
-    request_track_id = int(request.META.get('HTTP_TRACK_ID', -1))
-    logger.error('Request for track id '+repr(request_track_id))
+def get_hike(request):
+    # Database testing function, TODO remove
+    create_hike_one()
     
-    #random_track = Track.query().order(-Track.date)
-    tracks = Track.query(Track.track_id == request_track_id).fetch(1)
-    logger.error('found '+repr(len(tracks))+' entries for track '+repr(request_track_id))
-    if tracks!=None and len(tracks) > 0:
-        track_string = tracks[0].to_json()
+    logger.error(repr(request))
+    request_hike_id = int(request.META.get('HTTP_HIKE_ID', -1))
+    logger.error('Request for hike id '+repr(request_hike_id))
+    
+    #random_hike = Hike.query().order(-Hike.date)
+    hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
+    logger.error('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
+    if hikes!=None and len(hikes) > 0:
+        hike_string = hikes[0].to_json()
             
-        logger.error('Return string '+repr(track_string))
-        return HttpResponse(track_string, content_type='application/json')
+        logger.error('Return string '+repr(hike_string))
+        return HttpResponse(hike_string, content_type='application/json')
     return HttpResponse(status=404)
     
-# Get multiple tracks, as specified in a list inside the field
-# track_ids of the GET request
-def get_tracks(request):
+# Get multiple hikes, as specified in a list inside the field
+# hike_ids of the GET request
+def get_hikes(request):
+    # Database testing function, TODO remove
+    create_hike_one()
     
-    #random_track = Track.query().order(-Track.date)
-    tracks = Track.query().fetch()
+    #random_hike = Hike.query().order(-Hike.date)
+    hikes = Hike.query().fetch()
     
-    #response_text = type(tracks)
+    #response_text = type(hikes)
     
-    all_tracks = ""
-    for track in tracks:#random_track = tracks[0]
-        track_string = track.to_json() #track_to_json(track)
-        all_tracks += track_string + '\n'
-            
-    # TODO remove: testing functionality
-    track_one = Track.query(Track.track_id == 1).fetch()
-    if(len(track_one) < 1):
-        build_sample_track(1, 1).put()
-    elif(len(track_one) > 1):
-        for old_track in track_one[1:]:
-            old_track.key.delete()
+    all_hikes = ""
+    for hike in hikes:#random_hike = hikes[0]
+        hike_string = hike.to_json() #hike_to_json(hike)
+        all_hikes += hike_string + '\n'
     
-    return HttpResponse(all_tracks, content_type='application/javascript')
-    #return HttpResponse(serializers.serialize("json", random_track), content_type='application/json')
+    return HttpResponse(all_hikes, content_type='application/javascript')
+    #return HttpResponse(serializers.serialize("json", random_hike), content_type='application/json')
+ 
+# Create a hike for testing   
+def create_hike_one():
+    hike_one = Hike.query(Hike.hike_id == 1).fetch()
+    if(len(hike_one) < 1):
+        build_sample_hike(1, 1).put()
+    elif(len(hike_one) > 1):
+        for old_hike in hike_one[1:]:
+            old_hike.key.delete()
     
-def post_track(request):
+def post_hike(request):
     if request.method == 'POST':
         logger.error('POST request '+repr(request.body))
         #author = request.POST.get('author') some sort of idenfication needs to happen here
-        track = build_track_from_json(request.body)
-        if track:
-            # Temporary: Remove old tracks with the same ID (to avoid ID collision)  
-            old_tracks = Track.query(Track.track_id == track.track_id).fetch()
-            for old_track in old_tracks:
-                old_track.key.delete()
+        hike = build_hike_from_json(request.body)
+        if hike:
+            # Temporary: Remove old hikes with the same ID (to avoid ID collision)  
+            old_hikes = Hike.query(Hike.hike_id == hike.hike_id).fetch()
+            for old_hike in old_hikes:
+                old_hike.key.delete()
                 
-            track.put()
+            hike.put()
                 
-        response = HttpResponse("{'track_id':"+repr(track.track_id)+"}",\
+        response = HttpResponse("{'hike_id':"+repr(hike.hike_id)+"}",\
                                 content_type='application/json', status=201)
         return response
     return HttpResponse(status=404)

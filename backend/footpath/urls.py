@@ -1,8 +1,8 @@
 from django.conf.urls.defaults import *
-from footpath.views import get_track, post_track, get_tracks
+from footpath.views import post_hike, get_hike, get_hikes
 
 urlpatterns = patterns('',
-    (r'^post_track/$', post_track),
-    (r'^get_track/$', get_track),
-    (r'^get_tracks/$', get_tracks),
+    (r'^post_hike/$', post_hike),
+    (r'^get_hike/$', get_hike),
+    (r'^get_hikes/$', get_hikes),
 )

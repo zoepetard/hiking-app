@@ -11,8 +11,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
 
-import ch.epfl.sweng.team7.database.TrackData;
-
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
  * communication protocol and data formats.
@@ -20,41 +18,41 @@ import ch.epfl.sweng.team7.database.TrackData;
  */
 public interface DatabaseClient {
     /**
-     * Fetch a single track from the server
-     * @param trackId The numeric ID of one track in the database
-     * @return A {@link TrackData} object encapsulating one track
-     * @throws DatabaseClientException in case the track could not be
+     * Fetch a single hike from the server
+     * @param hikeId The numeric ID of one hike in the database
+     * @return A {@link RawHikeData} object encapsulating one hike
+     * @throws DatabaseClientException in case the hike could not be
      * retrieved for any reason external to the application (network failure, etc.)
-     * or the trackId did not match a valid track.
+     * or the hikeId did not match a valid hike.
      */
-    TrackData fetchSingleTrack(long trackId) throws DatabaseClientException;
+    RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException;
 
     /**
-     * Fetch multiple tracks from the server
-     * @param trackIds The numeric IDs of multiple tracks in the database
-     * @return A list of {@link TrackData} objects encapsulating multiple tracks
-     * @throws DatabaseClientException in case the track could not be
+     * Fetch multiple hikes from the server
+     * @param hikeIds The numeric IDs of multiple hikes in the database
+     * @return A list of {@link RawHikeData} objects encapsulating multiple hikes
+     * @throws DatabaseClientException in case the hike could not be
      * retrieved for any reason external to the application (network failure, etc.)
-     * or the trackId did not match a valid track.
+     * or the hikeId did not match a valid hike.
      */
-    List<TrackData> fetchMultipleTracks(List<Integer> trackIds) throws DatabaseClientException;
+    List<RawHikeData> fetchMultipleHikes(List<Integer> hikeIds) throws DatabaseClientException;
 
     /**
-     * Get all tracks in a rectangular window on the map
+     * Get all hikes in a rectangular window on the map
      * @param bounds Boundaries (window) of the
-     * @return A list of track IDs
+     * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    List<Integer> getAllTracksInBounds(LatLngBounds bounds) throws DatabaseClientException;
+    List<Integer> getAllHikesInBounds(LatLngBounds bounds) throws DatabaseClientException;
 
     /**
-     * Post a track to the database. Returns the database ID
-     * that this track was assigned from the database.
-     * @param track Boundaries (window) of the
-     * @return A list of track IDs
+     * Post a hike to the database. Returns the database ID
+     * that this hike was assigned from the database.
+     * @param hike Boundaries (window) of the
+     * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    long postTrack(TrackData track) throws DatabaseClientException;
+    long postHike(RawHikeData hike) throws DatabaseClientException;
 }

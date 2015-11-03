@@ -21,11 +21,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-import ch.epfl.sweng.team7.database.TrackData;
-
 
 /**
- * Class to get and post tracks in the server
+ * Class to get and post hikes in the server
  */
 public class NetworkDatabaseClient implements DatabaseClient {
 
@@ -44,22 +42,22 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
 
     /**
-     * Fetch a single track from the server
-     * @param trackId The numeric ID of one track in the database
-     * @return A {@link TrackData} object encapsulating one track
-     * @throws DatabaseClientException in case the track could not be
+     * Fetch a single hike from the server
+     * @param hikeId The numeric ID of one hike in the database
+     * @return A {@link RawHikeData} object encapsulating one hike
+     * @throws DatabaseClientException in case the hike could not be
      * retrieved for any reason external to the application (network failure, etc.)
-     * or the trackId did not match a valid track.
+     * or the hikeId did not match a valid hike.
      */
-    public TrackData fetchSingleTrack(long trackId) throws DatabaseClientException {
+    public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/get_track/");
+            URL url = new URL(mServerUrl + "/get_hike/");
             HttpURLConnection conn = getConnection(url, "GET");
-            conn.setRequestProperty("track_id", Long.toString(trackId));
+            conn.setRequestProperty("hike_id", Long.toString(hikeId));
             conn.connect();
-            String stringTrackData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonTrackData = new JSONObject(stringTrackData);
-            return TrackData.parseFromJSON(jsonTrackData);
+            String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonHikeData = new JSONObject(stringHikeData);
+            return RawHikeData.parseFromJSON(jsonHikeData);
         } catch (IOException e) {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
@@ -68,46 +66,46 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * Fetch multiple tracks from the server
-     * @param trackIds The numeric IDs of multiple tracks in the database
-     * @return A list of {@link TrackData} objects encapsulating multiple tracks
-     * @throws DatabaseClientException in case the track could not be
+     * Fetch multiple hikes from the server
+     * @param hikeIds The numeric IDs of multiple hikes in the database
+     * @return A list of {@link RawHikeData} objects encapsulating multiple hikes
+     * @throws DatabaseClientException in case the hike could not be
      * retrieved for any reason external to the application (network failure, etc.)
-     * or the trackId did not match a valid track.
+     * or the hikeId did not match a valid hike.
      */
-    public List<TrackData> fetchMultipleTracks(List<Integer> trackIds) throws DatabaseClientException {
+    public List<RawHikeData> fetchMultipleHikes(List<Integer> hikeIds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
     }
 
     /**
-     * Get all tracks in a rectangular window on the map
+     * Get all hikes in a rectangular window on the map
      * @param bounds Boundaries (window) of the
-     * @return A list of track IDs
+     * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    public List<Integer> getAllTracksInBounds(LatLngBounds bounds) throws DatabaseClientException {
+    public List<Integer> getAllHikesInBounds(LatLngBounds bounds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
     }
 
     /**
-     * Post a track to the database. Returns the database ID
-     * that this track was assigned from the database.
-     * @param track Boundaries (window) of the
-     * @return A list of track IDs
+     * Post a hike to the database. Returns the database ID
+     * that this hike was assigned from the database.
+     * @param hike Boundaries (window) of the
+     * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    public long postTrack(TrackData track) throws DatabaseClientException {
+    public long postHike(RawHikeData hike) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/post_track/");
+            URL url = new URL(mServerUrl + "/post_hike/");
             HttpURLConnection conn = getConnection(url, "POST");
-            byte[] outputInBytes = track.toJSON().toString().getBytes("UTF-8");
+            byte[] outputInBytes = hike.toJSON().toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
-            String stringTrackData = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
-            JSONObject jsonTrackId = new JSONObject(stringTrackData);
-            return jsonTrackId.getLong("track_id");
+            String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+            JSONObject jsonHikeId = new JSONObject(stringHikeData);
+            return jsonHikeId.getLong("hike_id");
         } catch (IOException e) {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
