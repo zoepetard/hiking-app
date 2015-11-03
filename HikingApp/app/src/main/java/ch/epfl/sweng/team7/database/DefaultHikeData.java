@@ -14,7 +14,7 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.network.RawHikeData;
 
-public class DefaultHikeData {
+public class DefaultHikeData implements HikeData {
 
     // Some debug locations, TODO remove later
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
