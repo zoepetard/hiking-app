@@ -11,4 +11,12 @@ package ch.epfl.sweng.team7.database;
  * Database access may be blocking and must not be called from a UI thread.
  */
 public interface LocalCache {
+
+    /**
+     * Get a hike with a known identifier.
+     * @param hikeId the identifier
+     * @return a valid HikeData object or null if it doesn't exist
+     * @throws LocalCacheException on network error
+     */
+    HikeData getHikeById(long hikeId) throws LocalCacheException;
 }

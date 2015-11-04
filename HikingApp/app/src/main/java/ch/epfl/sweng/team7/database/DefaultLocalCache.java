@@ -21,7 +21,7 @@ public class DefaultLocalCache implements LocalCache {
     public HikeData getHikeById(long hikeId) throws LocalCacheException {
         if(hikeId == 1) {
             final String PROPER_JSON_ONEHIKE = "{\n"
-                    + "  \"hike_id\": 143,\n"
+                    + "  \"hike_id\": 1,\n"
                     + "  \"owner_id\": 48,\n"
                     + "  \"date\": 123201,\n"
                     + "  \"hike_data\": [\n"

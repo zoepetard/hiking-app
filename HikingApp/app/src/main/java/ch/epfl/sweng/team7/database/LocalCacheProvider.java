@@ -34,9 +34,19 @@ public class LocalCacheProvider {
 
     /**
      * Configure to use a different database client.
+     * This clears the cache.
      */
     public static void configureDatabaseClient(DatabaseClient databaseClient) {
         mDatabaseClient = databaseClient;
+        mLocalCache = null;
+    }
+
+    /**
+     * Reset the provider.
+     * This clears the cache.
+     */
+    public static void configureReset() {
+        mDatabaseClient = null;
         mLocalCache = null;
     }
 

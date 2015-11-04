@@ -31,7 +31,7 @@ public class DefaultHikeData implements HikeData {
      * @return the hike ID.
      */
     public long getHikeId() {
-        return 0;   //TODO implement
+        return 1;   //TODO implement
     }
 
     /**
