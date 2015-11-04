@@ -17,7 +17,7 @@ public final class HikeInfoActivity extends Activity {
 
         View view = findViewById(android.R.id.content);
 
-        HikeInfoView hikeInfoView = new HikeInfoView(view,this);
+        HikeInfoView hikeInfoView = new HikeInfoView(view, this);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.hikeRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -33,7 +33,7 @@ public final class HikeInfoActivity extends Activity {
         });
 
         // Setting a listener for each imageview.
-        for(int i = 0; i<hikeInfoView.imageViews.size(); i++){
+        for (int i = 0; i < hikeInfoView.imageViews.size(); i++) {
 
             ImageView imgView = hikeInfoView.imageViews.get(i);
             imgView.setOnClickListener(new ImageViewClickListener());
@@ -49,15 +49,12 @@ public final class HikeInfoActivity extends Activity {
         @Override
         public void onClick(View v) {
 
-            // Go fullscreen!
-            System.out.println("Clicked ImageView");
-
-            // Set clicked image in fullscreen view before switching to fullscreen!
+            // Update image in full screen view
             ImageView imgView = (ImageView) v;
-            Drawable drawable = imgView.getDrawable();  // getting the drawable for the clicked image.
+            Drawable drawable = imgView.getDrawable();
 
             ImageView fullScreenView = (ImageView) findViewById(R.id.image_fullscreen);
-            fullScreenView.setImageDrawable(drawable); // setting the new drawable for the fullscreen
+            fullScreenView.setImageDrawable(drawable);
 
             toggleFullScreen();
         }
@@ -66,7 +63,7 @@ public final class HikeInfoActivity extends Activity {
     private class MapPreviewClickListener implements View.OnClickListener {
 
         @Override
-        public void onClick(View v){
+        public void onClick(View v) {
             // segue to map activity!
 
         }
@@ -74,27 +71,27 @@ public final class HikeInfoActivity extends Activity {
 
     private class BackButtonClickListener implements View.OnClickListener {
         @Override
-        public void onClick(View v){
-            // return from fullscreen
+        public void onClick(View v) {
+
             toggleFullScreen();
+
         }
     }
 
-    public void toggleFullScreen(){
+    public void toggleFullScreen() {
         View infoView = findViewById(R.id.info_overview_layout);
         View fullScreenView = findViewById(R.id.image_fullscreen_layout);
         View containerView = findViewById(R.id.info_scrollview);
 
 
         // Check which view is currently visible and switch
-        if(infoView.getVisibility() == View.VISIBLE){
+        if (infoView.getVisibility() == View.VISIBLE) {
 
-            // infoview is visible, hide it and set fullscreen view visible
             infoView.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.BLACK);
             fullScreenView.setVisibility(View.VISIBLE);
 
-        }else{
+        } else {
 
             infoView.setVisibility(View.VISIBLE);
             fullScreenView.setVisibility(View.GONE);
