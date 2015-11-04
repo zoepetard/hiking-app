@@ -8,11 +8,10 @@ import org.junit.runner.RunWith;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 
-/** Tests whether the app correctly handles proper JSON */
+/** Tests the local cache for hikes */
 @RunWith(AndroidJUnit4.class)
 public class DefaultLocalCacheTest {
 
-    /** test that */
     @Test
     public void testDefaultLocalCacheCanBeCreated() throws LocalCacheException {
         LocalCacheProvider.configureReset();
@@ -20,7 +19,6 @@ public class DefaultLocalCacheTest {
         assertFalse("Local Cache Not Created.", lc == null);
     }
 
-    /** test that hike is correctly returned */
     @Test
     public void testGetDebugHikeOne() throws LocalCacheException {
         LocalCacheProvider.configureReset();

@@ -21,6 +21,7 @@ public class DefaultLocalCache implements LocalCache {
         mDatabaseClient = databaseClient;
     }
 
+    // TODO implement correctly
     public HikeData getHikeById(long hikeId) throws LocalCacheException {
         if(hikeId == 1) {
             final String PROPER_JSON_ONEHIKE = "{\n"
@@ -36,11 +37,19 @@ public class DefaultLocalCache implements LocalCache {
                     + "  ]\n"
                     + "}\n";
             try {
+                Thread.sleep(10); // this code should fail execution when called from UI thread
+            } catch(InterruptedException e) {
+                // pass
+            }
+            try {
                 return new DefaultHikeData(RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE)));
             } catch(JSONException e) {
                 throw new LocalCacheException(e);
             }
         }
-        throw new LocalCacheException("Hike not found in database.");
+
+        // TODO: Should an invalid request throw an exception?
+        return null;
+        //throw new LocalCacheException("Hike not found in database.");
     }
 }
