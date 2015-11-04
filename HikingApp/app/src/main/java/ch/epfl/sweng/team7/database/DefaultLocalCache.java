@@ -14,7 +14,10 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 public class DefaultLocalCache implements LocalCache {
     private final DatabaseClient mDatabaseClient;
 
-    public DefaultLocalCache(DatabaseClient databaseClient) {
+    public DefaultLocalCache(DatabaseClient databaseClient) throws IllegalArgumentException {
+        if(databaseClient == null) {
+            throw new IllegalArgumentException("Invalid DatabaseClient");
+        }
         mDatabaseClient = databaseClient;
     }
 
