@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.database;
+package ch.epfl.sweng.team7.network;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,9 +10,6 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ch.epfl.sweng.team7.network.RawHikeData;
-import ch.epfl.sweng.team7.network.RawHikePoint;
 
 import static junit.framework.Assert.assertEquals;
 

@@ -86,7 +86,7 @@ public class RawHikeData {
     }
     
     /**
-     * Returns a list of the question answers.
+     * Returns a list of the hike points.
      */
     public List<RawHikePoint> getHikePoints() {
         return new ArrayList<RawHikePoint>(mHikePoints);
