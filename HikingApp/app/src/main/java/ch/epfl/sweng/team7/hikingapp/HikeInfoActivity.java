@@ -27,6 +27,7 @@ public final class HikeInfoActivity extends Activity {
                     /* Here we would actually save the new rating in our Data Model and let it notify us of the change.
                     There won't be a need to update the UI directly from here.
                     */
+
                 ratingBar.setRating(rating);
 
             }
