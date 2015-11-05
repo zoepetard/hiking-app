@@ -73,7 +73,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      * or the hikeId did not match a valid hike.
      */
-    public List<RawHikeData> fetchMultipleHikes(List<Integer> hikeIds) throws DatabaseClientException {
+    public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
     }
 
