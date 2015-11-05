@@ -35,7 +35,7 @@ public interface DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      * or the hikeId did not match a valid hike.
      */
-    List<RawHikeData> fetchMultipleHikes(List<Integer> hikeIds) throws DatabaseClientException;
+    List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException;
 
     /**
      * Get all hikes in a rectangular window on the map
@@ -44,7 +44,7 @@ public interface DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    List<Integer> getAllHikesInBounds(LatLngBounds bounds) throws DatabaseClientException;
+    List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException;
 
     /**
      * Post a hike to the database. Returns the database ID

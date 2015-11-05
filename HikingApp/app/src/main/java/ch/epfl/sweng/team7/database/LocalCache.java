@@ -10,13 +10,16 @@ package ch.epfl.sweng.team7.database;
  * All database access should be routed through the cache.
  * Database access may be blocking and must not be called from a UI thread.
  */
-public interface LocalCache {
+interface LocalCache {
 
+    boolean hasHike(long hikeId);
     /**
      * Get a hike with a known identifier.
      * @param hikeId the identifier
      * @return a valid HikeData object or null if it doesn't exist
      * @throws LocalCacheException on network error
      */
-    HikeData getHikeById(long hikeId) throws LocalCacheException;
+    HikeData getHike(long hikeId);
+    void putHike(HikeData hikeData);
+    int cachedHikesCount();
 }
