@@ -20,7 +20,7 @@ class DefaultLocalCache implements LocalCache {
     private final HashMap<Long,HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
 
     public DefaultLocalCache()  {
-        if(true) {
+        if(false) {
             final String PROPER_JSON_ONEHIKE = "{\n"
                     + "  \"hike_id\": 1,\n"
                     + "  \"owner_id\": 48,\n"
@@ -45,22 +45,18 @@ class DefaultLocalCache implements LocalCache {
         }
     }
 
-    // TODO implement correctly
     public boolean hasHike(long hikeId) {
         return mHikesCache.containsKey(hikeId);
     }
 
-    // TODO implement correctly
     public HikeData getHike(long hikeId) {
         return mHikesCache.get(hikeId);
     }
 
-    // TODO implement
-    public void addHike(HikeData hikeData) {
-        if(hikeData == null) {
-            return;
+    public void putHike(HikeData hikeData) {
+        if(hikeData != null) {
+            mHikesCache.put(hikeData.getHikeId(), hikeData);
         }
-        mHikesCache.put(hikeData.getHikeId(), hikeData);
     }
 
     public int cachedHikesCount() {

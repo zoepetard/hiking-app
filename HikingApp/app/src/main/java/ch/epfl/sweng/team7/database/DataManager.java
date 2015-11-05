@@ -79,7 +79,7 @@ public class DataManager {
      */
     private HikeData processAndCache(RawHikeData rawHikeData) {
         HikeData hikeData = new DefaultHikeData(rawHikeData);
-        sLocalCache.addHike(hikeData);
+        sLocalCache.putHike(hikeData);
         return hikeData;
     }
     /**

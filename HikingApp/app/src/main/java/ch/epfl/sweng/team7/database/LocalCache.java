@@ -20,5 +20,6 @@ interface LocalCache {
      * @throws LocalCacheException on network error
      */
     HikeData getHike(long hikeId);
-    void addHike(HikeData hikeData);
+    void putHike(HikeData hikeData);
+    int cachedHikesCount();
 }
