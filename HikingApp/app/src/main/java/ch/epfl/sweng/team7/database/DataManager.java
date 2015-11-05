@@ -59,7 +59,7 @@ public class DataManager {
      */
     public HikeData getHikeById(long hikeId) throws DataManagerException {
 
-        HikeData hikeData = sLocalCache.getHikeById(hikeId);
+        HikeData hikeData = sLocalCache.getHike(hikeId);
         if(hikeData != null) {
             return hikeData;
         }

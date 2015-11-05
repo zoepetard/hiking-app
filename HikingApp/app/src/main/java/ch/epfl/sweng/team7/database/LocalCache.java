@@ -12,13 +12,13 @@ package ch.epfl.sweng.team7.database;
  */
 interface LocalCache {
 
+    boolean hasHike(long hikeId);
     /**
      * Get a hike with a known identifier.
      * @param hikeId the identifier
      * @return a valid HikeData object or null if it doesn't exist
      * @throws LocalCacheException on network error
      */
-    HikeData getHikeById(long hikeId);
-
+    HikeData getHike(long hikeId);
     void addHike(HikeData hikeData);
 }

@@ -8,16 +8,19 @@ package ch.epfl.sweng.team7.database;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import ch.epfl.sweng.team7.network.RawHikeData;
 
+
 class DefaultLocalCache implements LocalCache {
+    private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
+    private final HashMap<Long,HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
 
     public DefaultLocalCache()  {
-    }
-
-    // TODO implement correctly
-    public HikeData getHikeById(long hikeId) {
-        if(hikeId == 1) {
+        if(true) {
             final String PROPER_JSON_ONEHIKE = "{\n"
                     + "  \"hike_id\": 1,\n"
                     + "  \"owner_id\": 48,\n"
@@ -36,19 +39,46 @@ class DefaultLocalCache implements LocalCache {
                 // pass
             }
             try {
-                return new DefaultHikeData(RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE)));
+                mHikesCache.put(new Long(1), new DefaultHikeData(RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE))));
             } catch(JSONException e) {
-                return null;
             }
         }
+    }
 
-        // TODO: Should an invalid request throw an exception?
-        return null;
-        //throw new LocalCacheException("Hike not found in database.");
+    // TODO implement correctly
+    public boolean hasHike(long hikeId) {
+        return mHikesCache.containsKey(hikeId);
+    }
+
+    // TODO implement correctly
+    public HikeData getHike(long hikeId) {
+        return mHikesCache.get(hikeId);
     }
 
     // TODO implement
     public void addHike(HikeData hikeData) {
-        return;
+        if(hikeData == null) {
+            return;
+        }
+        mHikesCache.put(hikeData.getHikeId(), hikeData);
+    }
+
+    public int cachedHikesCount() {
+        return mHikesCache.size();
+    }
+
+
+    private class FixedSizeHashMap<K,V> extends LinkedHashMap<K,V> {
+        private final int MAX_ENTRIES;
+
+        FixedSizeHashMap(int maxEntries) {
+            super(16, 0.75f, true);
+            MAX_ENTRIES = maxEntries;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > MAX_ENTRIES;
+        }
     }
 }
