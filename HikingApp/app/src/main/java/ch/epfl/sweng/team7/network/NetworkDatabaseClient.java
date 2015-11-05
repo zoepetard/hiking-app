@@ -84,7 +84,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    public List<Integer> getAllHikesInBounds(LatLngBounds bounds) throws DatabaseClientException {
+    public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
     }
 

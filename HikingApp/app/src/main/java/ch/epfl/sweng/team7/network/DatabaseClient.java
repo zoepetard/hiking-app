@@ -44,7 +44,7 @@ public interface DatabaseClient {
      * @throws DatabaseClientException in case the data could not be
      * retrieved for any reason external to the application (network failure, etc.)
      */
-    List<Integer> getAllHikesInBounds(LatLngBounds bounds) throws DatabaseClientException;
+    List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException;
 
     /**
      * Post a hike to the database. Returns the database ID
