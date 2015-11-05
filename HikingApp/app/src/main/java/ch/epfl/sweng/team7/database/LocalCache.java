@@ -18,5 +18,7 @@ interface LocalCache {
      * @return a valid HikeData object or null if it doesn't exist
      * @throws LocalCacheException on network error
      */
-    HikeData getHikeById(long hikeId) throws LocalCacheException;
+    HikeData getHikeById(long hikeId);
+
+    void addHike(HikeData hikeData);
 }

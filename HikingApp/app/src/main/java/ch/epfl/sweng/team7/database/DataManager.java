@@ -6,13 +6,14 @@
 package ch.epfl.sweng.team7.database;
 
 import ch.epfl.sweng.team7.network.DatabaseClient;
+import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
+import ch.epfl.sweng.team7.network.RawHikeData;
 
 public class DataManager {
 
     private static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
-
     private static LocalCache sLocalCache;
     private static DatabaseClient sDatabaseClient;
 
@@ -24,7 +25,7 @@ public class DataManager {
     }
 
     /**
-     * Static setter for LocalCache and DatabaseClient: Use only for testing!
+     * Static setter: Use only for testing!
      */
     public static void setLocalCache(LocalCache localCache) {
         if(localCache == null) {
@@ -33,6 +34,9 @@ public class DataManager {
         sLocalCache = localCache;
     }
 
+    /**
+     * Static setter: Use only for testing!
+     */
     public static void setDatabaseClient(DatabaseClient databaseClient) {
         if(databaseClient == null) {
             throw new IllegalArgumentException();
@@ -40,11 +44,44 @@ public class DataManager {
         sDatabaseClient = databaseClient;
     }
 
+    /**
+     * Static reset: Use only for testing!
+     */
     public static void reset() {
         sDatabaseClient = new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
         sLocalCache = new DefaultLocalCache();
     }
 
+    /**
+     * Get a HikeData object by its identifier.
+     * @return a valid HikeData object
+     * @throws DataManagerException if hike does not exist
+     */
+    public HikeData getHikeById(long hikeId) throws DataManagerException {
+
+        HikeData hikeData = sLocalCache.getHikeById(hikeId);
+        if(hikeData != null) {
+            return hikeData;
+        }
+
+        try {
+            RawHikeData rawHikeData = sDatabaseClient.fetchSingleHike(hikeId);
+            hikeData = processAndCache(rawHikeData);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+        return hikeData;
+    }
+
+
+    /**
+     * Converts a RawHikeData container into a cacheable HikeData object, caches and returns it
+     */
+    private HikeData processAndCache(RawHikeData rawHikeData) {
+        HikeData hikeData = new DefaultHikeData(rawHikeData);
+        sLocalCache.addHike(hikeData);
+        return hikeData;
+    }
     /**
      * Creates the LocalCache and DatabaseClient
      */

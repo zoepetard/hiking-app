@@ -16,7 +16,7 @@ class DefaultLocalCache implements LocalCache {
     }
 
     // TODO implement correctly
-    public HikeData getHikeById(long hikeId) throws LocalCacheException {
+    public HikeData getHikeById(long hikeId) {
         if(hikeId == 1) {
             final String PROPER_JSON_ONEHIKE = "{\n"
                     + "  \"hike_id\": 1,\n"
@@ -38,12 +38,17 @@ class DefaultLocalCache implements LocalCache {
             try {
                 return new DefaultHikeData(RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE)));
             } catch(JSONException e) {
-                throw new LocalCacheException(e);
+                return null;
             }
         }
 
         // TODO: Should an invalid request throw an exception?
         return null;
         //throw new LocalCacheException("Hike not found in database.");
+    }
+
+    // TODO implement
+    public void addHike(HikeData hikeData) {
+        return;
     }
 }

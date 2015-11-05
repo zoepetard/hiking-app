@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 
 
@@ -20,11 +21,11 @@ public class DataManagerTest {
     }
 
     @Test
-    public void testGetDebugHikeOne() throws LocalCacheException {
+    public void testGetDebugHikeOne() throws Exception {
         //DataManager.configureDatabaseClient(new LocalDatabaseClient()); TODO waiting for issue #25
         final long hikeId = 1;  // ID 1 should always exist
-        //HikeData hike = DataManager.getInstance().getHikeById(hikeId);
-        //assertEquals("Hike ID did not match requested ID", hikeId, hike.getHikeId());
+        HikeData hike = DataManager.getInstance().getHikeById(hikeId);
+        assertEquals("Hike ID did not match requested ID", hikeId, hike.getHikeId());
     }
 
     @After
