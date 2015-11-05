@@ -5,6 +5,11 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
@@ -55,15 +60,17 @@ public class DataManager {
     /**
      * Get a HikeData object by its identifier.
      * @return a valid HikeData object
-     * @throws DataManagerException if hike does not exist
+     * @throws DataManagerException on error
      */
-    public HikeData getHikeById(long hikeId) throws DataManagerException {
+    public HikeData getHike(long hikeId) throws DataManagerException {
 
+        // Check if hike is cached
         HikeData hikeData = sLocalCache.getHike(hikeId);
         if(hikeData != null) {
             return hikeData;
         }
 
+        // Retrieve hike from the server
         try {
             RawHikeData rawHikeData = sDatabaseClient.fetchSingleHike(hikeId);
             hikeData = processAndCache(rawHikeData);
@@ -73,6 +80,59 @@ public class DataManager {
         return hikeData;
     }
 
+    /** Get multiple HikeData objects by its identifiers
+     * @return a list of valid HikeData objects
+     * @throws DataManagerException on error
+     */
+    public List<HikeData> getMultipleHikes(List<Long> hikeIdList) throws DataManagerException {
+
+        // Compile a list of hikes to ask from the server
+        List<HikeData> hikeDataList = new ArrayList<>();
+        List<Long> hikeIdNotCached = new ArrayList<>();
+        for(long hikeId : hikeIdList) {
+            HikeData hikeData = sLocalCache.getHike(hikeId);
+            if(hikeData != null) {
+                hikeDataList.add(hikeData);
+            } else {
+                hikeIdNotCached.add(hikeId);
+            }
+        }
+
+        // Ask the server
+        if(hikeIdNotCached.size() > 0) {
+            List<RawHikeData> rawHikeDataList;
+            try {
+                rawHikeDataList = sDatabaseClient.fetchMultipleHikes(hikeIdNotCached);
+            } catch (DatabaseClientException e) {
+                throw new DataManagerException(e);
+            }
+
+            // Convert and cache HikeData
+            for (RawHikeData rawHikeData : rawHikeDataList) {
+                hikeDataList.add(processAndCache(rawHikeData));
+            }
+        }
+        return hikeDataList;
+    }
+
+    /**
+     * Retrieves a list of all hikes in given boundaries
+     * @param bounds the boundaries of a rectangle
+     * @return a list of hikes in the given rectangle
+     * @throws DataManagerException on error
+     */
+    public List<HikeData> getHikesInWindow(LatLngBounds bounds) throws DataManagerException {
+
+        // Ask the server for the hike Ids
+        List<Long> hikeIdList;
+        try {
+            hikeIdList = sDatabaseClient.getHikeIdsInWindow(bounds);
+        } catch(DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+
+        return getMultipleHikes(hikeIdList);
+    }
 
     /**
      * Converts a RawHikeData container into a cacheable HikeData object, caches and returns it
@@ -82,6 +142,7 @@ public class DataManager {
         sLocalCache.putHike(hikeData);
         return hikeData;
     }
+
     /**
      * Creates the LocalCache and DatabaseClient
      */
