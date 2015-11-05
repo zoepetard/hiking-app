@@ -10,7 +10,7 @@ package ch.epfl.sweng.team7.database;
  * All database access should be routed through the cache.
  * Database access may be blocking and must not be called from a UI thread.
  */
-public interface LocalCache {
+interface LocalCache {
 
     /**
      * Get a hike with a known identifier.

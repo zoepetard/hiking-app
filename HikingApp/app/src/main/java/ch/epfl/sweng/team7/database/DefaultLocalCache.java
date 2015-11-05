@@ -8,17 +8,11 @@ package ch.epfl.sweng.team7.database;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
-public class DefaultLocalCache implements LocalCache {
-    private final DatabaseClient mDatabaseClient;
+class DefaultLocalCache implements LocalCache {
 
-    public DefaultLocalCache(DatabaseClient databaseClient) throws IllegalArgumentException {
-        if(databaseClient == null) {
-            throw new IllegalArgumentException("Invalid DatabaseClient");
-        }
-        mDatabaseClient = databaseClient;
+    public DefaultLocalCache()  {
     }
 
     // TODO implement correctly
