@@ -22,7 +22,7 @@ public class GPSTracker {
         if (currentLocation == null) {
             throw new NullPointerException("Trying to access a null position");
         }
-        return new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        return currentLocation.toLatLng();
     }
 
     public void updateCurrentLocation(Location newLocation) {
