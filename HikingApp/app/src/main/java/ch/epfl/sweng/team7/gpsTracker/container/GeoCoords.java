@@ -73,4 +73,9 @@ public class GeoCoords {
     public double getAltitude() {
         return this.altitude;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%f, %f, %f)", this.latitude, this.longitude, this.altitude);
+    }
 }
