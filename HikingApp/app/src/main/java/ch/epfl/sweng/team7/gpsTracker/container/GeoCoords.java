@@ -69,4 +69,13 @@ public class GeoCoords {
     public String toString() {
         return String.format("(%f, %f, %f)", this.latitude, this.longitude, this.altitude);
     }
+
+    @Override
+    public boolean equals(Object object) {
+        GeoCoords other = (GeoCoords)object;
+        if (other.getLatitude() == this.latitude && other.getLongitude() == this.longitude && other.getAltitude() == this.altitude) {
+            return true;
+        }
+        return false;
+    }
 }
