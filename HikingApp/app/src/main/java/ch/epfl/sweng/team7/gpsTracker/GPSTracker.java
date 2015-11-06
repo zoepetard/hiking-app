@@ -24,7 +24,9 @@ public final class GPSTracker {
     }
 
     public void updateCurrentLocation(Location newLocation) {
-        this.currentGeoCoords = GeoCoords.fromLocation(newLocation);
+        if (newLocation != null) {
+            this.currentGeoCoords = GeoCoords.fromLocation(newLocation);
+        }
     }
 
     @Override
