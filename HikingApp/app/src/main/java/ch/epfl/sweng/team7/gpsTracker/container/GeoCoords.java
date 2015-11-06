@@ -1,5 +1,7 @@
 package ch.epfl.sweng.team7.gpsTracker.container;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -37,6 +39,18 @@ public class GeoCoords {
      */
     public LatLng toLatLng() {
         return new LatLng(this.latitude, this.longitude);
+    }
+
+    /**
+     * Method used to create a GeoCoords object from a Location
+     * @param location source Location
+     * @return new GeoCoords object
+     */
+    public static GeoCoords fromLocation(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        double altitude = (location.hasAltitude())?location.getAltitude():0;
+        return new GeoCoords(latitude, longitude, altitude);
     }
 
     public double getLatitude() {
