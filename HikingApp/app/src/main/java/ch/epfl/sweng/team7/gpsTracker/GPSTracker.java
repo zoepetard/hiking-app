@@ -26,10 +26,7 @@ public class GPSTracker {
     }
 
     public void updateCurrentLocation(Location newLocation) {
-        double latitude = newLocation.getLatitude();
-        double longitude = newLocation.getLongitude();
-        double altitude = (newLocation.hasAltitude())?newLocation.getAltitude():0;
-        this.currentLocation = new GeoCoords(latitude, longitude, altitude);
+        this.currentLocation = GeoCoords.fromLocation(newLocation);
     }
 
     @Override
