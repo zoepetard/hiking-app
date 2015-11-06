@@ -8,7 +8,7 @@ import ch.epfl.sweng.team7.gpsTracker.container.GeoCoords;
  * Class used to fetch device's GPS-related information
  * (such has latitude, longitude and altitude)
  */
-public class GPSTracker {
+public final class GPSTracker {
 
     private GeoCoords currentGeoCoords = null;
 
