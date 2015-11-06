@@ -12,28 +12,28 @@ import ch.epfl.sweng.team7.gpsTracker.container.GeoCoords;
  */
 public class GPSTracker {
 
-    private GeoCoords currentLocation = null;
+    private GeoCoords currentGeoCoords = null;
 
     public GPSTracker() {
 
     }
 
     public LatLng getLatLng() throws NullPointerException {
-        if (currentLocation == null) {
+        if (currentGeoCoords == null) {
             throw new NullPointerException("Trying to access a null position");
         }
-        return currentLocation.toLatLng();
+        return currentGeoCoords.toLatLng();
     }
 
     public void updateCurrentLocation(Location newLocation) {
-        this.currentLocation = GeoCoords.fromLocation(newLocation);
+        this.currentGeoCoords = GeoCoords.fromLocation(newLocation);
     }
 
     @Override
     public String toString() {
-        if (currentLocation == null) {
+        if (currentGeoCoords == null) {
             return "No position tracked yet";
         }
-        return currentLocation.toString();
+        return currentGeoCoords.toString();
     }
 }
