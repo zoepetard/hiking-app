@@ -18,8 +18,15 @@ public class GPSTracker {
 
     }
 
-    public LatLng getLatLng() {
+    public LatLng getLatLng() throws NullPointerException {
+        if (currentLocation == null) {
+            throw new NullPointerException("Trying to access a null position");
+        }
+        return new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+    }
 
+    public void updateCurrentLocation(Location newLocation) {
+        this.currentLocation = newLocation;
     }
 
     @Override
