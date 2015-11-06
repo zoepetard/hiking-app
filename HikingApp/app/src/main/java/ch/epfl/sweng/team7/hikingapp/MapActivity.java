@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -11,14 +12,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import ch.epfl.sweng.team7.gpsTracker.GPSTracker;
+
 public class MapActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GPSTracker gpsTracker;
+    private GoogleMap.OnMyLocationChangeListener locationChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        setUpLocationListener();
         setUpMapIfNeeded();
     }
 
@@ -26,6 +32,16 @@ public class MapActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+    }
+
+    private void setUpLocationListener() {
+        this.gpsTracker = new GPSTracker();
+        locationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                gpsTracker.updateCurrentLocation(location);
+            }
+        };
     }
 
     /**
@@ -64,6 +80,7 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        mMap.setOnMyLocationChangeListener(locationChangeListener);
         displayTestPoints();
     }
 
