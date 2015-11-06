@@ -2,8 +2,6 @@ package ch.epfl.sweng.team7.gpsTracker;
 
 import android.location.Location;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import ch.epfl.sweng.team7.gpsTracker.container.GeoCoords;
 
 /**
