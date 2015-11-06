@@ -25,13 +25,6 @@ public class GPSTracker {
         return currentGeoCoords.copy();
     }
 
-    public LatLng getLatLng() throws NullPointerException {
-        if (currentGeoCoords == null) {
-            throw new NullPointerException("Trying to access a null position");
-        }
-        return currentGeoCoords.toLatLng();
-    }
-
     public void updateCurrentLocation(Location newLocation) {
         this.currentGeoCoords = GeoCoords.fromLocation(newLocation);
     }
