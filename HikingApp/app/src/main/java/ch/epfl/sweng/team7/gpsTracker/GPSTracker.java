@@ -18,6 +18,13 @@ public class GPSTracker {
 
     }
 
+    public GeoCoords getCurrentCoords() throws NullPointerException {
+        if (currentGeoCoords == null) {
+            throw new NullPointerException("Trying to access a null position");
+        }
+        return currentGeoCoords.copy();
+    }
+
     public LatLng getLatLng() throws NullPointerException {
         if (currentGeoCoords == null) {
             throw new NullPointerException("Trying to access a null position");
