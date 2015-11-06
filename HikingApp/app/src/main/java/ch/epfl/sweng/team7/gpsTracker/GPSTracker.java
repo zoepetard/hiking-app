@@ -20,7 +20,7 @@ public class GPSTracker {
         if (currentGeoCoords == null) {
             throw new NullPointerException("Trying to access a null position");
         }
-        return currentGeoCoords.copy();
+        return currentGeoCoords;
     }
 
     public void updateCurrentLocation(Location newLocation) {
