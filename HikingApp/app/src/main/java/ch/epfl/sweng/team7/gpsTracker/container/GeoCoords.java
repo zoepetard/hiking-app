@@ -42,15 +42,6 @@ public class GeoCoords {
     }
 
     /**
-     * This method should be used for improved security,
-     * when returning an object of type GeoCoords.
-     * @return GeoCoords object with the same information as 'this'
-     */
-    public GeoCoords copy() {
-        return new GeoCoords(this.latitude, this.longitude, this.altitude);
-    }
-
-    /**
      * Method used to create a GeoCoords object from a Location
      * @param location source Location
      * @return new GeoCoords object
