@@ -1,9 +1,6 @@
 package ch.epfl.sweng.team7.gpsTracker;
 
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -16,7 +13,7 @@ public class GPSTracker {
     private Location currentLocation = null;
 
     public GPSTracker() {
-        
+
     }
 
     public LatLng getLatLng() throws NullPointerException {
