@@ -9,37 +9,44 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  * Class used to read device's GPS-related information
  * (such has latitude, longitude, altitude and time).
  */
-public abstract class GPSManager {
+public final class GPSManager {
 
-    private static boolean isTracking = false;
-    private static GPSFootPrint lastFootPrint = null;
+    private boolean isTracking = false;
+    private GPSFootPrint lastFootPrint = null;
+    private static GPSManager instance = new GPSManager();
 
-    public static GeoCoords getCurrentCoords() throws NullPointerException {
-        if (lastFootPrint == null) {
+    public GPSManager getInstance() {
+        return instance;
+    }
+
+    public GeoCoords getCurrentCoords() throws NullPointerException {
+        if (this.lastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
         }
-        return lastFootPrint.getGeoCoords();
+        return this.lastFootPrint.getGeoCoords();
     }
 
-    public static void updateCurrentLocation(Location newLocation) {
+    public void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
-            lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
+            this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
         }
     }
 
-    public static String getCurrentState() {
-        String lastFootPrintString = (lastFootPrint != null)?lastFootPrint.toString():"null";
+    public String getCurrentState() {
+        String lastFootPrintString = (this.lastFootPrint != null)?this.lastFootPrint.toString():"null";
         return String.format("[-------------------]\n" +
                              "Saving to memory: %b\n" +
                              "Last FootPrint: %s\n" +
-                             "[-------------------]", isTracking, lastFootPrintString);
+                             "[-------------------]", this.isTracking, lastFootPrintString);
     }
 
     @Override
     public String toString() {
-        if (lastFootPrint == null) {
+        if (this.lastFootPrint == null) {
             return "No footprint stored yet";
         }
-        return lastFootPrint.toString();
+        return this.lastFootPrint.toString();
     }
+
+    private GPSManager() {}
 }
