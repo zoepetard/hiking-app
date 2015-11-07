@@ -1,72 +1,39 @@
 package ch.epfl.sweng.team7.gpsTracker;
 
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import ch.epfl.sweng.team7.gpsTracker.exceptions.GPSServiceNotAvailableException;
-import ch.epfl.sweng.team7.gpsTracker.exceptions.NoPositionTrackedException;
-import ch.epfl.sweng.team7.gpsTracker.listener.GPSLocationListener;
+import ch.epfl.sweng.team7.gpsTracker.container.GeoCoords;
 
 /**
  * Class used to fetch device's GPS-related information
  * (such has latitude, longitude and altitude)
  */
-public class GPSTracker {
+public final class GPSTracker {
 
-    private static final long UPDATE_MIN_TIME_INTERVAL = 5000L;
-    private static final float UPDATE_MIN_DISTANCE = 15.0f;
+    private GeoCoords currentGeoCoords = null;
 
-    private Context activityContext = null;
-    private LocationManager locationManager = null;
-    private GPSLocationListener locationListener = null;
+    public GPSTracker() {
 
-    /**
-     * Class' constructor
-     * @param activityContext the context (or activity) from which the GPSTracker was instantiated from
-     * @throws GPSServiceNotAvailableException exception thrown if GPS service is not available
-     */
-    public GPSTracker(Context activityContext) throws GPSServiceNotAvailableException {
-        this.activityContext = activityContext;
-        locationManager = (LocationManager) activityContext.getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            throw new GPSServiceNotAvailableException();
-
-        try {
-            locationListener = new GPSLocationListener(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-        } catch (SecurityException e) {
-            //TODO display a warning saying that the GPS service cannot be accessed
-        }
-        //TODO call requestLocationUpdates to set up automatic position updating
     }
 
-    /**
-     * Method used to get user's location
-     * @return new LatLng object containing information about the device's current position
-     * @throws NoPositionTrackedException exception thrown when there is no position tracked yet
-     */
-    public LatLng getLatLng() throws NoPositionTrackedException {
-
-        Location currentLocation = fetchCurrentLocation();
-
-        if (currentLocation == null) {
-            throw new NoPositionTrackedException();
+    public GeoCoords getCurrentCoords() throws NullPointerException {
+        if (currentGeoCoords == null) {
+            throw new NullPointerException("Trying to access a null position");
         }
-        return new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        return currentGeoCoords;
+    }
+
+    public void updateCurrentLocation(Location newLocation) {
+        if (newLocation != null) {
+            this.currentGeoCoords = GeoCoords.fromLocation(newLocation);
+        }
     }
 
     @Override
     public String toString() {
-        Location currentLocation = fetchCurrentLocation();
-        if (currentLocation == null) {
+        if (currentGeoCoords == null) {
             return "No position tracked yet";
         }
-        return currentLocation.toString();
-    }
-
-    private Location fetchCurrentLocation() {
-        return (locationListener != null)?locationListener.getCurLocation():null;
+        return currentGeoCoords.toString();
     }
 }
