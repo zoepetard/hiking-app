@@ -17,6 +17,14 @@ public class GPSFootPrint {
         this.timeStamp = timeStamp;
     }
 
+    public GeoCoords getGeoCoords() {
+        return this.geoCoords;
+    }
+
+    public long getTimeStamp() {
+        return this.timeStamp;
+    }
+
     @Override
     public String toString() {
         return String.format("[Coords: %s | Time: %d]", geoCoords.toString(), timeStamp);
