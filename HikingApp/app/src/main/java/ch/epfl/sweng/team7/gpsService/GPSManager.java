@@ -21,12 +21,20 @@ public final class GPSManager {
         return instance;
     }
 
-    public void starTracking() {
+    public void toggleTracking() {
+        if (!isTracking) {
+            starTracking();
+        } else {
+            stopTracking();
+        }
+    }
+
+    private void starTracking() {
         this.isTracking = true;
         gpsPath = new GPSPath();
     }
 
-    public void stopTracking() {
+    private void stopTracking() {
         this.isTracking = false;
         //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
         gpsPath = null;
