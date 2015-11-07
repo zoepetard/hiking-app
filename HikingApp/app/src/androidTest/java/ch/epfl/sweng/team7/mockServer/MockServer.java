@@ -86,7 +86,7 @@ public class MockServer implements DatabaseClient{
      */
     private RawHikeData createMockHikeOne() {
 
-        //Create mock Hike
+        //Create mock Hike number 1 (should always exist)
         //RawHikeData mockRawHikeData = mock(RawHikeData.class);
         //return RawHikeData.parseFromJSON(PROPER_JSON_ONEHIKE);
 
