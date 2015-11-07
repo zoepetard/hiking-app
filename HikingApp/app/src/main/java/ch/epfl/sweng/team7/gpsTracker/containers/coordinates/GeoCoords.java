@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.gpsTracker.containers;
+package ch.epfl.sweng.team7.gpsTracker.containers.coordinates;
 
 import android.location.Location;
 

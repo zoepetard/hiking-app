@@ -2,7 +2,7 @@ package ch.epfl.sweng.team7.gpsTracker;
 
 import android.location.Location;
 
-import ch.epfl.sweng.team7.gpsTracker.containers.GeoCoords;
+import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
 
 /**
  * Class used to fetch device's GPS-related information
