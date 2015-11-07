@@ -11,6 +11,7 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  */
 public abstract class GPSManager {
 
+    private static boolean isTracking = false;
     private static GPSFootPrint lastFootPrint = null;
 
     public static GeoCoords getCurrentCoords() throws NullPointerException {
