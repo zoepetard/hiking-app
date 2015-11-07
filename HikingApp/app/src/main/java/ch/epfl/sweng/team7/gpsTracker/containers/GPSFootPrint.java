@@ -26,6 +26,12 @@ public class GPSFootPrint {
     }
 
     @Override
+    public boolean equals(Object object) {
+        GPSFootPrint other = (GPSFootPrint)object;
+        return (other.getGeoCoords() == this.getGeoCoords() && other.getTimeStamp() == this.getTimeStamp());
+    }
+
+    @Override
     public String toString() {
         return String.format("[Coords: %s | Time: %d]", geoCoords.toString(), timeStamp);
     }
