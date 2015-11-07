@@ -25,6 +25,10 @@ public final class GPSPath {
         return 0.0f;
     }
 
+    public long getFootPrintCount() {
+        return this.path.size();
+    }
+
     @Override
     public String toString() {
         return String.format("[FootPrints: %d]", path.size());
