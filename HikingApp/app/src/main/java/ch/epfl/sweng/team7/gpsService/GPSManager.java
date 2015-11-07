@@ -9,7 +9,7 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  * Class used to read device's GPS-related information
  * (such has latitude, longitude, altitude and time).
  */
-public final class GPSManager {
+public abstract class GPSManager {
 
     private static GPSFootPrint lastFootPrint = null;
 
