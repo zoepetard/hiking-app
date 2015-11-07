@@ -27,7 +27,8 @@ public class GeoCoords {
      * Class' constructor with LatLng and altitude as arguments.
      * To be used directly with GoogleMaps API values.
      */
-    public GeoCoords(LatLng latLng, double altitude) {
+    public GeoCoords(LatLng latLng, double altitude) throws NullPointerException {
+        if (latLng == null) throw new NullPointerException("Cannot create GeoCoords from null LatLng");
         this.latitude = latLng.latitude;
         this.longitude = latLng.longitude;
         this.altitude = altitude;
@@ -46,7 +47,8 @@ public class GeoCoords {
      * @param location source Location
      * @return new GeoCoords object
      */
-    public static GeoCoords fromLocation(Location location) {
+    public static GeoCoords fromLocation(Location location) throws NullPointerException {
+        if (location == null) throw new NullPointerException("Cannot create GeoCoords from null Location");
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         double altitude = (location.hasAltitude())?location.getAltitude():0;
