@@ -74,6 +74,8 @@ public class GeoCoords {
 
     @Override
     public boolean equals(Object object) {
+        if (object == null) return false;
+        if (!(object instanceof GeoCoords)) return false;
         GeoCoords other = (GeoCoords)object;
         if (other.getLatitude() == this.latitude && other.getLongitude() == this.longitude && other.getAltitude() == this.altitude) {
             return true;
