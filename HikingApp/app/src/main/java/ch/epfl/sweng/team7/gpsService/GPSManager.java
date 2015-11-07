@@ -36,11 +36,11 @@ public final class GPSManager {
     public String toString() {
         String lastFootPrintCoords = (this.lastFootPrint != null)?this.lastFootPrint.getGeoCoords().toString():"null";
         long lastFootPrintTimeStamp = (this.lastFootPrint != null)?this.lastFootPrint.getTimeStamp():0;
-        return String.format("\n[-------------------]\n" +
-                             "Saving to memory: %b\n" +
-                             "Last Coordinates: %s\n" +
-                             "TimeStamp: %d\n" +
-                             "[-------------------]", this.isTracking, lastFootPrintCoords, lastFootPrintTimeStamp);
+        return String.format("\n|---------------------------\n" +
+                             "| Saving to memory: %b\n" +
+                             "| Last Coordinates: %s\n" +
+                             "| TimeStamp: %d\n" +
+                             "|---------------------------", this.isTracking, lastFootPrintCoords, lastFootPrintTimeStamp);
     }
 
     private GPSManager() {}
