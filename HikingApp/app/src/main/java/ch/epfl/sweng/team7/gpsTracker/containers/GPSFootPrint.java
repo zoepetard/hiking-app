@@ -27,6 +27,8 @@ public class GPSFootPrint {
 
     @Override
     public boolean equals(Object object) {
+        if (object == null) return false;
+        if (!(object instanceof GPSFootPrint)) return false;
         GPSFootPrint other = (GPSFootPrint)object;
         return (other.getGeoCoords() == this.getGeoCoords() && other.getTimeStamp() == this.getTimeStamp());
     }
