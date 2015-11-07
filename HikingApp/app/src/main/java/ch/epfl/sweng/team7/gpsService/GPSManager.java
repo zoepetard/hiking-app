@@ -26,6 +26,14 @@ public abstract class GPSManager {
         }
     }
 
+    public static String getCurrentState() {
+        String lastFootPrintString = (lastFootPrint != null)?lastFootPrint.toString():"null";
+        return String.format("[-------------------]\n" +
+                             "Saving to memory: %b\n" +
+                             "Last FootPrint: %s\n" +
+                             "[-------------------]", isTracking, lastFootPrintString);
+    }
+
     @Override
     public String toString() {
         if (lastFootPrint == null) {
