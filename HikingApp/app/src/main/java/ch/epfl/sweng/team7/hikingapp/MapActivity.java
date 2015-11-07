@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import ch.epfl.sweng.team7.gpsTracker.GPSTracker;
+import ch.epfl.sweng.team7.gpsService.GPSTracker;
 
 public class MapActivity extends FragmentActivity {
 

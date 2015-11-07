@@ -1,9 +1,9 @@
-package ch.epfl.sweng.team7.gpsTracker;
+package ch.epfl.sweng.team7.gpsService;
 
 import android.location.Location;
 
-import ch.epfl.sweng.team7.gpsTracker.containers.GPSFootPrint;
-import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
+import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 
 /**
  * Class used to read device's GPS-related information

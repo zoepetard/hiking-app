@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.gpsTracker;
+package ch.epfl.sweng.team7.gpsService;
 
 import android.support.test.runner.AndroidJUnit4;
 
