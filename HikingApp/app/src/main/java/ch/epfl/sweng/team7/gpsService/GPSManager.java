@@ -32,20 +32,13 @@ public final class GPSManager {
         }
     }
 
-    public String getCurrentState() {
+    @Override
+    public String toString() {
         String lastFootPrintString = (this.lastFootPrint != null)?this.lastFootPrint.toString():"null";
         return String.format("[-------------------]\n" +
                              "Saving to memory: %b\n" +
                              "Last FootPrint: %s\n" +
                              "[-------------------]", this.isTracking, lastFootPrintString);
-    }
-
-    @Override
-    public String toString() {
-        if (this.lastFootPrint == null) {
-            return "No footprint stored yet";
-        }
-        return this.lastFootPrint.toString();
     }
 
     private GPSManager() {}
