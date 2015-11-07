@@ -7,23 +7,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class GPSTrackerTest {
+public class GPSManagerTest {
 
-    private GPSTracker gpsTracker;
+    private GPSManager gpsManager;
 
     @Before
     public void setup() {
-        gpsTracker = new GPSTracker();
+        gpsManager = new GPSManager();
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullPositionInitialization() {
-        gpsTracker.getCurrentCoords();
+        gpsManager.getCurrentCoords();
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullLocationParameter() {
-        gpsTracker.updateCurrentLocation(null);
-        gpsTracker.getCurrentCoords();
+        gpsManager.updateCurrentLocation(null);
+        gpsManager.getCurrentCoords();
     }
 }
