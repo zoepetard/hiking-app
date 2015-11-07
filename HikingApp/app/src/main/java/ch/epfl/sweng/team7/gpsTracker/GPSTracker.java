@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.gpsTracker;
 
 import android.location.Location;
 
+import ch.epfl.sweng.team7.gpsTracker.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
 
 /**
@@ -10,30 +11,30 @@ import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
  */
 public final class GPSTracker {
 
-    private GeoCoords currentGeoCoords = null;
+    private GPSFootPrint lastFootPrint = null;
 
     public GPSTracker() {
 
     }
 
     public GeoCoords getCurrentCoords() throws NullPointerException {
-        if (currentGeoCoords == null) {
-            throw new NullPointerException("Trying to access a null position");
+        if (lastFootPrint == null) {
+            throw new NullPointerException("Trying to access a null gps footprint");
         }
-        return currentGeoCoords;
+        return lastFootPrint.getGeoCoords();
     }
 
     public void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
-            this.currentGeoCoords = GeoCoords.fromLocation(newLocation);
+            this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
         }
     }
 
     @Override
     public String toString() {
-        if (currentGeoCoords == null) {
-            return "No position tracked yet";
+        if (lastFootPrint == null) {
+            return "No footprint stored yet";
         }
-        return currentGeoCoords.toString();
+        return lastFootPrint.toString();
     }
 }
