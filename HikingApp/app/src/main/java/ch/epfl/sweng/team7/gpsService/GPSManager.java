@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.gpsService;
 import android.location.Location;
 
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
+import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 
 /**
@@ -11,6 +12,7 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  */
 public final class GPSManager {
 
+    private GPSPath gpsPath = null;
     private boolean isTracking = false;
     private GPSFootPrint lastFootPrint = null;
     private static GPSManager instance = new GPSManager();
@@ -21,10 +23,13 @@ public final class GPSManager {
 
     public void starTracking() {
         this.isTracking = true;
+        gpsPath = new GPSPath();
     }
 
     public void stopTracking() {
         this.isTracking = false;
+        //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
+        gpsPath = null;
     }
 
     public GeoCoords getCurrentCoords() throws NullPointerException {
@@ -37,6 +42,7 @@ public final class GPSManager {
     public void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
+            if (this.isTracking) gpsPath.addFootPrint(this.lastFootPrint);
         }
     }
 
