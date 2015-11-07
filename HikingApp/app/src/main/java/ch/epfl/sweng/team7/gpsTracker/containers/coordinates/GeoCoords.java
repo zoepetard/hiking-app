@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.gpsTracker.container;
+package ch.epfl.sweng.team7.gpsTracker.containers.coordinates;
 
 import android.location.Location;
 
@@ -27,7 +27,8 @@ public class GeoCoords {
      * Class' constructor with LatLng and altitude as arguments.
      * To be used directly with GoogleMaps API values.
      */
-    public GeoCoords(LatLng latLng, double altitude) {
+    public GeoCoords(LatLng latLng, double altitude) throws NullPointerException {
+        if (latLng == null) throw new NullPointerException("Cannot create GeoCoords from null LatLng");
         this.latitude = latLng.latitude;
         this.longitude = latLng.longitude;
         this.altitude = altitude;
@@ -46,7 +47,8 @@ public class GeoCoords {
      * @param location source Location
      * @return new GeoCoords object
      */
-    public static GeoCoords fromLocation(Location location) {
+    public static GeoCoords fromLocation(Location location) throws NullPointerException {
+        if (location == null) throw new NullPointerException("Cannot create GeoCoords from null Location");
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
         double altitude = (location.hasAltitude())?location.getAltitude():0;
@@ -71,7 +73,17 @@ public class GeoCoords {
     }
 
     @Override
+    public int hashCode() {
+        int latParcel = (int)((this.latitude != 0)?this.latitude:1);
+        int lngParcel = (int)((this.longitude != 0)?this.longitude:1);
+        int altParcel = (int)((this.altitude != 0)?this.altitude:1);
+        return latParcel * lngParcel * altParcel;
+    }
+
+    @Override
     public boolean equals(Object object) {
+        if (object == null) return false;
+        if (!(object instanceof GeoCoords)) return false;
         GeoCoords other = (GeoCoords)object;
         if (other.getLatitude() == this.latitude && other.getLongitude() == this.longitude && other.getAltitude() == this.altitude) {
             return true;
