@@ -6,8 +6,8 @@ import ch.epfl.sweng.team7.gpsTracker.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
 
 /**
- * Class used to fetch device's GPS-related information
- * (such has latitude, longitude and altitude)
+ * Class used to read device's GPS-related information
+ * (such has latitude, longitude, altitude and time).
  */
 public final class GPSTracker {
 
