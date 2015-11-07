@@ -5,17 +5,26 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 
 public final class HikeInfoActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hike_info);
+        setContentView(R.layout.navigation_drawer);
 
         View view = findViewById(android.R.id.content);
+
+        // load main content into the navigations drawer's framelayout
+        FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
+
+        View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info,null);
+
+        mainContentFrame.addView(hikeInfoLayout);
 
         HikeInfoView hikeInfoView = new HikeInfoView(view, this);
 

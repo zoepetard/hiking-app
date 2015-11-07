@@ -2,10 +2,13 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -39,6 +42,8 @@ public class HikeInfoView {
     ImageView mapPreview;
     GraphView hikeGraph;
     HorizontalScrollView imageScrollView;
+    ListView navDrawerList;
+    ArrayAdapter<String> navDrawerAdapter;
 
 
     public HikeInfoView (View view, Context context) {  // add model as argument when creating that
@@ -67,6 +72,8 @@ public class HikeInfoView {
         hikeGraph = (GraphView) view.findViewById(R.id.hike_graph);
 
         imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
+
+        navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
 
         update();
 
@@ -116,6 +123,16 @@ public class HikeInfoView {
         hikeElevation.setText("Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m");
 
         loadImageScrollView();
+
+        loadNavDrawerItems();
+
+    }
+
+    private void loadNavDrawerItems(){
+
+        String[] listViewItems = {"Account","Hikes","Map","Settings"}; // Temp data
+        navDrawerAdapter = new ArrayAdapter<String>(this.context,android.R.layout.simple_list_item_1,listViewItems);
+        navDrawerList.setAdapter(navDrawerAdapter);
 
     }
 
