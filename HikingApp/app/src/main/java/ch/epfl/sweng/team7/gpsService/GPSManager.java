@@ -15,7 +15,7 @@ public final class GPSManager {
     private GPSFootPrint lastFootPrint = null;
     private static GPSManager instance = new GPSManager();
 
-    public GPSManager getInstance() {
+    public static GPSManager getInstance() {
         return instance;
     }
 
