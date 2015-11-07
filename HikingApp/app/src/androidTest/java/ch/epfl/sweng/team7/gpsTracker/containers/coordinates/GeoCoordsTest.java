@@ -14,6 +14,16 @@ import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
 @RunWith(AndroidJUnit4.class)
 public class GeoCoordsTest {
 
+    @Test(expected = NullPointerException.class)
+    public void testInstantiationFromNullLocation() {
+        GeoCoords.fromLocation(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testInstantiationFromNullLatLng() {
+        new GeoCoords(null, 0);
+    }
+
     @Test
     public void testConversions() {
         GeoCoords coords = new GeoCoords(2, 3, 4);
