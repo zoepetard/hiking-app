@@ -31,12 +31,4 @@ public class GPSTrackerTest {
         gpsTracker.updateCurrentLocation(null);
         gpsTracker.getCurrentCoords();
     }
-
-    @Test
-    public void testConversions() {
-        GeoCoords coords = new GeoCoords(2, 3, 4);
-        LatLng latLng = new LatLng(2, 3);
-        assertEquals(new GeoCoords(latLng, 4), coords);
-        assertEquals(latLng, coords.toLatLng());
-    }
 }

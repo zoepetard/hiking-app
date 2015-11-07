@@ -13,5 +13,12 @@ import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
 
 @RunWith(AndroidJUnit4.class)
 public class GeoCoordsTest {
-    
+
+    @Test
+    public void testConversions() {
+        GeoCoords coords = new GeoCoords(2, 3, 4);
+        LatLng latLng = new LatLng(2, 3);
+        assertEquals(new GeoCoords(latLng, 4), coords);
+        assertEquals(latLng, coords.toLatLng());
+    }
 }
