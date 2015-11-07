@@ -46,13 +46,14 @@ public final class GPSManager {
 
     @Override
     public String toString() {
+        String gpsPathInformation = (isTracking && gpsPath != null)?String.format("yes -> %s", gpsPath.toString()):"No";
         String lastFootPrintCoords = (this.lastFootPrint != null)?this.lastFootPrint.getGeoCoords().toString():"null";
         long lastFootPrintTimeStamp = (this.lastFootPrint != null)?this.lastFootPrint.getTimeStamp():0;
         return String.format("\n|---------------------------\n" +
-                "| Saving to memory: %b\n" +
+                "| Saving to memory: %s\n" +
                 "| Last Coordinates: %s\n" +
                 "| TimeStamp: %d\n" +
-                "|---------------------------", this.isTracking, lastFootPrintCoords, lastFootPrintTimeStamp);
+                "|---------------------------", gpsPathInformation, lastFootPrintCoords, lastFootPrintTimeStamp);
     }
 
     private GPSManager() {}
