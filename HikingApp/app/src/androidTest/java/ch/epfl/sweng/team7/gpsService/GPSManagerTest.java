@@ -13,7 +13,7 @@ public class GPSManagerTest {
 
     @Before
     public void setup() {
-        gpsManager = new GPSManager();
+        gpsManager = GPSManager.getInstance();
     }
 
     @Test(expected = NullPointerException.class)
