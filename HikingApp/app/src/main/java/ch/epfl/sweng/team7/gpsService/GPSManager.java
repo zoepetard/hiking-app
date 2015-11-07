@@ -11,22 +11,18 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  */
 public final class GPSManager {
 
-    private GPSFootPrint lastFootPrint = null;
+    private static GPSFootPrint lastFootPrint = null;
 
-    public GPSManager() {
-
-    }
-
-    public GeoCoords getCurrentCoords() throws NullPointerException {
+    public static GeoCoords getCurrentCoords() throws NullPointerException {
         if (lastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
         }
         return lastFootPrint.getGeoCoords();
     }
 
-    public void updateCurrentLocation(Location newLocation) {
+    public static void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
-            this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
+            lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
         }
     }
 
