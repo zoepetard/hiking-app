@@ -13,5 +13,9 @@ import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
 
 @RunWith(AndroidJUnit4.class)
 public class GPSFootPrintTest {
-    
+
+    @Test(expected = NullPointerException.class)
+    public void testInitializationWithNullGeoCoords() {
+        new GPSFootPrint(null, 0);
+    }
 }
