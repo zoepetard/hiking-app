@@ -73,6 +73,14 @@ public class GeoCoords {
     }
 
     @Override
+    public int hashCode() {
+        int latParcel = (int)((this.latitude != 0)?this.latitude:1);
+        int lngParcel = (int)((this.longitude != 0)?this.longitude:1);
+        int altParcel = (int)((this.altitude != 0)?this.altitude:1);
+        return latParcel * lngParcel * altParcel;
+    }
+
+    @Override
     public boolean equals(Object object) {
         if (object == null) return false;
         if (!(object instanceof GeoCoords)) return false;
