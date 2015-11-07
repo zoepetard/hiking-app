@@ -24,4 +24,9 @@ public final class GPSPath {
         //TODO implement this method
         return 0.0f;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[FootPrints: %d]", path.size());
+    }
 }
