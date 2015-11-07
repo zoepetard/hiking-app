@@ -19,6 +19,14 @@ public final class GPSManager {
         return instance;
     }
 
+    public void starTracking() {
+        this.isTracking = true;
+    }
+
+    public void stopTracking() {
+        this.isTracking = false;
+    }
+
     public GeoCoords getCurrentCoords() throws NullPointerException {
         if (this.lastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
