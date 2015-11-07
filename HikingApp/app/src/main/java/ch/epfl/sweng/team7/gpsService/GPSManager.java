@@ -29,17 +29,6 @@ public final class GPSManager {
         }
     }
 
-    private void starTracking() {
-        this.isTracking = true;
-        gpsPath = new GPSPath();
-    }
-
-    private void stopTracking() {
-        this.isTracking = false;
-        //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
-        gpsPath = null;
-    }
-
     public GeoCoords getCurrentCoords() throws NullPointerException {
         if (this.lastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
@@ -59,11 +48,22 @@ public final class GPSManager {
         String lastFootPrintCoords = (this.lastFootPrint != null)?this.lastFootPrint.getGeoCoords().toString():"null";
         long lastFootPrintTimeStamp = (this.lastFootPrint != null)?this.lastFootPrint.getTimeStamp():0;
         return String.format("\n|---------------------------\n" +
-                             "| Saving to memory: %b\n" +
-                             "| Last Coordinates: %s\n" +
-                             "| TimeStamp: %d\n" +
-                             "|---------------------------", this.isTracking, lastFootPrintCoords, lastFootPrintTimeStamp);
+                "| Saving to memory: %b\n" +
+                "| Last Coordinates: %s\n" +
+                "| TimeStamp: %d\n" +
+                "|---------------------------", this.isTracking, lastFootPrintCoords, lastFootPrintTimeStamp);
     }
 
     private GPSManager() {}
+
+    private void starTracking() {
+        this.isTracking = true;
+        gpsPath = new GPSPath();
+    }
+
+    private void stopTracking() {
+        this.isTracking = false;
+        //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
+        gpsPath = null;
+    }
 }
