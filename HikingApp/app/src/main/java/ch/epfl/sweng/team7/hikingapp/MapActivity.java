@@ -39,7 +39,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onMyLocationChange(Location location) {
                 gps.updateCurrentLocation(location);
-                Log.d("LocationUpdate", "GPS State: " + gps.getCurrentState());
+                Log.d("LocationUpdate", "GPS State: " + gps.toString());
             }
         };
     }
