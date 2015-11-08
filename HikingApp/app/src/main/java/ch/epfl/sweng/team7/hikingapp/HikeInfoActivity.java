@@ -19,7 +19,6 @@ import android.widget.ScrollView;
 public final class HikeInfoActivity extends Activity {
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +29,7 @@ public final class HikeInfoActivity extends Activity {
         // load main content into the navigations drawer's framelayout
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
 
-        View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info,null);
+        View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
 
         mainContentFrame.addView(hikeInfoLayout);
 
@@ -72,18 +71,25 @@ public final class HikeInfoActivity extends Activity {
 
             String itemText = (String) parent.getItemAtPosition(position);
 
-            if(itemText.equals("Account")){
-                Intent intent = new Intent(view.getContext(),ChangeNicknameActivity.class);
-                startActivity(intent);
-            }else if(itemText.equals("Map")){
-                Intent intent = new Intent(view.getContext(),MapActivity.class);
-                startActivity(intent);
-            }else if(itemText.equals("Hikes")){
-                Intent intent = new Intent(view.getContext(),HikeListActivity.class);
-                startActivity(intent);
-            }else if(itemText.equals("Logout")){
-                Intent intent = new Intent(view.getContext(),LoginActivity.class);
-                startActivity(intent);
+            Intent intent;
+            switch (itemText) {
+
+                case "Account":
+                    intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
+                    startActivity(intent);
+                    break;
+                case "Map":
+                    intent = new Intent(view.getContext(), MapActivity.class);
+                    startActivity(intent);
+                    break;
+                case "Hikes":
+                    intent = new Intent(view.getContext(), HikeListActivity.class);
+                    startActivity(intent);
+                    break;
+                case "Logout":
+                    intent = new Intent(view.getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    break;
             }
 
         }

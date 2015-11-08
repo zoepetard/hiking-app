@@ -20,10 +20,8 @@ import java.util.ArrayList;
 
 
 /**
-
-Class which controls and updates the visual part of the view, not the interaction.
-
-*/
+ * Class which controls and updates the visual part of the view, not the interaction.
+ */
 
 
 public class HikeInfoView {
@@ -46,7 +44,7 @@ public class HikeInfoView {
     ArrayAdapter<String> navDrawerAdapter;
 
 
-    public HikeInfoView (View view, Context context) {  // add model as argument when creating that
+    public HikeInfoView(View view, Context context) {  // add model as argument when creating that
 
         // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
@@ -80,7 +78,7 @@ public class HikeInfoView {
     }
 
     // method to update info in UI elements
-    public void update(){
+    public void update() {
 
          /*
         Temporary example data!
@@ -94,7 +92,7 @@ public class HikeInfoView {
         int elevationMin = 1500;
         int elevationMax = 2100;
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 1500),
                 new DataPoint(1, 1800),
                 new DataPoint(2, 1900),
@@ -116,11 +114,13 @@ public class HikeInfoView {
 
         hikeName.setText(name);
 
-        hikeDistance.setText(distance + " km");
+        String distanceString = distance + " km";
+        hikeDistance.setText(distanceString);
 
         hikeRatingBar.setRating(rating);
 
-        hikeElevation.setText("Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m");
+        String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
+        hikeElevation.setText(elevationString);
 
         loadImageScrollView();
 
@@ -128,16 +128,16 @@ public class HikeInfoView {
 
     }
 
-    private void loadNavDrawerItems(){
+    private void loadNavDrawerItems() {
 
-        String[] listViewItems = {"Account","Map","Hikes","Logout"}; // Temp data
-        navDrawerAdapter = new ArrayAdapter<String>(this.context,android.R.layout.simple_list_item_1,listViewItems);
+        String[] listViewItems = {"Account", "Map", "Hikes", "Logout"}; // Temp data
+        navDrawerAdapter = new ArrayAdapter<>(this.context, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
 
     }
 
     // create imageviews and add them to the scrollview
-    private void loadImageScrollView(){
+    private void loadImageScrollView() {
 
         imageViews = new ArrayList<>();
 
@@ -145,7 +145,7 @@ public class HikeInfoView {
         Integer img1 = R.drawable.login_background;
 
         // add imageviews with images to the scrollview
-        for(int i = 0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
 
             imgLayout.addView(createImageView(img1));
 
@@ -153,12 +153,11 @@ public class HikeInfoView {
     }
 
 
-
-    private View createImageView(Integer img){
+    private View createImageView(Integer img) {
 
         // creating an ImageView and applying layout parameters
         ImageView imageView = new ImageView(context.getApplicationContext());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         imageView.setAdjustViewBounds(true); // set this to true to preserve aspect ratio of image.
         layoutParams.setMargins(10, 10, 10, 10); // Margin around each image
         imageView.setLayoutParams(layoutParams);

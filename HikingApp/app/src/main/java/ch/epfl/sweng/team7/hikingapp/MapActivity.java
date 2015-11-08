@@ -1,7 +1,13 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -18,8 +24,46 @@ public class MapActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.navigation_drawer);
+
+        // nav drawer setup
+        FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
+        View mapView = getLayoutInflater().inflate(R.layout.activity_map, null);
+        mainContentFrame.addView(mapView);
+
         setUpMapIfNeeded();
+
+        // load items into the Navigation drawer and add listeners
+        ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
+        loadNavDrawerItems(navDrawerList);
+        navDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String itemText = (String) parent.getItemAtPosition(position);
+                Intent intent;
+
+                switch (itemText) {
+                    case "Account":
+                        intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
+                        startActivity(intent);
+                        break;
+                    case "Map":
+                        intent = new Intent(view.getContext(), MapActivity.class);
+                        startActivity(intent);
+                        break;
+                    case "Hikes":
+                        intent = new Intent(view.getContext(), HikeListActivity.class);
+                        startActivity(intent);
+                        break;
+                    case "Logout":
+                        intent = new Intent(view.getContext(), LoginActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        });
+
+
     }
 
     @Override
@@ -68,7 +112,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayTestPoints() {
-        LatLng origin = new LatLng(0,0);
+        LatLng origin = new LatLng(0, 0);
         LatLng accra = new LatLng(5.615986, -0.171533);
         LatLng saoTome = new LatLng(0.362365, 6.558835);
 
@@ -80,4 +124,13 @@ public class MapActivity extends FragmentActivity {
 
         Polyline polyline = mMap.addPolyline(testTriangle);
     }
+
+    private void loadNavDrawerItems(ListView navDrawerList) {
+
+        String[] listViewItems = {"Account", "Map", "Hikes", "Logout"};
+        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listViewItems);
+        navDrawerList.setAdapter(navDrawerAdapter);
+
+    }
+
 }
