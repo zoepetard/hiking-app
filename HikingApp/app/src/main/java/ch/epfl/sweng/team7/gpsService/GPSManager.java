@@ -24,7 +24,7 @@ public final class GPSManager {
 
     public void toggleTracking() {
         if (!isTracking) {
-            starTracking();
+            startTracking();
         } else {
             stopTracking();
         }
@@ -58,7 +58,7 @@ public final class GPSManager {
 
     private GPSManager() {}
 
-    private void starTracking() {
+    private void startTracking() {
         this.isTracking = true;
         gpsPath = new GPSPath();
     }
