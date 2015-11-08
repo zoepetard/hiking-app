@@ -1,16 +1,24 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.LauncherActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 
 public final class HikeInfoActivity extends Activity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +61,34 @@ public final class HikeInfoActivity extends Activity {
 
         hikeInfoView.mapPreview.setOnClickListener(new MapPreviewClickListener());
 
+        hikeInfoView.navDrawerList.setOnItemClickListener(new ListItemClickListener());
+
     }
+
+    private class ListItemClickListener implements ListView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            String itemText = (String) parent.getItemAtPosition(position);
+
+            if(itemText.equals("Account")){
+                Intent intent = new Intent(view.getContext(),ChangeNicknameActivity.class);
+                startActivity(intent);
+            }else if(itemText.equals("Map")){
+                Intent intent = new Intent(view.getContext(),MapActivity.class);
+                startActivity(intent);
+            }else if(itemText.equals("Hikes")){
+                Intent intent = new Intent(view.getContext(),HikeListActivity.class);
+                startActivity(intent);
+            }else if(itemText.equals("Logout")){
+                Intent intent = new Intent(view.getContext(),LoginActivity.class);
+                startActivity(intent);
+            }
+
+        }
+    }
+
 
     private class ImageViewClickListener implements View.OnClickListener {
         @Override

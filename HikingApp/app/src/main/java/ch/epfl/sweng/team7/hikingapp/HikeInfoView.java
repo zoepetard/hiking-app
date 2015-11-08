@@ -130,7 +130,7 @@ public class HikeInfoView {
 
     private void loadNavDrawerItems(){
 
-        String[] listViewItems = {"Account","Hikes","Map","Settings"}; // Temp data
+        String[] listViewItems = {"Account","Map","Hikes","Logout"}; // Temp data
         navDrawerAdapter = new ArrayAdapter<String>(this.context,android.R.layout.simple_list_item_1,listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
 
