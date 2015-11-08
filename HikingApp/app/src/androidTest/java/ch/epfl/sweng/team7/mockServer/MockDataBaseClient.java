@@ -66,16 +66,18 @@ public class MockDataBaseClient extends TestCase {
         listRawHikes = mMockServer.fetchMultipleHikes(mHikeIds);
         long hike1 = listRawHikes.get(1).getHikeId();
         long hike2 = listRawHikes.get(2).getHikeId();
-        //assertEquals(hike1, mHikeIds.get(1));
-        //assertEquals(hike1, mHikeIds.get(2));
-
+        assertEquals(new Long (hike1), mHikeIds.get(1));
+        assertEquals(new Long(hike1), mHikeIds.get(2));
+        assertTrue(!listRawHikes.isEmpty());
 
     }
 
     public void aHikeCanBePosted() throws Exception{
         long hikeId = mMockServer.postHike(mRawHikeData);
         assertEquals(mRawHikeData.getHikeId(), hikeId);
-        assertTrue(!listRawHikes.isEmpty());
+        assertTrue(mMockServer.hasHike(mRawHikeData.getHikeId()));
+        assertEquals(mMockServer.getHike(mRawHikeData.getHikeId()), mRawHikeData.getHikeId());
+
 
     }
 }
