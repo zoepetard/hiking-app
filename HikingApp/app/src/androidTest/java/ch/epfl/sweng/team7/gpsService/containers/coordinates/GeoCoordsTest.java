@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.gpsTracker.containers.coordinates;
+package ch.epfl.sweng.team7.gpsService.containers.coordinates;
 
 import static org.junit.Assert.*;
 import android.support.test.runner.AndroidJUnit4;

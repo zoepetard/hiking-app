@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.gpsTracker.containers;
+package ch.epfl.sweng.team7.gpsService.containers;
 
 import android.support.test.runner.AndroidJUnit4;
 

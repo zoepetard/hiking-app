@@ -1,6 +1,6 @@
-package ch.epfl.sweng.team7.gpsTracker.containers;
+package ch.epfl.sweng.team7.gpsService.containers;
 
-import ch.epfl.sweng.team7.gpsTracker.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 
 /**
  * Class that contains all the information needed to
