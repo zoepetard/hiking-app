@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by pablo on 6/11/15.
  */
-public class MockServer implements DatabaseClient{
+public class MockServer implements DatabaseClient {
 
     private static final String PROPER_JSON_ONEHIKE = "{\n"
             + "  \"hike_id\": 1,\n"
@@ -37,7 +37,7 @@ public class MockServer implements DatabaseClient{
             + "}\n";
     //Same as DefaultLocalCache
     private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
-    private final HashMap<Long,RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
+    private final HashMap<Long, RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedHikeID = 2;
 
 
@@ -50,17 +50,17 @@ public class MockServer implements DatabaseClient{
     }
 
     public void putHike(RawHikeData rawHikeData) {
-        if(rawHikeData != null) {
+        if (rawHikeData != null) {
             mHikeDataBase.put(rawHikeData.getHikeId(), rawHikeData);
         }
     }
 
 
-    private class FixedSizeHashMap<K,V> extends LinkedHashMap<K,V> {
+    private static class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
         private final int MAX_ENTRIES;
 
         FixedSizeHashMap(int maxEntries) {
-            super(16, 0.75f, true);
+            //super(16, 0.75f, true);
             MAX_ENTRIES = maxEntries;
         }
 
@@ -72,6 +72,7 @@ public class MockServer implements DatabaseClient{
 
     /**
      * Method to fetch a single RawHikeData with the given hikeID
+     *
      * @param hikeId The numeric ID of one hike in the database
      * @return
      * @throws DatabaseClientException
@@ -79,22 +80,21 @@ public class MockServer implements DatabaseClient{
     @Override
     public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
         //Hike 1 should always exists
-        if(hikeId == 1 && !hasHike(hikeId)){
+        if (hikeId == 1 && !hasHike(hikeId)) {
             return createMockHikeOne();
-        }
-
-        else if(hasHike(hikeId)) {
+        } else if (hasHike(hikeId)) {
             return getHike(hikeId);
-        }else{
+        } else {
             throw new DatabaseClientException("No hike on the server with that ID");
         }
     }
 
     /**
      * Create mock hike number 1.
+     *
      * @return mockRawHike
      */
-    private RawHikeData createMockHikeOne()  {
+    private RawHikeData createMockHikeOne() {
 
         //Create mock Hike number 1 (should always exist)
         RawHikeData mockRawHikeData = null;
@@ -109,6 +109,7 @@ public class MockServer implements DatabaseClient{
 
     /**
      * Return a list of of RawHikeData with the given hikeIds
+     *
      * @param hikeIds The numeric IDs of multiple hikes in the database
      * @return
      * @throws DatabaseClientException
@@ -116,11 +117,11 @@ public class MockServer implements DatabaseClient{
     @Override
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
         List<RawHikeData> mListRawHikeData = new ArrayList<RawHikeData>();
-        for(int i = 0; i<hikeIds.size(); i++){
-            if(hasHike(hikeIds.get(i))){
+        for (int i = 0; i < hikeIds.size(); i++) {
+            if (hasHike(hikeIds.get(i))) {
                 mListRawHikeData.add(getHike(hikeIds.get(i)));
-            }else{
-                throw new DatabaseClientException("The hike with ID: "+ hikeIds.get(i)+ " it's not yet " +
+            } else {
+                throw new DatabaseClientException("The hike with ID: " + hikeIds.get(i) + " it's not yet " +
                         "in the server");
             }
         }
@@ -129,28 +130,29 @@ public class MockServer implements DatabaseClient{
 
     /**
      * Return the hikeIds of hikes that are in the given window
+     *
      * @param bounds Boundaries (window) of the
      * @return
      * @throws DatabaseClientException
      */
     @Override
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
-        if(mHikeDataBase != null && mHikeDataBase.size() > 1){
+        if (mHikeDataBase != null && mHikeDataBase.size() > 1) {
             List<Long> hikeIdsInWindow = new ArrayList<>();
-            for(int i = 0; i< mHikeDataBase.size(); i++){
+            for (int i = 0; i < mHikeDataBase.size(); i++) {
                 RawHikeData mRawHikeData = mHikeDataBase.get(i);
-                for(int hikePoints = 0; hikePoints < mRawHikeData.getHikePoints().size(); hikePoints++) {
-                    if(bounds.contains(mRawHikeData.getHikePoints().get(hikePoints).getPosition())){
+                for (int hikePoints = 0; hikePoints < mRawHikeData.getHikePoints().size(); hikePoints++) {
+                    if (bounds.contains(mRawHikeData.getHikePoints().get(hikePoints).getPosition())) {
                         hikeIdsInWindow.add(mRawHikeData.getHikeId());
                     }
                 }
             }
-            if(hikeIdsInWindow.isEmpty()){
+            if (hikeIdsInWindow.isEmpty()) {
                 throw new DatabaseClientException("No hikes in the given window");
-            }else{
+            } else {
                 return hikeIdsInWindow;
             }
-        }else{
+        } else {
             throw new DatabaseClientException("There are no hikes on the database yet");
         }
 
@@ -158,6 +160,7 @@ public class MockServer implements DatabaseClient{
 
     /**
      * Method to post a hike in the database
+     *
      * @param hike Boundaries (window) of the
      * @return
      * @throws DatabaseClientException
@@ -170,7 +173,7 @@ public class MockServer implements DatabaseClient{
             mAssignedHikeID++;
             putHike(hike);
             return hike.getHikeId();
-        }else {
+        } else {
             throw new DatabaseClientException("Testing mode allows to post only 2 hikes");
         }
     }
@@ -178,7 +181,4 @@ public class MockServer implements DatabaseClient{
     private static RawHikeData createHikeData() throws JSONException {
         return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
     }
-
-
-
 }
