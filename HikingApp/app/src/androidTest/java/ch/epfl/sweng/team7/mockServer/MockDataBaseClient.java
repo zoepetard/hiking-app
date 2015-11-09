@@ -64,22 +64,24 @@ public class MockDataBaseClient extends TestCase {
 
     @Test
     public void multipleHikesCanBeFetched() throws Exception{
-        mMockServer.postHike(mRawHikeData1);
-        mMockServer.postHike(mRawHikeData2);
-        listRawHikes = mMockServer.fetchMultipleHikes(mHikeIds);
-        long hike1 = listRawHikes.get(1).getHikeId();
-        long hike2 = listRawHikes.get(2).getHikeId();
-        assertEquals(new Long (hike1), mHikeIds.get(1));
-        assertEquals(new Long(hike2), mHikeIds.get(2));
+        List <Long> postHikeIds = new ArrayList<>();
+        postHikeIds.add(mMockServer.postHike(mRawHikeData1));
+        postHikeIds.add(mMockServer.postHike(mRawHikeData2));
+        listRawHikes = mMockServer.fetchMultipleHikes(postHikeIds);
+        long hike1 = listRawHikes.get(0).getHikeId();
+        long hike2 = listRawHikes.get(1).getHikeId();
+        assertEquals(new Long (hike1), postHikeIds.get(0));
+        assertEquals(new Long (hike2), postHikeIds.get(1));
         assertTrue(!listRawHikes.isEmpty());
 
     }
+
 
     public void aHikeCanBePosted() throws Exception{
         long hikeId = mMockServer.postHike(mRawHikeData1);
         assertEquals(mRawHikeData1.getHikeId(), hikeId);
         assertTrue(mMockServer.hasHike(mRawHikeData1.getHikeId()));
-        assertEquals(mMockServer.getHike(mRawHikeData1.getHikeId()), mRawHikeData1.getHikeId());
+        assertEquals(mMockServer.getHike(new Long (hikeId)), mRawHikeData1.getHikeId());
 
 
     }
