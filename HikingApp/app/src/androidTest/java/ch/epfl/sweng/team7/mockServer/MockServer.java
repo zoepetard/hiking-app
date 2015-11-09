@@ -120,7 +120,7 @@ public class MockServer implements DatabaseClient{
             if(hasHike(hikeIds.get(i))){
                 mListRawHikeData.add(getHike(hikeIds.get(i)));
             }else{
-                throw new DatabaseClientException("The hike with ID: "+ hikeIds.get(i)+ "it's not yet" +
+                throw new DatabaseClientException("The hike with ID: "+ hikeIds.get(i)+ " it's not yet " +
                         "in the server");
             }
         }

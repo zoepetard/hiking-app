@@ -24,10 +24,10 @@ public class MockDataBaseClient extends TestCase {
     public MockServer mMockServer;
     public List<Long> mHikeIds;
     public List<RawHikeData> listRawHikes;
-    public RawHikeData mRawHikeData;
+    public RawHikeData mRawHikeData1, mRawHikeData2;
 
     private static final String PROPER_JSON_ONEHIKE = "{\n"
-            + "  \"hike_id\": 143,\n"
+            + "  \"hike_id\": 1,\n"
             + "  \"owner_id\": 48,\n"
             + "  \"date\": 123201,\n"
             + "  \"hike_data\": [\n"
@@ -48,7 +48,8 @@ public class MockDataBaseClient extends TestCase {
         long id2 = 2;
         mHikeIds.add(id1);
         mHikeIds.add(id2);
-        mRawHikeData = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
 
     }
 
@@ -63,20 +64,22 @@ public class MockDataBaseClient extends TestCase {
 
     @Test
     public void multipleHikesCanBeFetched() throws Exception{
+        mMockServer.postHike(mRawHikeData1);
+        mMockServer.postHike(mRawHikeData2);
         listRawHikes = mMockServer.fetchMultipleHikes(mHikeIds);
         long hike1 = listRawHikes.get(1).getHikeId();
         long hike2 = listRawHikes.get(2).getHikeId();
         assertEquals(new Long (hike1), mHikeIds.get(1));
-        assertEquals(new Long(hike1), mHikeIds.get(2));
+        assertEquals(new Long(hike2), mHikeIds.get(2));
         assertTrue(!listRawHikes.isEmpty());
 
     }
 
     public void aHikeCanBePosted() throws Exception{
-        long hikeId = mMockServer.postHike(mRawHikeData);
-        assertEquals(mRawHikeData.getHikeId(), hikeId);
-        assertTrue(mMockServer.hasHike(mRawHikeData.getHikeId()));
-        assertEquals(mMockServer.getHike(mRawHikeData.getHikeId()), mRawHikeData.getHikeId());
+        long hikeId = mMockServer.postHike(mRawHikeData1);
+        assertEquals(mRawHikeData1.getHikeId(), hikeId);
+        assertTrue(mMockServer.hasHike(mRawHikeData1.getHikeId()));
+        assertEquals(mMockServer.getHike(mRawHikeData1.getHikeId()), mRawHikeData1.getHikeId());
 
 
     }
