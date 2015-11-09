@@ -138,12 +138,18 @@ public class MockServer implements DatabaseClient{
         if(mHikeDataBase != null && mHikeDataBase.size() > 1){
             List<Long> hikeIdsInWindow = new ArrayList<>();
             for(int i = 0; i< mHikeDataBase.size(); i++){
-                DefaultHikeData mDefaultHikeData = new DefaultHikeData(mHikeDataBase.get(i));
-                if(mDefaultHikeData.getBoundingBox().equals(bounds)){
-                    hikeIdsInWindow.add(mDefaultHikeData.getHikeId());
+                RawHikeData mRawHikeData = mHikeDataBase.get(i);
+                for(int hikePoints = 0; hikePoints < mRawHikeData.getHikePoints().size(); hikePoints++) {
+                    if(bounds.contains(mRawHikeData.getHikePoints().get(hikePoints).getPosition())){
+                        hikeIdsInWindow.add(mRawHikeData.getHikeId());
+                    }
                 }
             }
-            return hikeIdsInWindow;
+            if(hikeIdsInWindow.isEmpty()){
+                throw new DatabaseClientException("No hikes in the given window");
+            }else{
+                return hikeIdsInWindow;
+            }
         }else{
             throw new DatabaseClientException("There are no hikes on the database yet");
         }
