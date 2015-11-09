@@ -4,6 +4,7 @@ package ch.epfl.sweng.team7.hikingapp;
  * Created by fredrik-eliasson on 08/11/15.
  */
 
+import android.support.annotation.UiThread;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.ViewActions;
@@ -73,7 +74,7 @@ public class HikeInfoActivityTest
                 fail("Second item should be Map");
             }
             if(!navDrawerListView.getAdapter().getItem(2).equals("Hikes")){
-                fail("Third item shoud be Hikes");
+                fail("Third item should be Hikes");
             }
             if(!navDrawerListView.getAdapter().getItem(3).equals("Logout")){
                 fail("Fourth item should be Logout");
@@ -81,7 +82,35 @@ public class HikeInfoActivityTest
         }
     }
 
-    
+
+    /** Test if it's possible to display an image in fullscreen
+     * and then return from fullscreen
+     */
+    // TODO public void testToggleFullScreen()
+
+
+
+    public void testBackFromFullScreenButton(){
+
+        hikeInfoActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hikeInfoActivity.toggleFullScreen();
+            }
+        });
+
+        View infoView = getActivity().findViewById(R.id.info_overview_layout);
+        View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
+
+        onView(withId(R.id.back_button_fullscreen_image)).perform(click());
+        if(infoView.getVisibility() != View.VISIBLE ){
+            fail("infoView should be VISIBLE");
+        }
+
+        if(fullScreenView.getVisibility() == View.VISIBLE ){
+            fail("fullScreenView should be GONE");
+        }
+    }
 
 
 }
