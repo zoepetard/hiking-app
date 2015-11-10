@@ -86,51 +86,35 @@ public class HikeInfoActivityTest
     /** Test if it's possible to display an image in fullscreen
      * and then return from fullscreen
      */
-    // TODO public void testToggleFullScreen()
-
     public void testToggleFullScreen(){
 
-
-
-
         hikeInfoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 hikeInfoActivity.toggleFullScreen();
+                View infoView = getActivity().findViewById(R.id.info_overview_layout);
+                View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
 
 
-                fail();
-            }
-        });
+                if(infoView.getVisibility() == View.VISIBLE ){
+                    fail("infoView should be GONE");
+                }
 
-        View infoView = getActivity().findViewById(R.id.info_overview_layout);
-        View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
+                if(fullScreenView.getVisibility() != View.VISIBLE ){
+                    fail("fullScreenView should be VISIBLE");
+                }
 
-        if(infoView.getVisibility() == View.VISIBLE ){
-            fail("infoView should be GONE");
-        }
-
-        if(fullScreenView.getVisibility() != View.VISIBLE ){
-            fail("fullScreenView should be VISIBLE");
-        }
-
-        hikeInfoActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
                 hikeInfoActivity.toggleFullScreen();
+
+                if(infoView.getVisibility() != View.VISIBLE ){
+                    fail("infoView should be VISIBLE");
+                }
+
+                if(fullScreenView.getVisibility() == View.VISIBLE ){
+                    fail("fullScreenView should be GONE");
+                }
             }
         });
-
-        infoView = getActivity().findViewById(R.id.info_overview_layout);
-        fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
-
-        if(infoView.getVisibility() != View.VISIBLE ){
-            fail("infoView should be VISIBLE");
-        }
-
-        if(fullScreenView.getVisibility() == View.VISIBLE ){
-            fail("fullScreenView should be GONE");
-        }
     }
 
 
