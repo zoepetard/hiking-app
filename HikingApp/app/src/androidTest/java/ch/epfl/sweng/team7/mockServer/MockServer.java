@@ -58,7 +58,7 @@ public class MockServer implements DatabaseClient {
         private final int MAX_ENTRIES;
 
         FixedSizeHashMap(int maxEntries) {
-            //super(16, 0.75f, true);
+            super(16 /*initial size*/, 0.75f /*initial load factor*/, true /*update on access*/);
             MAX_ENTRIES = maxEntries;
         }
 
@@ -72,7 +72,6 @@ public class MockServer implements DatabaseClient {
      * Method to fetch a single RawHikeData with the given hikeID
      *
      * @param hikeId The numeric ID of one hike in the database
-     * @return
      * @throws DatabaseClientException
      */
     @Override
@@ -104,7 +103,6 @@ public class MockServer implements DatabaseClient {
      * Return a list of of RawHikeData with the given hikeIds
      *
      * @param hikeIds The numeric IDs of multiple hikes in the database
-     * @return
      * @throws DatabaseClientException
      */
     @Override
