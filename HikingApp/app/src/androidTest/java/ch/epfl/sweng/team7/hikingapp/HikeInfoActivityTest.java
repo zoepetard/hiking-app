@@ -4,19 +4,13 @@ package ch.epfl.sweng.team7.hikingapp;
  * Created by fredrik-eliasson on 08/11/15.
  */
 
-import android.support.annotation.UiThread;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.action.ViewActions;
-import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
 import android.support.test.espresso.contrib.*;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -93,7 +87,6 @@ public class HikeInfoActivityTest
                 hikeInfoActivity.toggleFullScreen();
                 View infoView = getActivity().findViewById(R.id.info_overview_layout);
                 View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
-
 
                 if(infoView.getVisibility() == View.VISIBLE ){
                     fail("infoView should be GONE");
