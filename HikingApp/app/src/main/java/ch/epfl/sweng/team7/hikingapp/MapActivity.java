@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,18 +9,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import ch.epfl.sweng.team7.gpsService.GPSManager;
+
 public class MapActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GPSManager gps = GPSManager.getInstance();
+    private GoogleMap.OnMyLocationChangeListener locationChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,16 @@ public class MapActivity extends FragmentActivity {
         setUpMapIfNeeded();
     }
 
+    private void setUpLocationListener() {
+        locationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                gps.updateCurrentLocation(location);
+                Log.d("LocationUpdate", "GPS State: " + gps.toString());
+            }
+        };
+    }
+
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -108,11 +123,16 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        // Enable MyLocation Layer of Google Map
+        mMap.setMyLocationEnabled(true);
+
+        mMap.setOnMyLocationChangeListener(locationChangeListener);
         displayTestPoints();
     }
 
     private void displayTestPoints() {
-        LatLng origin = new LatLng(0, 0);
+        LatLng origin = new LatLng(0,0);
         LatLng accra = new LatLng(5.615986, -0.171533);
         LatLng saoTome = new LatLng(0.362365, 6.558835);
 
