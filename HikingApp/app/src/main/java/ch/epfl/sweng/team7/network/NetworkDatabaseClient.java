@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class NetworkDatabaseClient implements DatabaseClient {
 
+    private final static String LOG_FLAG = "Network_DataBaseClient";
     private final static int CONNECT_TIMEOUT = 1000;
     private final static String JSON_CONTENT = "application/json";
     private final static String ENCODING = "charset=utf-8";

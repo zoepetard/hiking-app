@@ -17,6 +17,9 @@ import java.util.Date;
  * Stores data for one point in a hike.
  */
 public class RawHikePoint {
+
+    private final static String LOG_FLAG = "Network_RawHikePoint";
+
     private LatLng mPosition;
     private Date mTime;         // UTC Timestamp
 

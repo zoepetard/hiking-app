@@ -47,6 +47,8 @@ public class LoginActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    private final static String LOG_FLAG = "Activity_Login";
+
     public final static String EXTRA_NAME =
             "ch.epfl.sweng.team7.hikingapp.NAME";
 
