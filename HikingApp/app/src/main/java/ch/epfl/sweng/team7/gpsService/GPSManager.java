@@ -123,9 +123,7 @@ public final class GPSManager {
     private void startTracking() {
         this.isTracking = true;
         gpsPath = new GPSPath();
-        if (gpsService != null) {
-            gpsService.enableListeners();
-        }
+        toggleListeners();
     }
 
     /**
@@ -138,8 +136,16 @@ public final class GPSManager {
         //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
+        toggleListeners();
+    }
+
+    private void toggleListeners() {
         if (gpsService != null) {
-            gpsService.disableListeners();
+            if (isTracking) {
+                gpsService.enableListeners();
+            } else {
+                gpsService.disableListeners();
+            }
         }
     }
 }
