@@ -46,8 +46,9 @@ public class RawHikePoint {
     }
 
     /**
-     * @return JSONArray [double lat, double lng, long date]. Storing a JSON array instead of
-     *                   a full JSON object reduces the communication/storage data size of a hike.
+     * @return JSONArray [double lat, double lng, long date, double elevation]. Storing a JSON array
+     *                  instead of a full JSON object reduces the communication/storage data size of
+     *                  a hike.
      * @throws JSONException
      */
     public JSONArray toJSON() throws JSONException {
@@ -61,7 +62,7 @@ public class RawHikePoint {
 
     /**
      * Parse a RawHikePoint from an appropriate JSON object
-     * @param jsonArray [double lat, double lng, long date]
+     * @param jsonArray [double lat, double lng, long date, double elevation]
      * @return a valid RawHikePoint object
      * @throws JSONException
      */
