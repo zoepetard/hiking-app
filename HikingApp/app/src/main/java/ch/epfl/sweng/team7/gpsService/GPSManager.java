@@ -139,6 +139,10 @@ public final class GPSManager {
         toggleListeners();
     }
 
+    /**
+     * Method used to turn on/off the location
+     * listeners inside GPSService.
+     */
     private void toggleListeners() {
         if (gpsService != null) {
             if (isTracking) {
