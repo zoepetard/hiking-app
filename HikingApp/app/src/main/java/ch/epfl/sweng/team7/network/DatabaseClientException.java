@@ -14,6 +14,7 @@ package ch.epfl.sweng.team7.network;
  */
 public class DatabaseClientException extends Exception {
 
+    private final static String LOG_FLAG = "Network_DatabaseClientException";
     private static final long serialVersionUID = 1L;
     
     public DatabaseClientException() {
