@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 public class GPSService extends Service {
 
@@ -19,6 +20,11 @@ public class GPSService extends Service {
         GPSService getService() {
             return GPSService.this;
         }
+    }
+
+    @Override
+    public void onCreate() {
+        Log.d(LOG_FLAG, "GPSService has started");
     }
 
     @Nullable
