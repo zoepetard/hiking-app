@@ -107,14 +107,14 @@ public final class GPSManager {
                 // This is called when the connection with the service has been
                 // established
                 gpsService = ((GPSService.LocalBinder)service).getService();
-                Log.d(LOG_FLAG, "Attempting to connect to service");
+                Log.d(LOG_FLAG, "Successfully connected to service");
             }
 
             public void onServiceDisconnected(ComponentName className) {
                 // This is called when the connection with the service has been
                 // unexpectedly disconnected
                 gpsService = null;
-                Log.d(LOG_FLAG, "Connection with service was dropped...");
+                Log.d(LOG_FLAG, "Connection to service was dropped...");
             }
         };
     }
