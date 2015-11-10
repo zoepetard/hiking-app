@@ -27,6 +27,11 @@ public class GPSService extends Service {
         Log.d(LOG_FLAG, "GPSService has started");
     }
 
+    @Override
+    public void onDestroy() {
+        Log.d(LOG_FLAG, "GPSService has stopped");
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
