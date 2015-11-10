@@ -200,6 +200,8 @@ public class DefaultHikeData implements HikeData {
             if(thisElevation < elevationBounds.mMinElevation) {
                 elevationBounds.mMinElevation = thisElevation;
             }
+
+            lastElevation = thisElevation;
         }
         return elevationBounds;
     }

@@ -36,6 +36,7 @@ public class ProperJSONParsingTest {
     private static final double EPS_DOUBLE = 1e-10;
     private List<Double> properHikePointsX;
     private List<Double> properHikePointsY;
+    private List<Double> properHikePointsZ;
     private List<Long> properHikePointsT;
 
     @Before
@@ -52,6 +53,12 @@ public class ProperJSONParsingTest {
         properHikePointsY.add(0.0);
         properHikePointsY.add(89.9);
         properHikePointsY.add(0.0);
+        properHikePointsZ = new ArrayList<Double>();
+        properHikePointsZ.add(1.0);
+        properHikePointsZ.add(2.0);
+        properHikePointsZ.add(1.1);
+        properHikePointsZ.add(1.2);
+        properHikePointsZ.add(2.0);
         properHikePointsT = new ArrayList<Long>();
         properHikePointsT.add(123201L);
         properHikePointsT.add(123202L);
@@ -114,6 +121,17 @@ public class ProperJSONParsingTest {
         for(int i = 0; i < tp.size(); ++i) {
             assertEquals("HikePoints date does not match",
                     properHikePointsT.get(i).longValue(), tp.get(i).getTime().getTime());
+        }
+    }
+
+    /** test that hikepoints are correctly parsed */
+    @Test
+    public void testProperHikePointElevation() throws JSONException {
+        RawHikeData t = createHikeData();
+        List<RawHikePoint> tp = t.getHikePoints();
+        for(int i = 0; i < tp.size(); ++i) {
+            assertEquals("HikePoints elevation does not match",
+                    properHikePointsZ.get(i), tp.get(i).getElevation(), EPS_DOUBLE);
         }
     }
 
