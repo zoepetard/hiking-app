@@ -5,5 +5,12 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Date;
+
 public interface HikePoint {
+    LatLng getPosition();
+    double getElevation();
+    Date getTime();
 }
