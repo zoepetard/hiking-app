@@ -68,7 +68,7 @@ public final class GPSManager {
     private void stopTracking() {
         this.isTracking = false;
         //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
-        Log.d("LocationUpdate", "Saving GPSPath to memory: " + gpsPath.toString());
+        Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
     }
 }
