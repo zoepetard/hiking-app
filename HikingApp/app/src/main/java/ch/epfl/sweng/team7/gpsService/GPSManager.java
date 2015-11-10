@@ -66,7 +66,7 @@ public final class GPSManager {
      * Method called to update user's last know coordinates
      * @param newLocation Location object containing GPS fetched data
      */
-    public void updateCurrentLocation(Location newLocation) {
+    protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
             if (this.isTracking) gpsPath.addFootPrint(this.lastFootPrint);
