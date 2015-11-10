@@ -101,7 +101,7 @@ public class DefaultHikeData implements HikeData {
      * This feature is not yet implemented in the backend
      */
     public double getElevationGain() {
-        return 0; //TODO implement
+        return mElevationBounds.mElevationGain;
     }
 
     /**
@@ -110,21 +110,21 @@ public class DefaultHikeData implements HikeData {
      * This feature is not yet implemented in the backend
      */
     public double getElevationLoss() {
-        return 0; //TODO implement
+        return mElevationBounds.mElevationLoss;
     }
 
     /**
      * * This feature is not yet implemented in the backend
      */
     public double getMaxElevation() {
-        return 0; //TODO implement
+        return mElevationBounds.mMaxElevation;
     }
 
     /**
      * * This feature is not yet implemented in the backend
      */
     public double getMinElevation() {
-        return 0; //TODO implement
+        return mElevationBounds.mMinElevation;
     }
 
     /**
