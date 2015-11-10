@@ -28,6 +28,7 @@ public class DefaultHikeData implements HikeData {
     private LatLng mHikeLocation;
     private LatLng mStartLocation;
     private LatLng mFinishLocation;
+    private ElevationBounds mElevationBounds;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -49,6 +50,7 @@ public class DefaultHikeData implements HikeData {
         mHikeLocation = getBoundingBox().getCenter();
         mStartLocation = rawHikePoints.get(0).getPosition();
         mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
+        mElevationBounds = calculateElevationBounds(rawHikePoints);
     }
     /**
      * @return the hike ID.
@@ -169,4 +171,43 @@ public class DefaultHikeData implements HikeData {
         }
         return boundingBoxBuilder.build();
     }
+
+    private ElevationBounds calculateElevationBounds(List<RawHikePoint> rawHikePoints) {
+
+        ElevationBounds elevationBounds = new ElevationBounds();
+
+        // Initialize elevation
+        double lastElevation = rawHikePoints.get(0).getElevation();
+        elevationBounds.mMaxElevation = lastElevation;
+        elevationBounds.mMinElevation = lastElevation;
+
+        // Traverse hike points in order
+        for(int i = 1; i < rawHikePoints.size(); ++i) {
+            double thisElevation = rawHikePoints.get(i).getElevation();
+
+            if(thisElevation > lastElevation) {
+                elevationBounds.mElevationGain += (thisElevation - lastElevation);
+            } else {
+                elevationBounds.mElevationLoss -= (thisElevation - lastElevation);
+            }
+
+            if(thisElevation > elevationBounds.mMaxElevation) {
+                elevationBounds.mMaxElevation = thisElevation;
+            }
+
+            if(thisElevation < elevationBounds.mMinElevation) {
+                elevationBounds.mMinElevation = thisElevation;
+            }
+        }
+        return elevationBounds;
+    }
+
+    // A simple storage container for elevation-related data
+    private class ElevationBounds {
+        public double mMinElevation;
+        public double mMaxElevation;
+        public double mElevationGain;
+        public double mElevationLoss;
+    }
+
 }
