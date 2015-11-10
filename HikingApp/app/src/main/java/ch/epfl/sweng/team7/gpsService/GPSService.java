@@ -59,11 +59,20 @@ public class GPSService extends Service {
     }
 
     protected void enableListeners() {
-
+        try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        } catch (SecurityException e) {
+            Log.d(LOG_FLAG, "Could not request location updates");
+        }
     }
 
     protected void disableListeners() {
-        
+        try {
+            locationManager.removeUpdates(locationListener);
+        } catch (SecurityException e) {
+            Log.d(LOG_FLAG, "Could not cancel location updates");
+        }
     }
 
     /**
@@ -85,11 +94,5 @@ public class GPSService extends Service {
 
             public void onProviderDisabled(String provider) {}
         };
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        } catch (SecurityException e) {
-            Log.d(LOG_FLAG, "Could not request location updates");
-        }
     }
 }
