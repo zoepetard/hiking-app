@@ -18,10 +18,12 @@ public final class GPSManager {
 
     private static GPSManager instance = new GPSManager();
 
+    //GPS stored information
     private GPSPath gpsPath = null;
     private boolean isTracking = false;
     private GPSFootPrint lastFootPrint = null;
 
+    //GPS service communication
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
