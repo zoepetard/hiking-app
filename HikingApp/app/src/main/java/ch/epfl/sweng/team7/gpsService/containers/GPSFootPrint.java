@@ -8,6 +8,8 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  */
 public class GPSFootPrint {
 
+    private final static String LOG_FLAG = "GPS_FootPrint";
+
     private GeoCoords geoCoords;    //latitude, longitude and altitude
     private long timeStamp;         //time in milliseconds since January 1, 1970
 

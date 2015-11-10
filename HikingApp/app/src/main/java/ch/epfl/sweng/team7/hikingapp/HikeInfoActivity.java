@@ -10,6 +10,8 @@ import android.widget.RatingBar;
 
 public final class HikeInfoActivity extends Activity {
 
+    private final static String LOG_FLAG = "Activity_HikeInfo";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

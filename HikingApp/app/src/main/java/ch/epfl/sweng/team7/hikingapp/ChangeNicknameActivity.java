@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 
 public class ChangeNicknameActivity extends Activity {
+
+    private final static String LOG_FLAG = "Activity_ChangeNickname";
     public final static String EXTRA_MESSAGE =
             "ch.epfl.sweng.team7.hikingapp.MESSAGE";
 

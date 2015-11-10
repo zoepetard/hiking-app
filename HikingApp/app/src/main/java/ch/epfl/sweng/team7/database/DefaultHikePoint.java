@@ -13,6 +13,8 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 
 public class DefaultHikePoint implements HikePoint {
 
+    private final static String LOG_FLAG = "DB_DefaultHikePoint";
+
     private final LatLng mPosition;
     private final Date mTime;
     private final double mElevation;

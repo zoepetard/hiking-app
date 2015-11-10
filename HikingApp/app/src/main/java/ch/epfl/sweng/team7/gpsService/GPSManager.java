@@ -13,6 +13,8 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  */
 public final class GPSManager {
 
+    private final static String LOG_FLAG = "GPS_Manager";
+
     private GPSPath gpsPath = null;
     private boolean isTracking = false;
     private GPSFootPrint lastFootPrint = null;
@@ -66,7 +68,7 @@ public final class GPSManager {
     private void stopTracking() {
         this.isTracking = false;
         //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
-        Log.d("LocationUpdate", "Saving GPSPath to memory: " + gpsPath.toString());
+        Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
     }
 }

@@ -11,6 +11,8 @@ import java.util.Map;
 
 
 class DefaultLocalCache implements LocalCache {
+
+    private final static String LOG_FLAG = "DB_DefaultLocalCache";
     private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
     private final HashMap<Long,HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
 
