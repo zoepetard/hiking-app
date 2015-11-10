@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
+import ch.epfl.sweng.team7.network.RawHikePoint;
+
 public class DefaultHikePoint implements HikePoint {
 
     private final LatLng mPosition;
@@ -19,6 +21,12 @@ public class DefaultHikePoint implements HikePoint {
         mPosition = position;
         mTime = time;
         mElevation = elevation;
+    }
+
+    public DefaultHikePoint(RawHikePoint rawHikePoint) {
+        mPosition = rawHikePoint.getPosition();
+        mTime = rawHikePoint.getTime();
+        mElevation = rawHikePoint.getElevation();
     }
 
     public LatLng getPosition() {

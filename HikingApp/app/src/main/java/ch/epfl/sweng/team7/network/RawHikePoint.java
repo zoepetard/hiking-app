@@ -29,6 +29,9 @@ public class RawHikePoint {
         return mPosition;
     }
 
+    // TODO implement
+    public double getElevation() { return 0; }
+
     /**
      * @return Time of this point as UTC timestamp
      */

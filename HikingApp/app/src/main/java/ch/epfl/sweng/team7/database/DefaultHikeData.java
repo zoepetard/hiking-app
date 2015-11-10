@@ -41,8 +41,7 @@ public class DefaultHikeData implements HikeData {
         List<RawHikePoint> rawHikePoints = rawHikeData.getHikePoints();
         mHikePoints = new ArrayList<>();
         for (RawHikePoint rawHikePoint : rawHikePoints){
-            DefaultHikePoint newPoint = new DefaultHikePoint(rawHikePoint.getPosition(), rawHikePoint.getTime(), 0.0);
-            mHikePoints.add(newPoint);
+            mHikePoints.add(new DefaultHikePoint(rawHikePoint));
         }
 
         mDistance = calculateDistance(rawHikePoints);
