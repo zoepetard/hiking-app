@@ -63,6 +63,7 @@ public class GPSService extends Service {
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
+                Log.d(LOG_FLAG, "Updating current GPS location");
                 gps.updateCurrentLocation(location);
             }
 
@@ -73,6 +74,7 @@ public class GPSService extends Service {
             public void onProviderDisabled(String provider) {}
         };
         try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         } catch (SecurityException e) {
             Log.d(LOG_FLAG, "Could not request location updates");
