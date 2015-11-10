@@ -1,10 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.content.Intent;
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -14,7 +11,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import ch.epfl.sweng.team7.gpsService.GPSManager;
-import ch.epfl.sweng.team7.gpsService.GPSService;
 
 public class MapActivity extends FragmentActivity {
 
