@@ -146,6 +146,8 @@ public final class GPSManager {
             } else {
                 gpsService.disableListeners();
             }
+        } else {
+            Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
     }
 }
