@@ -31,6 +31,10 @@ public final class GPSManager {
         return instance;
     }
 
+    /**
+     * Method called to toggle hike tracking
+     * on/off, according to previous state.
+     */
     public void toggleTracking() {
         if (!isTracking) {
             startTracking();
@@ -39,6 +43,11 @@ public final class GPSManager {
         }
     }
 
+    /**
+     * Method called to get user's last known coordinates.
+     * @return GeoCoords object containing user's last known coordinates
+     * @throws NullPointerException whenever there is no last known position
+     */
     public GeoCoords getCurrentCoords() throws NullPointerException {
         if (this.lastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
@@ -46,6 +55,10 @@ public final class GPSManager {
         return this.lastFootPrint.getGeoCoords();
     }
 
+    /**
+     * Method called to update user's last know coordinates
+     * @param newLocation Location object containing GPS fetched data
+     */
     public void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
@@ -69,6 +82,10 @@ public final class GPSManager {
         setupServiceConnection();
     }
 
+    /**
+     * Private method to setup communication with the
+     * GPSService that will be running in the background.
+     */
     private void setupServiceConnection() {
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder service) {
@@ -85,11 +102,20 @@ public final class GPSManager {
         };
     }
 
+    /**
+     * Method called to start tracking - start
+     * storing user's coordinates.
+     */
     private void startTracking() {
         this.isTracking = true;
         gpsPath = new GPSPath();
     }
 
+    /**
+     * Method called to stop tracking - stop
+     * storing user's coordinates and store the
+     * previous ones.
+     */
     private void stopTracking() {
         this.isTracking = false;
         //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
