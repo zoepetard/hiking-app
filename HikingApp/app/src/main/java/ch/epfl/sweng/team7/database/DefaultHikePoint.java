@@ -11,6 +11,8 @@ import java.util.Date;
 
 public class DefaultHikePoint implements HikePoint {
 
+    private final static String LOG_FLAG = "DB_DefaultHikePoint";
+
     private LatLng mPosition;
     private Date mTime;
 

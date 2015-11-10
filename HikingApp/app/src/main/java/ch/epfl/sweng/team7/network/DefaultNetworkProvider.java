@@ -19,6 +19,8 @@ import java.net.URL;
  */
 public class DefaultNetworkProvider implements NetworkProvider {
 
+    private final static String LOG_FLAG = "Network_DefaultNetworkProvider";
+
     /**
      * The default constructor.
      */

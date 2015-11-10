@@ -19,6 +19,8 @@ import static android.location.Location.distanceBetween;
 
 public class DefaultHikeData implements HikeData {
 
+    private final static String LOG_FLAG = "DB_DefaultHikeData";
+
     private long mHikeId;    // Database hike ID of this hike
     private long mOwnerId;   // Database user ID of owner
     private Date mDate;      // A UTC time stamp
