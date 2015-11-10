@@ -58,6 +58,10 @@ public class GPSService extends Service {
         return mBinder;
     }
 
+    /**
+     * Method called from within GPSManager to control when
+     * location updates are necessary.
+     */
     protected void enableListeners() {
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
@@ -67,6 +71,10 @@ public class GPSService extends Service {
         }
     }
 
+    /**
+     * Method called from within GPSManager to control when
+     * location updates are no longer necessary.
+     */
     protected void disableListeners() {
         try {
             locationManager.removeUpdates(locationListener);
