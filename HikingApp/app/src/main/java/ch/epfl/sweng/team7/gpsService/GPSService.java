@@ -58,6 +58,14 @@ public class GPSService extends Service {
         return mBinder;
     }
 
+    protected void enableListeners() {
+
+    }
+
+    protected void disableListeners() {
+        
+    }
+
     /**
      * Method called once to setup GPS related variables and
      * automatic updates from both network and gps providers.
