@@ -19,18 +19,21 @@ import java.util.Date;
 public class RawHikePoint {
     private LatLng mPosition;
     private Date mTime;         // UTC Timestamp
+    private double mElevation;
 
-    public RawHikePoint(LatLng position, Date time) {
+    public RawHikePoint(LatLng position, Date time, double elevation) {
         mPosition = position;
         mTime = time;
+        mElevation = elevation;
     }
 
     public LatLng getPosition() {
         return mPosition;
     }
 
-    // TODO implement
-    public double getElevation() { return 0; }
+    public double getElevation() {
+        return mElevation;
+    }
 
     /**
      * @return Time of this point as UTC timestamp
@@ -59,6 +62,7 @@ public class RawHikePoint {
     public static RawHikePoint parseFromJSON(JSONArray jsonArray) throws JSONException {
         LatLng latLng = new LatLng(jsonArray.getDouble(0), jsonArray.getDouble(1));
         Date date = new Date(jsonArray.getLong(2));
-        return new RawHikePoint(latLng, date);
+        double elevation = jsonArray.getDouble(3);
+        return new RawHikePoint(latLng, date, elevation);
     }
 }

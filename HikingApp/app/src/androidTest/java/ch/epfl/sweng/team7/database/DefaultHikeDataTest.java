@@ -31,9 +31,9 @@ public class DefaultHikeDataTest {
     @Before
     public void setUp() throws Exception {
         rawHikePoints = new ArrayList<>();
-        rawHikePoints.add(new RawHikePoint(startLocation, new Date(100, 01, 01)));
-        rawHikePoints.add(new RawHikePoint(new LatLng(10,10), new Date(100, 01, 01)));
-        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(100, 01, 01)));
+        rawHikePoints.add(new RawHikePoint(startLocation, new Date(100, 01, 01), 1.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(10,10), new Date(100, 01, 01), 2.0));
+        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(100, 01, 01), 3.0));
 
     }
     @Test

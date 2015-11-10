@@ -22,11 +22,11 @@ public class ProperJSONParsingTest {
             + "  \"owner_id\": 153,\n"
             + "  \"date\": 123201,\n"
             + "  \"hike_data\": [\n"
-            + "    [0.0, 0.0, 123201],\n"
-            + "    [0.1, 0.1, 123202],\n"
-            + "    [0.2, 0.0, 123203],\n"
-            + "    [0.3,89.9, 123204],\n"
-            + "    [0.4, 0.0, 123205]\n"
+            + "    [0.0, 0.0, 123201, 1.0],\n"
+            + "    [0.1, 0.1, 123202, 2.0],\n"
+            + "    [0.2, 0.0, 123203, 1.1],\n"
+            + "    [0.3,89.9, 123204, 1.2],\n"
+            + "    [0.4, 0.0, 123205, 2.0]\n"
             + "  ]\n"
             + "}\n";
 
@@ -63,7 +63,7 @@ public class ProperJSONParsingTest {
     /** test that hike ID is correctly parsed */
     @Test
     public void testProperHikeId() throws JSONException {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         assertEquals("Hike ID does not match",
                 EXPECTED_HIKE_ID, t.getHikeId());
     }
@@ -71,7 +71,7 @@ public class ProperJSONParsingTest {
     /** test that owner ID is correctly parsed */
     @Test
     public void testProperOwnerId() throws JSONException {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         assertEquals("Owner ID does not match",
                 EXPECTED_OWNER_ID, t.getOwnerId());
     }
@@ -79,7 +79,7 @@ public class ProperJSONParsingTest {
     /** test that date is correctly parsed */
     @Test
     public void testProperDate() throws JSONException {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         assertEquals("Date does not match",
                 EXPECTED_DATE, t.getDate().getTime());
     }
@@ -87,7 +87,7 @@ public class ProperJSONParsingTest {
     /** test that hikepoints are correctly parsed */
     @Test
     public void testProperHikePointSize() throws JSONException {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         assertEquals("HikePoints size does not match",
                 properHikePointsT.size(), tp.size());
@@ -96,7 +96,7 @@ public class ProperJSONParsingTest {
     /** test that hikepoints are correctly parsed */
     @Test
     public void testProperHikePointLatLng() throws JSONException {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
             assertEquals("HikePoints latitude does not match",
@@ -109,7 +109,7 @@ public class ProperJSONParsingTest {
     /** test that hikepoints are correctly parsed */
     @Test
     public void testProperHikePointDate() throws JSONException {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
             assertEquals("HikePoints date does not match",
@@ -120,7 +120,7 @@ public class ProperJSONParsingTest {
     /** test that parsing back from RawHikeData to JSON works */
     @Test
     public void testParseBackToJSON() throws Exception {
-        RawHikeData t = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        RawHikeData t = createHikeData();
         JSONObject j = t.toJSON();
 
         assertEquals("Hike ID does not match",
@@ -144,5 +144,13 @@ public class ProperJSONParsingTest {
                     tp.get(i).getTime().getTime(),
                     j.getJSONArray("hike_data").getJSONArray(i).getLong(2), EPS_DOUBLE);
         }
+    }
+
+    /**
+     * Create a valid HikeData object
+     * @return a HikeData object
+     */
+    private static RawHikeData createHikeData() throws JSONException {
+        return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
     }
 }
