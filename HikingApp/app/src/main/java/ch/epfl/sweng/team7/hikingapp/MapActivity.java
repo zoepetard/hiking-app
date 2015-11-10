@@ -18,7 +18,6 @@ public class MapActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
-    private GoogleMap.OnMyLocationChangeListener locationChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
