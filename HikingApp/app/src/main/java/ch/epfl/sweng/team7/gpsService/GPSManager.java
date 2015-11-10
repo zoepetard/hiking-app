@@ -66,6 +66,8 @@ public final class GPSManager {
     public void startService(Context context) {
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
+        context.bindService(new Intent(context, GPSService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        Log.d(LOG_FLAG, "Intent sent to bind to GPSService");
     }
 
     /**
