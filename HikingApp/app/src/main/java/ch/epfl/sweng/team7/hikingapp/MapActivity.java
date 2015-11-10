@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.gpsService.GPSService;
 
 public class MapActivity extends FragmentActivity {
 
@@ -25,6 +27,7 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        startService(new Intent(this, GPSService.class));
         setUpMapIfNeeded();
     }
 
@@ -33,7 +36,7 @@ public class MapActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
     }
-    
+
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
