@@ -27,7 +27,7 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        startService(new Intent(this, GPSService.class));
+        gps.startService(this);
         setUpMapIfNeeded();
     }
 
