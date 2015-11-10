@@ -28,6 +28,12 @@ public class GPSService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(LOG_FLAG, "Received start id " + startId + ": " + intent);
+        return START_NOT_STICKY;
+    }
+
+    @Override
     public void onDestroy() {
         Log.d(LOG_FLAG, "GPSService has stopped");
     }
