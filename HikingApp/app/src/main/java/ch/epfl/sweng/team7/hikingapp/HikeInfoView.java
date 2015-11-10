@@ -60,7 +60,6 @@ public class HikeInfoView {
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
-        // Back button
         backButton = (Button) view.findViewById(R.id.back_button_fullscreen_image);
 
         fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
@@ -111,7 +110,6 @@ public class HikeInfoView {
          */
 
         // Updating the UI with data
-
         hikeName.setText(name);
 
         String distanceString = distance + " km";

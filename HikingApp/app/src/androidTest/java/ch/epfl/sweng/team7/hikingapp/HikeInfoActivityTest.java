@@ -88,6 +88,50 @@ public class HikeInfoActivityTest
      */
     // TODO public void testToggleFullScreen()
 
+    public void testToggleFullScreen(){
+
+
+
+
+        hikeInfoActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hikeInfoActivity.toggleFullScreen();
+
+
+                fail();
+            }
+        });
+
+        View infoView = getActivity().findViewById(R.id.info_overview_layout);
+        View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
+
+        if(infoView.getVisibility() == View.VISIBLE ){
+            fail("infoView should be GONE");
+        }
+
+        if(fullScreenView.getVisibility() != View.VISIBLE ){
+            fail("fullScreenView should be VISIBLE");
+        }
+
+        hikeInfoActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hikeInfoActivity.toggleFullScreen();
+            }
+        });
+
+        infoView = getActivity().findViewById(R.id.info_overview_layout);
+        fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
+
+        if(infoView.getVisibility() != View.VISIBLE ){
+            fail("infoView should be VISIBLE");
+        }
+
+        if(fullScreenView.getVisibility() == View.VISIBLE ){
+            fail("fullScreenView should be GONE");
+        }
+    }
 
 
     public void testBackFromFullScreenButton(){

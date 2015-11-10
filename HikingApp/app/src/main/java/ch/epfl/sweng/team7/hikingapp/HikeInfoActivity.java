@@ -16,6 +16,10 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 
+/**
+ * Created by fredrik-eliasson on 19/10/15.
+ * View Controller that creates and will serve as the link between our HikeInfoView and our Data Model.
+ */
 public final class HikeInfoActivity extends Activity {
 
 
@@ -28,10 +32,9 @@ public final class HikeInfoActivity extends Activity {
 
         // load main content into the navigations drawer's framelayout
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
-
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
-
         mainContentFrame.addView(hikeInfoLayout);
+
 
         HikeInfoView hikeInfoView = new HikeInfoView(view, this);
 
@@ -95,7 +98,6 @@ public final class HikeInfoActivity extends Activity {
         }
     }
 
-
     private class ImageViewClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -133,7 +135,6 @@ public final class HikeInfoActivity extends Activity {
         View infoView = findViewById(R.id.info_overview_layout);
         View fullScreenView = findViewById(R.id.image_fullscreen_layout);
         View containerView = findViewById(R.id.info_scrollview);
-
 
         // Check which view is currently visible and switch
         if (infoView.getVisibility() == View.VISIBLE) {
