@@ -22,6 +22,7 @@ public class GPSService extends Service {
     private static final String LOG_FLAG = "GPS_Service";
 
     private final IBinder mBinder = new LocalBinder();
+    private GPSManager gps;
     private LocationManager locationManager;
     private LocationListener locationListener;
 
@@ -58,6 +59,7 @@ public class GPSService extends Service {
     }
 
     private void gpsSetup() {
+        gps = GPSManager.getInstance();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
