@@ -1,6 +1,8 @@
 package ch.epfl.sweng.team7.gpsService;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.IBinder;
@@ -54,6 +56,10 @@ public final class GPSManager {
             throw new NullPointerException("Trying to access a null gps footprint");
         }
         return this.lastFootPrint.getGeoCoords();
+    }
+
+    public void startService(Context context) {
+        context.startService(new Intent(context, GPSService.class));
     }
 
     /**
