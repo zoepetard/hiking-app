@@ -1,6 +1,9 @@
 package ch.epfl.sweng.team7.gpsService;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.location.Location;
+import android.os.IBinder;
 import android.util.Log;
 
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
@@ -18,6 +21,9 @@ public final class GPSManager {
     private GPSPath gpsPath = null;
     private boolean isTracking = false;
     private GPSFootPrint lastFootPrint = null;
+
+    private GPSService gpsService;
+    private ServiceConnection serviceConnection;
 
     public static GPSManager getInstance() {
         return instance;
@@ -57,7 +63,25 @@ public final class GPSManager {
                 "|---------------------------", gpsPathInformation, lastFootPrintCoords, lastFootPrintTimeStamp);
     }
 
-    private GPSManager() {}
+    private GPSManager() {
+        setupServiceConnection();
+    }
+
+    private void setupServiceConnection() {
+        serviceConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                // This is called when the connection with the service has been
+                // established
+                gpsService = ((GPSService.LocalBinder)service).getService();
+            }
+
+            public void onServiceDisconnected(ComponentName className) {
+                // This is called when the connection with the service has been
+                // unexpectedly disconnected
+                gpsService = null;
+            }
+        };
+    }
 
     private void startTracking() {
         this.isTracking = true;
