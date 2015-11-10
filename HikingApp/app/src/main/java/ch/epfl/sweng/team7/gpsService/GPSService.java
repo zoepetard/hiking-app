@@ -7,6 +7,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+/**
+ * Class used as a 'background task'. It is in charge of
+ * updating user's current position, according to GPS information,
+ * throughout all the app's activities.
+ */
 public class GPSService extends Service {
 
     private static final String LOG_FLAG = "GPS_Service";
