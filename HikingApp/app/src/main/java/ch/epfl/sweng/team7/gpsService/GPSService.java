@@ -2,6 +2,8 @@ package ch.epfl.sweng.team7.gpsService;
 
 import android.app.Service;
 import android.content.Intent;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -17,6 +19,8 @@ public class GPSService extends Service {
     private static final String LOG_FLAG = "GPS_Service";
 
     private final IBinder mBinder = new LocalBinder();
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     /**
      * Class for clients to access.
