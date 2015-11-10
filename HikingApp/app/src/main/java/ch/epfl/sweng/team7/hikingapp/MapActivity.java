@@ -24,7 +24,6 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        setUpLocationListener();
         setUpMapIfNeeded();
     }
 
@@ -32,16 +31,6 @@ public class MapActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-    }
-
-    private void setUpLocationListener() {
-        locationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                gps.updateCurrentLocation(location);
-                Log.d("LocationUpdate", "GPS State: " + gps.toString());
-            }
-        };
     }
 
     /**
@@ -80,11 +69,6 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-
-        // Enable MyLocation Layer of Google Map
-        mMap.setMyLocationEnabled(true);
-
-        mMap.setOnMyLocationChangeListener(locationChangeListener);
         displayTestPoints();
     }
 
