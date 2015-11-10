@@ -58,6 +58,10 @@ public final class GPSManager {
         return this.lastFootPrint.getGeoCoords();
     }
 
+    /**
+     * Method called to start the GPSService, by means of an Intent
+     * @param context the context from which the Intent will be sent.
+     */
     public void startService(Context context) {
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
