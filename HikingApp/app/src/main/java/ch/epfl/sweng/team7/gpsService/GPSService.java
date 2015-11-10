@@ -63,7 +63,7 @@ public class GPSService extends Service {
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                gps.updateLocation(location);
+                gps.updateCurrentLocation(location);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
