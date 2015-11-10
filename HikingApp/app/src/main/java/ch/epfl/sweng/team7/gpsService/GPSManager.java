@@ -75,7 +75,6 @@ public final class GPSManager {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
             if (this.isTracking) gpsPath.addFootPrint(this.lastFootPrint);
-            Log.d(LOG_FLAG, "Location updated to: " + newLocation.toString());
         }
     }
 
