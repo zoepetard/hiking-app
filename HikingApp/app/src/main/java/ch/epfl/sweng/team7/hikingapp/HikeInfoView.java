@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 public class HikeInfoView {
 
+    private final static String LOG_FLAG = "Activity_HikeInfoView";
 
     TextView hikeName;
     TextView hikeDistance;

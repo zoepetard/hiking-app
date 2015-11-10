@@ -22,6 +22,8 @@ import ch.epfl.sweng.team7.gpsService.GPSManager;
 
 public class MapActivity extends FragmentActivity {
 
+    private final static String LOG_FLAG = "Activity_Map";
+
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
     private GoogleMap.OnMyLocationChangeListener locationChangeListener;
@@ -82,7 +84,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onMyLocationChange(Location location) {
                 gps.updateCurrentLocation(location);
-                Log.d("LocationUpdate", "GPS State: " + gps.toString());
+                Log.d(LOG_FLAG, "GPS State: " + gps.toString());
             }
         };
     }

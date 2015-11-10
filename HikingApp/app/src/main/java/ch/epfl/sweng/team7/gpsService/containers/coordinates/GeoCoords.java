@@ -10,6 +10,8 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class GeoCoords {
 
+    private final static String LOG_FLAG = "GPS_GeoCoords";
+
     private double latitude;
     private double longitude;
     private double altitude;

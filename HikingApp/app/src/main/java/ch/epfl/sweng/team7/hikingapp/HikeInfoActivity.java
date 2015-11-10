@@ -16,12 +16,9 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 
-/**
- * Created by fredrik-eliasson on 19/10/15.
- * View Controller that creates and will serve as the link between our HikeInfoView and our Data Model.
- */
 public final class HikeInfoActivity extends Activity {
 
+    private final static String LOG_FLAG = "Activity_HikeInfo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +132,7 @@ public final class HikeInfoActivity extends Activity {
         View infoView = findViewById(R.id.info_overview_layout);
         View fullScreenView = findViewById(R.id.image_fullscreen_layout);
         View containerView = findViewById(R.id.info_scrollview);
+
 
         // Check which view is currently visible and switch
         if (infoView.getVisibility() == View.VISIBLE) {

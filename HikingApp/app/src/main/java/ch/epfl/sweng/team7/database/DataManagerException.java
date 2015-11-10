@@ -12,6 +12,7 @@ package ch.epfl.sweng.team7.database;
  */
 public class DataManagerException extends Exception {
 
+    private final static String LOG_FLAG = "DB_DataManagerException";
     private static final long serialVersionUID = 1L;
 
     public DataManagerException() {
