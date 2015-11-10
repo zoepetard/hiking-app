@@ -13,39 +13,63 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawHikePoint;
+
+import static android.location.Location.distanceBetween;
 
 public class DefaultHikeData implements HikeData {
 
-    // Some debug locations, TODO remove later
-    private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
-    private static final LatLng DEBUG_LOC_SAOTOME = new LatLng(0.362365, 6.558835);
+    private long mHikeId;    // Database hike ID of this hike
+    private long mOwnerId;   // Database user ID of owner
+    private Date mDate;      // A UTC time stamp
+    private List<HikePoint> mHikePoints;
+    private double mDistance;
+    private LatLngBounds mBoundingBox;
+    private LatLng mHikeLocation;
+    private LatLng mStartLocation;
+    private LatLng mFinishLocation;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
      * that can later be queried by the user interface.
      */
     public DefaultHikeData(RawHikeData rawHikeData) {
-        // TODO evaluate rawHikeData
+        mHikeId = rawHikeData.getHikeId();
+        mOwnerId = rawHikeData.getOwnerId();
+        mDate = rawHikeData.getDate();
+
+        List<RawHikePoint> rawHikePoints = rawHikeData.getHikePoints();
+        mHikePoints = new ArrayList<>();
+        for (RawHikePoint rawHikePoint : rawHikePoints){
+            DefaultHikePoint newPoint = new DefaultHikePoint(rawHikePoint.getPosition(), rawHikePoint.getTime());
+            mHikePoints.add(newPoint);
+        }
+
+        mDistance = calculateDistance(rawHikePoints);
+        mBoundingBox = calculateBoundingBox(rawHikePoints);
+        mHikeLocation = getBoundingBox().getCenter();
+        mStartLocation = rawHikePoints.get(0).getPosition();
+        mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
     }
     /**
      * @return the hike ID.
      */
     public long getHikeId() {
-        return 1;   //TODO implement
+        return mHikeId;
     }
 
     /**
      * @return the owner ID.
      */
     public long getOwnerId() {
-        return 0;   //TODO implement
+        return mOwnerId;
     }
 
     /**
      * @return the date of the hike
      */
     public Date getDate() {
-        return new Date();  //TODO implement
+        return mDate;
     }
 
     /**
@@ -60,19 +84,20 @@ public class DefaultHikeData implements HikeData {
      * @return an ordered list of the waypoints on this hike
      */
     public List<HikePoint> getHikePoints() {
-        return new ArrayList<HikePoint>();  // TODO implement
+        return mHikePoints;
     }
 
     /**
      * @return the total distance covered by the hike
      */
     public double getDistance() {
-        return 0; //TODO implement
+        return mDistance;
     }
 
     /**
      * @return the total elevation gain,
      * which is the sum of all position elevation differences, ignoring all downhill
+     * This feature is not yet implemented in the backend
      */
     public double getElevationGain() {
         return 0; //TODO implement
@@ -81,15 +106,22 @@ public class DefaultHikeData implements HikeData {
     /**
      * @return the total elevation loss,
      * which is the sum of all negative elevation differences, ignoring all uphill
+     * This feature is not yet implemented in the backend
      */
     public double getElevationLoss() {
         return 0; //TODO implement
     }
 
+    /**
+     * * This feature is not yet implemented in the backend
+     */
     public double getMaxElevation() {
         return 0; //TODO implement
     }
 
+    /**
+     * * This feature is not yet implemented in the backend
+     */
     public double getMinElevation() {
         return 0; //TODO implement
     }
@@ -99,21 +131,43 @@ public class DefaultHikeData implements HikeData {
      * Queried by the backend/interface to see whether hike should be displayed.
      */
     public LatLngBounds getBoundingBox() {
-        return new LatLngBounds(DEBUG_LOC_ACCRA, DEBUG_LOC_SAOTOME);//TODO implement
+        return mBoundingBox;
     }
 
     /**
      * @return a representative point for this hike, where the pin will be placed on the map
      */
     public LatLng getHikeLocation() {
-        return DEBUG_LOC_ACCRA;
+        return mHikeLocation;
     }
 
     public LatLng getStartLocation() {
-        return DEBUG_LOC_ACCRA;
+        return mStartLocation;
     }
 
     public LatLng getFinishLocation() {
-        return DEBUG_LOC_SAOTOME;
+        return mFinishLocation;
+    }
+
+    private double calculateDistance(List<RawHikePoint> rawHikePoints) {
+        double distance = 0;
+        for (int i = 0; i < rawHikePoints.size() - 1; i++){
+            LatLng currentLoc = rawHikePoints.get(i).getPosition();
+            LatLng nextLoc = rawHikePoints.get(i + 1).getPosition();
+            float[] distanceBetween = new float[1];
+            distanceBetween(currentLoc.latitude, currentLoc.longitude,
+                    nextLoc.latitude, nextLoc.longitude, distanceBetween);
+            distance += (double) distanceBetween[0];
+        }
+        return distance;
+    }
+
+    private LatLngBounds calculateBoundingBox(List<RawHikePoint> rawHikePoints) {
+        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
+        for (RawHikePoint rawHikePoint : rawHikePoints){
+            LatLng pos = rawHikePoint.getPosition();
+            boundingBoxBuilder.include(pos);
+        }
+        return boundingBoxBuilder.build();
     }
 }
