@@ -34,9 +34,9 @@ public class MockServer implements DatabaseClient {
             + "  ]\n"
             + "}\n";
     //Same as DefaultLocalCache
-    private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
+    private final int HIKES_CACHE_MAX_SIZE = 100;
     private final HashMap<Long, RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
-    private int mAssignedHikeID = 2;
+    private int mAssignedHikeID = 10;
 
 
     public boolean hasHike(long hikeId) {
@@ -148,23 +148,21 @@ public class MockServer implements DatabaseClient {
     }
 
     /**
-     * Method to post a hike in the database
+     * Method to post a hike in the database. The database assigns a hike ID and returns that.
      *
-     * @param hike Boundaries (window) of the
-     * @return
+     * @param hike to post. ID is ignored, because hike will be assigned a new ID.
      * @throws DatabaseClientException
      */
     @Override
     public long postHike(RawHikeData hike) throws DatabaseClientException {
-        //It only allows to post 2 hikes, hike 3 should not exist
-        if (mHikeDataBase.size() < 2) {
-            hike.setHikeId(mAssignedHikeID);
+        long hikeId = 2;
+        if(hasHike(hikeId)) {
+            hikeId = mAssignedHikeID;
             mAssignedHikeID++;
-            putHike(hike);
-            return hike.getHikeId();
-        } else {
-            throw new DatabaseClientException("Testing mode allows to post only 2 hikes");
         }
+        hike.setHikeId(hikeId);
+        putHike(hike);
+        return hikeId;
     }
 
     private static RawHikeData createHikeData() throws JSONException {
