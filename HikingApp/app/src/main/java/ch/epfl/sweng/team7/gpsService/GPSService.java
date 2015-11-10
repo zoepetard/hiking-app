@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 
 public class GPSService extends Service {
 
+    private static final String LOG_FLAG = "GPS_Service";
+
     private final IBinder mBinder = new LocalBinder();
 
     /**
