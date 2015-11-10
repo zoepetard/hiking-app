@@ -159,6 +159,12 @@ public class HikeListActivity extends Activity {
 
         @Override
         protected void onPostExecute(List<HikeData> results) {
+            if (results != null) {
+                displayHikes(results);
+            }
+        }
+
+        private void displayHikes(List<HikeData> results) {
             TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
             for (int i = 0; i < results.size(); i++) {
                 TableRow hikeRow = getHikeRow(i, results.get(i));
