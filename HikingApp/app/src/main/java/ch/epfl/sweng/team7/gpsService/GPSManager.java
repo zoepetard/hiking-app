@@ -13,6 +13,8 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
  */
 public final class GPSManager {
 
+    private final static String LOG_FLAG = "GPS_Manager";
+
     private GPSPath gpsPath = null;
     private boolean isTracking = false;
     private GPSFootPrint lastFootPrint = null;

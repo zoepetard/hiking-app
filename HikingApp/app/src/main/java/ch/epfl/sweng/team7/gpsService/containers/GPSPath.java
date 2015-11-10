@@ -10,6 +10,8 @@ import java.util.List;
  */
 public final class GPSPath {
 
+    private final static String LOG_FLAG = "GPS_Path";
+
     private List<GPSFootPrint> path;
 
     public GPSPath() {
