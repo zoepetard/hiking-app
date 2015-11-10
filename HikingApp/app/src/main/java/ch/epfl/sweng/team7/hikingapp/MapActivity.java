@@ -16,6 +16,8 @@ import ch.epfl.sweng.team7.gpsService.GPSManager;
 
 public class MapActivity extends FragmentActivity {
 
+    private final static String LOG_FLAG = "Activity_Map";
+
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
 
@@ -31,7 +33,7 @@ public class MapActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
     }
-
+    
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever

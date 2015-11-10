@@ -25,6 +25,7 @@ Class which controls and updates the visual part of the view, not the interactio
 
 public class HikeInfoView {
 
+    private final static String LOG_FLAG = "Activity_HikeInfoView";
 
     TextView hikeName;
     TextView hikeDistance;

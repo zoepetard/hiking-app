@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 public class HikeListActivity extends Activity {
 
+    private final static String LOG_FLAG = "Activity_HikeList";
 
     //Displays a list of nearby hikes, with a map, the distance and the rating.
     @Override

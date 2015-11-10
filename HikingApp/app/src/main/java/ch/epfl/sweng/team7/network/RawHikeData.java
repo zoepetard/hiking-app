@@ -21,6 +21,8 @@ import java.util.List;
  * serialization and reduce data rate in communication.
  */
 public class RawHikeData {
+
+    private final static String LOG_FLAG = "Network_RawHikeData";
     public static final long HIKE_ID_UNKNOWN = -1;
 
     private long mHikeId;    // Database hike ID of this hike
