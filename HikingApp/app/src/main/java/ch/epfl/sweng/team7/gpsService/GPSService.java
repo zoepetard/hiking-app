@@ -1,10 +1,13 @@
 package ch.epfl.sweng.team7.gpsService;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -34,6 +37,7 @@ public class GPSService extends Service {
     @Override
     public void onCreate() {
         Log.d(LOG_FLAG, "GPSService has started");
+        gpsSetup();
     }
 
     @Override
@@ -51,5 +55,25 @@ public class GPSService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    private void gpsSetup() {
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                gps.updateLocation(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+        try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        } catch (SecurityException e) {
+            Log.d(LOG_FLAG, "Could not request location updates");
+        }
     }
 }
