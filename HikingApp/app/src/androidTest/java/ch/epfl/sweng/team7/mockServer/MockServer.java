@@ -11,12 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.RawHikeData;
-
-import static org.mockito.Mockito.mock;
+import ch.epfl.sweng.team7.network.RawHikePoint;
 
 /**
  * Created by pablo on 6/11/15.
@@ -90,21 +88,16 @@ public class MockServer implements DatabaseClient {
     }
 
     /**
-     * Create mock hike number 1.
+     * Create mock hike number 1 (should always exist).
      *
      * @return mockRawHike
      */
-    private RawHikeData createMockHikeOne() {
-
-        //Create mock Hike number 1 (should always exist)
-        RawHikeData mockRawHikeData = null;
+    private RawHikeData createMockHikeOne() throws DatabaseClientException {
         try {
-            mockRawHikeData = createHikeData();
+            return createHikeData();
         } catch (JSONException e) {
-            e.printStackTrace();
+            throw new DatabaseClientException(e);
         }
-        return mockRawHikeData;
-
     }
 
     /**
@@ -137,21 +130,17 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
-        if (mHikeDataBase != null && mHikeDataBase.size() > 1) {
+        if (mHikeDataBase != null && mHikeDataBase.size() > 0) {
             List<Long> hikeIdsInWindow = new ArrayList<>();
-            for (int i = 0; i < mHikeDataBase.size(); i++) {
-                RawHikeData mRawHikeData = mHikeDataBase.get(i);
-                for (int hikePoints = 0; hikePoints < mRawHikeData.getHikePoints().size(); hikePoints++) {
-                    if (bounds.contains(mRawHikeData.getHikePoints().get(hikePoints).getPosition())) {
-                        hikeIdsInWindow.add(mRawHikeData.getHikeId());
+            for (RawHikeData rawHikeData : mHikeDataBase.values()) {
+                for (RawHikePoint rawHikePoint : rawHikeData.getHikePoints()) {
+                    if (bounds.contains(rawHikePoint.getPosition())) {
+                        hikeIdsInWindow.add(rawHikeData.getHikeId());
+                        break;
                     }
                 }
             }
-            if (hikeIdsInWindow.isEmpty()) {
-                throw new DatabaseClientException("No hikes in the given window");
-            } else {
-                return hikeIdsInWindow;
-            }
+            return hikeIdsInWindow;
         } else {
             throw new DatabaseClientException("There are no hikes on the database yet");
         }
