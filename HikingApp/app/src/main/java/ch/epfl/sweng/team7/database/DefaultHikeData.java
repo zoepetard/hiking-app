@@ -19,16 +19,16 @@ import static android.location.Location.distanceBetween;
 
 public class DefaultHikeData implements HikeData {
 
-    private long mHikeId;    // Database hike ID of this hike
-    private long mOwnerId;   // Database user ID of owner
-    private Date mDate;      // A UTC time stamp
-    private List<HikePoint> mHikePoints;
-    private double mDistance;
-    private LatLngBounds mBoundingBox;
-    private LatLng mHikeLocation;
-    private LatLng mStartLocation;
-    private LatLng mFinishLocation;
-    private ElevationBounds mElevationBounds;
+    private final long mHikeId;    // Database hike ID of this hike
+    private final long mOwnerId;   // Database user ID of owner
+    private final Date mDate;      // A UTC time stamp
+    private final List<HikePoint> mHikePoints;
+    private final double mDistance;
+    private final LatLngBounds mBoundingBox;
+    private final LatLng mHikeLocation;
+    private final LatLng mStartLocation;
+    private final LatLng mFinishLocation;
+    private final ElevationBounds mElevationBounds;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
