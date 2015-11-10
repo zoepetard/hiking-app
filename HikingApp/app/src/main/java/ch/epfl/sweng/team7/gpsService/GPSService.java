@@ -58,6 +58,10 @@ public class GPSService extends Service {
         return mBinder;
     }
 
+    /**
+     * Method called once to setup GPS related variables and
+     * automatic updates from both network and gps providers.
+     */
     private void gpsSetup() {
         gps = GPSManager.getInstance();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
