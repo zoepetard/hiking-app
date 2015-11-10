@@ -13,6 +13,7 @@ public class DefaultHikePoint implements HikePoint {
 
     private LatLng mPosition;
     private Date mTime;
+    private double mElevation;
 
     public DefaultHikePoint(LatLng position, Date time) {
         mPosition = position;
@@ -21,6 +22,10 @@ public class DefaultHikePoint implements HikePoint {
 
     public LatLng getPosition() {
         return mPosition;
+    }
+
+    public double getElevation() {
+        return mElevation;
     }
 
     /**
