@@ -63,9 +63,9 @@ public class DefaultHikeDataTest {
         DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
 
         List<DefaultHikePoint> hikePoints = new ArrayList<>();
-        hikePoints.add(new DefaultHikePoint(new LatLng(0,0), new Date(100, 01, 01)));
-        hikePoints.add(new DefaultHikePoint(new LatLng(10,10), new Date(100, 01, 01)));
-        hikePoints.add(new DefaultHikePoint(new LatLng(15, 15), new Date(100, 01, 01)));
+        hikePoints.add(new DefaultHikePoint(new LatLng(0,0), new Date(100, 01, 01), 1.0));
+        hikePoints.add(new DefaultHikePoint(new LatLng(10,10), new Date(100, 01, 01), 2.0));
+        hikePoints.add(new DefaultHikePoint(new LatLng(15, 15), new Date(100, 01, 01), 3.0));
         for (int i = 0; i < rawHikePoints.size(); i++) {
             DefaultHikePoint expectedHikePoint = hikePoints.get(i);
             DefaultHikePoint calcHikePoint = (DefaultHikePoint)defaultHikeData.getHikePoints().get(i);

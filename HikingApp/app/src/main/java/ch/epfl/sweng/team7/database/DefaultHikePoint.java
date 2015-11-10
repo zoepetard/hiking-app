@@ -11,13 +11,14 @@ import java.util.Date;
 
 public class DefaultHikePoint implements HikePoint {
 
-    private LatLng mPosition;
-    private Date mTime;
-    private double mElevation;
+    private final LatLng mPosition;
+    private final Date mTime;
+    private final double mElevation;
 
-    public DefaultHikePoint(LatLng position, Date time) {
+    public DefaultHikePoint(LatLng position, Date time, double elevation) {
         mPosition = position;
         mTime = time;
+        mElevation = elevation;
     }
 
     public LatLng getPosition() {
