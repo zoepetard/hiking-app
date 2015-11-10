@@ -52,7 +52,10 @@ public class RawHikePoint {
      */
     public JSONArray toJSON() throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        jsonArray.put(mPosition.latitude).put(mPosition.longitude).put(mTime.getTime());
+        jsonArray.put(mPosition.latitude)
+                .put(mPosition.longitude)
+                .put(mTime.getTime())
+                .put(mElevation);
         return jsonArray;
     }
 
