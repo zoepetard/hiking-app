@@ -125,7 +125,7 @@ public class HikeInfoView {
 
         // Add adapter and onclickmethods to the nav drawer listview
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,context);
-        
+
     }
 
 
