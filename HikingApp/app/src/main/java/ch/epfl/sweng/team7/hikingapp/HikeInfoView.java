@@ -28,21 +28,21 @@ public class HikeInfoView {
 
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 
-    TextView hikeName;
-    TextView hikeDistance;
-    RatingBar hikeRatingBar;
-    LinearLayout imgLayout;
-    TextView hikeElevation;
-    View view;
-    Context context;
-    ArrayList<ImageView> imageViews; // make ImageViews accessible in controller.
-    Button backButton;
-    ImageView fullScreenImage;
-    ImageView mapPreview;
-    GraphView hikeGraph;
-    HorizontalScrollView imageScrollView;
-    ListView navDrawerList;
-    ArrayAdapter<String> navDrawerAdapter;
+    private TextView hikeName;
+    private TextView hikeDistance;
+    private RatingBar hikeRatingBar;
+    private LinearLayout imgLayout;
+    private TextView hikeElevation;
+    private View view;
+    private Context context;
+    private ArrayList<ImageView> galleryImageViews; // make ImageViews accessible in controller.
+    private Button backButton;
+    private ImageView fullScreenImage;
+    private ImageView mapPreview;
+    private GraphView hikeGraph;
+    private HorizontalScrollView imageScrollView;
+    private ListView navDrawerList;
+    private ArrayAdapter<String> navDrawerAdapter;
 
 
     public HikeInfoView(View view, Context context) {  // add model as argument when creating that
@@ -138,7 +138,7 @@ public class HikeInfoView {
     // create imageviews and add them to the scrollview
     private void loadImageScrollView() {
 
-        imageViews = new ArrayList<>();
+        galleryImageViews = new ArrayList<>();
 
         // TEMPORARY
         Integer img1 = R.drawable.login_background;
@@ -162,9 +162,39 @@ public class HikeInfoView {
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
         imageView.setImageResource(img);
-        imageViews.add(imageView);
+        galleryImageViews.add(imageView);
 
         return imageView;
 
     }
+
+    public Button getBackButton()
+    {
+        return backButton;
+    }
+
+    public RatingBar getHikeRatingBar()
+    {
+
+        return hikeRatingBar;
+    }
+
+    public ArrayList<ImageView> getGalleryImageViews()
+    {
+        return galleryImageViews;
+    }
+
+    public ImageView getMapPreview()
+    {
+        return mapPreview;
+    }
+
+    public ListView getNavDrawerList()
+    {
+        return navDrawerList;
+    }
+
+
+
+
 }

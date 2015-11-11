@@ -42,6 +42,7 @@ public class HikeListActivity extends Activity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
+        
         loadNavDrawerItems(navDrawerList);
         navDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

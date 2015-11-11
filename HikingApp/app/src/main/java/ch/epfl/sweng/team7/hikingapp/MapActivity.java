@@ -33,6 +33,8 @@ public class MapActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
+
         // nav drawer setup
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
         View mapView = getLayoutInflater().inflate(R.layout.activity_map, null);
@@ -42,7 +44,11 @@ public class MapActivity extends FragmentActivity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        loadNavDrawerItems(navDrawerList);
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerView,navDrawerList);
+        navDrawerList = navDrawerListFactory.getListView();
+
+        /*loadNavDrawerItems(navDrawerList);
+
         navDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -69,7 +75,7 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
-
+*/
 
     }
 
