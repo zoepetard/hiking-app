@@ -13,8 +13,8 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
-import ch.epfl.sweng.team7.mockServer.MockDataBaseClient;
 import ch.epfl.sweng.team7.mockServer.MockServer;
+import ch.epfl.sweng.team7.mockServer.MockServerTest;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -26,13 +26,13 @@ public class HikeListTest {
     @Test
     public void testCorrectData() {
         MockServer mockServer = new MockServer();
-        MockDataBaseClient mockDataBaseClient = new MockDataBaseClient();
-        mockDataBaseClient.mMockServer = mockServer;
+        MockServerTest mockServerTest = new MockServerTest();
+        mockServerTest.mMockServer = mockServer;
         LatLngBounds bounds = new LatLngBounds(new LatLng(0.0, 0.0), new LatLng(5.0, 5.0));
         try {
-            mockDataBaseClient.setUp();
-            mockDataBaseClient.aHikeCanBePosted();
-            mockDataBaseClient.aHikeCanBePosted();
+            mockServerTest.setUp();
+            mockServerTest.testHikeCanBePosted();
+            mockServerTest.testHikeCanBePosted();
         } catch (Exception e) {
             e.printStackTrace();
             return;
