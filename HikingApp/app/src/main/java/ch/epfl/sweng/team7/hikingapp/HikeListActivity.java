@@ -88,7 +88,6 @@ public class HikeListActivity extends Activity {
     }
 
     /* MODIFY TO USE REAL DATA FROM THE HIKE */
-
     //Creates and returns a TableRow with information about a hike.
     public TableRow getHikeRow(int i) {
 
