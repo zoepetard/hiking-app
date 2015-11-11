@@ -1,9 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -20,13 +18,12 @@ public class MapActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
-    private GoogleMap.OnMyLocationChangeListener locationChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        setUpLocationListener();
+        gps.startService(this);
         setUpMapIfNeeded();
     }
 
@@ -34,16 +31,6 @@ public class MapActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-    }
-
-    private void setUpLocationListener() {
-        locationChangeListener = new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                gps.updateCurrentLocation(location);
-                Log.d(LOG_FLAG, "GPS State: " + gps.toString());
-            }
-        };
     }
 
     /**
@@ -82,11 +69,6 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-
-        // Enable MyLocation Layer of Google Map
-        mMap.setMyLocationEnabled(true);
-
-        mMap.setOnMyLocationChangeListener(locationChangeListener);
         displayTestPoints();
     }
 
