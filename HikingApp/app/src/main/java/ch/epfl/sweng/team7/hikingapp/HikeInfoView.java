@@ -123,17 +123,11 @@ public class HikeInfoView {
 
         loadImageScrollView();
 
-        loadNavDrawerItems();
-
+        // Add adapter and onclickmethods to the nav drawer listview
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,context);
+        
     }
 
-    private void loadNavDrawerItems() {
-
-        String[] listViewItems = {"Account", "Map", "Hikes", "Logout"}; // Temp data
-        navDrawerAdapter = new ArrayAdapter<>(this.context, android.R.layout.simple_list_item_1, listViewItems);
-        navDrawerList.setAdapter(navDrawerAdapter);
-
-    }
 
     // create imageviews and add them to the scrollview
     private void loadImageScrollView() {

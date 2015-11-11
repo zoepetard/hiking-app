@@ -26,7 +26,9 @@ public class HikeListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
+
         // Inflate Navigation Drawer with main content
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
         View hikeListView = getLayoutInflater().inflate(R.layout.activity_hike_list, null);
         mainContentFrame.addView(hikeListView);
@@ -42,35 +44,7 @@ public class HikeListActivity extends Activity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        
-        loadNavDrawerItems(navDrawerList);
-        navDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemText = (String) parent.getItemAtPosition(position);
-
-                Intent intent;
-                switch (itemText) {
-
-                    case "Account":
-                        intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "Map":
-                        intent = new Intent(view.getContext(), MapActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "Hikes":
-                        intent = new Intent(view.getContext(), HikeListActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "Logout":
-                        intent = new Intent(view.getContext(), LoginActivity.class);
-                        startActivity(intent);
-                        break;
-                }
-            }
-        });
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
     }
 

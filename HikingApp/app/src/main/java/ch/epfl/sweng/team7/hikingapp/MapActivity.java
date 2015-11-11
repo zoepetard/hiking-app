@@ -33,9 +33,8 @@ public class MapActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
-        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
-
         // nav drawer setup
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
         View mapView = getLayoutInflater().inflate(R.layout.activity_map, null);
         mainContentFrame.addView(mapView);
@@ -44,38 +43,8 @@ public class MapActivity extends FragmentActivity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerView,navDrawerList);
-        navDrawerList = navDrawerListFactory.getListView();
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
-        /*loadNavDrawerItems(navDrawerList);
-
-        navDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemText = (String) parent.getItemAtPosition(position);
-                Intent intent;
-
-                switch (itemText) {
-                    case "Account":
-                        intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "Map":
-                        intent = new Intent(view.getContext(), MapActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "Hikes":
-                        intent = new Intent(view.getContext(), HikeListActivity.class);
-                        startActivity(intent);
-                        break;
-                    case "Logout":
-                        intent = new Intent(view.getContext(), LoginActivity.class);
-                        startActivity(intent);
-                        break;
-                }
-            }
-        });
-*/
 
     }
 

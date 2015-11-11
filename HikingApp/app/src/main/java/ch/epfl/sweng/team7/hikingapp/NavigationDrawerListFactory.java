@@ -18,13 +18,11 @@ import static android.support.v4.app.ActivityCompat.startActivity;
 
 public class NavigationDrawerListFactory {
 
-    private ListView navDrawerList;
-    private View view;
+    private Context context;
 
-    public NavigationDrawerListFactory(View view, ListView navDrawerList) {
+    public NavigationDrawerListFactory(ListView navDrawerList,Context context) {
 
-        this.view = view;
-        this.navDrawerList = navDrawerList;
+        this.context = context;
 
         // load items into the Navigation drawer and add listeners
         loadNavDrawerItems(navDrawerList);
@@ -58,15 +56,11 @@ public class NavigationDrawerListFactory {
 
     }
 
-    public ListView getListView()
-    {
-        return navDrawerList;
-    }
 
     private void loadNavDrawerItems(ListView navDrawerList) {
 
         String[] listViewItems = {"Account", "Map", "Hikes", "Logout"};
-        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(this.view.getContext(), android.R.layout.simple_list_item_1, listViewItems);
+        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
 
     }
