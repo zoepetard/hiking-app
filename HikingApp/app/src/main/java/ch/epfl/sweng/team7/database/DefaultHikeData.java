@@ -21,15 +21,16 @@ public class DefaultHikeData implements HikeData {
 
     private final static String LOG_FLAG = "DB_DefaultHikeData";
 
-    private long mHikeId;    // Database hike ID of this hike
-    private long mOwnerId;   // Database user ID of owner
-    private Date mDate;      // A UTC time stamp
-    private List<HikePoint> mHikePoints;
-    private double mDistance;
-    private LatLngBounds mBoundingBox;
-    private LatLng mHikeLocation;
-    private LatLng mStartLocation;
-    private LatLng mFinishLocation;
+    private final long mHikeId;    // Database hike ID of this hike
+    private final long mOwnerId;   // Database user ID of owner
+    private final Date mDate;      // A UTC time stamp
+    private final List<HikePoint> mHikePoints;
+    private final double mDistance;
+    private final LatLngBounds mBoundingBox;
+    private final LatLng mHikeLocation;
+    private final LatLng mStartLocation;
+    private final LatLng mFinishLocation;
+    private final ElevationBounds mElevationBounds;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -43,8 +44,7 @@ public class DefaultHikeData implements HikeData {
         List<RawHikePoint> rawHikePoints = rawHikeData.getHikePoints();
         mHikePoints = new ArrayList<>();
         for (RawHikePoint rawHikePoint : rawHikePoints){
-            DefaultHikePoint newPoint = new DefaultHikePoint(rawHikePoint.getPosition(), rawHikePoint.getTime());
-            mHikePoints.add(newPoint);
+            mHikePoints.add(new DefaultHikePoint(rawHikePoint));
         }
 
         mDistance = calculateDistance(rawHikePoints);
@@ -52,6 +52,7 @@ public class DefaultHikeData implements HikeData {
         mHikeLocation = getBoundingBox().getCenter();
         mStartLocation = rawHikePoints.get(0).getPosition();
         mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
+        mElevationBounds = calculateElevationBounds(rawHikePoints);
     }
     /**
      * @return the hike ID.
@@ -102,7 +103,7 @@ public class DefaultHikeData implements HikeData {
      * This feature is not yet implemented in the backend
      */
     public double getElevationGain() {
-        return 0; //TODO implement
+        return mElevationBounds.mElevationGain;
     }
 
     /**
@@ -111,21 +112,21 @@ public class DefaultHikeData implements HikeData {
      * This feature is not yet implemented in the backend
      */
     public double getElevationLoss() {
-        return 0; //TODO implement
+        return mElevationBounds.mElevationLoss;
     }
 
     /**
      * * This feature is not yet implemented in the backend
      */
     public double getMaxElevation() {
-        return 0; //TODO implement
+        return mElevationBounds.mMaxElevation;
     }
 
     /**
      * * This feature is not yet implemented in the backend
      */
     public double getMinElevation() {
-        return 0; //TODO implement
+        return mElevationBounds.mMinElevation;
     }
 
     /**
@@ -172,4 +173,48 @@ public class DefaultHikeData implements HikeData {
         }
         return boundingBoxBuilder.build();
     }
+
+    private ElevationBounds calculateElevationBounds(List<RawHikePoint> rawHikePoints) {
+
+        ElevationBounds elevationBounds = new ElevationBounds();
+
+        // Initialize elevation
+        double lastElevation = rawHikePoints.get(0).getElevation();
+        elevationBounds.mMaxElevation = lastElevation;
+        elevationBounds.mMinElevation = lastElevation;
+
+        // Traverse hike points in order
+        for(int i = 1; i < rawHikePoints.size(); ++i) {
+            final double thisElevation = rawHikePoints.get(i).getElevation();
+            final double deltaElevation  = thisElevation - lastElevation;
+
+            if(deltaElevation > 0) {
+                elevationBounds.mElevationGain += deltaElevation;
+            } else {
+                // ElevationLoss is always positive, but deltaElevation is negative here
+                elevationBounds.mElevationLoss += (-deltaElevation);
+            }
+
+            if(thisElevation > elevationBounds.mMaxElevation) {
+                elevationBounds.mMaxElevation = thisElevation;
+            }
+
+            if(thisElevation < elevationBounds.mMinElevation) {
+                elevationBounds.mMinElevation = thisElevation;
+            }
+
+            lastElevation = thisElevation;
+        }
+        return elevationBounds;
+    }
+
+    // A simple storage container for elevation-related data.
+    // ElevationGain and ElevationLoss are both positive numbers.
+    private class ElevationBounds {
+        public double mMinElevation;
+        public double mMaxElevation;
+        public double mElevationGain;
+        public double mElevationLoss;
+    }
+
 }

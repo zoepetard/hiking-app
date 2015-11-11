@@ -23,52 +23,47 @@ public class DefaultHikeDataTest {
 
     private long hikeId = 1;
     private long ownerId = 1;
-    private Date date = new Date(100, 01, 01);
+    private Date date = new Date(1000101);
     private List<RawHikePoint> rawHikePoints;
     private LatLng startLocation = new LatLng(0,0);
     private LatLng finishLocation = new LatLng(15, 15);
+    private RawHikeData mRawHikeData;
+    private DefaultHikeData mDefaultHikeData;
+    private static final double EPS_DOUBLE = 1e-10;
 
     @Before
     public void setUp() throws Exception {
         rawHikePoints = new ArrayList<>();
-        rawHikePoints.add(new RawHikePoint(startLocation, new Date(100, 01, 01)));
-        rawHikePoints.add(new RawHikePoint(new LatLng(10,10), new Date(100, 01, 01)));
-        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(100, 01, 01)));
-
+        rawHikePoints.add(new RawHikePoint(startLocation, new Date(1000101), 1.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(10,10), new Date(1000102), 3.0));
+        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000103), 2.0));
+        mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
+        mDefaultHikeData = new DefaultHikeData(mRawHikeData);
     }
     @Test
     public void testIdAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-        assertEquals("Mismatched hike ID", hikeId, defaultHikeData.getHikeId());
+        assertEquals("Mismatched hike ID", hikeId, mDefaultHikeData.getHikeId());
     }
 
     @Test
     public void testOwnerAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-        assertEquals("Mismatched owner ID", ownerId, defaultHikeData.getOwnerId());
+        assertEquals("Mismatched owner ID", ownerId, mDefaultHikeData.getOwnerId());
     }
 
     @Test
     public void testDateAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-        assertEquals("Mismatched date", date, defaultHikeData.getDate());
+        assertEquals("Mismatched date", date, mDefaultHikeData.getDate());
     }
 
     @Test
     public void testHikePointsAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-
         List<DefaultHikePoint> hikePoints = new ArrayList<>();
-        hikePoints.add(new DefaultHikePoint(new LatLng(0,0), new Date(100, 01, 01)));
-        hikePoints.add(new DefaultHikePoint(new LatLng(10,10), new Date(100, 01, 01)));
-        hikePoints.add(new DefaultHikePoint(new LatLng(15, 15), new Date(100, 01, 01)));
+        hikePoints.add(new DefaultHikePoint(new LatLng(0,0), new Date(1000101), 1.0));
+        hikePoints.add(new DefaultHikePoint(new LatLng(10,10), new Date(1000102), 2.0));
+        hikePoints.add(new DefaultHikePoint(new LatLng(15, 15), new Date(1000103), 3.0));
         for (int i = 0; i < rawHikePoints.size(); i++) {
-            DefaultHikePoint expectedHikePoint = hikePoints.get(i);
-            DefaultHikePoint calcHikePoint = (DefaultHikePoint)defaultHikeData.getHikePoints().get(i);
+            HikePoint expectedHikePoint = hikePoints.get(i);
+            HikePoint calcHikePoint = mDefaultHikeData.getHikePoints().get(i);
             assertEquals("Mismatched latitude of a hike point", expectedHikePoint.getPosition().latitude, calcHikePoint.getPosition().latitude, 0);
             assertEquals("Mismatched longitude of a hike point", expectedHikePoint.getPosition().longitude, calcHikePoint.getPosition().longitude, 0);
         }
@@ -76,42 +71,52 @@ public class DefaultHikeDataTest {
 
     @Test
     public void testDistanceAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-        assertEquals("Incorrect distance", 2345000, defaultHikeData.getDistance(), 5000);
+        assertEquals("Incorrect distance", 2345000, mDefaultHikeData.getDistance(), 5000);
     }
 
     @Test
     public void testBoundingBoxAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
         LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
         boundingBoxBuilder.include(new LatLng(0,0)).include(new LatLng(15, 15));
-        assertEquals("Incorrect bounding box", boundingBoxBuilder.build(), defaultHikeData.getBoundingBox());
+        assertEquals("Incorrect bounding box", boundingBoxBuilder.build(), mDefaultHikeData.getBoundingBox());
     }
 
     @Test
     public void testHikeLocationAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
         LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
         boundingBoxBuilder.include(new LatLng(0, 0)).include(new LatLng(15, 15));
         LatLng center = boundingBoxBuilder.build().getCenter();
-        assertEquals("Incorrect representative hike location", center, defaultHikeData.getHikeLocation());
+        assertEquals("Incorrect representative hike location", center, mDefaultHikeData.getHikeLocation());
     }
 
     @Test
     public void testStartLocationAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-        assertEquals("Incorrect representative start location", startLocation, defaultHikeData.getStartLocation());
+        assertEquals("Incorrect representative start location", startLocation, mDefaultHikeData.getStartLocation());
     }
 
     @Test
     public void testFinishLocationAccess() {
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        DefaultHikeData defaultHikeData = new DefaultHikeData(rawHikeData);
-        assertEquals("Incorrect representative finish location", finishLocation, defaultHikeData.getFinishLocation());
+        assertEquals("Incorrect representative finish location", finishLocation, mDefaultHikeData.getFinishLocation());
+    }
+
+    @Test
+    public void testGetMinElevation() {
+        assertEquals("Incorrect min elevation", 1.0, mDefaultHikeData.getMinElevation(), EPS_DOUBLE);
+    }
+
+    @Test
+    public void testGetMaxElevation() {
+        assertEquals("Incorrect max elevation", 3.0, mDefaultHikeData.getMaxElevation(), EPS_DOUBLE);
+    }
+
+    @Test
+    public void testGetElevationGain() {
+        assertEquals("Incorrect elevation gain", 2.0, mDefaultHikeData.getElevationGain(), EPS_DOUBLE);
+    }
+
+    @Test
+    public void testGetElevationLoss() {
+        assertEquals("Incorrect elevation loss", 1.0, mDefaultHikeData.getElevationLoss(), EPS_DOUBLE);
     }
 
 }

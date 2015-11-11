@@ -32,8 +32,8 @@ public class DataManagerTest {
     public void setUp() throws Exception {
         MockServer mockServer = new MockServer();
         List<RawHikePoint> newHikePoints = new ArrayList<>();
-        newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date()));
-        newHikePoints.add(new RawHikePoint(new LatLng(2.,11.), new Date()));
+        newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(2.,11.), new Date(), 0.0));
         RawHikeData newHike = new RawHikeData(2, 15, new Date(), newHikePoints);
         mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);

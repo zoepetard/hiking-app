@@ -1,7 +1,5 @@
 package ch.epfl.sweng.team7.mockServer;
-
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.TestCase;
 
@@ -19,8 +17,7 @@ import ch.epfl.sweng.team7.network.RawHikeData;
  * Created by pablo on 8/11/15.
  */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
-public class MockDataBaseClient extends TestCase {
+public class MockServerTest extends TestCase {
     public MockServer mMockServer;
     public List<Long> mHikeIds;
     public List<RawHikeData> listRawHikes;
@@ -31,11 +28,11 @@ public class MockDataBaseClient extends TestCase {
             + "  \"owner_id\": 48,\n"
             + "  \"date\": 123201,\n"
             + "  \"hike_data\": [\n"
-            + "    [0.0, 0.0, 123201],\n"
-            + "    [0.1, 0.1, 123202],\n"
-            + "    [0.2, 0.0, 123203],\n"
-            + "    [0.3,89.9, 123204],\n"
-            + "    [0.4, 0.0, 123205]\n"
+            + "    [0.0, 0.0, 123201, 1.0],\n"
+            + "    [0.1, 0.1, 123202, 2.0],\n"
+            + "    [0.2, 0.0, 123203, 3.0],\n"
+            + "    [0.3,89.9, 123204, 4.0],\n"
+            + "    [0.4, 0.0, 123205, 5.0]\n"
             + "  ]\n"
             + "}\n";
 
@@ -54,7 +51,7 @@ public class MockDataBaseClient extends TestCase {
     }
 
     @Test
-    public void aSingleHikeCanBeFetched() throws Exception {
+    public void testSingleHikeCanBeFetched() throws Exception {
         long hikeId = 1;
         RawHikeData mRawHikeData = mMockServer.fetchSingleHike(1);
         assertEquals(mRawHikeData.getHikeId(), hikeId);
@@ -62,7 +59,7 @@ public class MockDataBaseClient extends TestCase {
 
 
     @Test
-    public void multipleHikesCanBeFetched() throws Exception {
+    public void testMultipleHikesCanBeFetched() throws Exception {
         List<Long> postHikeIds = new ArrayList<>();
         postHikeIds.add(mMockServer.postHike(mRawHikeData1));
         postHikeIds.add(mMockServer.postHike(mRawHikeData2));
@@ -76,7 +73,7 @@ public class MockDataBaseClient extends TestCase {
     }
 
     @Test
-    public void aHikeCanBePosted() throws Exception {
+    public void testHikeCanBePosted() throws Exception {
         long hikeId = mMockServer.postHike(mRawHikeData1);
         assertEquals(mRawHikeData1.getHikeId(), hikeId);
         assertTrue(mMockServer.hasHike(mRawHikeData1.getHikeId()));
