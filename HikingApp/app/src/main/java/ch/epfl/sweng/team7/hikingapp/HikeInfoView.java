@@ -158,33 +158,25 @@ public class HikeInfoView {
 
     }
 
-    public Button getBackButton()
-    {
+    public Button getBackButton() {
         return backButton;
     }
 
-    public RatingBar getHikeRatingBar()
-    {
+    public RatingBar getHikeRatingBar() {
 
         return hikeRatingBar;
     }
 
-    public ArrayList<ImageView> getGalleryImageViews()
-    {
+    public ArrayList<ImageView> getGalleryImageViews() {
         return galleryImageViews;
     }
 
-    public ImageView getMapPreview()
-    {
+    public ImageView getMapPreview() {
         return mapPreview;
     }
 
-    public ListView getNavDrawerList()
-    {
+    public ListView getNavDrawerList() {
         return navDrawerList;
     }
-
-
-
 
 }
