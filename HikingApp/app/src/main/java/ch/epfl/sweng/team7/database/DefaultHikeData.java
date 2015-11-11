@@ -185,12 +185,14 @@ public class DefaultHikeData implements HikeData {
 
         // Traverse hike points in order
         for(int i = 1; i < rawHikePoints.size(); ++i) {
-            double thisElevation = rawHikePoints.get(i).getElevation();
+            final double thisElevation = rawHikePoints.get(i).getElevation();
+            final double deltaElevation  = thisElevation - lastElevation;
 
-            if(thisElevation > lastElevation) {
-                elevationBounds.mElevationGain += (thisElevation - lastElevation);
+            if(deltaElevation > 0) {
+                elevationBounds.mElevationGain += deltaElevation;
             } else {
-                elevationBounds.mElevationLoss -= (thisElevation - lastElevation);
+                // ElevationLoss is always positive, but deltaElevation is negative here
+                elevationBounds.mElevationLoss += (-deltaElevation);
             }
 
             if(thisElevation > elevationBounds.mMaxElevation) {
@@ -206,7 +208,8 @@ public class DefaultHikeData implements HikeData {
         return elevationBounds;
     }
 
-    // A simple storage container for elevation-related data
+    // A simple storage container for elevation-related data.
+    // ElevationGain and ElevationLoss are both positive numbers.
     private class ElevationBounds {
         public double mMinElevation;
         public double mMaxElevation;
