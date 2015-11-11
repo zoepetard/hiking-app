@@ -9,20 +9,34 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
+import ch.epfl.sweng.team7.network.RawHikePoint;
+
 public class DefaultHikePoint implements HikePoint {
 
     private final static String LOG_FLAG = "DB_DefaultHikePoint";
 
-    private LatLng mPosition;
-    private Date mTime;
+    private final LatLng mPosition;
+    private final Date mTime;
+    private final double mElevation;
 
-    public DefaultHikePoint(LatLng position, Date time) {
+    public DefaultHikePoint(LatLng position, Date time, double elevation) {
         mPosition = position;
         mTime = time;
+        mElevation = elevation;
+    }
+
+    public DefaultHikePoint(RawHikePoint rawHikePoint) {
+        mPosition = rawHikePoint.getPosition();
+        mTime = rawHikePoint.getTime();
+        mElevation = rawHikePoint.getElevation();
     }
 
     public LatLng getPosition() {
         return mPosition;
+    }
+
+    public double getElevation() {
+        return mElevation;
     }
 
     /**

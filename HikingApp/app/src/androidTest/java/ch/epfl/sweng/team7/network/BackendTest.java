@@ -6,13 +6,14 @@ import android.test.suitebuilder.annotation.LargeTest;
 import junit.framework.TestCase;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 
 
 /**
@@ -24,18 +25,6 @@ import java.net.URL;
 @LargeTest
 public class BackendTest extends TestCase {
 
-    private static final String PROPER_JSON_ONEHIKE = "{\n"
-            + "  \"hike_id\": 143,\n"
-            + "  \"owner_id\": 48,\n"
-            + "  \"date\": 123201,\n"
-            + "  \"hike_data\": [\n"
-            + "    [0.0, 0.0, 123201],\n"
-            + "    [0.1, 0.1, 123202],\n"
-            + "    [0.2, 0.0, 123203],\n"
-            + "    [0.3,89.9, 123204],\n"
-            + "    [0.4, 0.0, 123205]\n"
-            + "  ]\n"
-            + "}\n";
     private static final double EPS_DOUBLE = 1e-10;
     public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
 
@@ -121,7 +110,7 @@ public class BackendTest extends TestCase {
      * @return a HikeData object
      */
     private static RawHikeData createHikeData() throws JSONException {
-        return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        return DummyHikeBuilder.buildRawHikeData(1);
     }
 
     /**

@@ -22,14 +22,20 @@ public class RawHikePoint {
 
     private LatLng mPosition;
     private Date mTime;         // UTC Timestamp
+    private double mElevation;
 
-    public RawHikePoint(LatLng position, Date time) {
+    public RawHikePoint(LatLng position, Date time, double elevation) {
         mPosition = position;
         mTime = time;
+        mElevation = elevation;
     }
 
     public LatLng getPosition() {
         return mPosition;
+    }
+
+    public double getElevation() {
+        return mElevation;
     }
 
     /**
@@ -40,25 +46,30 @@ public class RawHikePoint {
     }
 
     /**
-     * @return JSONArray [double lat, double lng, long date]. Storing a JSON array instead of
-     *                   a full JSON object reduces the communication/storage data size of a hike.
+     * @return JSONArray [double lat, double lng, long date, double elevation]. Storing a JSON array
+     *                  instead of a full JSON object reduces the communication/storage data size of
+     *                  a hike.
      * @throws JSONException
      */
     public JSONArray toJSON() throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        jsonArray.put(mPosition.latitude).put(mPosition.longitude).put(mTime.getTime());
+        jsonArray.put(mPosition.latitude)
+                .put(mPosition.longitude)
+                .put(mTime.getTime())
+                .put(mElevation);
         return jsonArray;
     }
 
     /**
      * Parse a RawHikePoint from an appropriate JSON object
-     * @param jsonArray [double lat, double lng, long date]
+     * @param jsonArray [double lat, double lng, long date, double elevation]
      * @return a valid RawHikePoint object
      * @throws JSONException
      */
     public static RawHikePoint parseFromJSON(JSONArray jsonArray) throws JSONException {
         LatLng latLng = new LatLng(jsonArray.getDouble(0), jsonArray.getDouble(1));
         Date date = new Date(jsonArray.getLong(2));
-        return new RawHikePoint(latLng, date);
+        double elevation = jsonArray.getDouble(3);
+        return new RawHikePoint(latLng, date, elevation);
     }
 }
