@@ -19,11 +19,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.ArrayList;
 
 
-/**
- * Class which controls and updates the visual part of the view, not the interaction.
- */
-
-
+/** Class which controls and updates the visual part of the view, not the interaction */
 public class HikeInfoView {
 
     private final static String LOG_FLAG = "Activity_HikeInfoView";
