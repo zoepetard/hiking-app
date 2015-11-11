@@ -9,16 +9,16 @@ import android.widget.ListView;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
 
-/**
- *
- * Class that creates a listview for the navigation drawer
- *
- * */
-
-
+/** Class that creates a listview for the navigation drawer */
 public class NavigationDrawerListFactory {
 
     private Context context;
+
+    private final static String LIST_ITEM_ACCOUNT = "Account";
+    private final static String LIST_ITEM_MAP = "Map";
+    private final static String LIST_ITEM_HIKES = "Hikes";
+    private final static String LIST_ITEM_LOGOUT = "Logout";
+
 
     public NavigationDrawerListFactory(ListView navDrawerList,Context context) {
 
@@ -34,19 +34,19 @@ public class NavigationDrawerListFactory {
                 Intent intent;
 
                 switch (itemText) {
-                    case "Account":
+                    case LIST_ITEM_ACCOUNT:
                         intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
                         view.getContext().startActivity(intent);
                         break;
-                    case "Map":
+                    case LIST_ITEM_MAP:
                         intent = new Intent(view.getContext(), MapActivity.class);
                         view.getContext().startActivity(intent);
                         break;
-                    case "Hikes":
+                    case LIST_ITEM_HIKES:
                         intent = new Intent(view.getContext(), HikeListActivity.class);
                         view.getContext().startActivity(intent);
                         break;
-                    case "Logout":
+                    case LIST_ITEM_LOGOUT:
                         intent = new Intent(view.getContext(), LoginActivity.class);
                         view.getContext().startActivity(intent);
                         break;
@@ -59,7 +59,7 @@ public class NavigationDrawerListFactory {
 
     private void loadNavDrawerItems(ListView navDrawerList) {
 
-        String[] listViewItems = {"Account", "Map", "Hikes", "Logout"};
+        String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_MAP, LIST_ITEM_HIKES, LIST_ITEM_LOGOUT};
         ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
 
