@@ -21,15 +21,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
 
+import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 
 public class HikeListActivity extends Activity {
-    /* GET HIKES ASYNC
-    CAN'T BE TESTED W/O MOCK SERVER SO ALL CODE COMMENTED
-    OUT LIKE THIS FOR NOW
     private DataManager dataManager = DataManager.getInstance();
-     */
+    private LatLngBounds bounds;
 
     private final static String LOG_FLAG = "Activity_HikeList";
 
@@ -46,23 +44,11 @@ public class HikeListActivity extends Activity {
         View hikeListView = getLayoutInflater().inflate(R.layout.activity_hike_list, null);
         mainContentFrame.addView(hikeListView);
 
-        int nearbyHikes = 5; /* DELETE THIS */
-        TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
-
-        /* DELETE THIS */
-        for (int i = 0; i < nearbyHikes; i++) {
-            TableRow hikeRow = getHikeRow(i);
-            hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
-        }
-
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
-        /*
-        LatLngBounds bounds;
         new GetMultHikeAsync().execute(bounds);
-         */
     }
 
     @Override
@@ -87,9 +73,8 @@ public class HikeListActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /* MODIFY TO USE REAL DATA FROM THE HIKE */
     //Creates and returns a TableRow with information about a hike.
-    public TableRow getHikeRow(int i) {
+    public TableRow getHikeRow(int i, HikeData hikeData) {
 
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
@@ -113,6 +98,7 @@ public class HikeListActivity extends Activity {
         gridLayout.setColumnCount(2);
 
         //map column
+        // still placeholder since map is not stored in server yet
         GridLayout.LayoutParams mapColumn = new GridLayout.LayoutParams(rowSpan, col1);
         mapColumn.width = screenWidth / 3;
         mapColumn.height = screenHeight / 5;
@@ -135,16 +121,18 @@ public class HikeListActivity extends Activity {
         gridLayout.addView(nameText, nameRow);
 
         //distance row
+        double distance = hikeData.getDistance();
         GridLayout.LayoutParams distanceRow = new GridLayout.LayoutParams(row2, col2);
         TextView distanceText = new TextView(this);
-        distanceText.setText("Distance: " + Integer.toString((i + 1) * 5) + "km");
+        distanceText.setText("Distance: " + Double.toString(distance) + "km");
         distanceText.setLayoutParams(distanceRow);
         gridLayout.addView(distanceText, distanceRow);
 
         //rating row
+        double rating = hikeData.getRating();
         GridLayout.LayoutParams ratingRow = new GridLayout.LayoutParams(row3, col2);
         TextView ratingText = new TextView(this);
-        ratingText.setText("Rating: " + Integer.toString(i));
+        ratingText.setText("Rating: " + Double.toString(rating));
         ratingText.setLayoutParams(ratingRow);
         gridLayout.addView(ratingText, ratingRow);
 
@@ -157,7 +145,6 @@ public class HikeListActivity extends Activity {
         startActivity(intent);
     }
 
-    /*
     private class GetMultHikeAsync extends AsyncTask<LatLngBounds, Void, List<HikeData> > {
 
         @Override
@@ -171,29 +158,13 @@ public class HikeListActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(List<HikeData> result) {
-            if (result == null) {
-                setErrorState();
-                return;
-            }
-
-            displayHikes(result);
-        }
-
-        private void setErrorState() {
-            Context context = getApplicationContext();
-            Toast.makeText(context, getString(R.string.hikes_fetch_error),
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        private void displayHikes(final List<HikeData> result) {
-            for (int i = 0; i < result.length(); i++) {
-                TableRow hikeRow = getHikeRow(i);
+        protected void onPostExecute(List<HikeData> results) {
+            TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
+            for (int i = 0; i < results.size(); i++) {
+                TableRow hikeRow = getHikeRow(i, results.get(i));
                 hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
             }
         }
     }
-    */
-
 }
