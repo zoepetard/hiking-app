@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -18,12 +20,18 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.HikeData;
+
 
 /** Class which controls and updates the visual part of the view, not the interaction */
 public class HikeInfoView {
+    private DataManager dataManager = DataManager.getInstance();
 
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 
+    private long hikeId;
     private TextView hikeName;
     private TextView hikeDistance;
     private RatingBar hikeRatingBar;
@@ -40,8 +48,8 @@ public class HikeInfoView {
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
 
-
-    public HikeInfoView(View view, Context context) {  // add model as argument when creating that
+    public HikeInfoView (View view, Context context, long id) {  // add model as argument when creating that
+        hikeId = id;
 
         // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
@@ -69,93 +77,111 @@ public class HikeInfoView {
 
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
 
-        update();
-
-    }
-
-    // method to update info in UI elements
-    public void update() {
-
-         /*
-        Temporary example data!
-        This data will be stored and accessed differently later in the project.
-        Start
-        */
-
-        String name = "The Super Hike";
-        double distance = 10.3;  // in km
-        float rating = 3;
-        int elevationMin = 1500;
-        int elevationMax = 2100;
-
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 1500),
-                new DataPoint(1, 1800),
-                new DataPoint(2, 1900),
-                new DataPoint(3, 2100),
-                new DataPoint(4, 2000)
-        });
-
-        hikeGraph.removeAllSeries(); // remove placeholder series
-        hikeGraph.setTitle("Elevation");
-        hikeGraph.getGridLabelRenderer().setHorizontalAxisTitle("Hours");
-
-        hikeGraph.addSeries(series);
-
-        /*
-        END
+        galleryImageViews = new ArrayList<>(4);
+        /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
+        imageViews.size() IS IN HIKEINFOACTIVITY BUT WE IT'S ASYNC SO WE HAVE AN ERROR:
+        EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
+        ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
 
-        // Updating the UI with data
-        hikeName.setText(name);
-
-        String distanceString = distance + " km";
-        hikeDistance.setText(distanceString);
-
-        hikeRatingBar.setRating(rating);
-
-        String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
-        hikeElevation.setText(elevationString);
-
-        loadImageScrollView();
-
-        // Add adapter and onclickmethods to the nav drawer listview
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,context);
+        new GetOneHikeAsync().execute(hikeId);
 
     }
 
+    private class GetOneHikeAsync extends AsyncTask<Long, Void, HikeData> {
 
-    // create imageviews and add them to the scrollview
-    private void loadImageScrollView() {
+        @Override
+        protected HikeData doInBackground(Long... hikeIds) {
+            try {
+                return dataManager.getHike(hikeIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
 
-        galleryImageViews = new ArrayList<>();
+        @Override
+        protected void onPostExecute(HikeData result) {
+            if (result == null) {
+                setErrorState();
+                return;
+            }
+            displayHike(result);
+        }
 
-        // TEMPORARY
-        Integer img1 = R.drawable.login_background;
+        private void setErrorState() {
+            String name = "Hike Data Not Found";
+            hikeName.setText(name);
+        }
 
-        // add imageviews with images to the scrollview
-        for (int i = 0; i < 4; i++) {
+        private void displayHike(HikeData result) {
+            String name = "The Super Hike";
+            double distance = result.getDistance();  // in km
+            float rating = (float) result.getRating();
+            double elevationMin = result.getMinElevation();
+            double elevationMax = result.getMaxElevation();
 
-            imgLayout.addView(createImageView(img1));
+            /* didn't find elevation change in database so still use fake data*/
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
+                    new DataPoint(0, 1500),
+                    new DataPoint(1, 1800),
+                    new DataPoint(2, 1900),
+                    new DataPoint(3, 2100),
+                    new DataPoint(4, 2000)
+            });
+
+            hikeGraph.removeAllSeries(); // remove placeholder series
+            hikeGraph.setTitle("Elevation");
+            hikeGraph.getGridLabelRenderer().setHorizontalAxisTitle("Hours");
+
+            hikeGraph.addSeries(series);
+
+            // Updating the UI with data
+            hikeName.setText(name);
+
+            String distanceString = distance + " km";
+            hikeDistance.setText(distanceString);
+
+            hikeRatingBar.setRating(rating);
+
+            String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
+            hikeElevation.setText(elevationString);
+
+            loadImageScrollView();
+
+            // Add adapter and onclickmethods to the nav drawer listview
+            NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
+        }
+
+        // create imageviews and add them to the scrollview
+        private void loadImageScrollView(){
+
+            // TEMPORARY
+            Integer img1 = R.drawable.login_background;
+
+            // add imageviews with images to the scrollview
+            for(int i = 0; i<4; i++){
+
+                imgLayout.addView(createImageView(img1));
+
+            }
+        }
+
+        private View createImageView(Integer img) {
+
+            // creating an ImageView and applying layout parameters
+            ImageView imageView = new ImageView(context.getApplicationContext());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            imageView.setAdjustViewBounds(true); // set this to true to preserve aspect ratio of image.
+            layoutParams.setMargins(10, 10, 10, 10); // Margin around each image
+            imageView.setLayoutParams(layoutParams);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
+            imageView.setImageResource(img);
+            galleryImageViews.add(imageView);
+
+            return imageView;
 
         }
-    }
-
-
-    private View createImageView(Integer img) {
-
-        // creating an ImageView and applying layout parameters
-        ImageView imageView = new ImageView(context.getApplicationContext());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        imageView.setAdjustViewBounds(true); // set this to true to preserve aspect ratio of image.
-        layoutParams.setMargins(10, 10, 10, 10); // Margin around each image
-        imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
-        imageView.setImageResource(img);
-        galleryImageViews.add(imageView);
-
-        return imageView;
-
     }
 
     public Button getBackButton() {

@@ -17,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 
 public final class HikeInfoActivity extends Activity {
+    private long hikeId;
 
     private final static String LOG_FLAG = "Activity_HikeInfo";
 
@@ -32,8 +33,8 @@ public final class HikeInfoActivity extends Activity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-
-        HikeInfoView hikeInfoView = new HikeInfoView(view, this);
+        hikeId = 1; // test
+        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
