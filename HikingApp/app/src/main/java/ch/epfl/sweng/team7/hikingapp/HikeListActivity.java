@@ -7,7 +7,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -20,15 +24,28 @@ public class HikeListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hike_list);
+        setContentView(R.layout.navigation_drawer);
+
+
+        // Inflate Navigation Drawer with main content
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
+        FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
+        View hikeListView = getLayoutInflater().inflate(R.layout.activity_hike_list, null);
+        mainContentFrame.addView(hikeListView);
 
         int nearbyHikes = 5;
-        TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
+        TableLayout hikeListTable = (TableLayout) findViewById((R.id.hikeListTable));
 
         for (int i = 0; i < nearbyHikes; i++) {
             TableRow hikeRow = getHikeRow(i);
             hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
         }
+
+
+        // load items into the Navigation drawer and add listeners
+        ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
+
     }
 
     @Override
@@ -68,7 +85,7 @@ public class HikeListActivity extends Activity {
         GridLayout.Spec row1 = GridLayout.spec(0);
         GridLayout.Spec row2 = GridLayout.spec(1);
         GridLayout.Spec row3 = GridLayout.spec(2);
-        GridLayout.Spec rowSpan = GridLayout.spec(0,3);
+        GridLayout.Spec rowSpan = GridLayout.spec(0, 3);
 
         GridLayout.Spec col1 = GridLayout.spec(0);
         GridLayout.Spec col2 = GridLayout.spec(1);
@@ -79,12 +96,12 @@ public class HikeListActivity extends Activity {
 
         //map column
         GridLayout.LayoutParams mapColumn = new GridLayout.LayoutParams(rowSpan, col1);
-        mapColumn.width = screenWidth/3;
-        mapColumn.height = screenHeight/5;
+        mapColumn.width = screenWidth / 3;
+        mapColumn.height = screenHeight / 5;
         TextView mapText = new TextView(this);
         mapText.setText("Map for hike " + Integer.toString(i + 1) + " goes here.");
         mapText.setLayoutParams(mapColumn);
-        gridLayout.addView(mapText,mapColumn);
+        gridLayout.addView(mapText, mapColumn);
 
         //name row
         GridLayout.LayoutParams nameRow = new GridLayout.LayoutParams(row1, col2);
@@ -97,21 +114,21 @@ public class HikeListActivity extends Activity {
                 startActivity(intent);
             }
         });
-        gridLayout.addView(nameText,nameRow);
+        gridLayout.addView(nameText, nameRow);
 
         //distance row
         GridLayout.LayoutParams distanceRow = new GridLayout.LayoutParams(row2, col2);
         TextView distanceText = new TextView(this);
-        distanceText.setText("Distance: " + Integer.toString((i+1)*5) + "km");
+        distanceText.setText("Distance: " + Integer.toString((i + 1) * 5) + "km");
         distanceText.setLayoutParams(distanceRow);
-        gridLayout.addView(distanceText,distanceRow);
+        gridLayout.addView(distanceText, distanceRow);
 
         //rating row
         GridLayout.LayoutParams ratingRow = new GridLayout.LayoutParams(row3, col2);
         TextView ratingText = new TextView(this);
         ratingText.setText("Rating: " + Integer.toString(i));
         ratingText.setLayoutParams(ratingRow);
-        gridLayout.addView(ratingText,ratingRow);
+        gridLayout.addView(ratingText, ratingRow);
 
         hikeRow.addView(gridLayout);
         return hikeRow;

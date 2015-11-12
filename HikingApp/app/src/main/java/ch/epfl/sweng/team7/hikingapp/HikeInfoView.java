@@ -2,10 +2,13 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -16,33 +19,29 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.ArrayList;
 
 
-/**
-
-Class which controls and updates the visual part of the view, not the interaction.
-
-*/
-
-
+/** Class which controls and updates the visual part of the view, not the interaction */
 public class HikeInfoView {
 
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 
-    TextView hikeName;
-    TextView hikeDistance;
-    RatingBar hikeRatingBar;
-    LinearLayout imgLayout;
-    TextView hikeElevation;
-    View view;
-    Context context;
-    ArrayList<ImageView> imageViews; // make ImageViews accessible in controller.
-    Button backButton;
-    ImageView fullScreenImage;
-    ImageView mapPreview;
-    GraphView hikeGraph;
-    HorizontalScrollView imageScrollView;
+    private TextView hikeName;
+    private TextView hikeDistance;
+    private RatingBar hikeRatingBar;
+    private LinearLayout imgLayout;
+    private TextView hikeElevation;
+    private View view;
+    private Context context;
+    private ArrayList<ImageView> galleryImageViews; // make ImageViews accessible in controller.
+    private Button backButton;
+    private ImageView fullScreenImage;
+    private ImageView mapPreview;
+    private GraphView hikeGraph;
+    private HorizontalScrollView imageScrollView;
+    private ListView navDrawerList;
+    private ArrayAdapter<String> navDrawerAdapter;
 
 
-    public HikeInfoView (View view, Context context) {  // add model as argument when creating that
+    public HikeInfoView(View view, Context context) {  // add model as argument when creating that
 
         // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
@@ -58,7 +57,6 @@ public class HikeInfoView {
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
-        // Back button
         backButton = (Button) view.findViewById(R.id.back_button_fullscreen_image);
 
         fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
@@ -69,12 +67,14 @@ public class HikeInfoView {
 
         imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
+        navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
+
         update();
 
     }
 
     // method to update info in UI elements
-    public void update(){
+    public void update() {
 
          /*
         Temporary example data!
@@ -88,7 +88,7 @@ public class HikeInfoView {
         int elevationMin = 1500;
         int elevationMax = 2100;
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(0, 1500),
                 new DataPoint(1, 1800),
                 new DataPoint(2, 1900),
@@ -107,29 +107,34 @@ public class HikeInfoView {
          */
 
         // Updating the UI with data
-
         hikeName.setText(name);
 
-        hikeDistance.setText(distance + " km");
+        String distanceString = distance + " km";
+        hikeDistance.setText(distanceString);
 
         hikeRatingBar.setRating(rating);
 
-        hikeElevation.setText("Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m");
+        String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
+        hikeElevation.setText(elevationString);
 
         loadImageScrollView();
 
+        // Add adapter and onclickmethods to the nav drawer listview
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,context);
+
     }
 
-    // create imageviews and add them to the scrollview
-    private void loadImageScrollView(){
 
-        imageViews = new ArrayList<>();
+    // create imageviews and add them to the scrollview
+    private void loadImageScrollView() {
+
+        galleryImageViews = new ArrayList<>();
 
         // TEMPORARY
         Integer img1 = R.drawable.login_background;
 
         // add imageviews with images to the scrollview
-        for(int i = 0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
 
             imgLayout.addView(createImageView(img1));
 
@@ -137,20 +142,41 @@ public class HikeInfoView {
     }
 
 
-
-    private View createImageView(Integer img){
+    private View createImageView(Integer img) {
 
         // creating an ImageView and applying layout parameters
         ImageView imageView = new ImageView(context.getApplicationContext());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         imageView.setAdjustViewBounds(true); // set this to true to preserve aspect ratio of image.
         layoutParams.setMargins(10, 10, 10, 10); // Margin around each image
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
         imageView.setImageResource(img);
-        imageViews.add(imageView);
+        galleryImageViews.add(imageView);
 
         return imageView;
 
     }
+
+    public Button getBackButton() {
+        return backButton;
+    }
+
+    public RatingBar getHikeRatingBar() {
+
+        return hikeRatingBar;
+    }
+
+    public ArrayList<ImageView> getGalleryImageViews() {
+        return galleryImageViews;
+    }
+
+    public ImageView getMapPreview() {
+        return mapPreview;
+    }
+
+    public ListView getNavDrawerList() {
+        return navDrawerList;
+    }
+
 }

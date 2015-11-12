@@ -1,12 +1,20 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.LauncherActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 
 public final class HikeInfoActivity extends Activity {
 
@@ -15,14 +23,20 @@ public final class HikeInfoActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hike_info);
+        setContentView(R.layout.navigation_drawer);
 
         View view = findViewById(android.R.id.content);
+
+        // load main content into the navigations drawer's framelayout
+        FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
+        View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
+        mainContentFrame.addView(hikeInfoLayout);
+
 
         HikeInfoView hikeInfoView = new HikeInfoView(view, this);
 
         // set listener methods for UI elements in HikeInfoView
-        hikeInfoView.hikeRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 
@@ -36,17 +50,19 @@ public final class HikeInfoActivity extends Activity {
         });
 
         // Setting a listener for each imageview.
-        for (int i = 0; i < hikeInfoView.imageViews.size(); i++) {
+        for (int i = 0; i < hikeInfoView.getGalleryImageViews().size(); i++) {
 
-            ImageView imgView = hikeInfoView.imageViews.get(i);
+            ImageView imgView = hikeInfoView.getGalleryImageViews().get(i);
             imgView.setOnClickListener(new ImageViewClickListener());
         }
 
-        hikeInfoView.backButton.setOnClickListener(new BackButtonClickListener());
+        hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
-        hikeInfoView.mapPreview.setOnClickListener(new MapPreviewClickListener());
+        hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
 
     }
+
+
 
     private class ImageViewClickListener implements View.OnClickListener {
         @Override
@@ -64,7 +80,6 @@ public final class HikeInfoActivity extends Activity {
     }
 
     private class MapPreviewClickListener implements View.OnClickListener {
-
         @Override
         public void onClick(View v) {
             // segue to map activity!
@@ -75,9 +90,7 @@ public final class HikeInfoActivity extends Activity {
     private class BackButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-
             toggleFullScreen();
-
         }
     }
 
@@ -85,7 +98,6 @@ public final class HikeInfoActivity extends Activity {
         View infoView = findViewById(R.id.info_overview_layout);
         View fullScreenView = findViewById(R.id.image_fullscreen_layout);
         View containerView = findViewById(R.id.info_scrollview);
-
 
         // Check which view is currently visible and switch
         if (infoView.getVisibility() == View.VISIBLE) {
@@ -99,8 +111,6 @@ public final class HikeInfoActivity extends Activity {
             infoView.setVisibility(View.VISIBLE);
             fullScreenView.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.WHITE);
-
         }
     }
-
 }

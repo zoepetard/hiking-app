@@ -1,7 +1,15 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.Intent;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,9 +30,22 @@ public class MapActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.navigation_drawer);
         gps.startService(this);
+
+        // nav drawer setup
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
+        FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
+        View mapView = getLayoutInflater().inflate(R.layout.activity_map, null);
+        mainContentFrame.addView(mapView);
+
         setUpMapIfNeeded();
+
+        // load items into the Navigation drawer and add listeners
+        ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
+
+
     }
 
     @Override
@@ -85,4 +106,6 @@ public class MapActivity extends FragmentActivity {
 
         Polyline polyline = mMap.addPolyline(testTriangle);
     }
+
+
 }
