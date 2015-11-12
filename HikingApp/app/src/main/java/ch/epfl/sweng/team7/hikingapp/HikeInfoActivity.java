@@ -60,40 +60,9 @@ public final class HikeInfoActivity extends Activity {
 
         hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
 
-        hikeInfoView.getNavDrawerList().setOnItemClickListener(new ListItemClickListener());
-
     }
 
-    private class ListItemClickListener implements ListView.OnItemClickListener {
 
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            String itemText = (String) parent.getItemAtPosition(position);
-
-            Intent intent;
-            switch (itemText) {
-
-                case "Account":
-                    intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
-                    startActivity(intent);
-                    break;
-                case "Map":
-                    intent = new Intent(view.getContext(), MapActivity.class);
-                    startActivity(intent);
-                    break;
-                case "Hikes":
-                    intent = new Intent(view.getContext(), HikeListActivity.class);
-                    startActivity(intent);
-                    break;
-                case "Logout":
-                    intent = new Intent(view.getContext(), LoginActivity.class);
-                    startActivity(intent);
-                    break;
-            }
-
-        }
-    }
 
     private class ImageViewClickListener implements View.OnClickListener {
         @Override
