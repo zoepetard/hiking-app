@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,19 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.List;
+
+import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.HikeData;
+
 public class HikeListActivity extends Activity {
+    /* GET HIKES ASYNC
+    CAN'T BE TESTED W/O MOCK SERVER SO ALL CODE COMMENTED
+    OUT LIKE THIS FOR NOW
+    private DataManager dataManager = DataManager.getInstance();
+     */
 
     private final static String LOG_FLAG = "Activity_HikeList";
 
@@ -33,19 +46,23 @@ public class HikeListActivity extends Activity {
         View hikeListView = getLayoutInflater().inflate(R.layout.activity_hike_list, null);
         mainContentFrame.addView(hikeListView);
 
-        int nearbyHikes = 5;
-        TableLayout hikeListTable = (TableLayout) findViewById((R.id.hikeListTable));
+        int nearbyHikes = 5; /* DELETE THIS */
+        TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
 
+        /* DELETE THIS */
         for (int i = 0; i < nearbyHikes; i++) {
             TableRow hikeRow = getHikeRow(i);
             hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
         }
 
-
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
+        /*
+        LatLngBounds bounds;
+        new GetMultHikeAsync().execute(bounds);
+         */
     }
 
     @Override
@@ -70,6 +87,8 @@ public class HikeListActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /* MODIFY TO USE REAL DATA FROM THE HIKE */
+    
     //Creates and returns a TableRow with information about a hike.
     public TableRow getHikeRow(int i) {
 
@@ -138,5 +157,44 @@ public class HikeListActivity extends Activity {
         Intent intent = new Intent(this, MapActivity.class);
         startActivity(intent);
     }
+
+    /*
+    private class GetMultHikeAsync extends AsyncTask<LatLngBounds, Void, List<HikeData> > {
+
+        @Override
+        protected List<HikeData> doInBackground(LatLngBounds... bounds) {
+            try {
+                return dataManager.getHikesInWindow(bounds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<HikeData> result) {
+            if (result == null) {
+                setErrorState();
+                return;
+            }
+
+            displayHikes(result);
+        }
+
+        private void setErrorState() {
+            Context context = getApplicationContext();
+            Toast.makeText(context, getString(R.string.hikes_fetch_error),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        private void displayHikes(final List<HikeData> result) {
+            for (int i = 0; i < result.length(); i++) {
+                TableRow hikeRow = getHikeRow(i);
+                hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+            }
+        }
+    }
+    */
 
 }
