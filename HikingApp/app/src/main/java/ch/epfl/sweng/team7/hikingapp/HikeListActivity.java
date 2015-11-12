@@ -139,11 +139,4 @@ public class HikeListActivity extends Activity {
         startActivity(intent);
     }
 
-    private void loadNavDrawerItems(ListView navDrawerList) {
-
-        String[] listViewItems = {"Account", "Map", "Hikes", "Logout"};
-        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listViewItems);
-        navDrawerList.setAdapter(navDrawerAdapter);
-
-    }
 }
