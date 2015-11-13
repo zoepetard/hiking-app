@@ -38,7 +38,11 @@ public class PopulateDatabase {
     public static List<File> findAllFiles() {
         ArrayList<File> allFiles = new ArrayList<>();
 
-        String externalDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File externalDirectoryFile = Environment.getExternalStorageDirectory();
+        if(externalDirectoryFile == null) return allFiles;
+        String externalDirectory = externalDirectoryFile.getAbsolutePath();
+        if(externalDirectory == null) return allFiles;
+
         File f = new File(externalDirectory);
         if (f.exists() && f.isDirectory()) {
             final Pattern p = Pattern.compile(".*\\.gpx");
