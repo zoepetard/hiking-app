@@ -8,10 +8,9 @@
 
 package ch.epfl.sweng.team7.network;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -97,24 +96,24 @@ public class NetworkDatabaseClient implements DatabaseClient {
                 "{\"lat_min\":%f,\"lng_min\":%f,\"lat_max\":%f,\"lng_max\":%f}",
                 bounds.southwest.latitude, bounds.southwest.longitude,
                 bounds.northeast.latitude, bounds.northeast.longitude);
+        List<Long> hikeList = new ArrayList<>();
 
         try {
-            Log.d(LOG_FLAG, "asking...");
             URL url = new URL(mServerUrl + "/get_hikes_in_window/");
             HttpURLConnection conn = getConnection(url, "GET");
             conn.setRequestProperty("bounding_box", boundingBoxJSON);
             conn.connect();
-            String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            Log.d(LOG_FLAG, stringHikeData);
-            //JSONObject jsonHikeData = new JSONObject(stringHikeData);
-            //return RawHikeData.parseFromJSON(jsonHikeData);
-        } catch (Exception e) {//IOException|JSONException|HikeParseException
-            //throw new DatabaseClientException(e);
-        }
+            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
 
-        // TODO implement properly
-        List<Long> hikeList = new ArrayList<>();
-        hikeList.add(10L);
+            // Parse response
+            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
+            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
+                hikeList.add(jsonHikeIdArray.getLong(i));
+            }
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
         return hikeList;
     }
 
