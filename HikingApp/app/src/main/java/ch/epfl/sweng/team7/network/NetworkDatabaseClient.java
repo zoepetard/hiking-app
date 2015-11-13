@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -73,7 +74,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * or the hikeId did not match a valid hike.
      */
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented."); // TODO implement
+        // TODO implement properly
+        List<RawHikeData> rawHikeDatas = new ArrayList<>();
+        for(Long hikeId : hikeIds) {
+            rawHikeDatas.add(fetchSingleHike(hikeId));
+        }
+        return rawHikeDatas;
     }
 
     /**
@@ -84,7 +90,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented."); // TODO implement
+        // TODO implement properly
+        return new ArrayList<>(10);
     }
 
     /**
