@@ -34,8 +34,8 @@ class Hike(ndb.Model):
     # Management (set by backend)
     author = ndb.UserProperty()
     last_changed = ndb.DateTimeProperty(auto_now_add=True)
-    bounding_botleft = ndb.GeoPtProperty()
-    bounding_toprght = ndb.GeoPtProperty()
+    bb_southwest = ndb.GeoPtProperty()
+    bb_northeast = ndb.GeoPtProperty()
     
     # Header
     hike_id = ndb.IntegerProperty()
@@ -60,8 +60,8 @@ class Hike(ndb.Model):
         self.hike_data = json_object['hike_data']
         #self.some_string = json_object['some_string']
         bb = get_bounding_box(self.hike_data)
-        self.bounding_botleft = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
-        self.bounding_toprght = ndb.GeoPt(bb['lat_max'], bb['lng_max'])
+        self.bb_southwest = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
+        self.bb_northeast = ndb.GeoPt(bb['lat_max'], bb['lng_max'])
         logger.info('lat in bounds %s:%s, lng in bounds %s:%s', bb['lat_min'], bb['lat_max'], bb['lng_min'], bb['lng_max'])
         return True
                 

@@ -8,6 +8,8 @@
 
 package ch.epfl.sweng.team7.network;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
@@ -28,7 +30,7 @@ import java.util.List;
  */
 public class NetworkDatabaseClient implements DatabaseClient {
 
-    private final static String LOG_FLAG = "Network_DataBaseClient";
+    private final static String LOG_FLAG = "Network_DatabaseClient";
     private final static int CONNECT_TIMEOUT = 1000;
     private final static String JSON_CONTENT = "application/json";
     private final static String ENCODING = "charset=utf-8";
@@ -97,11 +99,13 @@ public class NetworkDatabaseClient implements DatabaseClient {
                 bounds.northeast.latitude, bounds.northeast.longitude);
 
         try {
+            Log.d(LOG_FLAG, "asking...");
             URL url = new URL(mServerUrl + "/get_hikes_in_window/");
             HttpURLConnection conn = getConnection(url, "GET");
             conn.setRequestProperty("bounding_box", boundingBoxJSON);
             conn.connect();
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            Log.d(LOG_FLAG, stringHikeData);
             //JSONObject jsonHikeData = new JSONObject(stringHikeData);
             //return RawHikeData.parseFromJSON(jsonHikeData);
         } catch (Exception e) {//IOException|JSONException|HikeParseException

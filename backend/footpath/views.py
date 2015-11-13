@@ -55,23 +55,27 @@ def get_hikes(request):
  
 def get_hikes_in_window(request):
     
-    logger.info('got request %s', repr(request))
+    # Get window from input
     request_bounding_box = request.META.get('HTTP_BOUNDING_BOX', -1)
-    logger.info('for bounding box %s',repr(request_bounding_box))
     
     bb = json.loads(request_bounding_box)
     lat_min = float(bb['lat_min'])
-    logger.info('of dimensions %s',repr(lat_min))
+    lng_min = float(bb['lng_min'])
+    lat_max = float(bb['lat_max'])
+    lng_max = float(bb['lng_max'])
+    window_southwest = ndb.GeoPt(lat=lat_min, lon=lng_min)
+    window_northeast = ndb.GeoPt(lat=lat_max, lon=lng_max)
     
-    #random_hike = Hike.query().order(-Hike.date)
-    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    #logger.error('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
-    #if hikes!=None and len(hikes) > 0:
-    #    hike_string = hikes[0].to_json()
-            
-    #    logger.error('Return string '+repr(hike_string))
-    #    return HttpResponse(hike_string, content_type='application/json')
-    return HttpResponse(status=404)
+    # query database and assemble output
+    hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
+    hike_ids = [];
+    for hike in hikes:
+        if (hike.bb_southwest < window_northeast):
+            hike_ids.append(hike.hike_id)
+     
+    # return result       
+    hike_ids_string = "{\"hike_ids\":" + repr(hike_ids) + "}";
+    return HttpResponse(hike_ids_string, content_type='application/json')
     
     
     
