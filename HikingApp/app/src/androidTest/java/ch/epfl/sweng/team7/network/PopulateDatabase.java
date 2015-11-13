@@ -63,8 +63,6 @@ public class PopulateDatabase {
 
     // Push a file to the database
     public static RawHikeData parseFile(File gpxFile) throws HikeParseException {
-        Log.d("PopulateDatabase", "pushing "+gpxFile.toString());
-
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
