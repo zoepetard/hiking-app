@@ -21,6 +21,7 @@ public class PopulateDatabase {
     public static void findAllFiles() {
         String externalDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
         File f = new File(externalDirectory);
+        Log.d("PopulateDatabase", "findAllFiles: "+f.toString());
         if (f.exists() && f.isDirectory()) {
             final Pattern p = Pattern.compile(".*\\.gpx");
 
@@ -36,13 +37,13 @@ public class PopulateDatabase {
             }
         }
     }
-    public static void pushFile(String filePath) {
+
+    public static void pushFile(File gpxFile) {
 
         try {
-            File fXmlFile = new File(filePath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(fXmlFile);
+            Document doc = dBuilder.parse(gpxFile);
             RawHikeData rawHikeData = RawHikeData.parseFromGpxXml(doc);
             // TODO: post to database
         } catch(Exception e) {

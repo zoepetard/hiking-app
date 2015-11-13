@@ -102,6 +102,11 @@ public class BackendTest extends TestCase {
         }
     }
 
+    @Test
+    public void testPopulateDatabase() {
+        PopulateDatabase.findAllFiles();
+    }
+
     // TODO test backend reaction to malformed input
     // TODO test other backend interface (like post_hikes)
 
