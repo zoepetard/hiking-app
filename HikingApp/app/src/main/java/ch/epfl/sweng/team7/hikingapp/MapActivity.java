@@ -181,8 +181,6 @@ public class MapActivity extends FragmentActivity {
         });
     }
 
-
-
     //Hike object for testing purposes
     private DefaultHikeData testHike() {
         long hikeId = 1;
