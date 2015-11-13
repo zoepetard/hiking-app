@@ -186,7 +186,7 @@ public class RawHikeData {
 
             // Input check
             if (doc.getDocumentElement().getNodeName().compareTo("gpx") != 0) {
-                throw new DatabaseClientException("gpx node not found.");
+                throw new HikeParseException("gpx node not found.");
             }
 
             // Parse track (trk node with trkseg subnodes)
