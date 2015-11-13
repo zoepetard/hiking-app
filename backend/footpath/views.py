@@ -17,9 +17,9 @@ def get_hike(request):
     # Database testing function, TODO remove
     create_hike_one()
     
-    logger.error(repr(request))
+    logger.info('got request %s', repr(request))
     request_hike_id = int(request.META.get('HTTP_HIKE_ID', -1))
-    logger.error('Request for hike id '+repr(request_hike_id))
+    logger.info('for hike id %s',repr(request_hike_id))
     
     #random_hike = Hike.query().order(-Hike.date)
     hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
@@ -46,10 +46,30 @@ def get_hikes(request):
     for hike in hikes:#random_hike = hikes[0]
         hike_string = hike.to_json() #hike_to_json(hike)
         all_hikes += hike_string + '\n'
+        debug_new_hike = Hike()
+        debug_new_hike.from_json(hike_string)
     
     return HttpResponse(all_hikes, content_type='application/javascript')
     #return HttpResponse(serializers.serialize("json", random_hike), content_type='application/json')
  
+def get_hikes_in_window(request):
+    
+    logger.info('got request %s', repr(request))
+    request_bounding_box = int(request.META.get('HTTP_BOUNDING_BOX', -1))
+    logger.info('for bounding box %s',repr(request_bounding_box))
+    
+    #random_hike = Hike.query().order(-Hike.date)
+    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
+    #logger.error('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
+    #if hikes!=None and len(hikes) > 0:
+    #    hike_string = hikes[0].to_json()
+            
+    #    logger.error('Return string '+repr(hike_string))
+    #    return HttpResponse(hike_string, content_type='application/json')
+    return HttpResponse(status=404)
+    
+    
+    
 # Create a hike for testing   
 def create_hike_one():
     hike_one = Hike.query(Hike.hike_id == 1).fetch()

@@ -91,7 +91,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
         // TODO implement properly
-        return new ArrayList<>(10);
+        List<Long> hikeList = new ArrayList<>();
+        hikeList.add(10L);
+        return hikeList;
     }
 
     /**

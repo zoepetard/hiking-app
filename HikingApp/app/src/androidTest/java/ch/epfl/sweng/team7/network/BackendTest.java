@@ -2,6 +2,10 @@ package ch.epfl.sweng.team7.network;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import junit.framework.TestCase;
 
@@ -11,6 +15,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 
@@ -25,7 +30,7 @@ import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
+    public static final String SERVER_URL = "http://10.0.3.2:8080";//"http://footpath-1104.appspot.com";//
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -104,6 +109,17 @@ public class BackendTest extends TestCase {
     @Test
     public void testPopulateDatabase() throws Exception {
         //PopulateDatabase.run(createDatabaseClient());
+    }
+
+    @Test
+    public void testGetHikesInWindow() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-89.,-179.), new LatLng(89.,179.));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        Log.d("BackendTestLog", "Found "+hikeList.size()+" Hikes");
+        for(Long l : hikeList) {
+            Log.d("BackendTestLog", "Found Hike "+l);
+        }
     }
 
     // TODO test backend reaction to malformed input
