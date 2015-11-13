@@ -27,6 +27,7 @@ import static junit.framework.Assert.assertFalse;
 public class DataManagerTest {
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
     private static final LatLng DEBUG_LOC_SAOTOME = new LatLng(0.362365, 6.558835);
+    private long mNewHikeId;
 
     @Before
     public void setUp() throws Exception {
@@ -35,7 +36,7 @@ public class DataManagerTest {
         newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date(), 0.0));
         newHikePoints.add(new RawHikePoint(new LatLng(2.,11.), new Date(), 0.0));
         RawHikeData newHike = new RawHikeData(2, 15, new Date(), newHikePoints);
-        mockServer.postHike(newHike);
+        mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
     }
 
@@ -57,7 +58,7 @@ public class DataManagerTest {
         LatLngBounds window = new LatLngBounds(DEBUG_LOC_SAOTOME, DEBUG_LOC_ACCRA);
         List<HikeData> hikeDatas = DataManager.getInstance().getHikesInWindow(window);
         assertEquals(1, hikeDatas.size());
-        assertEquals(2, hikeDatas.get(0).getHikeId());
+        assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
     @After
