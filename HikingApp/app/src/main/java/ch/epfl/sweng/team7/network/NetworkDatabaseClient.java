@@ -59,9 +59,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonHikeData = new JSONObject(stringHikeData);
             return RawHikeData.parseFromJSON(jsonHikeData);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException|JSONException|HikeParseException e) {
             throw new DatabaseClientException(e);
         }
     }

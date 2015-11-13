@@ -5,7 +5,6 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.TestCase;
 
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -114,7 +113,7 @@ public class BackendTest extends TestCase {
      * Create a valid HikeData object
      * @return a HikeData object
      */
-    private static RawHikeData createHikeData() throws JSONException {
+    private static RawHikeData createHikeData() throws HikeParseException {
         return DummyHikeBuilder.buildRawHikeData(1);
     }
 

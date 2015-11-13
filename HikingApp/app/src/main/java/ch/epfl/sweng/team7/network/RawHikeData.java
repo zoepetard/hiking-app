@@ -149,7 +149,7 @@ public class RawHikeData {
      * @return a new RawHikeData object.
      * @throws JSONException in case of malformed JSON.
      */
-    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws JSONException {
+    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException {
 
         try {
             JSONArray jsonHikePoints = jsonObject.getJSONArray("hike_data");
@@ -164,17 +164,19 @@ public class RawHikeData {
                     jsonObject.getLong("owner_id"),
                     date,
                     hikePoints);
+        } catch (JSONException e) {
+            throw new HikeParseException(e);
         } catch (IllegalArgumentException e) {
-            throw new JSONException("Invalid hike structure: "+e.getMessage());
+            throw new HikeParseException("Invalid hike structure: "+e.getMessage());
         } catch (NullPointerException e) {
-            throw new JSONException("Invalid hike structure");
+            throw new HikeParseException("Invalid hike structure");
         }
     }
 
     /**
      * Creates a new RawHikeData object by parsing a GPX track from xml file
      */
-    public static RawHikeData parseFromGPXDocument(Document doc) throws DatabaseClientException {
+    public static RawHikeData parseFromGPXDocument(Document doc) throws HikeParseException {
 
         List<RawHikePoint> hikePoints = new ArrayList<>();
 
@@ -217,10 +219,10 @@ public class RawHikeData {
         } catch(Exception e) {
             // Parsing should be very forgiving and ignore any exception.
             Log.e(LOG_FLAG, e.getMessage());
-            throw new DatabaseClientException(e);
+            throw new HikeParseException(e);
         }
 
-        return new RawHikeData(0, 0, hikePoints.get(0).getTime(), hikePoints);
+        return new RawHikeData(10, 0, hikePoints.get(0).getTime(), hikePoints);
     }
 
 }

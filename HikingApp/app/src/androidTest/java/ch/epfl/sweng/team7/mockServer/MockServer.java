@@ -13,6 +13,7 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
+import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -94,7 +95,7 @@ public class MockServer implements DatabaseClient {
     private RawHikeData createMockHikeOne() throws DatabaseClientException {
         try {
             return createHikeData();
-        } catch (JSONException e) {
+        } catch (HikeParseException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -163,7 +164,11 @@ public class MockServer implements DatabaseClient {
         return hikeId;
     }
 
-    private static RawHikeData createHikeData() throws JSONException {
-        return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+    private static RawHikeData createHikeData() throws HikeParseException {
+        try {
+            return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        } catch(JSONException e) {
+            throw new HikeParseException(e);
+        }
     }
 }

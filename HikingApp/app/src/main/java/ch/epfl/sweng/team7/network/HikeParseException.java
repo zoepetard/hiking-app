@@ -5,20 +5,20 @@ package ch.epfl.sweng.team7.network;
  *
  * Thrown to indicate a parsing problem
  */
-public class ParsingException extends Exception {
+public class HikeParseException extends Exception {
 
     private final static String LOG_FLAG = "Network_ParsingException";
     private static final long serialVersionUID = 1L;
 
-    public ParsingException() {
+    public HikeParseException() {
         super();
     }
 
-    public ParsingException(String message) {
+    public HikeParseException(String message) {
         super(message);
     }
 
-    public ParsingException(Throwable throwable) {
+    public HikeParseException(Throwable throwable) {
             super(throwable);
         }
 }
