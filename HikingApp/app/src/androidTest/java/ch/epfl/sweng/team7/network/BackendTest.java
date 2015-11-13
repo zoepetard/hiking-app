@@ -114,7 +114,7 @@ public class BackendTest extends TestCase {
     @Test
     public void testGetHikesInWindow() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-180), new LatLng(90,180));
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
 
         assertTrue("No hikes found on server", hikeList.size() > 0);

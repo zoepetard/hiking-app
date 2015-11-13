@@ -18,17 +18,17 @@ def get_hike(request):
     # Database testing function, TODO remove
     create_hike_one()
     
-    logger.info('got request %s', repr(request))
+    #logger.info('got request %s', repr(request))
     request_hike_id = int(request.META.get('HTTP_HIKE_ID', -1))
-    logger.info('for hike id %s',repr(request_hike_id))
+    logger.info('got request for hike id %s',repr(request_hike_id))
     
     #random_hike = Hike.query().order(-Hike.date)
     hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    logger.error('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
+    logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
     if hikes!=None and len(hikes) > 0:
         hike_string = hikes[0].to_json()
             
-        logger.error('Return string '+repr(hike_string))
+        logger.error('return string '+repr(hike_string))
         return HttpResponse(hike_string, content_type='application/json')
     return HttpResponse(status=404)
     
@@ -57,6 +57,7 @@ def get_hikes_in_window(request):
     
     # Get window from input
     request_bounding_box = request.META.get('HTTP_BOUNDING_BOX', -1)
+    logger.info('got request for hikes in window %s', request_bounding_box)
     
     bb = json.loads(request_bounding_box)
     lat_min = float(bb['lat_min'])
@@ -77,6 +78,7 @@ def get_hikes_in_window(request):
      
     # return result       
     hike_ids_string = "{\"hike_ids\":" + repr(hike_ids) + "}";
+    logger.info("return string "+hike_ids_string)
     return HttpResponse(hike_ids_string, content_type='application/json')
     
     
