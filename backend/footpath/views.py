@@ -55,7 +55,7 @@ def get_hikes(request):
 def get_hikes_in_window(request):
     
     logger.info('got request %s', repr(request))
-    request_bounding_box = int(request.META.get('HTTP_BOUNDING_BOX', -1))
+    request_bounding_box = request.META.get('HTTP_BOUNDING_BOX', -1)
     logger.info('for bounding box %s',repr(request_bounding_box))
     
     #random_hike = Hike.query().order(-Hike.date)

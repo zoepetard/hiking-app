@@ -90,6 +90,24 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
+
+        String boundingBoxJSON = String.format(
+                "{'lat_min' : %f, 'lng_min' : %f, 'lat_max' : %f, 'lng_max' : %f}",
+                bounds.southwest.latitude, bounds.southwest.longitude,
+                bounds.northeast.latitude, bounds.northeast.longitude);
+
+        try {
+            URL url = new URL(mServerUrl + "/get_hikes_in_window/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("bounding_box", boundingBoxJSON);
+            conn.connect();
+            String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            //JSONObject jsonHikeData = new JSONObject(stringHikeData);
+            //return RawHikeData.parseFromJSON(jsonHikeData);
+        } catch (Exception e) {//IOException|JSONException|HikeParseException
+            //throw new DatabaseClientException(e);
+        }
+
         // TODO implement properly
         List<Long> hikeList = new ArrayList<>();
         hikeList.add(10L);
