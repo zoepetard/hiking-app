@@ -7,10 +7,15 @@
 
 package ch.epfl.sweng.team7.network;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -164,36 +169,38 @@ public class RawHikeData {
     /**
      * Creates a new RawHikeData object by parsing a GPX track from xml file
      */
-    public static RawHikeData parseFromGpxXml(Document doc) {
+    public static RawHikeData parseFromGPXDocument(Document doc) {
 
         doc.getDocumentElement().normalize();
 
-        /*System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+        Log.d(LOG_FLAG, "Root element: " + doc.getDocumentElement().getNodeName());
 
-        NodeList nList = doc.getElementsByTagName("staff");
+        NodeList nList = doc.getElementsByTagName("trk");
 
-        System.out.println("----------------------------");
+        Log.d(LOG_FLAG, "l="+nList.getLength());
+
+        Log.d(LOG_FLAG, "----------------------------");
 
         for (int temp = 0; temp < nList.getLength(); temp++) {
 
             Node nNode = nList.item(temp);
 
-            System.out.println("\nCurrent Element :" + nNode.getNodeName());
+            Log.d(LOG_FLAG, "Current Element :" + nNode.getNodeName());
 
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eElement = (Element) nNode;
-
-                System.out.println("Staff id : " + eElement.getAttribute("id"));
-                System.out.println("First Name : " + eElement.getElementsByTagName("firstname").item(0).getTextContent());
-                System.out.println("Last Name : " + eElement.getElementsByTagName("lastname").item(0).getTextContent());
-                System.out.println("Nick Name : " + eElement.getElementsByTagName("nickname").item(0).getTextContent());
-                System.out.println("Salary : " + eElement.getElementsByTagName("salary").item(0).getTextContent());
-
+                if(false) {
+                    Log.d(LOG_FLAG, "Staff id : " + eElement.getAttribute("id"));
+                    Log.d(LOG_FLAG, "First Name : " + eElement.getElementsByTagName("firstname").item(0).getTextContent());
+                    Log.d(LOG_FLAG, "Last Name : " + eElement.getElementsByTagName("lastname").item(0).getTextContent());
+                    Log.d(LOG_FLAG, "Nick Name : " + eElement.getElementsByTagName("nickname").item(0).getTextContent());
+                    Log.d(LOG_FLAG, "Salary : " + eElement.getElementsByTagName("salary").item(0).getTextContent());
+                }
             }
-        }*/
+        }
 
-        return new RawHikeData(0, 0, null, null);
+        return null;//new RawHikeData(0, 0, null, null);
     }
 
 }

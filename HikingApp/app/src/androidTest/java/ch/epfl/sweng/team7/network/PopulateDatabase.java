@@ -7,6 +7,8 @@ import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -17,11 +19,20 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class PopulateDatabase {
 
+    public static void run() {
+        List<File> allFiles = findAllFiles();
+        for(File gpxFile : allFiles) {
+            RawHikeData rawHikeData = parseFile(gpxFile);
+            // TODO: post to database
+        }
+    }
+
     // Find all .gpx files in the device external storage
-    public static void findAllFiles() {
+    public static List<File> findAllFiles() {
+        ArrayList<File> allFiles = new ArrayList<>();
+
         String externalDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
         File f = new File(externalDirectory);
-        Log.d("PopulateDatabase", "findAllFiles: "+f.toString());
         if (f.exists() && f.isDirectory()) {
             final Pattern p = Pattern.compile(".*\\.gpx");
 
@@ -33,21 +44,25 @@ public class PopulateDatabase {
             });
 
             for(File gpxFile : gpxFiles) {
-                Log.d("PopulateDatabase", gpxFile.toString());
+                allFiles.add(gpxFile);
             }
         }
+
+        return allFiles;
     }
 
-    public static void pushFile(File gpxFile) {
+    // Push a file to the database
+    public static RawHikeData parseFile(File gpxFile) {
+        Log.d("PopulateDatabase", "pushing "+gpxFile.toString());
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(gpxFile);
-            RawHikeData rawHikeData = RawHikeData.parseFromGpxXml(doc);
-            // TODO: post to database
+            return RawHikeData.parseFromGPXDocument(doc);
         } catch(Exception e) {
             Log.e("PopulateDatabase", "Fail: "+e.toString());
+            return null;
         }
     }
 }

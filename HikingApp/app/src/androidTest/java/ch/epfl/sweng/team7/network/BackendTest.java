@@ -104,7 +104,7 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testPopulateDatabase() {
-        PopulateDatabase.findAllFiles();
+        PopulateDatabase.run();
     }
 
     // TODO test backend reaction to malformed input
