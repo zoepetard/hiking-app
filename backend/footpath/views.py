@@ -68,9 +68,11 @@ def get_hikes_in_window(request):
     
     # query database and assemble output
     hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
+    
     hike_ids = [];
     for hike in hikes:
-        if (hike.bb_southwest < window_northeast):
+        if (hike.bb_southwest.lat < window_northeast.lat and hike.bb_southwest.lon < window_northeast.lon
+            and hike.bb_northeast.lat > window_southwest.lat and hike.bb_northeast.lon > window_southwest.lon):
             hike_ids.append(hike.hike_id)
      
     # return result       

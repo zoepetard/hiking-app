@@ -114,12 +114,40 @@ public class BackendTest extends TestCase {
     @Test
     public void testGetHikesInWindow() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-89.,-179.), new LatLng(89.,179.));
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-180), new LatLng(90,180));
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
-        Log.d("BackendTestLog", "Found "+hikeList.size()+" Hikes");
+
+        assertTrue("No hikes found on server", hikeList.size() > 0);
+        RawHikeData rawHikeData = dbClient.fetchSingleHike(hikeList.get(0));
+        boolean onePointInBox = false;
+        for(RawHikePoint p : rawHikeData.getHikePoints()) {
+            if(bounds.contains(p.getPosition())) {
+                onePointInBox = true;
+                break;
+            }
+        }
+        assertTrue("Returned hike has no point in window", onePointInBox);
+
+        Log.d("BackendTestLog", "Found " + hikeList.size() + " Hikes");
         for(Long l : hikeList) {
             Log.d("BackendTestLog", "Found Hike "+l);
         }
+    }
+
+    @Test
+    public void testGetHikesInWindow_AtSouthPole() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-180), new LatLng(-89,180));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        assertEquals("Found Hike at South Pole", 0, hikeList.size());
+    }
+
+    @Test
+    public void testGetHikesInWindow_InAtlantic() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(42.840628, -49.093879), new LatLng(55.971414, -18.178352));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        assertEquals("Found Hike in the Atlantic.", 0, hikeList.size());
     }
 
     // TODO test backend reaction to malformed input
