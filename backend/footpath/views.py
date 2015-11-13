@@ -8,6 +8,7 @@ from footpath.models import *
 
 import urllib
 import logging
+import json
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -57,6 +58,10 @@ def get_hikes_in_window(request):
     logger.info('got request %s', repr(request))
     request_bounding_box = request.META.get('HTTP_BOUNDING_BOX', -1)
     logger.info('for bounding box %s',repr(request_bounding_box))
+    
+    bb = json.loads(request_bounding_box)
+    lat_min = float(bb['lat_min'])
+    logger.info('of dimensions %s',repr(lat_min))
     
     #random_hike = Hike.query().order(-Hike.date)
     #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)

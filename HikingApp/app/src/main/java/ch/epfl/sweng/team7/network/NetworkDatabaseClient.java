@@ -92,7 +92,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
 
         String boundingBoxJSON = String.format(
-                "{'lat_min' : %f, 'lng_min' : %f, 'lat_max' : %f, 'lng_max' : %f}",
+                "{\"lat_min\":%f,\"lng_min\":%f,\"lat_max\":%f,\"lng_max\":%f}",
                 bounds.southwest.latitude, bounds.southwest.longitude,
                 bounds.northeast.latitude, bounds.northeast.longitude);
 
