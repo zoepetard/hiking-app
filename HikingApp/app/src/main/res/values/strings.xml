@@ -24,6 +24,13 @@
     <!-- Google Play Services error for Toast -->
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
 
+     <!-- Strings related to hike display -->
+     <string name="hikeNumberText">Hike #</string>
+     <string name="hikeOwnerText">Owner:\u0020</string>
+     <string name="hikeDistanceText">Distance:\u0020</string>
+     <string name="hikeTimeText">Time:\u0020</string>
+     <string name="km">km</string>
+
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>

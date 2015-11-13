@@ -10,15 +10,29 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.util.Log;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import ch.epfl.sweng.team7.database.DefaultHikeData;
+import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawHikePoint;
+
+import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
@@ -89,23 +103,105 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        displayTestPoints();
+        displayMarkers();
+        final PolylineOptions testPolyline = displayTestPoints();
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
+                double shortestDistance = 200000;
+                List<LatLng> polylinePoints = testPolyline.getPoints();
+                for (LatLng polylinePoint : polylinePoints) {
+                    float[] distanceBetween = new float[1];
+                    distanceBetween(polylinePoint.latitude, polylinePoint.longitude,
+                            point.latitude, point.longitude, distanceBetween);
+                    double distance = distanceBetween[0];
+                    if (distance < shortestDistance) {
+                        displayHikeInfo();
+                        return;
+                    }
+                }
+                mapTableLayout.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
-    private void displayTestPoints() {
-        LatLng origin = new LatLng(0,0);
-        LatLng accra = new LatLng(5.615986, -0.171533);
-        LatLng saoTome = new LatLng(0.362365, 6.558835);
+    private PolylineOptions displayTestPoints() {
+        PolylineOptions testPolyline = new PolylineOptions();
+        List<HikePoint> testHikePoints = testHike().getHikePoints();
+        for (HikePoint hikePoint: testHikePoints) {
+            testPolyline.add(hikePoint.getPosition());
+        }
+        Polyline polyline = mMap.addPolyline(testPolyline);
+        return testPolyline;
 
-        PolylineOptions testTriangle = new PolylineOptions()
-                .add(origin)
-                .add(accra)
-                .add(saoTome)
-                .add(origin);
-
-        Polyline polyline = mMap.addPolyline(testTriangle);
     }
 
+    private void displayMarkers() {
+        MarkerOptions startMarker = new MarkerOptions()
+                .position(testHike().getStartLocation())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        MarkerOptions finishMarker = new MarkerOptions()
+                .position(testHike().getFinishLocation())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker marker) {
+                displayHikeInfo();
+                return true;
+            }
+        });
+        mMap.addMarker(startMarker);
+        mMap.addMarker(finishMarker);
+    }
+
+    private void displayHikeInfo() {
+        TableLayout mapTableLayout = (TableLayout)findViewById(R.id.mapTextTable);
+        mapTableLayout.removeAllViews();
+
+        TextView hikeTitle = new TextView(this);
+        hikeTitle.setText(getResources().getString(R.string.hikeNumberText) + Integer.toString((int) testHike().getHikeId()));
+        hikeTitle.setTextSize(20);
+
+        TextView hikeOwner = new TextView(this);
+        hikeOwner.setText(getResources().getString(R.string.hikeOwnerText) + Integer.toString((int)testHike().getOwnerId()));
+
+        TextView hikeDistance = new TextView(this);
+        hikeDistance.setText(getResources().getString(R.string.hikeDistanceText) + Integer.toString((int)testHike().getDistance()) + getResources().getString(R.string.km));
+
+        mapTableLayout.addView(hikeTitle);
+        mapTableLayout.addView(hikeOwner);
+        mapTableLayout.addView(hikeDistance);
+        mapTableLayout.setVisibility(View.VISIBLE);
+        mapTableLayout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+
+
+    //Hike object for testing purposes
+    private DefaultHikeData testHike() {
+        long hikeId = 1;
+        long ownerId = 1;
+        Date date = new Date(1000101);
+        List<RawHikePoint> rawHikePoints;
+        LatLng startLocation = new LatLng(0,0);
+        LatLng finishLocation = new LatLng(15, 15);
+        RawHikeData mRawHikeData;
+
+        rawHikePoints = new ArrayList<>();
+        rawHikePoints.add(new RawHikePoint(startLocation, new Date(1000101), 1.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(2,2), new Date(1000102), 3.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(5,5), new Date(1000103), 3.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(10,10), new Date(1000104), 3.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(12,12), new Date(1000105), 3.0));
+        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000106), 2.0));
+        mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
+        return new DefaultHikeData(mRawHikeData);
+    }
 
 }
