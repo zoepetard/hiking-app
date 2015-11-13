@@ -14,6 +14,7 @@ import ch.epfl.sweng.team7.mockServer.MockServer;
 import static junit.framework.TestCase.assertEquals;
 
 public class HikeListTest {
+    // Commented out because not currently needed. Might be used in issue 60.
     //Rule
     /*public ActivityTestRule<HikeListActivity> mActivityRule = new ActivityTestRule<>(
             HikeListActivity.class);*/
