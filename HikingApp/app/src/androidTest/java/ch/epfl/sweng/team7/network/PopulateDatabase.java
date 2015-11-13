@@ -19,11 +19,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class PopulateDatabase {
 
-    public static void run() {
+    public static void run(DatabaseClient dbClient) {
         List<File> allFiles = findAllFiles();
         for(File gpxFile : allFiles) {
             RawHikeData rawHikeData = parseFile(gpxFile);
-            // TODO: post to database
+            try {
+                dbClient.postHike(rawHikeData);
+            } catch(DatabaseClientException e) {
+                //pass
+            }
         }
     }
 
@@ -61,6 +65,7 @@ public class PopulateDatabase {
             Document doc = dBuilder.parse(gpxFile);
             return RawHikeData.parseFromGPXDocument(doc);
         } catch(Exception e) {
+            // Ignore errors
             Log.e("PopulateDatabase", "Fail: "+e.toString());
             return null;
         }

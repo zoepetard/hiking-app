@@ -103,8 +103,8 @@ public class BackendTest extends TestCase {
     }
 
     @Test
-    public void testPopulateDatabase() {
-        PopulateDatabase.run();
+    public void testPopulateDatabase() throws Exception {
+        PopulateDatabase.run(createDatabaseClient());
     }
 
     // TODO test backend reaction to malformed input

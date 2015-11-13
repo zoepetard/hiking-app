@@ -9,17 +9,22 @@ package ch.epfl.sweng.team7.network;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
@@ -169,38 +174,53 @@ public class RawHikeData {
     /**
      * Creates a new RawHikeData object by parsing a GPX track from xml file
      */
-    public static RawHikeData parseFromGPXDocument(Document doc) {
+    public static RawHikeData parseFromGPXDocument(Document doc) throws DatabaseClientException {
 
-        doc.getDocumentElement().normalize();
+        List<RawHikePoint> hikePoints = new ArrayList<>();
 
-        Log.d(LOG_FLAG, "Root element: " + doc.getDocumentElement().getNodeName());
+        try {
+            // Normalization
+            doc.getDocumentElement().normalize();
 
-        NodeList nList = doc.getElementsByTagName("trk");
+            // Input check
+            if (doc.getDocumentElement().getNodeName().compareTo("gpx") != 0) {
+                throw new DatabaseClientException("gpx node not found.");
+            }
 
-        Log.d(LOG_FLAG, "l="+nList.getLength());
+            // Parse track (trk node with trkseg subnodes)
+            Element trk = (Element) doc.getElementsByTagName("trk").item(0);
+            Element trkseg = (Element) trk.getElementsByTagName("trkseg").item(0);
+            NodeList trkptList = trkseg.getElementsByTagName("trkpt");
 
-        Log.d(LOG_FLAG, "----------------------------");
+            for (int temp = 0; temp < trkptList.getLength(); temp++) {
 
-        for (int temp = 0; temp < nList.getLength(); temp++) {
+                try {
+                    Node trkptNode = trkptList.item(temp);
 
-            Node nNode = nList.item(temp);
+                    if (trkptNode.getNodeType() == Node.ELEMENT_NODE) {
 
-            Log.d(LOG_FLAG, "Current Element :" + nNode.getNodeName());
+                        Element trackPoint = (Element) trkptNode;
+                        double lat = Double.parseDouble(trackPoint.getAttribute("lat"));
+                        double lng = Double.parseDouble(trackPoint.getAttribute("lon"));
+                        double ele = Double.parseDouble(trackPoint.getElementsByTagName("ele").item(0).getTextContent());
+                        String timeString = trackPoint.getElementsByTagName("time").item(0).getTextContent();
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+                        Date date = format.parse(timeString);
 
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                Element eElement = (Element) nNode;
-                if(false) {
-                    Log.d(LOG_FLAG, "Staff id : " + eElement.getAttribute("id"));
-                    Log.d(LOG_FLAG, "First Name : " + eElement.getElementsByTagName("firstname").item(0).getTextContent());
-                    Log.d(LOG_FLAG, "Last Name : " + eElement.getElementsByTagName("lastname").item(0).getTextContent());
-                    Log.d(LOG_FLAG, "Nick Name : " + eElement.getElementsByTagName("nickname").item(0).getTextContent());
-                    Log.d(LOG_FLAG, "Salary : " + eElement.getElementsByTagName("salary").item(0).getTextContent());
+                        hikePoints.add(new RawHikePoint(new LatLng(lat, lng), date, ele));
+                    }
+                } catch(Exception e) {
+                    // pass
+                    Log.e(LOG_FLAG, "parseFromGPXDocument failed: "+e.getMessage());
                 }
             }
+        } catch(Exception e) {
+            // Parsing should be very forgiving and ignore any exception.
+            Log.e(LOG_FLAG, e.getMessage());
+            throw new DatabaseClientException(e);
         }
 
-        return null;//new RawHikeData(0, 0, null, null);
+        return new RawHikeData(0, 0, hikePoints.get(0).getTime(), hikePoints);
     }
 
 }
