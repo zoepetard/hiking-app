@@ -10,6 +10,7 @@ package ch.epfl.sweng.team7.network;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -159,4 +160,15 @@ public class RawHikeData {
             throw new JSONException("Invalid hike structure");
         }
     }
+
+    /**
+     * Creates a new RawHikeData object by parsing a GPX track from xml file
+     */
+    public static RawHikeData parseFromGpxXml(Document doc) {
+
+        doc.getDocumentElement().normalize();
+
+        return new RawHikeData(0, 0, null, null);
+    }
+
 }
