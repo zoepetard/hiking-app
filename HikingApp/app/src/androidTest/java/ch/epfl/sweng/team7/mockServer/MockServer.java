@@ -39,10 +39,11 @@ public class MockServer implements DatabaseClient {
     private final HashMap<Long, RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedHikeID = 10;
 
-    // Actual implementation of MockServer
+
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
     }
+
     /**
      * Method to fetch a single RawHikeData with the given hikeID
      *

@@ -29,6 +29,7 @@ public class PopulateDatabase {
                 RawHikeData rawHikeData = parseFile(gpxFile);
                 dbClient.postHike(rawHikeData);
             } catch(HikeParseException|DatabaseClientException e) {
+                Log.e("PopulateDatabase", "Parse GPX file failed with message " + e.getMessage());
                 //pass
             }
         }
@@ -50,7 +51,7 @@ public class PopulateDatabase {
                 }
             });
 
-            if(gpxFiles != null) {
+            if (gpxFiles != null) {
                 for (File gpxFile : gpxFiles) {
                     allFiles.add(gpxFile);
                 }
