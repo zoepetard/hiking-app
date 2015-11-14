@@ -33,7 +33,8 @@ public final class HikeInfoActivity extends Activity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-        hikeId = 1; // test
+        Intent intent = getIntent();
+        hikeId = intent.getIntExtra(HikeListActivity.EXTRA_HIKE_ID, 0);
         HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId);
 
         // set listener methods for UI elements in HikeInfoView
