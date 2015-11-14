@@ -24,10 +24,13 @@ public class PopulateDatabase {
 
     public static void run(DatabaseClient dbClient) {
         List<File> allFiles = findAllFiles();
+        int newHikeId = 10;
         for(File gpxFile : allFiles) {
             try {
                 RawHikeData rawHikeData = parseFile(gpxFile);
+                rawHikeData.setHikeId(newHikeId);
                 dbClient.postHike(rawHikeData);
+                newHikeId++;
             } catch(HikeParseException|DatabaseClientException e) {
                 Log.e("PopulateDatabase", "Parse GPX file failed with message " + e.getMessage());
                 //pass

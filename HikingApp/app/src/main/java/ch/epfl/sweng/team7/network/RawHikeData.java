@@ -222,7 +222,7 @@ public class RawHikeData {
             throw new HikeParseException(e);
         }
 
-        return new RawHikeData(10, 0, hikePoints.get(0).getTime(), hikePoints);
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints);
     }
 
 }
