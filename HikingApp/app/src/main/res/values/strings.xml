@@ -40,4 +40,5 @@
 
     <string name="edit_nickname">Choose a new nickname</string>
     <string name="title_activity_hike_info">HikeInfoActivity</string>
+    <string name="title_activity_user_data">UserDataActivity</string>
 </resources>

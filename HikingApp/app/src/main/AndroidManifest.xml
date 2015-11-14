@@ -54,9 +54,15 @@
         </activity>
         <activity
             android:name=".HikeInfoActivity"
-            android:label="@string/title_activity_hike_info">
+            android:label="@string/title_activity_hike_info" >
         </activity>
+
         <service android:name="ch.epfl.sweng.team7.gpsService.GPSService" />
+
+        <activity
+            android:name=".UserDataActivity"
+            android:label="@string/title_activity_user_data" >
+        </activity>
     </application>
 
 </manifest>
