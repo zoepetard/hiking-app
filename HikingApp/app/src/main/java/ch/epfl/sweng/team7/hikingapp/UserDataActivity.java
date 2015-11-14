@@ -19,7 +19,7 @@ public class UserDataActivity extends Activity {
         // use real data stored in local cache after issue #56 is in master
         user_name.setText("Team 7");
         user_email.setText("team7@epfl.ch");
-        num_hikes.setText(getString(R.string.num_hikes_fmt, Integer.toString(100)));
+        num_hikes.setText(getString(R.string.num_hikes_fmt, 100));
     }
 
 }
