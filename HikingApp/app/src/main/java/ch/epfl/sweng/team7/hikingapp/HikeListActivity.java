@@ -30,6 +30,8 @@ public class HikeListActivity extends Activity {
     private LatLngBounds bounds;
 
     private final static String LOG_FLAG = "Activity_HikeList";
+    public final static String EXTRA_HIKE_ID =
+            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     //Displays a list of nearby hikes, with a map, the distance and the rating.
     @Override
@@ -164,12 +166,21 @@ public class HikeListActivity extends Activity {
             }
         }
 
-        private void displayHikes(List<HikeData> results) {
+        private void displayHikes(final List<HikeData> results) {
             TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
             for (int i = 0; i < results.size(); i++) {
-                TableRow hikeRow = getHikeRow(i, results.get(i));
+                final HikeData hikeData = results.get(i);
+                final TableRow hikeRow = getHikeRow(i, hikeData);
+                hikeRow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
+                        i.putExtra(EXTRA_HIKE_ID, hikeData.getHikeId());
+                        startActivity(i);
+                    }
+                });
                 hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+                        TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
             }
         }
     }
