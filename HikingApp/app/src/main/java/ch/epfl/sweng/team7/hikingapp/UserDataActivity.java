@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
+    private int user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +18,7 @@ public class UserDataActivity extends Activity {
         TextView num_hikes = (TextView) findViewById(R.id.num_hikes);
 
         // use real data stored in local cache after issue #56 is in master
+        // for user with this user_id
         user_name.setText("Team 7");
         user_email.setText("team7@epfl.ch");
         num_hikes.setText(getString(R.string.num_hikes_fmt, 100));
