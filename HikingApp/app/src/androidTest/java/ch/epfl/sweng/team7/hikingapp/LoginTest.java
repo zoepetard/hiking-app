@@ -26,10 +26,4 @@ public class LoginTest {
         onView(withId(R.id.sign_in_button)).check(matches(isDisplayed()));
         onView(withId(R.id.sign_out_and_disconnect)).check(matches(not(isDisplayed())));
     }
-
-    // TODO: test login and choose account
-//    @Test
-//    public void testLogin() {
-//        onView(withId(R.id.sign_in_button)).perform(click());
-//    }
 }
