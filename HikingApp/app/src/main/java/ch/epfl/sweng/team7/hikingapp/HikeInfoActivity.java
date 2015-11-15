@@ -65,7 +65,7 @@ public final class HikeInfoActivity extends Activity {
 
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
-            hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
+        hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
 
     }
 
