@@ -23,6 +23,8 @@ public final class DataManager {
     private static LocalCache sLocalCache;
     private static DatabaseClient sDatabaseClient;
 
+    private final static int USER_NAME_MIN_LENGTH = 2;
+
     /**
      * @return the DataManager
      */
@@ -155,10 +157,18 @@ public final class DataManager {
 
     }
 
-    /** Change user name */
-    public void changeUserName(String newName){
+    /**
+     * Change user name
+     * @param  newName the new user name
+     * */
+    public void changeUserName(String newName) {
+        if(newName.length() < USER_NAME_MIN_LENGTH){
+            throw new IllegalArgumentException("User name must be at least two characters");
+        }
         sLocalCache.changeUserName(newName);
         // TODO update DB with this name
+
+
 
     }
 

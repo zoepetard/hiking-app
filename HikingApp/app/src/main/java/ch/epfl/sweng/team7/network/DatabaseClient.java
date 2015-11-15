@@ -55,4 +55,23 @@ public interface DatabaseClient {
      * retrieved for any reason external to the application (network failure, etc.)
      */
     long postHike(RawHikeData hike) throws DatabaseClientException;
+
+    /**
+     * Post user data to the data base
+     * @param rawUserData object conatining id,user name and mail address
+     * @return user id
+     * @throws DatabaseClientException if update post is unsuccessful
+     */
+    long postUserData(RawUserData rawUserData) throws DatabaseClientException;
+
+
+    /**
+     * Fetch data for a user from the server
+     * @param mailAddress - mail address of the user
+     * @return RawUserData
+     * @throws  DatabaseClientException if unable to fetch user data
+     * */
+     RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
+
+
 }

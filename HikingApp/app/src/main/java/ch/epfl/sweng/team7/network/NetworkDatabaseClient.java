@@ -67,8 +67,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-
-
     /**
      * Fetch multiple hikes from the server
      * @param hikeIds The numeric IDs of multiple hikes in the database
@@ -119,30 +117,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /** Prototype of how to send user data to server
      * TODO implement user data storage on server and modify this accordingly
-     * @param userData - RawUserData object
+     * @param rawUserData - RawUserData object
      * @return user id
      * @throws DatabaseClientException
      * */
-    public long postUserData(RawUserData userData) throws DatabaseClientException {
+    public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         try{
             URL url = new URL(mServerUrl + "/post_user_data");
             HttpURLConnection conn = getConnection(url, "POST");
-            byte[] outputInBytes = userData.toJSON().toString().getBytes("UTF-8");
+            byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("user_id");
         } catch (IOException e) {
-            throw new DatabaseClientException(e);
+            throw new DatabaseClientException();
         } catch (JSONException e) {
-            throw new DatabaseClientException(e);
+            throw new DatabaseClientException("Post unsuccessful: " + e.getMessage());
         }
     }
 
     /**
      * TODO Implement on server side ability to handle this request
-     * Fetch user data from the server
-     * @param mailAddress
+     * Fetch data for a user from the server
+     * @param mailAddress - mail address of the user
      * @return RawUserData
      * @throws  DatabaseClientException if unable to fetch user data
      * */
@@ -158,7 +156,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         } catch (IOException e) {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
-            throw new DatabaseClientException(e);
+            throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
         }
     }
 

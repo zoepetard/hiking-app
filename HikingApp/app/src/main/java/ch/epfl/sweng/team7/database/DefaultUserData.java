@@ -77,13 +77,13 @@ public class DefaultUserData implements UserData{
     }
 
     /**
-     * @param newName
-     * @set new user name
+     * Changes the user name
+     * @param newName the new user name
      */
     @Override
     public void changeUserName(String newName) {
         this.userName = newName;
     }
-    
+
 }
 
