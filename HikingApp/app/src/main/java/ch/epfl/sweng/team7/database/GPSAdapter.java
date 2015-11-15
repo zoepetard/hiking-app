@@ -4,7 +4,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
-import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
@@ -37,14 +36,17 @@ public class GPSAdapter  {
         //The date of the hike is the time stamp of the first FootPrint
         Date hikeDate = new Date(gpsPath.getPath().get(FIRST_FOOT_PRINT).getTimeStamp());
         getHikePointsFromGPS(gpsPath);
-        //Waiting for #iss56, by now its 0 by default
+        //Waiting for #iss56, by now is 0 by default
         long ownerId = 0;
-        long hikeId = 1;
-        mRawHikeData = new RawHikeData(hikeId,ownerId,hikeDate,hikePoints);
+        mRawHikeData = new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN,ownerId,hikeDate,hikePoints);
         storeHike(mRawHikeData);
 
     }
 
+    /**
+     * Method to store in DB the RawHikeData converted
+     * @param mRawHikeData
+     */
     private void storeHike(RawHikeData mRawHikeData) {
         mDefaultNetworkProvider = new DefaultNetworkProvider();
         mNetworkDatabaseClient = new NetworkDatabaseClient(SERVER_URL, mDefaultNetworkProvider );
@@ -55,6 +57,10 @@ public class GPSAdapter  {
         }
     }
 
+    /**
+     * Method to convert the FootPrints into HikePoints
+     * @param gpsPath
+     */
     private void getHikePointsFromGPS(GPSPath gpsPath) {
         hikePoints = new ArrayList<>();
         for (GPSFootPrint mGPSFootPrint: gpsPath.getPath()){
@@ -65,5 +71,10 @@ public class GPSAdapter  {
             hikePoints.add(mRawHikePoint);
         }
 
+    }
+
+
+    public RawHikeData getRawHikeData() {
+        return mRawHikeData;
     }
 }
