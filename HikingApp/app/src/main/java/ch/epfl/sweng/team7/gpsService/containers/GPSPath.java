@@ -15,7 +15,7 @@ public final class GPSPath {
     private List<GPSFootPrint> path;
 
     public GPSPath() {
-        this.path = new ArrayList<GPSFootPrint>();
+        this.path = new ArrayList<>();
     }
 
     public void addFootPrint(GPSFootPrint newFootPrint) {
@@ -29,6 +29,10 @@ public final class GPSPath {
 
     public long getFootPrintCount() {
         return this.path.size();
+    }
+
+    public List<GPSFootPrint> getPath(){
+        return path;
     }
 
     @Override
