@@ -31,7 +31,7 @@ public final class GPSPath {
         return this.path.size();
     }
 
-    public List<GPSFootPrint> getPath(){
+    public List<GPSFootPrint> getPath() {
         return path;
     }
 

@@ -8,7 +8,7 @@ import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
 
-import ch.epfl.sweng.team7.database.GPSAdapter;
+import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
@@ -32,7 +32,7 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
 
     //GPS adapter
-    private GPSAdapter mGPSAdapter = null;
+    private GPSPathConverter mGPSPathConverter = null;
 
     public static GPSManager getInstance() {
         return instance;
@@ -139,8 +139,8 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.isTracking = false;
-        mGPSAdapter = new GPSAdapter();
-        mGPSAdapter.adaptGPSPathToRawHikeData(gpsPath);
+        GPSPathConverter.toRawHikeData(gpsPath);
+
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
     }
