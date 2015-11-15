@@ -21,6 +21,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import ch.epfl.sweng.team7.database.UserData;
+
 
 /**
  * Class to get and post hikes in the server
@@ -40,7 +42,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         mServerUrl = serverUrl;
         mNetworkProvider = networkProvider;
     }
-
 
     /**
      * Fetch a single hike from the server
@@ -65,6 +66,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
+
+
 
     /**
      * Fetch multiple hikes from the server
@@ -113,7 +116,52 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
-    
+
+    /** Prototype of how to send user data to server
+     * TODO implement user data storage on server and modify this accordingly
+     * @param userData - RawUserData object
+     * @return user id
+     * @throws DatabaseClientException
+     * */
+    public long postUserData(RawUserData userData) throws DatabaseClientException {
+        try{
+            URL url = new URL(mServerUrl + "/post_user_data");
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = userData.toJSON().toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+            return new JSONObject(serverResponse).getLong("user_id");
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
+     * TODO Implement on server side ability to handle this request
+     * Fetch user data from the server
+     * @param mailAddress
+     * @return RawUserData
+     * @throws  DatabaseClientException if unable to fetch user data
+     * */
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException{
+        try {
+            URL url = new URL(mServerUrl + "/get_user/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("mail_address", mailAddress);
+            conn.connect();
+            String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonUserData = new JSONObject(stringUserData);
+            return RawUserData.parseFromJSON(jsonUserData);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
     /**
      * Method to set the properties of the connection to the server
      * @param url the server url

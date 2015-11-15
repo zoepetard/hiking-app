@@ -106,6 +106,7 @@ public class RawHikeData {
         }
         mHikeId = hikeId;
     }
+
     /**
      * @return a JSON object representing this hike
      * @throws JSONException

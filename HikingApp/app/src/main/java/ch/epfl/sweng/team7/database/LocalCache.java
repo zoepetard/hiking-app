@@ -22,4 +22,7 @@ interface LocalCache {
     HikeData getHike(long hikeId);
     void putHike(HikeData hikeData);
     int cachedHikesCount();
+
+    void setUserData(UserData userData);
+    void changeUserName(String newName);
 }

@@ -145,6 +145,33 @@ public final class DataManager {
     }
 
     /**
+     * store a user data object in local cache
+     */
+    public void setUserData(UserData userData){
+
+        // update user data in cache and database
+        sLocalCache.setUserData(userData);
+        // TODO call a post method in sDatabaseClient
+
+    }
+
+    /** Change user name */
+    public void changeUserName(String newName){
+        sLocalCache.changeUserName(newName);
+        // TODO update DB with this name
+
+    }
+
+    /** Get a user  */
+
+    public UserData getUserData(){
+
+        return null;
+    }
+
+
+
+    /**
      * Creates the LocalCache and DatabaseClient
      */
     private DataManager() {
