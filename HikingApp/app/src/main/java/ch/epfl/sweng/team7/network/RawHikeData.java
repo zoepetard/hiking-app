@@ -7,13 +7,24 @@
 
 package ch.epfl.sweng.team7.network;
 
+import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
@@ -138,7 +149,7 @@ public class RawHikeData {
      * @return a new RawHikeData object.
      * @throws JSONException in case of malformed JSON.
      */
-    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws JSONException {
+    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException {
 
         try {
             JSONArray jsonHikePoints = jsonObject.getJSONArray("hike_data");
@@ -153,10 +164,65 @@ public class RawHikeData {
                     jsonObject.getLong("owner_id"),
                     date,
                     hikePoints);
+        } catch (JSONException e) {
+            throw new HikeParseException(e);
         } catch (IllegalArgumentException e) {
-            throw new JSONException("Invalid hike structure: "+e.getMessage());
+            throw new HikeParseException("Invalid hike structure: "+e.getMessage());
         } catch (NullPointerException e) {
-            throw new JSONException("Invalid hike structure");
+            throw new HikeParseException("Invalid hike structure");
         }
     }
+
+    /**
+     * Creates a new RawHikeData object by parsing a GPX track from xml file
+     */
+    public static RawHikeData parseFromGPXDocument(Document doc) throws HikeParseException {
+
+        List<RawHikePoint> hikePoints = new ArrayList<>();
+
+        try {
+            // Normalization
+            doc.getDocumentElement().normalize();
+
+            // Input check
+            if (doc.getDocumentElement().getNodeName().compareTo("gpx") != 0) {
+                throw new HikeParseException("gpx node not found.");
+            }
+
+            // Parse track (trk node with trkseg subnodes)
+            Element trk = (Element) doc.getElementsByTagName("trk").item(0);
+            Element trkseg = (Element) trk.getElementsByTagName("trkseg").item(0);
+            NodeList trkptList = trkseg.getElementsByTagName("trkpt");
+
+            for (int temp = 0; temp < trkptList.getLength(); temp++) {
+
+                try {
+                    Node trkptNode = trkptList.item(temp);
+
+                    if (trkptNode.getNodeType() == Node.ELEMENT_NODE) {
+
+                        Element trackPoint = (Element) trkptNode;
+                        double lat = Double.parseDouble(trackPoint.getAttribute("lat"));
+                        double lng = Double.parseDouble(trackPoint.getAttribute("lon"));
+                        double ele = Double.parseDouble(trackPoint.getElementsByTagName("ele").item(0).getTextContent());
+                        String timeString = trackPoint.getElementsByTagName("time").item(0).getTextContent();
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+                        Date date = format.parse(timeString);
+
+                        hikePoints.add(new RawHikePoint(new LatLng(lat, lng), date, ele));
+                    }
+                } catch(Exception e) {
+                    // pass
+                    Log.e(LOG_FLAG, "parseFromGPXDocument failed: "+e.getMessage());
+                }
+            }
+        } catch(Exception e) {
+            // Parsing should be very forgiving and ignore any exception.
+            Log.e(LOG_FLAG, e.getMessage());
+            throw new HikeParseException(e);
+        }
+
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints);
+    }
+
 }

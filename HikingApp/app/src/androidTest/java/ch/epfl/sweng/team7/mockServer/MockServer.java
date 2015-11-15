@@ -13,6 +13,7 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
+import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -39,6 +40,79 @@ public class MockServer implements DatabaseClient {
     private int mAssignedHikeID = 10;
 
 
+    public MockServer() throws DatabaseClientException {
+        createMockHikeOne();
+    }
+
+    /**
+     * Method to fetch a single RawHikeData with the given hikeID
+     *
+     * @param hikeId The numeric ID of one hike in the database
+     * @throws DatabaseClientException
+     */
+    @Override
+    public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
+        //Hike 1 should always exists
+        if (hasHike(hikeId)) {
+            return getHike(hikeId);
+        } else {
+            throw new DatabaseClientException("No hike on the server with ID "+hikeId);
+        }
+    }
+
+    /**
+     * Return a list of of RawHikeData with the given hikeIds
+     *
+     * @param hikeIds The numeric IDs of multiple hikes in the database
+     * @throws DatabaseClientException
+     */
+    @Override
+    public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
+        List<RawHikeData> listRawHikeData = new ArrayList<RawHikeData>();
+        for (Long hikeId : hikeIds) {
+            listRawHikeData.add(fetchSingleHike(hikeId));
+        }
+        return listRawHikeData;
+    }
+
+    /**
+     * Return the hikeIds of hikes that are in the given window
+     *
+     * @param bounds Boundaries (window) of the
+     * @return
+     * @throws DatabaseClientException
+     */
+    @Override
+    public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
+        List<Long> hikeIdsInWindow = new ArrayList<>();
+        for (RawHikeData rawHikeData : mHikeDataBase.values()) {
+            for (RawHikePoint rawHikePoint : rawHikeData.getHikePoints()) {
+                if (bounds.contains(rawHikePoint.getPosition())) {
+                    hikeIdsInWindow.add(rawHikeData.getHikeId());
+                    break;
+                }
+            }
+        }
+        return hikeIdsInWindow;
+    }
+
+    /**
+     * Method to post a hike in the database. The database assigns a hike ID and returns that.
+     *
+     * @param hike to post. ID is ignored, because hike will be assigned a new ID.
+     * @throws DatabaseClientException
+     */
+    @Override
+    public long postHike(RawHikeData hike) throws DatabaseClientException {
+        long hikeId = mAssignedHikeID;
+        mAssignedHikeID++;
+        hike.setHikeId(hikeId);
+        putHike(hike);
+        return hikeId;
+    }
+
+
+    // Internal database management functions
     public boolean hasHike(long hikeId) {
         return mHikeDataBase.containsKey(hikeId);
     }
@@ -47,12 +121,14 @@ public class MockServer implements DatabaseClient {
         return mHikeDataBase.get(hikeId);
     }
 
-    public void putHike(RawHikeData rawHikeData) {
+    private void putHike(RawHikeData rawHikeData) throws DatabaseClientException {
         if (rawHikeData != null) {
+            if(rawHikeData.getHikeId() == 3) {
+                throw new DatabaseClientException("The Mock server cannot have a hike 3.");
+            }
             mHikeDataBase.put(rawHikeData.getHikeId(), rawHikeData);
         }
     }
-
 
     private static class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
         private final int MAX_ENTRIES;
@@ -69,101 +145,22 @@ public class MockServer implements DatabaseClient {
     }
 
     /**
-     * Method to fetch a single RawHikeData with the given hikeID
-     *
-     * @param hikeId The numeric ID of one hike in the database
-     * @throws DatabaseClientException
-     */
-    @Override
-    public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
-        //Hike 1 should always exists
-        if (hikeId == 1 && !hasHike(hikeId)) {
-            return createMockHikeOne();
-        } else if (hasHike(hikeId)) {
-            return getHike(hikeId);
-        } else {
-            throw new DatabaseClientException("No hike on the server with that ID");
-        }
-    }
-
-    /**
      * Create mock hike number 1 (should always exist).
-     *
-     * @return mockRawHike
      */
-    private RawHikeData createMockHikeOne() throws DatabaseClientException {
+    private void createMockHikeOne() throws DatabaseClientException {
         try {
-            return createHikeData();
-        } catch (JSONException e) {
+            RawHikeData rawHikeData = createHikeData();
+            mHikeDataBase.put(rawHikeData.getHikeId(), rawHikeData);
+        } catch (HikeParseException e) {
             throw new DatabaseClientException(e);
         }
     }
 
-    /**
-     * Return a list of of RawHikeData with the given hikeIds
-     *
-     * @param hikeIds The numeric IDs of multiple hikes in the database
-     * @throws DatabaseClientException
-     */
-    @Override
-    public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
-        List<RawHikeData> mListRawHikeData = new ArrayList<RawHikeData>();
-        for (int i = 0; i < hikeIds.size(); i++) {
-            if (hasHike(hikeIds.get(i))) {
-                mListRawHikeData.add(getHike(hikeIds.get(i)));
-            } else {
-                throw new DatabaseClientException("The hike with ID: " + hikeIds.get(i) + " it's not yet " +
-                        "in the server");
-            }
+    private static RawHikeData createHikeData() throws HikeParseException {
+        try {
+            return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        } catch(JSONException e) {
+            throw new HikeParseException(e);
         }
-        return mListRawHikeData;
-    }
-
-    /**
-     * Return the hikeIds of hikes that are in the given window
-     *
-     * @param bounds Boundaries (window) of the
-     * @return
-     * @throws DatabaseClientException
-     */
-    @Override
-    public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
-        if (mHikeDataBase != null && mHikeDataBase.size() > 0) {
-            List<Long> hikeIdsInWindow = new ArrayList<>();
-            for (RawHikeData rawHikeData : mHikeDataBase.values()) {
-                for (RawHikePoint rawHikePoint : rawHikeData.getHikePoints()) {
-                    if (bounds.contains(rawHikePoint.getPosition())) {
-                        hikeIdsInWindow.add(rawHikeData.getHikeId());
-                        break;
-                    }
-                }
-            }
-            return hikeIdsInWindow;
-        } else {
-            throw new DatabaseClientException("There are no hikes on the database yet");
-        }
-
-    }
-
-    /**
-     * Method to post a hike in the database. The database assigns a hike ID and returns that.
-     *
-     * @param hike to post. ID is ignored, because hike will be assigned a new ID.
-     * @throws DatabaseClientException
-     */
-    @Override
-    public long postHike(RawHikeData hike) throws DatabaseClientException {
-        long hikeId = 2;
-        if(hasHike(hikeId)) {
-            hikeId = mAssignedHikeID;
-            mAssignedHikeID++;
-        }
-        hike.setHikeId(hikeId);
-        putHike(hike);
-        return hikeId;
-    }
-
-    private static RawHikeData createHikeData() throws JSONException {
-        return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
     }
 }
