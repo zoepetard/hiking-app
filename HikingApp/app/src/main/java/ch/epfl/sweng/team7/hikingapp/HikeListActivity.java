@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +21,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -152,7 +158,14 @@ public class HikeListActivity extends Activity {
         @Override
         protected List<HikeData> doInBackground(LatLngBounds... bounds) {
             try {
-                return dataManager.getHikesInWindow(bounds[0]);
+                // TODO
+                // only for testing right now. need to remove after database
+                // stores real data
+                // the function below not implemented in server yet
+                // List<HikeData> results = dataManager.getHikesInWindow(bounds[0]);
+                List<HikeData> fake_results = new ArrayList<>();
+                fake_results.add(dataManager.getHike(1));
+                return fake_results;
             } catch (DataManagerException e) {
                 e.printStackTrace();
                 return null;
@@ -168,6 +181,7 @@ public class HikeListActivity extends Activity {
 
         private void displayHikes(final List<HikeData> results) {
             TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
+            Log.i("num of results", Integer.toString(results.size()));
             for (int i = 0; i < results.size(); i++) {
                 final HikeData hikeData = results.get(i);
                 final TableRow hikeRow = getHikeRow(i, hikeData);
@@ -175,7 +189,7 @@ public class HikeListActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
-                        i.putExtra(EXTRA_HIKE_ID, hikeData.getHikeId());
+                        i.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
                         startActivity(i);
                     }
                 });
