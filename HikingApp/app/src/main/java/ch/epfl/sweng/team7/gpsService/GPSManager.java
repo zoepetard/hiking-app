@@ -141,7 +141,7 @@ public final class GPSManager {
         this.isTracking = false;
         mGPSAdapter = new GPSAdapter();
         mGPSAdapter.adaptGPSPathToRawHikeData(gpsPath);
-        //TODO send GPSPath to another class, maybe DB, to store it in memory/upload it
+
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
     }
