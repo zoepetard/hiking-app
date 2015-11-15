@@ -39,7 +39,7 @@ public class GPSPathConverterTest {
     public void setUp() throws Exception {
         mGPSPath = new GPSPath();
         startLocation =  new LatLng(0,0);
-        hikeId = 1;
+        hikeId = -1;
         ownerId = 0;
         mGPSPath.addFootPrint(new GPSFootPrint(new GeoCoords(0,0,0), 100));
         mGPSPath.addFootPrint(new GPSFootPrint(new GeoCoords(1,1,1), 200));

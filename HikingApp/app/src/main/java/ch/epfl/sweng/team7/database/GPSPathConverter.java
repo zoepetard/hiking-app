@@ -58,7 +58,7 @@ public class GPSPathConverter {
         try {
             mNetworkDatabaseClient.postHike(mRawHikeData);
         } catch (DatabaseClientException e) {
-            e.printStackTrace();
+
         }
 
 
