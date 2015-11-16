@@ -68,8 +68,8 @@ public class DataManagerTest {
     public void testFailedToFetchUserData() throws DataManagerException {
 
         DataManager dataManager = DataManager.getInstance();
-        String unusedMailAddress = "hej@haj.com"; // mail address that's not in cache or DB
-        dataManager.getUserData(unusedMailAddress);
+        long unknownId = -1;
+        dataManager.getUserData(unknownId);
     }
 
 
