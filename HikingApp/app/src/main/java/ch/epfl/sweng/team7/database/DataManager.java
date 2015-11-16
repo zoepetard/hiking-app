@@ -136,6 +136,19 @@ public final class DataManager {
     }
 
     /**
+     *  Method to post a hike.
+     * @param rawHikeData
+     * @throws DataManagerException
+     */
+    public long postHike(RawHikeData rawHikeData) throws DataManagerException {
+        try {
+            return sDatabaseClient.postHike(rawHikeData);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    /**
      * Converts a RawHikeData container into a cacheable HikeData object, caches and returns it
      */
     private HikeData processAndCache(RawHikeData rawHikeData) {

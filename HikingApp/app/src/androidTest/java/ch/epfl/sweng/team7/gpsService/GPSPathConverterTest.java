@@ -30,9 +30,7 @@ public class GPSPathConverterTest {
     private long hikeId;
     private long ownerId = 0;
     private Date date1 = new Date(100);
-    private double epsilon = 0;
-
-
+    private double epsilon = 1;
 
     @Before
     public void setUp() throws Exception {
@@ -61,8 +59,6 @@ public class GPSPathConverterTest {
         assertEquals(mRawHikeDataConverted.getDate(), mRawHikeDataOriginal.getDate());
         assertEquals(mRawHikeDataConverted.getOwnerId(), mRawHikeDataOriginal.getOwnerId());
         assertEquals(mRawHikeDataConverted.getHikeId(), mRawHikeDataOriginal.getHikeId());
-
-
     }
 }
 

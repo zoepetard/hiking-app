@@ -8,13 +8,13 @@ import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
 
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
-import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
-import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
 /**
@@ -24,7 +24,6 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 public final class GPSManager {
 
     private final static String LOG_FLAG = "GPS_Manager";
-    private static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
     private static GPSManager instance = new GPSManager();
 
     //GPS stored information
@@ -37,8 +36,6 @@ public final class GPSManager {
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
-    //GPS adapter
-    private RawHikeData mRawHikeData = null;
 
     public static GPSManager getInstance() {
         return instance;
@@ -48,7 +45,7 @@ public final class GPSManager {
      * Method called to toggle hike tracking
      * on/off, according to previous state.
      */
-    public void toggleTracking() {
+    public void toggleTracking()  {
         if (!isTracking) {
             startTracking();
         } else {
@@ -145,12 +142,16 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.isTracking = false;
-        RawHikeData mRawHikeData;
-        mRawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
+        RawHikeData rawHikeData = null;
         try {
-            storeHike(mRawHikeData);
+            rawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
+        } catch (Exception e) {
+            //TODO
+        }
+        try {
+            storeHike(rawHikeData);
         } catch (DatabaseClientException e) {
-            Log.d(LOG_FLAG, "Error while storing the converted hike");
+            //TODO, we need the button to store hikes to show the error message to the user.
         }
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
@@ -174,12 +175,14 @@ public final class GPSManager {
     /**
      * Method to store in DB the RawHikeData converted from the GPS object
      *
-     * @param mRawHikeData
+     * @param rawHikeData
      */
-    private  void storeHike(RawHikeData mRawHikeData) throws DatabaseClientException {
-        NetworkDatabaseClient mNetworkDatabaseClient;
-        DefaultNetworkProvider mDefaultNetworkProvider = new DefaultNetworkProvider();
-        mNetworkDatabaseClient = new NetworkDatabaseClient(SERVER_URL, mDefaultNetworkProvider);
-        mNetworkDatabaseClient.postHike(mRawHikeData);
+    private  void storeHike(RawHikeData rawHikeData) throws DatabaseClientException {
+        DataManager dataManager =  DataManager.getInstance();
+        try {
+            dataManager.postHike(rawHikeData);
+        } catch (DataManagerException e) {
+            //TODO
+        }
     }
 }

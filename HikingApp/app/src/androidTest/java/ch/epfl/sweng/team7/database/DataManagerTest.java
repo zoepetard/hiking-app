@@ -38,6 +38,7 @@ public class DataManagerTest {
         RawHikeData newHike = new RawHikeData(2, 15, new Date(), newHikePoints);
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
+        DataManager.getInstance().postHike(newHike);
     }
 
     @Test
@@ -61,6 +62,15 @@ public class DataManagerTest {
         assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
+    @Test
+    public void testPostHike() throws Exception{
+        List<RawHikePoint> newHikePoints = new ArrayList<>();
+        newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
+        RawHikeData newHike = new RawHikeData(2, 15, new Date(), newHikePoints);
+        assertEquals(DataManager.getInstance().getHike(mNewHikeId), newHike.getHikeId());
+
+    }
     @After
     public void tearDown() {
         DataManager.reset();
