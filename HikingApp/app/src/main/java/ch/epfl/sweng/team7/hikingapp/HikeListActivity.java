@@ -59,7 +59,7 @@ public class HikeListActivity extends Activity {
 
         // for testing
         bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
-        
+
         new GetMultHikeAsync().execute(bounds);
     }
 
