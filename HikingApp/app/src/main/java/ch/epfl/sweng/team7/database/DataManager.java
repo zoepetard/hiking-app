@@ -152,7 +152,7 @@ public final class DataManager {
     }
 
     /**
-     * Store a user data object in database and update local cache
+     * Store user data in database and update local cache
      *
      * @param rawUserData - a raw user data object
      */
