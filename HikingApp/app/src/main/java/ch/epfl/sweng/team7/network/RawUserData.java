@@ -94,13 +94,4 @@ public class RawUserData {
         }
     }
 
-    private JSONArray parseHikeList(List<Long> hikeList) throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-
-        for (int i = 0; i < hikeList.size(); i++) {
-            jsonArray.put(hikeList.get(i));
-        }
-        return jsonArray;
-    }
-
 }
