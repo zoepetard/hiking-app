@@ -43,20 +43,8 @@ class DefaultLocalCache implements LocalCache {
         this.userData = userData;
     }
 
-    public String getUserName(){
-        return userData.getUserName();
-    }
-
-    public long getUserId(){
-        return userData.getUserId();
-    }
-
-    public String getMailAddress(){
-        return userData.getMailAddress();
-    }
-
-    public void changeUserName(String newName){
-        userData.changeUserName(newName);
+    public UserData getUserData(){
+        return userData;
     }
 
     private class FixedSizeHashMap<K,V> extends LinkedHashMap<K,V> {

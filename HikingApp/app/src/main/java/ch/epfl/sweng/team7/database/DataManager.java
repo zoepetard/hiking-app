@@ -5,6 +5,8 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.provider.ContactsContract;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 public final class DataManager {
 
@@ -149,36 +152,56 @@ public final class DataManager {
     /**
      * store a user data object in local cache
      */
-    public void setUserData(UserData userData){
+    public void setUserData(RawUserData rawUserData) throws DataManagerException{
 
-        // update user data in cache and database
-        sLocalCache.setUserData(userData);
         // TODO call a post method in sDatabaseClient
+        // update user data in cache and database
+        try {
+            sDatabaseClient.postUserData(rawUserData);
+            UserData defaultUserData = new DefaultUserData(rawUserData);
+            sLocalCache.setUserData(defaultUserData);
+        }catch(DatabaseClientException e){
+            throw new DataManagerException(e);
+        }
+    }
+
+    /**
+     * TODO implement server side
+     * Change user name
+     * @param  newName the new user name
+     * */
+    public void changeUserName(String newName, String mailAddress) throws DataManagerException{
+        // get user data then update the database
+        UserData userData = getUserData(mailAddress);
+
+        RawUserData rawUserData = new RawUserData(userData.getUserId(),userData.getUserName(),userData.getMailAddress());
+        setUserData(rawUserData);
 
     }
 
     /**
-     * Change user name
-     * @param  newName the new user name
+     *  Retrieve a user data object from cache or database
+     * @param mailAddress - mail address to identify user
+     * @return  UserData object
      * */
-    public void changeUserName(String newName) {
-        if(newName.length() < USER_NAME_MIN_LENGTH){
-            throw new IllegalArgumentException("User name must be at least two characters");
+    public UserData getUserData(String mailAddress) throws DataManagerException{
+
+        // check if user data is stored in cache, otherwise return from server
+        if(sLocalCache.getUserData() != null &&
+                sLocalCache.getUserData().getMailAddress().equals(mailAddress)){
+            return sLocalCache.getUserData();
         }
-        sLocalCache.changeUserName(newName);
-        // TODO update DB with this name
-
-
-
+        else{
+            try {
+                RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
+                UserData userData = new DefaultUserData(rawUserData);
+                sLocalCache.setUserData(userData); // update cache
+                return userData;
+            }catch (DatabaseClientException e){
+                throw new DataManagerException(e);
+            }
+        }
     }
-
-    /** Get a user  */
-
-    public UserData getUserData(){
-
-        return null;
-    }
-
 
 
     /**

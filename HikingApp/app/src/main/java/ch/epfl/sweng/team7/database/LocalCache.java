@@ -24,5 +24,5 @@ interface LocalCache {
     int cachedHikesCount();
 
     void setUserData(UserData userData);
-    void changeUserName(String newName);
+    UserData getUserData();
 }
