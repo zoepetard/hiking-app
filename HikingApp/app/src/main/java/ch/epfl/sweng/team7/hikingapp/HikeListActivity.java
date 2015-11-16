@@ -58,6 +58,7 @@ public class HikeListActivity extends Activity {
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
         // for testing
+        // TODO: get real boundaries
         bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
 
         new GetMultHikeAsync().execute(bounds);
