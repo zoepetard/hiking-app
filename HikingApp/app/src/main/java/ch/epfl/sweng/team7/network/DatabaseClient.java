@@ -73,11 +73,11 @@ public interface DatabaseClient {
     /**
      * Fetch data for a user from the server
      *
-     * @param mailAddress - mail address of the user
+     * @param userId - id of the user
      * @return RawUserData
      * @throws DatabaseClientException if unable to fetch user data
      */
-    RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
+    RawUserData fetchUserData(long userId) throws DatabaseClientException;
 
 
 }

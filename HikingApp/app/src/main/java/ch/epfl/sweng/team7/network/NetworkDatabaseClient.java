@@ -175,15 +175,15 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * TODO Implement on server side ability to handle this request
      * Fetch data for a user from the server
      *
-     * @param mailAddress - mail address of the user
+     * @param userId - mail address of the user
      * @return RawUserData
      * @throws DatabaseClientException if unable to fetch user data
      */
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
+    public RawUserData fetchUserData(long userId) throws DatabaseClientException {
         try {
             URL url = new URL(mServerUrl + "/get_user/");
             HttpURLConnection conn = getConnection(url, "GET");
-            conn.setRequestProperty("mail_address", mailAddress);
+            conn.setRequestProperty("user_id", Long.toString(userId));
             conn.connect();
             String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonUserData = new JSONObject(stringUserData);

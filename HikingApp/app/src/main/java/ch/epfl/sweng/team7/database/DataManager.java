@@ -165,7 +165,7 @@ public final class DataManager {
             sLocalCache.setUserData(defaultUserData);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             throw new DataManagerException(e.getMessage());
         }
     }
@@ -176,10 +176,10 @@ public final class DataManager {
      *
      * @param newName,mailAddress the new user name and mailAddress as identifier
      */
-    public void changeUserName(String newName, String mailAddress) throws DataManagerException {
+    public void changeUserName(String newName, long userId) throws DataManagerException {
 
         // get current user data then update the database
-        UserData userData = getUserData(mailAddress);
+        UserData userData = getUserData(userId);
         RawUserData rawUserData = new RawUserData(userData.getUserId(), newName, userData.getMailAddress());
         setUserData(rawUserData);
 
@@ -189,18 +189,18 @@ public final class DataManager {
      * Retrieve a user data object from cache or database
      * TODO server side needs to be implemented before this can work correctly
      *
-     * @param mailAddress - mail address to identify user
+     * @param userId - id assigned to identify user
      * @return UserData object
      */
-    public UserData getUserData(String mailAddress) throws DataManagerException {
+    public UserData getUserData(long userId) throws DataManagerException {
 
         // check if user data is stored in cache, otherwise return from server
-        if (sLocalCache.getUserData() != null &&
-                sLocalCache.getUserData().getMailAddress().equals(mailAddress)) {
-            return sLocalCache.getUserData();
+        if (sLocalCache.getUserData(userId) != null &&
+                sLocalCache.getUserData(userId).getUserId() == userId) {
+            return sLocalCache.getUserData(userId);
         } else {
             try {
-                RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
+                RawUserData rawUserData = sDatabaseClient.fetchUserData(userId);
                 UserData userData = new DefaultUserData(rawUserData);
                 sLocalCache.setUserData(userData); // update cache
                 return userData;
@@ -210,14 +210,6 @@ public final class DataManager {
                 throw new DataManagerException(e.getMessage());
             }
         }
-    }
-
-    /**
-     * Get the id of the currently selected hike
-     * long = -1 means no hike has been seleceted
-     */
-    public long getSelectedHike() {
-        return sLocalCache.getUserData().getSelectedHikeId();
     }
 
 

@@ -29,5 +29,5 @@ interface LocalCache {
 
     void setUserData(UserData userData);
 
-    UserData getUserData();
+    UserData getUserData(long userId);
 }
