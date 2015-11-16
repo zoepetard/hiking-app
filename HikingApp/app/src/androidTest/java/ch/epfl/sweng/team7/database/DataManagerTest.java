@@ -17,12 +17,15 @@ import java.util.List;
 import ch.epfl.sweng.team7.mockServer.MockServer;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 
 
-/** Tests the local cache for hikes */
+/**
+ * Tests the local cache for hikes
+ */
 @RunWith(AndroidJUnit4.class)
 public class DataManagerTest {
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
@@ -33,8 +36,8 @@ public class DataManagerTest {
     public void setUp() throws Exception {
         MockServer mockServer = new MockServer();
         List<RawHikePoint> newHikePoints = new ArrayList<>();
-        newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date(), 0.0));
-        newHikePoints.add(new RawHikePoint(new LatLng(2.,11.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(2., 10.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
         RawHikeData newHike = new RawHikeData(2, 15, new Date(), newHikePoints);
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
@@ -61,16 +64,35 @@ public class DataManagerTest {
         assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
-    @Test
-    public void testGetUserData() throws Exception {}
+    @Test(expected = DataManagerException.class)
+    public void testFailedToFetchUserData() throws DataManagerException {
+
+        DataManager dataManager = DataManager.getInstance();
+        String unusedMailAddress = "hej@haj.com"; // mail address that's not in cache or DB
+        dataManager.getUserData(unusedMailAddress);
+    }
+
+
+    @Test (expected = DataManagerException.class)
+    public void testFailedToPostUserData() throws Exception{
+
+        RawUserData rawUserData = new RawUserData(1,"ab","a@gmail.com"); // legal data
+        DataManager dataManager = DataManager.getInstance();
+        dataManager.setUserData(rawUserData);
+
+    }
 
     @Test
-    public void testChangeUserName() throws Exception {}
+    public void testGetUserData() throws Exception {
+    }
 
     @Test
-    public void testSetUserData() throws Exception {}
+    public void testChangeUserName() throws Exception {
+    }
 
-
+    @Test
+    public void testSetUserData() throws Exception {
+    }
 
     @After
     public void tearDown() {

@@ -63,7 +63,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonHikeData = new JSONObject(stringHikeData);
             return RawHikeData.parseFromJSON(jsonHikeData);
-        } catch (IOException|JSONException|HikeParseException e) {
+        } catch (IOException | JSONException | HikeParseException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -80,7 +80,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
         // TODO implement properly
         List<RawHikeData> rawHikeDatas = new ArrayList<>();
-        for(Long hikeId : hikeIds) {
+        for (Long hikeId : hikeIds) {
             rawHikeDatas.add(fetchSingleHike(hikeId));
         }
         return rawHikeDatas;
@@ -115,7 +115,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
                 hikeList.add(jsonHikeIdArray.getLong(i));
             }
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
         return hikeList;

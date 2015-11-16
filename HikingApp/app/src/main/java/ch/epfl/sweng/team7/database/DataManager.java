@@ -154,7 +154,7 @@ public final class DataManager {
     /**
      * Store a user data object in database and update local cache
      *
-     * @param rawUserData
+     * @param rawUserData - a raw user data object
      */
     public void setUserData(RawUserData rawUserData) throws DataManagerException {
 
@@ -165,11 +165,13 @@ public final class DataManager {
             sLocalCache.setUserData(defaultUserData);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
+        } catch (Exception e) {
+            throw new DataManagerException(e.getMessage());
         }
     }
 
     /**
-     * TODO implement server side
+     * TODO server side needs to be implemented before this can work
      * Change user name
      *
      * @param newName,mailAddress the new user name and mailAddress as identifier
@@ -185,6 +187,7 @@ public final class DataManager {
 
     /**
      * Retrieve a user data object from cache or database
+     * TODO server side needs to be implemented before this can work correctly
      *
      * @param mailAddress - mail address to identify user
      * @return UserData object
@@ -203,6 +206,8 @@ public final class DataManager {
                 return userData;
             } catch (DatabaseClientException e) {
                 throw new DataManagerException(e);
+            } catch (Exception e) {
+                throw new DataManagerException(e.getMessage());
             }
         }
     }
