@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -115,60 +116,25 @@ public class MapActivity extends FragmentActivity {
         int screenWidth = size.x;
         int screenHeight = size.y;
 
+        hikesInWindow = testHikeList(); //TODO get hikes from DataManager
+        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
 
-
-
-        hikesInWindow = testHikeList();
         for (int i = 0; i < hikesInWindow.size(); i++) {
             HikeData hike = hikesInWindow.get(i);
             displayMarkers(hike);
-            PolylineOptions polylineOptions = displayOneHike(hike);
-
-
+            PolylineOptions polylineOptions = displayHike(hike);
+            boundingBoxBuilder.include(hike.getStartLocation());
+            boundingBoxBuilder.include(hike.getFinishLocation());
         }
 
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
 
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(hikesInWindow.get(0).getBoundingBox(), screenWidth, screenHeight, screenWidth / 10));
-
-
-        /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
-                TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
-                double shortestDistance = 1;
-                List<LatLng> polylinePoints = polylineOptions.getPoints();
-                for (LatLng polylinePoint : polylinePoints) {
-                    float[] distanceBetween = new float[1];
-
-                    //Computes the approximate distance (in meters) between polyLinePoint and point.
-                    //Returns the result as the first element of the float array distanceBetween
-                    distanceBetween(polylinePoint.latitude, polylinePoint.longitude,
-                            point.latitude, point.longitude, distanceBetween);
-
-                    double distance = distanceBetween[0];
-                    if (distance < shortestDistance) {
-                        displayHikeInfo();
-                        return;
-                    }
-                }
-                mapTableLayout.setVisibility(View.INVISIBLE);
+                onMapClickHelper(point);
             }
-        });*/
-    }
-
-
-
-    private PolylineOptions displayOneHike(final HikeData hike) {
-        PolylineOptions testPolyline = new PolylineOptions();
-
-        List<HikePoint> databaseHikePoints = hike.getHikePoints();
-        for (HikePoint hikePoint: databaseHikePoints) {
-            testPolyline.add(hikePoint.getPosition());
-        }
-        Polyline polyline = mMap.addPolyline(testPolyline);
-        return testPolyline;
-
+        });
     }
 
     private void displayMarkers(final HikeData hike) {
@@ -197,6 +163,42 @@ public class MapActivity extends FragmentActivity {
             }
         }
         return true;
+    }
+
+    private PolylineOptions displayHike(final HikeData hike) {
+        PolylineOptions testPolyline = new PolylineOptions();
+
+        List<HikePoint> databaseHikePoints = hike.getHikePoints();
+        for (HikePoint hikePoint: databaseHikePoints) {
+            testPolyline.add(hikePoint.getPosition());
+        }
+        Polyline polyline = mMap.addPolyline(testPolyline);
+        return testPolyline;
+
+    }
+
+    private void onMapClickHelper(LatLng point) {
+        for (int i = 0; i < hikesInWindow.size(); i++) {
+            HikeData hike = hikesInWindow.get(i);
+            double shortestDistance = 1000;
+            List<HikePoint> hikePoints = hike.getHikePoints();
+            for (HikePoint hikePoint : hikePoints) {
+                float[] distanceBetween = new float[1];
+
+                //Computes the approximate distance (in meters) between polyLinePoint and point.
+                //Returns the result as the first element of the float array distanceBetween
+                distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
+                        point.latitude, point.longitude, distanceBetween);
+
+                double distance = distanceBetween[0];
+                if (distance < shortestDistance) {
+                    displayHikeInfo(hike);
+                    return;
+                }
+            }
+            TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
+            mapTableLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void displayHikeInfo(HikeData hike) {
@@ -278,8 +280,5 @@ public class MapActivity extends FragmentActivity {
         mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
         return new DefaultHikeData(mRawHikeData);
     }
-
-
-
 
 }
