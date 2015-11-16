@@ -41,36 +41,32 @@ public class DefaultUserDataTest {
 
     }
 
-    @Test
-    public void testUserNameLength() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void testUserNameLength() {
 
         RawUserData rawUserData = new RawUserData(2, "A", "a@gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
 
     }
 
-    @Test
-    public void testValidMailAddress() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void testValidMailAddress() {
 
         RawUserData rawUserData = new RawUserData(3, "Bert", "gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
-
     }
 
-    @Test
-    public void testPositiveId() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void testPositiveId() {
         RawUserData rawUserData = new RawUserData(-2, "Bert", "bert@gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
     }
 
     @Test
-    public void testIdUnknown(){
+    public void testIdUnknown() {
         RawUserData rawUserData = new RawUserData(-1, "Bert", "bert@gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
 
         assertEquals("Unknown User Id", -1, defaultUserData.getUserId());
-
     }
-
-
 }

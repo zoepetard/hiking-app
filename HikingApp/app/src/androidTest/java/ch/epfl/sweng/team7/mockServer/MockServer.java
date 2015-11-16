@@ -16,6 +16,7 @@ import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
  * Created by pablo on 6/11/15.
@@ -111,6 +112,30 @@ public class MockServer implements DatabaseClient {
         return hikeId;
     }
 
+    /**
+     * Post user data to the data base
+     *
+     * @param rawUserData object conatining id,user name and mail address
+     * @return user id
+     * @throws DatabaseClientException if post is unsuccessful
+     */
+    @Override
+    public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
+        return 0;
+    }
+
+    /**
+     * Fetch data for a user from the server
+     *
+     * @param mailAddress - mail address of the user
+     * @return RawUserData
+     * @throws DatabaseClientException if unable to fetch user data
+     */
+    @Override
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
+        return null;
+    }
+
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {
@@ -163,4 +188,7 @@ public class MockServer implements DatabaseClient {
             throw new HikeParseException(e);
         }
     }
+
+
+
 }
