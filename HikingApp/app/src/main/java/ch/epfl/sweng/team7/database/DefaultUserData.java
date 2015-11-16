@@ -17,7 +17,6 @@ public class DefaultUserData implements UserData {
     private String mUserName;
     private String mMailAddress;
     private List<Long> mHikeList; // id's for user's hike
-    private long mSelectedHikeId = -1;
 
     public DefaultUserData(RawUserData rawUserData) {
 
@@ -68,24 +67,6 @@ public class DefaultUserData implements UserData {
     }
 
     /**
-     * @return id for currently selected hike for user
-     */
-    @Override
-    public long getSelectedHikeId() {
-        return mSelectedHikeId;
-    }
-
-    /**
-     * Changes the user name
-     *
-     * @param newName the new user name
-     */
-    @Override
-    public void changeUserName(String newName) {
-        mUserName = newName;
-    }
-
-    /**
      * @param hikeList - list containing id of user's hikes
      */
     @Override
@@ -93,14 +74,6 @@ public class DefaultUserData implements UserData {
         mHikeList = hikeList;
     }
 
-    /**
-     * Updates user's selected hike
-     *
-     * @param selectedHikeId - id of selected hike
-     */
-    @Override
-    public void setSelectedHikeId(long selectedHikeId) {
-        mSelectedHikeId = selectedHikeId;
-    }
+
 }
 

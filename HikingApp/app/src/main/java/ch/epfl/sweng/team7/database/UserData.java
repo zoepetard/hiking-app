@@ -35,26 +35,8 @@ public interface UserData {
     int getNumberOfHikes();
 
     /**
-     * @return id for currently selected hike for user
-     */
-    long getSelectedHikeId();
-
-    /**
-     * Update user name
-     *
-     * @param newName - new user name
-     */
-    void changeUserName(String newName);
-
-    /**
      * @param hikeList - list containing id of user's hikes
      */
     void setHikeList(List<Long> hikeList);
 
-    /**
-     * Updates user's selected hike
-     *
-     * @param selectedHikeId - id of selected hike
-     */
-    void setSelectedHikeId(long selectedHikeId);
 }
