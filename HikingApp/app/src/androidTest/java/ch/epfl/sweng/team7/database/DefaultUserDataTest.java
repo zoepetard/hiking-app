@@ -13,37 +13,64 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultUserDataTest {
 
-
     private int userId = 1;
     private String userName = "Bert";
     private String mailAddress = "bert@gmail.com";
     private DefaultUserData defaultUserData;
 
-
-
     @Before
-    public void setUp(){
-        RawUserData rawUserData = new RawUserData(userId,userName,mailAddress);
+    public void setUp() {
+        RawUserData rawUserData = new RawUserData(userId, userName, mailAddress);
         defaultUserData = new DefaultUserData(rawUserData);
     }
 
     @Test
-    public void testUserIdMatch(){
+    public void testUserIdMatch() {
         assertEquals("Id values don't match", userId, defaultUserData.getUserId());
     }
 
     @Test
-    public void testUserNameMatch(){
-        assertEquals("User names don't match",userName,defaultUserData.getUserName());
+    public void testUserNameMatch() {
+        assertEquals("User names don't match", userName, defaultUserData.getUserName());
 
     }
 
     @Test
-    public void testMailAddressMatch(){
+    public void testMailAddressMatch() {
         assertEquals("Mail addresses don't match", mailAddress, defaultUserData.getMailAddress());
-                
+
     }
 
+    @Test
+    public void testUserNameLength() throws Exception {
+
+        RawUserData rawUserData = new RawUserData(2, "A", "a@gmail.com");
+        DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
+
+    }
+
+    @Test
+    public void testValidMailAddress() throws Exception {
+
+        RawUserData rawUserData = new RawUserData(3, "Bert", "gmail.com");
+        DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
+
+    }
+
+    @Test
+    public void testPositiveId() throws Exception {
+        RawUserData rawUserData = new RawUserData(-2, "Bert", "bert@gmail.com");
+        DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
+    }
+
+    @Test
+    public void testIdUnknown(){
+        RawUserData rawUserData = new RawUserData(-1, "Bert", "bert@gmail.com");
+        DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
+
+        assertEquals("Unknown User Id", -1, defaultUserData.getUserId());
+        
+    }
 
 
 }

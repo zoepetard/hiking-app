@@ -11,7 +11,7 @@ import ch.epfl.sweng.team7.network.RawUserData;
 /**
  * Object containing data about a user
  */
-public class DefaultUserData implements UserData{
+public class DefaultUserData implements UserData {
 
     private long userId;
     private String userName;
@@ -19,7 +19,7 @@ public class DefaultUserData implements UserData{
     private List<Long> hikeList; // id's for user's hike
     private long selectedHikeId = -1;
 
-    public DefaultUserData(RawUserData rawUserData){
+    public DefaultUserData(RawUserData rawUserData) {
 
         this.userId = rawUserData.getUserId();
         this.userName = rawUserData.getUserName();
@@ -77,6 +77,7 @@ public class DefaultUserData implements UserData{
 
     /**
      * Changes the user name
+     *
      * @param newName the new user name
      */
     @Override
@@ -94,6 +95,7 @@ public class DefaultUserData implements UserData{
 
     /**
      * Updates user's selected hike
+     *
      * @param selectedHikeId - id of selected hike
      */
     @Override

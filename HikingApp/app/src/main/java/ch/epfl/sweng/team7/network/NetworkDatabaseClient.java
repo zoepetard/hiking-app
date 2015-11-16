@@ -45,11 +45,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Fetch a single hike from the server
+     *
      * @param hikeId The numeric ID of one hike in the database
      * @return A {@link RawHikeData} object encapsulating one hike
      * @throws DatabaseClientException in case the hike could not be
-     * retrieved for any reason external to the application (network failure, etc.)
-     * or the hikeId did not match a valid hike.
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     *                                 or the hikeId did not match a valid hike.
      */
     public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
         try {
@@ -69,11 +70,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Fetch multiple hikes from the server
+     *
      * @param hikeIds The numeric IDs of multiple hikes in the database
      * @return A list of {@link RawHikeData} objects encapsulating multiple hikes
      * @throws DatabaseClientException in case the hike could not be
-     * retrieved for any reason external to the application (network failure, etc.)
-     * or the hikeId did not match a valid hike.
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     *                                 or the hikeId did not match a valid hike.
      */
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
@@ -81,10 +83,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Get all hikes in a rectangular window on the map
+     *
      * @param bounds Boundaries (window) of the
      * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
-     * retrieved for any reason external to the application (network failure, etc.)
+     *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented."); // TODO implement
@@ -93,10 +96,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Post a hike to the database. Returns the database ID
      * that this hike was assigned from the database.
+     *
      * @param hike Boundaries (window) of the
      * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
-     * retrieved for any reason external to the application (network failure, etc.)
+     *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public long postHike(RawHikeData hike) throws DatabaseClientException {
         try {
@@ -115,14 +119,16 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-    /** Prototype of how to send user data to server
+    /**
+     * Prototype of how to send user data to server
      * TODO implement user data storage on server and modify this accordingly
+     *
      * @param rawUserData - RawUserData object
      * @return user id
      * @throws DatabaseClientException
-     * */
+     */
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
-        try{
+        try {
             URL url = new URL(mServerUrl + "/post_user_data");
             HttpURLConnection conn = getConnection(url, "POST");
             byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
@@ -140,11 +146,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * TODO Implement on server side ability to handle this request
      * Fetch data for a user from the server
+     *
      * @param mailAddress - mail address of the user
      * @return RawUserData
-     * @throws  DatabaseClientException if unable to fetch user data
-     * */
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException{
+     * @throws DatabaseClientException if unable to fetch user data
+     */
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
         try {
             URL url = new URL(mServerUrl + "/get_user/");
             HttpURLConnection conn = getConnection(url, "GET");
@@ -162,7 +169,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Method to set the properties of the connection to the server
-     * @param url the server url
+     *
+     * @param url    the server url
      * @param method "GET" or "POST"
      * @return a valid HttpConnection
      * @throws IOException
@@ -176,9 +184,10 @@ public class NetworkDatabaseClient implements DatabaseClient {
         conn.setRequestMethod(method);
         return conn;
     }
-    
+
     /**
      * Method to check the response code of the server and return the message that the server sends
+     *
      * @param conn an open HttpURLConnection
      * @return the string that was read from the connection
      * @throws IOException
@@ -186,20 +195,20 @@ public class NetworkDatabaseClient implements DatabaseClient {
     private String fetchResponse(HttpURLConnection conn, int expectedResponseCode) throws IOException {
         int responseCode = conn.getResponseCode();
         StringBuilder result = new StringBuilder();
-        if(responseCode != expectedResponseCode) {
-            throw new IOException("Unexpected HTTP Response Code: "+responseCode);
+        if (responseCode != expectedResponseCode) {
+            throw new IOException("Unexpected HTTP Response Code: " + responseCode);
         }
 
         String contentType = conn.getContentType();
         if (contentType == null) {
             throw new IOException("HTTP content type unset");
-        } else if(contentType.compareTo(JSON_CONTENT) != 0) {
+        } else if (contentType.compareTo(JSON_CONTENT) != 0) {
             throw new IOException("Invalid HTTP content type: " + contentType);
         }
 
         InputStream input = conn.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            
+
         String line;
         while ((line = reader.readLine()) != null) {
             result.append(line + "\n");
@@ -208,5 +217,5 @@ public class NetworkDatabaseClient implements DatabaseClient {
         conn.disconnect();
         return result.toString();
     }
-    
+
 }
