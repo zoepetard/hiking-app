@@ -10,6 +10,7 @@ package ch.epfl.sweng.team7.network;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.UserData;
@@ -29,7 +31,7 @@ import ch.epfl.sweng.team7.database.UserData;
  */
 public class NetworkDatabaseClient implements DatabaseClient {
 
-    private final static String LOG_FLAG = "Network_DataBaseClient";
+    private final static String LOG_FLAG = "Network_DatabaseClient";
     private final static int CONNECT_TIMEOUT = 1000;
     private final static String JSON_CONTENT = "application/json";
     private final static String ENCODING = "charset=utf-8";
@@ -61,9 +63,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonHikeData = new JSONObject(stringHikeData);
             return RawHikeData.parseFromJSON(jsonHikeData);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException|JSONException|HikeParseException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -78,7 +78,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
      *                                 or the hikeId did not match a valid hike.
      */
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented."); // TODO implement
+        // TODO implement properly
+        List<RawHikeData> rawHikeDatas = new ArrayList<>();
+        for(Long hikeId : hikeIds) {
+            rawHikeDatas.add(fetchSingleHike(hikeId));
+        }
+        return rawHikeDatas;
     }
 
     /**
@@ -90,7 +95,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented."); // TODO implement
+
+        String boundingBoxJSON = String.format(
+                "{\"lat_min\":%f,\"lng_min\":%f,\"lat_max\":%f,\"lng_max\":%f}",
+                bounds.southwest.latitude, bounds.southwest.longitude,
+                bounds.northeast.latitude, bounds.northeast.longitude);
+        List<Long> hikeList = new ArrayList<>();
+
+        try {
+            URL url = new URL(mServerUrl + "/get_hikes_in_window/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("bounding_box", boundingBoxJSON);
+            conn.connect();
+            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+
+            // Parse response
+            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
+            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
+                hikeList.add(jsonHikeIdArray.getLong(i));
+            }
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+        return hikeList;
     }
 
     /**

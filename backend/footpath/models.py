@@ -1,8 +1,12 @@
 from google.appengine.ext import ndb
 import json
 from datetime import datetime
+import logging
 
 DEFAULT_NAME = 'some_global_string'
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 # SET NO PARENT KEY, hikes should be in different entity groups.
 # We set a parent key on the 'Greetings' to ensure that they are all in the same
@@ -30,8 +34,8 @@ class Hike(ndb.Model):
     # Management (set by backend)
     author = ndb.UserProperty()
     last_changed = ndb.DateTimeProperty(auto_now_add=True)
-    bounding_botleft = ndb.GeoPtProperty()
-    bounding_toprght = ndb.GeoPtProperty()
+    bb_southwest = ndb.GeoPtProperty()
+    bb_northeast = ndb.GeoPtProperty()
     
     # Header
     hike_id = ndb.IntegerProperty()
@@ -55,6 +59,10 @@ class Hike(ndb.Model):
         self.date = json_object['date']
         self.hike_data = json_object['hike_data']
         #self.some_string = json_object['some_string']
+        bb = get_bounding_box(self.hike_data)
+        self.bb_southwest = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
+        self.bb_northeast = ndb.GeoPt(bb['lat_max'], bb['lng_max'])
+        logger.info('lat in bounds %s:%s, lng in bounds %s:%s', bb['lat_min'], bb['lat_max'], bb['lng_min'], bb['lng_max'])
         return True
                 
     # Parse this into JSON string
@@ -69,9 +77,18 @@ class Hike(ndb.Model):
         return json.dumps(hike_data)
     
 # Get an array-dict containing the data from the hike_data object
-def read_hike_data(hike_data):
-    hike_data
-    # TODO implement
+def get_bounding_box(hike_data):
+    latitudes = [point[0] for point in hike_data]
+    longitudes = [point[1] for point in hike_data]   
+    
+    # TODO Note that for a hike across the pacific
+    # the bounding box is not calculated correctly
+    lat_min = min(latitudes)
+    lng_min = min(longitudes)
+    lat_max = max(latitudes)
+    lng_max = max(longitudes)
+    
+    return {'lat_min' : lat_min, 'lng_min' : lng_min, 'lat_max' : lat_max, 'lng_max' : lng_max}
 
 # Factory to turn a json-string into a valid hike object
 def build_hike_from_json(json_string):
