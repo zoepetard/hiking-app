@@ -17,7 +17,7 @@ public class DefaultUserData implements UserData{
     private String userName;
     private String mailAddress;
     private List<Long> hikeList; // id's for user's hike
-    private long selectedHikeId;
+    private long selectedHikeId = -1;
 
     public DefaultUserData(RawUserData rawUserData){
 
@@ -32,7 +32,7 @@ public class DefaultUserData implements UserData{
      */
     @Override
     public long getUserId() {
-        return 0;
+        return userId;
     }
 
     /**
@@ -40,7 +40,7 @@ public class DefaultUserData implements UserData{
      */
     @Override
     public String getUserName() {
-        return null;
+        return userName;
     }
 
     /**
@@ -48,15 +48,15 @@ public class DefaultUserData implements UserData{
      */
     @Override
     public String getMailAddress() {
-        return null;
+        return mailAddress;
     }
 
     /**
      * @return list of hikes
      */
     @Override
-    public List<HikeData> getHikeList() {
-        return null;
+    public List<Long> getHikeList() {
+        return hikeList;
     }
 
     /**
@@ -84,5 +84,21 @@ public class DefaultUserData implements UserData{
         this.userName = newName;
     }
 
+    /**
+     * @param hikeList - list containing id of user's hikes
+     */
+    @Override
+    public void setHikeList(List<Long> hikeList) {
+        this.hikeList = hikeList;
+    }
+
+    /**
+     * Updates user's selected hike
+     * @param selectedHikeId - id of selected hike
+     */
+    @Override
+    public void setSelectedHikeId(long selectedHikeId) {
+        this.selectedHikeId = selectedHikeId;
+    }
 }
 

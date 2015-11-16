@@ -170,9 +170,9 @@ public final class DataManager {
      * */
     public void changeUserName(String newName, String mailAddress) throws DataManagerException{
 
-        // get user data then update the database
+        // get current user data then update the database
         UserData userData = getUserData(mailAddress);
-        RawUserData rawUserData = new RawUserData(userData.getUserId(),userData.getUserName(),userData.getMailAddress());
+        RawUserData rawUserData = new RawUserData(userData.getUserId(),newName,userData.getMailAddress());
         setUserData(rawUserData);
 
     }
@@ -199,6 +199,14 @@ public final class DataManager {
                 throw new DataManagerException(e);
             }
         }
+    }
+
+    /**
+     * Get the id of the currently selected hike
+     * long = -1 means no hike has been seleceted
+     * */
+    public long getSelectedHike(){
+        return sLocalCache.getUserData().getSelectedHikeId();
     }
 
 

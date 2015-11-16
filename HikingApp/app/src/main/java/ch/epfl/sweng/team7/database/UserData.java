@@ -17,7 +17,7 @@ public interface UserData {
     String getMailAddress();
 
     /** @return list of hikes */
-    List<HikeData> getHikeList();
+    List<Long> getHikeList();
 
     /** @return number of hikes */
     int getNumberOfHikes();
@@ -25,8 +25,19 @@ public interface UserData {
     /** @return id for currently selected hike for user */
     long getSelectedHikeId();
 
-    /** @set new user name */
+    /**  Update user name
+     * @param newName - new user name
+     * */
     void changeUserName(String newName);
 
+    /**
+     *  @param hikeList - list containing id of user's hikes
+     *  */
+    void setHikeList(List<Long> hikeList);
 
+    /**
+     * Updates user's selected hike
+     * @param selectedHikeId - id of selected hike
+     * */
+    void setSelectedHikeId(long selectedHikeId);
 }

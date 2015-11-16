@@ -60,6 +60,17 @@ public class DataManagerTest {
         assertEquals(2, hikeDatas.get(0).getHikeId());
     }
 
+    @Test
+    public void testGetUserData() throws Exception {}
+
+    @Test
+    public void testChangeUserName() throws Exception {}
+
+    @Test
+    public void testSetUserData() throws Exception {}
+
+
+
     @After
     public void tearDown() {
         DataManager.reset();

@@ -40,6 +40,10 @@ class DefaultLocalCache implements LocalCache {
     }
 
     public void setUserData(UserData userData) {
+        // keep old hike list and selected hike and updates the rest
+        userData.setHikeList(this.userData.getHikeList());
+        userData.setSelectedHikeId(this.userData.getSelectedHikeId());
+
         this.userData = userData;
     }
 

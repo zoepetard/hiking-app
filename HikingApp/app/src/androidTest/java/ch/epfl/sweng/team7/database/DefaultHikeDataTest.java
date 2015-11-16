@@ -119,4 +119,5 @@ public class DefaultHikeDataTest {
         assertEquals("Incorrect elevation loss", 1.0, mDefaultHikeData.getElevationLoss(), EPS_DOUBLE);
     }
 
+
 }
