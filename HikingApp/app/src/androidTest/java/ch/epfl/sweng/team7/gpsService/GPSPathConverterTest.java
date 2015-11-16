@@ -45,12 +45,10 @@ public class GPSPathConverterTest {
         rawHikePoints = new ArrayList<>();
         rawHikePoints.add(new RawHikePoint(startLocation, new Date(100), 0));
         mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints);
-
+        mRawHikeDataConverted = GPSPathConverter.toRawHikeData(mGPSPath);
     }
     @Test
     public void testFootPrintsAreConverted() throws Exception{
-        GPSPathConverter.toRawHikeData(mGPSPath);
-        //mRawHikeDataConverted = mGPSPathConverter.getRawHikeData();
         LatLng position = mRawHikeDataConverted.getHikePoints().get(0).getPosition();
         Date mDate = mRawHikeDataConverted.getHikePoints().get(0).getTime();
         double elevation = mRawHikeDataConverted.getHikePoints().get(0).getElevation();
