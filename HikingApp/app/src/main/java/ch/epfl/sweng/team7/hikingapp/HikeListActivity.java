@@ -19,6 +19,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -56,6 +57,9 @@ public class HikeListActivity extends Activity {
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
+        // for testing
+        bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
+        
         new GetMultHikeAsync().execute(bounds);
     }
 
@@ -158,14 +162,7 @@ public class HikeListActivity extends Activity {
         @Override
         protected List<HikeData> doInBackground(LatLngBounds... bounds) {
             try {
-                // TODO
-                // only for testing right now. need to remove after database
-                // stores real data
-                // the function below not implemented in server yet
-                // List<HikeData> results = dataManager.getHikesInWindow(bounds[0]);
-                List<HikeData> fake_results = new ArrayList<>();
-                fake_results.add(dataManager.getHike(1));
-                return fake_results;
+                return dataManager.getHikesInWindow(bounds[0]);
             } catch (DataManagerException e) {
                 e.printStackTrace();
                 return null;
@@ -181,7 +178,6 @@ public class HikeListActivity extends Activity {
 
         private void displayHikes(final List<HikeData> results) {
             TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
-            Log.i("num of results", Integer.toString(results.size()));
             for (int i = 0; i < results.size(); i++) {
                 final HikeData hikeData = results.get(i);
                 final TableRow hikeRow = getHikeRow(i, hikeData);
