@@ -69,7 +69,7 @@ public class ProperJSONParsingTest {
 
     /** test that hike ID is correctly parsed */
     @Test
-    public void testProperHikeId() throws JSONException {
+    public void testProperHikeId() throws HikeParseException {
         RawHikeData t = createHikeData();
         assertEquals("Hike ID does not match",
                 EXPECTED_HIKE_ID, t.getHikeId());
@@ -77,7 +77,7 @@ public class ProperJSONParsingTest {
 
     /** test that owner ID is correctly parsed */
     @Test
-    public void testProperOwnerId() throws JSONException {
+    public void testProperOwnerId() throws HikeParseException {
         RawHikeData t = createHikeData();
         assertEquals("Owner ID does not match",
                 EXPECTED_OWNER_ID, t.getOwnerId());
@@ -85,7 +85,7 @@ public class ProperJSONParsingTest {
 
     /** test that date is correctly parsed */
     @Test
-    public void testProperDate() throws JSONException {
+    public void testProperDate() throws HikeParseException {
         RawHikeData t = createHikeData();
         assertEquals("Date does not match",
                 EXPECTED_DATE, t.getDate().getTime());
@@ -93,7 +93,7 @@ public class ProperJSONParsingTest {
 
     /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperHikePointSize() throws JSONException {
+    public void testProperHikePointSize() throws HikeParseException {
         RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         assertEquals("HikePoints size does not match",
@@ -102,7 +102,7 @@ public class ProperJSONParsingTest {
 
     /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperHikePointLatLng() throws JSONException {
+    public void testProperHikePointLatLng() throws HikeParseException {
         RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
@@ -115,7 +115,7 @@ public class ProperJSONParsingTest {
 
     /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperHikePointDate() throws JSONException {
+    public void testProperHikePointDate() throws Exception {
         RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
@@ -126,7 +126,7 @@ public class ProperJSONParsingTest {
 
     /** test that hikepoints are correctly parsed */
     @Test
-    public void testProperHikePointElevation() throws JSONException {
+    public void testProperHikePointElevation() throws Exception {
         RawHikeData t = createHikeData();
         List<RawHikePoint> tp = t.getHikePoints();
         for(int i = 0; i < tp.size(); ++i) {
@@ -168,7 +168,11 @@ public class ProperJSONParsingTest {
      * Create a valid HikeData object
      * @return a HikeData object
      */
-    private static RawHikeData createHikeData() throws JSONException {
-        return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+    private static RawHikeData createHikeData() throws HikeParseException {
+        try {
+            return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        } catch(JSONException e) {
+            throw new HikeParseException(e);
+        }
     }
 }

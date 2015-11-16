@@ -2,16 +2,20 @@ package ch.epfl.sweng.team7.network;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import junit.framework.TestCase;
 
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 
@@ -26,7 +30,7 @@ import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
+    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -102,6 +106,50 @@ public class BackendTest extends TestCase {
         }
     }
 
+    @Test
+    public void testPopulateDatabase() throws Exception {
+        //PopulateDatabase.run(createDatabaseClient());
+    }
+
+    @Test
+    public void testGetHikesInWindow() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+
+        assertTrue("No hikes found on server", hikeList.size() > 0);
+        RawHikeData rawHikeData = dbClient.fetchSingleHike(hikeList.get(0));
+        boolean onePointInBox = false;
+        for(RawHikePoint p : rawHikeData.getHikePoints()) {
+            if(bounds.contains(p.getPosition())) {
+                onePointInBox = true;
+                break;
+            }
+        }
+        assertTrue("Returned hike has no point in window", onePointInBox);
+
+        Log.d("BackendTestLog", "Found " + hikeList.size() + " Hikes");
+        for(Long l : hikeList) {
+            Log.d("BackendTestLog", "Found Hike "+l);
+        }
+    }
+
+    @Test
+    public void testGetHikesInWindow_AtSouthPole() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-180), new LatLng(-89,180));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        assertEquals("Found Hike at South Pole", 0, hikeList.size());
+    }
+
+    @Test
+    public void testGetHikesInWindow_InAtlantic() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(42.840628, -49.093879), new LatLng(55.971414, -18.178352));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        assertEquals("Found Hike in the Atlantic.", 0, hikeList.size());
+    }
+
     // TODO test backend reaction to malformed input
     // TODO test other backend interface (like post_hikes)
 
@@ -109,7 +157,7 @@ public class BackendTest extends TestCase {
      * Create a valid HikeData object
      * @return a HikeData object
      */
-    private static RawHikeData createHikeData() throws JSONException {
+    private static RawHikeData createHikeData() throws HikeParseException {
         return DummyHikeBuilder.buildRawHikeData(1);
     }
 

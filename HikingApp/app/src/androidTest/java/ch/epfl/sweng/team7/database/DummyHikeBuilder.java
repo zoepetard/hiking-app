@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.database;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
 public class DummyHikeBuilder {
@@ -20,13 +21,17 @@ public class DummyHikeBuilder {
             + "  ]\n"
             + "}\n";
 
-    public static RawHikeData buildRawHikeData(long hikeId) throws JSONException {
-        RawHikeData rawHikeData = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
-        rawHikeData.setHikeId(hikeId);
-        return rawHikeData;
+    public static RawHikeData buildRawHikeData(long hikeId) throws HikeParseException {
+        try {
+            RawHikeData rawHikeData = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+            rawHikeData.setHikeId(hikeId);
+            return rawHikeData;
+        } catch(JSONException e) {
+            throw new HikeParseException(e);
+        }
     }
 
-    public static HikeData buildDefaultHikeData(long hikeId) throws JSONException {
+    public static HikeData buildDefaultHikeData(long hikeId) throws HikeParseException {
         return new DefaultHikeData(buildRawHikeData(hikeId));
     }
 }
