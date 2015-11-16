@@ -160,7 +160,7 @@ public class DefaultHikeData implements HikeData {
             float[] distanceBetween = new float[1];
             distanceBetween(currentLoc.latitude, currentLoc.longitude,
                     nextLoc.latitude, nextLoc.longitude, distanceBetween);
-            distance += (double) distanceBetween[0];
+            distance += (double) distanceBetween[0]/1000;
         }
         return distance;
     }
