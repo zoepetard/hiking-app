@@ -167,6 +167,8 @@ public final class DataManager {
             throw new DataManagerException(e);
         } catch (IllegalArgumentException e) {
             throw new DataManagerException(e.getMessage());
+        } catch (NullPointerException e) {
+            throw new DataManagerException(e.getMessage());
         }
     }
 
