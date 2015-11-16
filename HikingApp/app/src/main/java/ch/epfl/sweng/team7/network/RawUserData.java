@@ -22,7 +22,7 @@ public class RawUserData {
 
     public RawUserData(long userId, String userName, String mailAddress) {
 
-        // Arguments check
+        // Check that are arguments are valid, otherwise throw exception
         if (userId < 0 && userId != USER_ID_UNKNOWN) {
             throw new IllegalArgumentException("User ID must be positive");
         }

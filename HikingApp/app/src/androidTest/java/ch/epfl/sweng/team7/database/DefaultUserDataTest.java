@@ -13,30 +13,30 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultUserDataTest {
 
-    private int userId = 1;
-    private String userName = "Bert";
-    private String mailAddress = "bert@gmail.com";
-    private DefaultUserData defaultUserData;
+    private int mUserId = 1;
+    private String mUserName = "Bert";
+    private String mMailAddress = "bert@gmail.com";
+    private DefaultUserData mDefaultUserData;
 
     @Before
     public void setUp() {
-        RawUserData rawUserData = new RawUserData(userId, userName, mailAddress);
-        defaultUserData = new DefaultUserData(rawUserData);
+        RawUserData rawUserData = new RawUserData(mUserId, mUserName, mMailAddress);
+        mDefaultUserData = new DefaultUserData(rawUserData);
     }
 
     @Test
     public void testUserIdMatch() {
-        assertEquals("Id values don't match", userId, defaultUserData.getUserId());
+        assertEquals("Id values don't match", mUserId, mDefaultUserData.getUserId());
     }
 
     @Test
     public void testUserNameMatch() {
-        assertEquals("User names don't match", userName, defaultUserData.getUserName());
+        assertEquals("User names don't match", mUserName, mDefaultUserData.getUserName());
     }
 
     @Test
     public void testMailAddressMatch() {
-        assertEquals("Mail addresses don't match", mailAddress, defaultUserData.getMailAddress());
+        assertEquals("Mail addresses don't match", mMailAddress, mDefaultUserData.getMailAddress());
     }
 
     @Test(expected = IllegalArgumentException.class)
