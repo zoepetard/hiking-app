@@ -13,17 +13,17 @@ import ch.epfl.sweng.team7.network.RawUserData;
  */
 public class DefaultUserData implements UserData {
 
-    private long userId;
-    private String userName;
-    private String mailAddress;
-    private List<Long> hikeList; // id's for user's hike
-    private long selectedHikeId = -1;
+    private long mUserId;
+    private String mUserName;
+    private String mMailAddress;
+    private List<Long> mHikeList; // id's for user's hike
+    private long mSelectedHikeId = -1;
 
     public DefaultUserData(RawUserData rawUserData) {
 
-        this.userId = rawUserData.getUserId();
-        this.userName = rawUserData.getUserName();
-        this.mailAddress = rawUserData.getMailAddress();
+        mUserId = rawUserData.getUserId();
+        mUserName = rawUserData.getUserName();
+        mMailAddress = rawUserData.getMailAddress();
 
     }
 
@@ -32,7 +32,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public long getUserId() {
-        return userId;
+        return mUserId;
     }
 
     /**
@@ -40,7 +40,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public String getUserName() {
-        return userName;
+        return mUserName;
     }
 
     /**
@@ -48,7 +48,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public String getMailAddress() {
-        return mailAddress;
+        return mMailAddress;
     }
 
     /**
@@ -56,7 +56,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public List<Long> getHikeList() {
-        return hikeList;
+        return mHikeList;
     }
 
     /**
@@ -64,7 +64,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public int getNumberOfHikes() {
-        return hikeList.size();
+        return mHikeList.size();
     }
 
     /**
@@ -72,7 +72,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public long getSelectedHikeId() {
-        return selectedHikeId;
+        return mSelectedHikeId;
     }
 
     /**
@@ -82,7 +82,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public void changeUserName(String newName) {
-        this.userName = newName;
+        mUserName = newName;
     }
 
     /**
@@ -90,7 +90,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public void setHikeList(List<Long> hikeList) {
-        this.hikeList = hikeList;
+        mHikeList = hikeList;
     }
 
     /**
@@ -100,7 +100,7 @@ public class DefaultUserData implements UserData {
      */
     @Override
     public void setSelectedHikeId(long selectedHikeId) {
-        this.selectedHikeId = selectedHikeId;
+        mSelectedHikeId = selectedHikeId;
     }
 }
 

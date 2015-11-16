@@ -15,7 +15,9 @@ class DefaultLocalCache implements LocalCache {
     private final static String LOG_FLAG = "DB_DefaultLocalCache";
     private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
     private final HashMap<Long, HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
-    private UserData userData;
+    private final HashMap<Long, UserData> mUsersCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
+    
+    private UserData mUserData;
 
 
     public boolean hasHike(long hikeId) {
@@ -38,14 +40,14 @@ class DefaultLocalCache implements LocalCache {
 
     public void setUserData(UserData userData) {
         // keep old hike list and selected hike and updates the rest
-        userData.setHikeList(this.userData.getHikeList());
-        userData.setSelectedHikeId(this.userData.getSelectedHikeId());
+        userData.setHikeList(mUserData.getHikeList());
+        userData.setSelectedHikeId(mUserData.getSelectedHikeId());
 
-        this.userData = userData;
+        mUserData = userData;
     }
 
     public UserData getUserData() {
-        return userData;
+        return mUserData;
     }
 
     private class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {

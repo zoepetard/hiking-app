@@ -9,14 +9,15 @@ import java.util.List;
 /**
  * Stores the user information as it's stored on the server
  */
+
 public class RawUserData {
 
     public static final long USER_ID_UNKNOWN = -1;
     public static final long USER_NAME_MIN_LENGTH = 2;
 
-    private long userId;
-    private String userName;
-    private String mailAddress;
+    private long mUserId;
+    private String mUserName;
+    private String mMailAddress;
 
 
     public RawUserData(long userId, String userName, String mailAddress) {
@@ -32,31 +33,31 @@ public class RawUserData {
             throw new IllegalArgumentException("Invalid e-mail address");
         }
 
-        this.userId = userId;
-        this.userName = userName;
-        this.mailAddress = mailAddress;
+        mUserId = userId;
+        mUserName = userName;
+        mMailAddress = mailAddress;
 
     }
 
     public long getUserId() {
-        return userId;
+        return mUserId;
     }
 
     public String getUserName() {
-        return userName;
+        return mUserName;
     }
 
     public String getMailAddress() {
-        return mailAddress;
+        return mMailAddress;
     }
 
     public void setUserId(long id) {
 
-        if (userId < 0 && userId != USER_ID_UNKNOWN) {
+        if (mUserId < 0 && mUserId != USER_ID_UNKNOWN) {
             throw new IllegalArgumentException("User ID must be positive");
         }
 
-        this.userId = id;
+        mUserId = id;
     }
 
     public void setUserName(String userName) {
@@ -64,15 +65,15 @@ public class RawUserData {
         if (userName.length() < 1) {
             throw new IllegalArgumentException("User name must be at least two characters");
         }
-        this.userName = userName;
+        mUserName = userName;
     }
 
 
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user_id", userId);
-        jsonObject.put("user_name", userName);
-        jsonObject.put("mail_address", mailAddress);
+        jsonObject.put("user_id", mUserId);
+        jsonObject.put("user_name", mUserName);
+        jsonObject.put("mail_address", mMailAddress);
 
         return new JSONObject();
     }
