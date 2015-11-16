@@ -2,10 +2,17 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
 
@@ -18,6 +25,8 @@ public class NavigationDrawerListFactory {
     private final static String LIST_ITEM_MAP = "Map";
     private final static String LIST_ITEM_HIKES = "Hikes";
     private final static String LIST_ITEM_LOGOUT = "Logout";
+
+    private final static String EXTRA_BOUND = "ch.epfl.sweng.team7.hikingapp.BOUND";
 
 
     public NavigationDrawerListFactory(ListView navDrawerList,Context context) {
@@ -43,7 +52,12 @@ public class NavigationDrawerListFactory {
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_HIKES:
+                        LatLngBounds bounds = MapActivity.getBounds();
+                        Bundle bound = new Bundle();
+                        bound.putParcelable("sw", bounds.southwest);
+                        bound.putParcelable("ne", bounds.northeast);
                         intent = new Intent(view.getContext(), HikeListActivity.class);
+                        intent.putExtra(EXTRA_BOUND, bound);
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_LOGOUT:

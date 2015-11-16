@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -57,10 +58,16 @@ public class HikeListActivity extends Activity {
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
-        // for testing
-        // TODO: get real boundaries
-        bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
-
+        Bundle bound = getIntent().getParcelableExtra("EXTRA_BOUND");
+        if (bound != null) {
+            LatLng sw = bound.getParcelable("sw");
+            LatLng ne = bound.getParcelable("ne");
+            bounds = new LatLngBounds(sw, ne);
+        } else {
+            // display all hikes if no bounds specified
+            Log.d("msg", "bound null");
+            bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
+        }
         new GetMultHikeAsync().execute(bounds);
     }
 
