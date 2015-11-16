@@ -26,8 +26,6 @@ public final class DataManager {
     private static LocalCache sLocalCache;
     private static DatabaseClient sDatabaseClient;
 
-    private final static int USER_NAME_MIN_LENGTH = 2;
-
     /**
      * @return the DataManager
      */
@@ -150,11 +148,11 @@ public final class DataManager {
     }
 
     /**
-     * store a user data object in local cache
+     * Store a user data object in database and update local cache
+     * @param rawUserData
      */
     public void setUserData(RawUserData rawUserData) throws DataManagerException{
 
-        // TODO call a post method in sDatabaseClient
         // update user data in cache and database
         try {
             sDatabaseClient.postUserData(rawUserData);
@@ -168,12 +166,12 @@ public final class DataManager {
     /**
      * TODO implement server side
      * Change user name
-     * @param  newName the new user name
+     * @param  newName,mailAddress the new user name and mailAddress as identifier
      * */
     public void changeUserName(String newName, String mailAddress) throws DataManagerException{
+
         // get user data then update the database
         UserData userData = getUserData(mailAddress);
-
         RawUserData rawUserData = new RawUserData(userData.getUserId(),userData.getUserName(),userData.getMailAddress());
         setUserData(rawUserData);
 

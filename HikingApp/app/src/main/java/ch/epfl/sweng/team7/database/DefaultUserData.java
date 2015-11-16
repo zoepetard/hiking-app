@@ -19,7 +19,6 @@ public class DefaultUserData implements UserData{
     private List<Long> hikeList; // id's for user's hike
     private long selectedHikeId;
 
-
     public DefaultUserData(RawUserData rawUserData){
 
         this.userId = rawUserData.getUserId();
