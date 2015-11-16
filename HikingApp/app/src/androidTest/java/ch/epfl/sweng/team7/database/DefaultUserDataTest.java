@@ -69,7 +69,7 @@ public class DefaultUserDataTest {
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
 
         assertEquals("Unknown User Id", -1, defaultUserData.getUserId());
-        
+
     }
 
 
