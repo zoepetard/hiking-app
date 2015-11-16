@@ -12,6 +12,10 @@ import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.network.DatabaseClientException;
+import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
+import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
+import ch.epfl.sweng.team7.network.RawHikeData;
 
 /**
  * Class used to read device's GPS-related information
@@ -20,6 +24,7 @@ import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 public final class GPSManager {
 
     private final static String LOG_FLAG = "GPS_Manager";
+    private static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
     private static GPSManager instance = new GPSManager();
 
     //GPS stored information
@@ -27,12 +32,13 @@ public final class GPSManager {
     private boolean isTracking = false;
     private GPSFootPrint lastFootPrint = null;
 
+
     //GPS service communication
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
     //GPS adapter
-    private GPSPathConverter mGPSPathConverter = null;
+    private RawHikeData mRawHikeData = null;
 
     public static GPSManager getInstance() {
         return instance;
@@ -139,8 +145,13 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.isTracking = false;
-        GPSPathConverter.toRawHikeData(gpsPath);
-
+        RawHikeData mRawHikeData;
+        mRawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
+        try {
+            storeHike(mRawHikeData);
+        } catch (DatabaseClientException e) {
+            Log.d(LOG_FLAG, "Error while storing the converted hike");
+        }
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         gpsPath = null;
     }
@@ -159,5 +170,16 @@ public final class GPSManager {
         } else {
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
+    }
+    /**
+     * Method to store in DB the RawHikeData converted from the GPS object
+     *
+     * @param mRawHikeData
+     */
+    private  void storeHike(RawHikeData mRawHikeData) throws DatabaseClientException {
+        NetworkDatabaseClient mNetworkDatabaseClient;
+        DefaultNetworkProvider mDefaultNetworkProvider = new DefaultNetworkProvider();
+        mNetworkDatabaseClient = new NetworkDatabaseClient(SERVER_URL, mDefaultNetworkProvider);
+        mNetworkDatabaseClient.postHike(mRawHikeData);
     }
 }
