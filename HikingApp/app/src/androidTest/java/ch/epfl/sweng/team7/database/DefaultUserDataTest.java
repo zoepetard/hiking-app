@@ -32,26 +32,21 @@ public class DefaultUserDataTest {
     @Test
     public void testUserNameMatch() {
         assertEquals("User names don't match", userName, defaultUserData.getUserName());
-
     }
 
     @Test
     public void testMailAddressMatch() {
         assertEquals("Mail addresses don't match", mailAddress, defaultUserData.getMailAddress());
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUserNameLength() {
-
         RawUserData rawUserData = new RawUserData(2, "A", "a@gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testValidMailAddress() {
-
         RawUserData rawUserData = new RawUserData(3, "Bert", "gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
     }
@@ -66,7 +61,6 @@ public class DefaultUserDataTest {
     public void testIdUnknown() {
         RawUserData rawUserData = new RawUserData(-1, "Bert", "bert@gmail.com");
         DefaultUserData defaultUserData = new DefaultUserData(rawUserData);
-
         assertEquals("Unknown User Id", -1, defaultUserData.getUserId());
     }
 }

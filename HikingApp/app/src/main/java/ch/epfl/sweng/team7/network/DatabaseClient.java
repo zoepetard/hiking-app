@@ -22,9 +22,10 @@ public interface DatabaseClient {
      * @param hikeId The numeric ID of one hike in the database
      * @return A {@link RawHikeData} object encapsulating one hike
      * @throws DatabaseClientException in case the hike could not be
-     *                                 retrieved for any reason external to the application (network failure, etc.)
-     *                                 or the hikeId did not match a valid hike.
+     * retrieved for any reason external to the application (network failure, etc.)
+     * or the hikeId did not match a valid hike.
      */
+
     RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException;
 
     /**

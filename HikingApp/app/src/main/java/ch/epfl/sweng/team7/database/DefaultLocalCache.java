@@ -18,9 +18,6 @@ class DefaultLocalCache implements LocalCache {
     private UserData userData;
 
 
-    public DefaultLocalCache() {
-    }
-
     public boolean hasHike(long hikeId) {
         return mHikesCache.containsKey(hikeId);
     }

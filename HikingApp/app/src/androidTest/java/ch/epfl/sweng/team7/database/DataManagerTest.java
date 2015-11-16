@@ -73,15 +73,16 @@ public class DataManagerTest {
     }
 
 
-    @Test (expected = DataManagerException.class)
-    public void testFailedToPostUserData() throws Exception{
+    @Test(expected = DataManagerException.class)
+    public void testFailedToPostUserData() throws Exception {
 
-        RawUserData rawUserData = new RawUserData(1,"ab","a@gmail.com"); // legal data
+        RawUserData rawUserData = new RawUserData(1, "ab", "a@gmail.com"); // legal data
         DataManager dataManager = DataManager.getInstance();
         dataManager.setUserData(rawUserData);
 
     }
 
+    /* TODO add after server side is Implemented
     @Test
     public void testGetUserData() throws Exception {
     }
@@ -97,5 +98,5 @@ public class DataManagerTest {
     @After
     public void tearDown() {
         DataManager.reset();
-    }
+    } */
 }

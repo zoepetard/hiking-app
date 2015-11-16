@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * A user data object that
+ * Stores the user information as it's stored on the server
  */
 public class RawUserData {
 
