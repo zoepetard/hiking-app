@@ -19,5 +19,8 @@ public class GPSServiceTest extends ActivityInstrumentationTestCase2<MapActivity
 
     public void testServiceUnbindOnActivityChange() {
         getActivity();
+        assertTrue(GPSService.isBound);
+        //TODO change to other activity
+        assertFalse(GPSService.isBound);
     }
 }
