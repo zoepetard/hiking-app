@@ -86,6 +86,11 @@ public final class GPSManager {
         Log.d(LOG_FLAG, "Intent sent to bind to GPSService");
     }
 
+    public void unbindService(Context context) {
+        context.unbindService(serviceConnection);
+        Log.d(LOG_FLAG, "Intent sent to unbind GPSService");
+    }
+
     /**
      * Method called to update user's last know coordinates
      *
