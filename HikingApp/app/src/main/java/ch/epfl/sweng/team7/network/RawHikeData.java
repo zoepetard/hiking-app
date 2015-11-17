@@ -165,10 +165,18 @@ public class RawHikeData {
         mHikeId = hikeId;
     }
 
+
     public void setRating(Rating rating) {
         mRating = rating;
     }
 
+    public void setAnnotations(List<Annotation> annotations){
+        if(annotations.size() < 1){
+            throw new IllegalArgumentException("List of annotations is empty");
+        }
+        mAnnotations = annotations;
+
+    }
     /**
      * @return a JSON object representing this hike
      * @throws JSONException
@@ -229,7 +237,7 @@ public class RawHikeData {
      * @return a new RawHikeData object.
      * @throws JSONException in case of malformed JSON.
      */
-    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException {
+    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException, JSONException {
 
         try {
             JSONArray jsonHikePoints = jsonObject.getJSONArray("hike_data");
