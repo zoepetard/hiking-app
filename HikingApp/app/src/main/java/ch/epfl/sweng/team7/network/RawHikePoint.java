@@ -13,6 +13,8 @@ import org.json.JSONException;
 
 import java.util.Date;
 
+import ch.epfl.sweng.team7.database.Annotation;
+
 /**
  * Stores data for one point in a hike.
  */
@@ -45,10 +47,12 @@ public class RawHikePoint {
         return mTime;
     }
 
+
+
     /**
-     * @return JSONArray [double lat, double lng, long date, double elevation]. Storing a JSON array
-     *                  instead of a full JSON object reduces the communication/storage data size of
-     *                  a hike.
+     * @return JSONArray [double lat, double lng, long date, double elevation, String comment].
+     * Storing a JSON array instead of a full JSON object reduces the communication/storage
+     * data size of a hike.
      * @throws JSONException
      */
     public JSONArray toJSON() throws JSONException {
@@ -72,4 +76,6 @@ public class RawHikePoint {
         double elevation = jsonArray.getDouble(3);
         return new RawHikePoint(latLng, date, elevation);
     }
+
+
 }

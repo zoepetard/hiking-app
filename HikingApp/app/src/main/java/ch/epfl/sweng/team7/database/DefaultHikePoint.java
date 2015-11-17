@@ -23,6 +23,7 @@ public class DefaultHikePoint implements HikePoint {
         mPosition = position;
         mTime = time;
         mElevation = elevation;
+
     }
 
     public DefaultHikePoint(RawHikePoint rawHikePoint) {
@@ -45,6 +46,10 @@ public class DefaultHikePoint implements HikePoint {
     public Date getTime() {
         return mTime;
     }
+
+
+
+
 
 
 }

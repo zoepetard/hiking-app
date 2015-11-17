@@ -406,6 +406,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Post a comment to the database
      * @param comment the comment to be posted
+     * @param
+     * //TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */

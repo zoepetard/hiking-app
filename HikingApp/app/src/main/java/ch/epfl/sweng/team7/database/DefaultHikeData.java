@@ -51,6 +51,7 @@ public class DefaultHikeData implements HikeData {
     private final Rating mRating;
     private String mTitle;
 
+
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
      * that can later be queried by the user interface.
