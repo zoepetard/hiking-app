@@ -1,24 +1,21 @@
 package ch.epfl.sweng.team7.gpsService;
 
-import android.support.test.InstrumentationRegistry;
-import android.test.ActivityInstrumentationTestCase2;
+import static org.junit.Assert.*;
+import android.support.test.rule.ActivityTestRule;
+
+import org.junit.Rule;
+import org.junit.Test;
 
 import ch.epfl.sweng.team7.hikingapp.MapActivity;
 
-public class GPSServiceTest extends ActivityInstrumentationTestCase2<MapActivity> {
+public class GPSServiceTest {
 
-    public GPSServiceTest() {
-        super(MapActivity.class);
-    }
+    @Rule
+    public ActivityTestRule<MapActivity> mActivityRule = new ActivityTestRule<>(
+            MapActivity.class);
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
-
+    @Test
     public void testServiceUnbindOnActivityChange() {
-        getActivity();
         assertTrue(GPSService.isBound);
         //TODO change to other activity
         assertFalse(GPSService.isBound);
