@@ -90,6 +90,10 @@ public final class GPSManager {
         Log.d(LOG_FLAG, "Intent sent to bind to GPSService");
     }
 
+    /**
+     * Method called to unbind GPSService from a certain Context
+     * @param context Context from which the GPSService will be unbound
+     */
     public void unbindService(Context context) {
         context.unbindService(serviceConnection);
         Log.d(LOG_FLAG, "Intent sent to unbind GPSService");
