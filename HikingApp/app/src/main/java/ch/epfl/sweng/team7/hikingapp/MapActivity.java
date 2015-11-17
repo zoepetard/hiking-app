@@ -59,7 +59,6 @@ public class MapActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        gps.unbindService(this);
     }
 
     /**
