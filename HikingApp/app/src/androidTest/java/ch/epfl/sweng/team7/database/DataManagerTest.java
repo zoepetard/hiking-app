@@ -66,10 +66,10 @@ public class DataManagerTest {
     @Test
     public void testPostHike() throws Exception{
         List<RawHikePoint> newHikePoints = new ArrayList<>();
-        newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date(), 0.0));
-        newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(3.,12.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(4., 13.), new Date(), 0.0));
         RawHikeData hike = new RawHikeData(2, 15, new Date(), newHikePoints);
-        assertEquals(DataManager.getInstance().getHike(mNewHikeId2), hike.getHikeId());
+        assertEquals(DataManager.getInstance().getHike(mNewHikeId2).getHikeId(), hike.getHikeId());
 
     }
     @After
