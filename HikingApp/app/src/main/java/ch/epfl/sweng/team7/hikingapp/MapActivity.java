@@ -34,7 +34,6 @@ public class MapActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
         gps.startService(this);
-        gps.bindService(this);
 
         // nav drawer setup
         View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
@@ -55,6 +54,7 @@ public class MapActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        gps.bindService(this);
     }
 
     @Override
