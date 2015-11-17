@@ -80,18 +80,11 @@ public class RawUserData {
 
     public static RawUserData parseFromJSON(JSONObject jsonObject) throws JSONException {
 
+        return new RawUserData(
+                jsonObject.getLong("user_id"),
+                jsonObject.getString("user_name"),
+                jsonObject.getString("mail_address"));
 
-        try {
-            return new RawUserData(
-                    jsonObject.getLong("user_id"),
-                    jsonObject.getString("user_name"),
-                    jsonObject.getString("mail_address"));
-
-        } catch (NullPointerException e) {
-            throw new JSONException("Invalid user data " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            throw new JSONException("Invalid user data" + e.getMessage());
-        }
     }
 
 }

@@ -64,21 +64,37 @@ public class DataManagerTest {
         assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
-    @Test(expected = DataManagerException.class)
+    @Test
     public void testFailedToFetchUserData() throws DataManagerException {
+        boolean exceptionIsThrown = false;
 
-        DataManager dataManager = DataManager.getInstance();
-        long unknownId = -1;
-        dataManager.getUserData(unknownId);
+        try {
+            DataManager dataManager = DataManager.getInstance();
+            long unknownId = -1;
+            dataManager.getUserData(unknownId);
+        } catch (NullPointerException e) {
+            exceptionIsThrown = true;
+        }
+
+        assertEquals("Exception wasn't thrown ", true, exceptionIsThrown);
+
     }
 
 
-    @Test(expected = DataManagerException.class)
+    @Test
     public void testFailedToPostUserData() throws Exception {
+        boolean exceptionIsThrown = false;
 
-        RawUserData rawUserData = new RawUserData(1, "ab", "a@gmail.com"); // legal data
-        DataManager dataManager = DataManager.getInstance();
-        dataManager.setUserData(rawUserData);
+        try {
+            RawUserData rawUserData = new RawUserData(-3, "a", "gmail.com"); // bad data
+            DataManager dataManager = DataManager.getInstance();
+            dataManager.setUserData(rawUserData);
+        } catch (IllegalArgumentException e) {
+            exceptionIsThrown = true;
+        }
+
+        assertEquals("Exception wasn't thrown + ", true, exceptionIsThrown);
+
 
     }
 

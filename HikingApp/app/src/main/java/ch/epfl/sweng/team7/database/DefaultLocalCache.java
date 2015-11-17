@@ -40,8 +40,9 @@ class DefaultLocalCache implements LocalCache {
 
         if (userData != null) {
             // keep old hike list and updates the rest
-            userData.setHikeList(mUsersCache.get(userData.getUserId()).getHikeList());
-
+            if (mUsersCache.get(userData.getUserId()) != null) {
+                userData.setHikeList(mUsersCache.get(userData.getUserId()).getHikeList());
+            }
             mUsersCache.put(userData.getUserId(), userData);
         }
     }

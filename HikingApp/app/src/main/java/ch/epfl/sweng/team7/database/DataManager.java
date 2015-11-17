@@ -165,10 +165,6 @@ public final class DataManager {
             sLocalCache.setUserData(defaultUserData);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
-        } catch (IllegalArgumentException e) {
-            throw new DataManagerException(e.getMessage());
-        } catch (NullPointerException e) {
-            throw new DataManagerException(e.getMessage());
         }
     }
 
@@ -208,8 +204,6 @@ public final class DataManager {
                 return userData;
             } catch (DatabaseClientException e) {
                 throw new DataManagerException(e);
-            } catch (NullPointerException e) {
-                throw new DataManagerException(e.getMessage());
             }
         }
     }

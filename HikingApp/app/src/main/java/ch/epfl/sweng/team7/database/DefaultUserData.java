@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.team7.network.RawUserData;
@@ -23,6 +24,7 @@ public class DefaultUserData implements UserData {
         mUserId = rawUserData.getUserId();
         mUserName = rawUserData.getUserName();
         mMailAddress = rawUserData.getMailAddress();
+        mHikeList = new ArrayList<Long>();
 
     }
 

@@ -230,7 +230,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         String contentType = conn.getContentType();
         if (contentType == null) {
             throw new IOException("HTTP content type unset");
-        } else if (contentType.compareTo(JSON_CONTENT) != 0) {
+        } else if (contentType.equals(JSON_CONTENT)) {
             throw new IOException("Invalid HTTP content type: " + contentType);
         }
 
