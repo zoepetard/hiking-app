@@ -25,7 +25,7 @@ public class DefaultHikeDataTest {
     private long ownerId = 1;
     private Date date = new Date(1000101);
     private List<RawHikePoint> rawHikePoints;
-    private LatLng startLocation = new LatLng(0,0);
+    private LatLng startLocation = new LatLng(0, 0);
     private LatLng finishLocation = new LatLng(15, 15);
     private RawHikeData mRawHikeData;
     private DefaultHikeData mDefaultHikeData;
@@ -35,11 +35,12 @@ public class DefaultHikeDataTest {
     public void setUp() throws Exception {
         rawHikePoints = new ArrayList<>();
         rawHikePoints.add(new RawHikePoint(startLocation, new Date(1000101), 1.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(10,10), new Date(1000102), 3.0));
+        rawHikePoints.add(new RawHikePoint(new LatLng(10, 10), new Date(1000102), 3.0));
         rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000103), 2.0));
         mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
         mDefaultHikeData = new DefaultHikeData(mRawHikeData);
     }
+
     @Test
     public void testIdAccess() {
         assertEquals("Mismatched hike ID", hikeId, mDefaultHikeData.getHikeId());
@@ -58,8 +59,8 @@ public class DefaultHikeDataTest {
     @Test
     public void testHikePointsAccess() {
         List<DefaultHikePoint> hikePoints = new ArrayList<>();
-        hikePoints.add(new DefaultHikePoint(new LatLng(0,0), new Date(1000101), 1.0));
-        hikePoints.add(new DefaultHikePoint(new LatLng(10,10), new Date(1000102), 2.0));
+        hikePoints.add(new DefaultHikePoint(new LatLng(0, 0), new Date(1000101), 1.0));
+        hikePoints.add(new DefaultHikePoint(new LatLng(10, 10), new Date(1000102), 2.0));
         hikePoints.add(new DefaultHikePoint(new LatLng(15, 15), new Date(1000103), 3.0));
         for (int i = 0; i < rawHikePoints.size(); i++) {
             HikePoint expectedHikePoint = hikePoints.get(i);
@@ -76,14 +77,14 @@ public class DefaultHikeDataTest {
 
     @Test
     public void testBoundingBoxAccess() {
-        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
-        boundingBoxBuilder.include(new LatLng(0,0)).include(new LatLng(15, 15));
+        LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
+        boundingBoxBuilder.include(new LatLng(0, 0)).include(new LatLng(15, 15));
         assertEquals("Incorrect bounding box", boundingBoxBuilder.build(), mDefaultHikeData.getBoundingBox());
     }
 
     @Test
     public void testHikeLocationAccess() {
-        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
+        LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
         boundingBoxBuilder.include(new LatLng(0, 0)).include(new LatLng(15, 15));
         LatLng center = boundingBoxBuilder.build().getCenter();
         assertEquals("Incorrect representative hike location", center, mDefaultHikeData.getHikeLocation());

@@ -16,6 +16,7 @@ import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
  * Created by pablo on 6/11/15.
@@ -56,7 +57,7 @@ public class MockServer implements DatabaseClient {
         if (hasHike(hikeId)) {
             return getHike(hikeId);
         } else {
-            throw new DatabaseClientException("No hike on the server with ID "+hikeId);
+            throw new DatabaseClientException("No hike on the server with ID " + hikeId);
         }
     }
 
@@ -111,6 +112,32 @@ public class MockServer implements DatabaseClient {
         return hikeId;
     }
 
+    /**
+     * Post user data to the data base
+     * TODO implement this in mockserver
+     *
+     * @param rawUserData object conatining id,user name and mail address
+     * @return user id
+     * @throws DatabaseClientException if post is unsuccessful
+     */
+    @Override
+    public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
+        return 0;
+    }
+
+    /**
+     * Fetch data for a user from the server
+     * TODO implement this in mockserver
+     *
+     * @param userId - id of the user
+     * @return RawUserData
+     * @throws DatabaseClientException if unable to fetch user data
+     */
+    @Override
+    public RawUserData fetchUserData(long userId) throws DatabaseClientException {
+        return null;
+    }
+
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {
@@ -123,7 +150,7 @@ public class MockServer implements DatabaseClient {
 
     private void putHike(RawHikeData rawHikeData) throws DatabaseClientException {
         if (rawHikeData != null) {
-            if(rawHikeData.getHikeId() == 3) {
+            if (rawHikeData.getHikeId() == 3) {
                 throw new DatabaseClientException("The Mock server cannot have a hike 3.");
             }
             mHikeDataBase.put(rawHikeData.getHikeId(), rawHikeData);
@@ -159,8 +186,10 @@ public class MockServer implements DatabaseClient {
     private static RawHikeData createHikeData() throws HikeParseException {
         try {
             return RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             throw new HikeParseException(e);
         }
     }
+
+
 }

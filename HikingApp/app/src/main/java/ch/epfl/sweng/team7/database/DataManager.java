@@ -5,6 +5,8 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.provider.ContactsContract;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 public final class DataManager {
 
@@ -34,7 +37,7 @@ public final class DataManager {
      * Static setter: Use only for testing!
      */
     public static void setLocalCache(LocalCache localCache) {
-        if(localCache == null) {
+        if (localCache == null) {
             throw new IllegalArgumentException();
         }
         sLocalCache = localCache;
@@ -44,7 +47,7 @@ public final class DataManager {
      * Static setter: Use only for testing!
      */
     public static void setDatabaseClient(DatabaseClient databaseClient) {
-        if(databaseClient == null) {
+        if (databaseClient == null) {
             throw new IllegalArgumentException();
         }
         sDatabaseClient = databaseClient;
@@ -60,6 +63,7 @@ public final class DataManager {
 
     /**
      * Get a HikeData object by its identifier.
+     *
      * @return a valid HikeData object
      * @throws DataManagerException on error
      */
@@ -67,7 +71,7 @@ public final class DataManager {
 
         // Check if hike is cached
         HikeData hikeData = sLocalCache.getHike(hikeId);
-        if(hikeData != null) {
+        if (hikeData != null) {
             return hikeData;
         }
 
@@ -81,7 +85,9 @@ public final class DataManager {
         return hikeData;
     }
 
-    /** Get multiple HikeData objects by its identifiers
+    /**
+     * Get multiple HikeData objects by its identifiers
+     *
      * @return a list of valid HikeData objects
      * @throws DataManagerException on error
      */
@@ -90,9 +96,9 @@ public final class DataManager {
         // Compile a list of hikes to ask from the server
         List<HikeData> hikeDataList = new ArrayList<>();
         List<Long> hikeIdNotCached = new ArrayList<>();
-        for(long hikeId : hikeIdList) {
+        for (long hikeId : hikeIdList) {
             HikeData hikeData = sLocalCache.getHike(hikeId);
-            if(hikeData != null) {
+            if (hikeData != null) {
                 hikeDataList.add(hikeData);
             } else {
                 hikeIdNotCached.add(hikeId);
@@ -100,7 +106,7 @@ public final class DataManager {
         }
 
         // Ask the server
-        if(hikeIdNotCached.size() > 0) {
+        if (hikeIdNotCached.size() > 0) {
             List<RawHikeData> rawHikeDataList;
             try {
                 rawHikeDataList = sDatabaseClient.fetchMultipleHikes(hikeIdNotCached);
@@ -118,6 +124,7 @@ public final class DataManager {
 
     /**
      * Retrieves a list of all hikes in given boundaries
+     *
      * @param bounds the boundaries of a rectangle
      * @return a list of hikes in the given rectangle
      * @throws DataManagerException on error
@@ -128,7 +135,7 @@ public final class DataManager {
         List<Long> hikeIdList;
         try {
             hikeIdList = sDatabaseClient.getHikeIdsInWindow(bounds);
-        } catch(DatabaseClientException e) {
+        } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }
 
@@ -158,13 +165,71 @@ public final class DataManager {
     }
 
     /**
+     * Store user data in database and update local cache
+     *
+     * @param rawUserData - a raw user data object
+     */
+    public void setUserData(RawUserData rawUserData) throws DataManagerException {
+
+        // update user data in cache and database
+        try {
+            sDatabaseClient.postUserData(rawUserData);
+            UserData defaultUserData = new DefaultUserData(rawUserData);
+            sLocalCache.setUserData(defaultUserData);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    /**
+     * TODO server side needs to be implemented before this can work
+     * Change user name
+     *
+     * @param newName,mailAddress the new user name and mailAddress as identifier
+     */
+    public void changeUserName(String newName, long userId) throws DataManagerException {
+
+        // get current user data then update the database
+        UserData userData = getUserData(userId);
+        RawUserData rawUserData = new RawUserData(userData.getUserId(), newName, userData.getMailAddress());
+        setUserData(rawUserData);
+
+    }
+
+    /**
+     * Retrieve a user data object from cache or database
+     * TODO server side needs to be implemented before this can work correctly
+     *
+     * @param userId - id assigned to identify user
+     * @return UserData object
+     */
+    public UserData getUserData(long userId) throws DataManagerException {
+
+        // check if user data is stored in cache, otherwise return from server
+        if (sLocalCache.getUserData(userId) != null &&
+                sLocalCache.getUserData(userId).getUserId() == userId) {
+            return sLocalCache.getUserData(userId);
+        } else {
+            try {
+                RawUserData rawUserData = sDatabaseClient.fetchUserData(userId);
+                UserData userData = new DefaultUserData(rawUserData);
+                sLocalCache.setUserData(userData); // update cache
+                return userData;
+            } catch (DatabaseClientException e) {
+                throw new DataManagerException(e);
+            }
+        }
+    }
+
+
+    /**
      * Creates the LocalCache and DatabaseClient
      */
     private DataManager() {
-        if(sDatabaseClient == null) {
+        if (sDatabaseClient == null) {
             sDatabaseClient = new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
         }
-        if(sLocalCache == null) {
+        if (sLocalCache == null) {
             sLocalCache = new DefaultLocalCache();
         }
     }

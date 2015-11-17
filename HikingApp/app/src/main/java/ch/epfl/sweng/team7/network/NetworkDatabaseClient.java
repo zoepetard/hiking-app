@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.database.UserData;
+
 
 /**
  * Class to get and post hikes in the server
@@ -43,14 +45,14 @@ public class NetworkDatabaseClient implements DatabaseClient {
         mNetworkProvider = networkProvider;
     }
 
-
     /**
      * Fetch a single hike from the server
+     *
      * @param hikeId The numeric ID of one hike in the database
      * @return A {@link RawHikeData} object encapsulating one hike
      * @throws DatabaseClientException in case the hike could not be
-     * retrieved for any reason external to the application (network failure, etc.)
-     * or the hikeId did not match a valid hike.
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     *                                 or the hikeId did not match a valid hike.
      */
     public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
         try {
@@ -61,23 +63,24 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonHikeData = new JSONObject(stringHikeData);
             return RawHikeData.parseFromJSON(jsonHikeData);
-        } catch (IOException|JSONException|HikeParseException e) {
+        } catch (IOException | JSONException | HikeParseException e) {
             throw new DatabaseClientException(e);
         }
     }
 
     /**
      * Fetch multiple hikes from the server
+     *
      * @param hikeIds The numeric IDs of multiple hikes in the database
      * @return A list of {@link RawHikeData} objects encapsulating multiple hikes
      * @throws DatabaseClientException in case the hike could not be
-     * retrieved for any reason external to the application (network failure, etc.)
-     * or the hikeId did not match a valid hike.
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     *                                 or the hikeId did not match a valid hike.
      */
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
         // TODO implement properly
         List<RawHikeData> rawHikeDatas = new ArrayList<>();
-        for(Long hikeId : hikeIds) {
+        for (Long hikeId : hikeIds) {
             rawHikeDatas.add(fetchSingleHike(hikeId));
         }
         return rawHikeDatas;
@@ -85,10 +88,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Get all hikes in a rectangular window on the map
+     *
      * @param bounds Boundaries (window) of the
      * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
-     * retrieved for any reason external to the application (network failure, etc.)
+     *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
 
@@ -111,7 +115,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
                 hikeList.add(jsonHikeIdArray.getLong(i));
             }
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
         return hikeList;
@@ -120,10 +124,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Post a hike to the database. Returns the database ID
      * that this hike was assigned from the database.
+     *
      * @param hike Boundaries (window) of the
      * @return A list of hike IDs
      * @throws DatabaseClientException in case the data could not be
-     * retrieved for any reason external to the application (network failure, etc.)
+     *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public long postHike(RawHikeData hike) throws DatabaseClientException {
         try {
@@ -141,10 +146,59 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
-    
+
+    /**
+     * Prototype of how to send user data to server
+     * TODO implement user data storage on server and modify this accordingly
+     *
+     * @param rawUserData - RawUserData object
+     * @return user id
+     * @throws DatabaseClientException
+     */
+    public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
+        try {
+            URL url = new URL(mServerUrl + "/post_user_data");
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+            return new JSONObject(serverResponse).getLong("user_id");
+        } catch (IOException e) {
+            throw new DatabaseClientException();
+        } catch (JSONException e) {
+            throw new DatabaseClientException("Post unsuccessful: " + e.getMessage());
+        }
+    }
+
+    /**
+     * TODO Implement on server side ability to handle this request
+     * Fetch data for a user from the server
+     *
+     * @param userId - mail address of the user
+     * @return RawUserData
+     * @throws DatabaseClientException if unable to fetch user data
+     */
+    public RawUserData fetchUserData(long userId) throws DatabaseClientException {
+        try {
+            URL url = new URL(mServerUrl + "/get_user/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("user_id", Long.toString(userId));
+            conn.connect();
+            String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonUserData = new JSONObject(stringUserData);
+            return RawUserData.parseFromJSON(jsonUserData);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
+        }
+    }
+
     /**
      * Method to set the properties of the connection to the server
-     * @param url the server url
+     *
+     * @param url    the server url
      * @param method "GET" or "POST"
      * @return a valid HttpConnection
      * @throws IOException
@@ -158,9 +212,10 @@ public class NetworkDatabaseClient implements DatabaseClient {
         conn.setRequestMethod(method);
         return conn;
     }
-    
+
     /**
      * Method to check the response code of the server and return the message that the server sends
+     *
      * @param conn an open HttpURLConnection
      * @return the string that was read from the connection
      * @throws IOException
@@ -168,20 +223,20 @@ public class NetworkDatabaseClient implements DatabaseClient {
     private String fetchResponse(HttpURLConnection conn, int expectedResponseCode) throws IOException {
         int responseCode = conn.getResponseCode();
         StringBuilder result = new StringBuilder();
-        if(responseCode != expectedResponseCode) {
-            throw new IOException("Unexpected HTTP Response Code: "+responseCode);
+        if (responseCode != expectedResponseCode) {
+            throw new IOException("Unexpected HTTP Response Code: " + responseCode);
         }
 
         String contentType = conn.getContentType();
         if (contentType == null) {
             throw new IOException("HTTP content type unset");
-        } else if(contentType.compareTo(JSON_CONTENT) != 0) {
+        } else if (!contentType.equals(JSON_CONTENT)) {
             throw new IOException("Invalid HTTP content type: " + contentType);
         }
 
         InputStream input = conn.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            
+
         String line;
         while ((line = reader.readLine()) != null) {
             result.append(line + "\n");
@@ -190,5 +245,5 @@ public class NetworkDatabaseClient implements DatabaseClient {
         conn.disconnect();
         return result.toString();
     }
-    
+
 }
