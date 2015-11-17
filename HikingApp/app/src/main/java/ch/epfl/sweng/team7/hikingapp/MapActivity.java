@@ -3,6 +3,8 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
+import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +37,7 @@ import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -75,6 +78,8 @@ public class MapActivity extends FragmentActivity {
         setUpMapIfNeeded();
     }
 
+
+
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -111,12 +116,34 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap()  {
 
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        int screenWidth = size.x;
-        int screenHeight = size.y;
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
+        new DownloadHikeList().execute(bounds);
 
-        hikesInWindow = testHikeList(); //TODO get hikes from DataManager
+
+    }
+
+    private class DownloadHikeList extends AsyncTask<LatLngBounds, Void, List<HikeData>> {
+        @Override
+        protected List<HikeData> doInBackground (LatLngBounds...bounds){
+            DataManager dataManager = DataManager.getInstance();
+            try {
+                return dataManager.getHikesInWindow(bounds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<HikeData> result) {
+            if (result != null) {
+                displayMap(result);
+            }
+        }
+    }
+
+    private void displayMap(List<HikeData> result) {
+        hikesInWindow = result;
         LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
 
         for (int i = 0; i < hikesInWindow.size(); i++) {
@@ -127,6 +154,10 @@ public class MapActivity extends FragmentActivity {
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
 
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int screenWidth = size.x;
+        int screenHeight = size.y;
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -225,60 +256,6 @@ public class MapActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    private static List<HikeData> testHikeList() {
-        //List<HikeData>
-        HikeData hike1 = testHike1();
-        HikeData hike2 = testHike2();
-        List<HikeData> hikeList = new ArrayList<>();
-        hikeList.add(hike1);
-        hikeList.add(hike2);
-        return hikeList;
-    }
-
-    //Hike object for testing purposes
-    private static DefaultHikeData testHike1() {
-        long hikeId = 1;
-        long ownerId = 1;
-        Date date = new Date(1000101);
-        List<RawHikePoint> rawHikePoints;
-        LatLng startLocation = new LatLng(47.445172, -80.570527);
-        LatLng finishLocation = new LatLng(47.377527, -80.615061);
-        RawHikeData mRawHikeData;
-
-        rawHikePoints = new ArrayList<>();
-        rawHikePoints.add(new RawHikePoint(startLocation, new Date(1000101), 1.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.435175, -80.575680), new Date(1000102), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.428269, -80.565859), new Date(1000103), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.420308, -80.579278), new Date(1000104), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.414782, -80.573249), new Date(1000105), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.396026, -80.583556), new Date(1000106), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.387139, -80.602226), new Date(1000107), 3.0));
-        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000108), 2.0));
-        mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        return new DefaultHikeData(mRawHikeData);
-    }
-
-    //Hike object for testing purposes
-    private static DefaultHikeData testHike2() {
-        long hikeId = 2;
-        long ownerId = 2;
-        Date date = new Date(1000201);
-        List<RawHikePoint> rawHikePoints;
-        LatLng startLocation = new LatLng(47.395043, -80.664059);
-        LatLng finishLocation = new LatLng(47.400156, -80.552308);
-        RawHikeData mRawHikeData;
-
-        rawHikePoints = new ArrayList<>();
-        rawHikePoints.add(new RawHikePoint(startLocation, new Date(1000201), 1.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.397019, -80.653931), new Date(1000202), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.400737, -80.632989), new Date(1000203), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.400621, -80.604493), new Date(1000204), 3.0));
-        rawHikePoints.add(new RawHikePoint(new LatLng(47.399807, -80.577199), new Date(1000205), 3.0));
-        rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000206), 2.0));
-        mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        return new DefaultHikeData(mRawHikeData);
     }
 
 }
