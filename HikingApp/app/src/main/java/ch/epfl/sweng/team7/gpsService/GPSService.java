@@ -60,6 +60,17 @@ public class GPSService extends Service {
         return mBinder;
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        isBound = false;
+        return true; // ensures onRebind is called
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        isBound = true;
+    }
+
     /**
      * Method called from within GPSManager to control when
      * location updates are necessary.
