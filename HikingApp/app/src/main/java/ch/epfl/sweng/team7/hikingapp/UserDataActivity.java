@@ -2,6 +2,9 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
@@ -10,7 +13,17 @@ public class UserDataActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_data);
+        setContentView(R.layout.navigation_drawer);
+
+        // Inflate Navigation Drawer with main content
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
+        FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
+        View userDataView = getLayoutInflater().inflate(R.layout.activity_user_data, null);
+        mainContentFrame.addView(userDataView);
+
+        // load items into the Navigation drawer and add listeners
+        ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
         // TODO: add more field when we decide to store more user information
         TextView user_name = (TextView) findViewById(R.id.user_name);

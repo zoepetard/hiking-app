@@ -44,7 +44,7 @@ public class NavigationDrawerListFactory {
 
                 switch (itemText) {
                     case LIST_ITEM_ACCOUNT:
-                        intent = new Intent(view.getContext(), ChangeNicknameActivity.class);
+                        intent = new Intent(view.getContext(), UserDataActivity.class);
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_MAP:
