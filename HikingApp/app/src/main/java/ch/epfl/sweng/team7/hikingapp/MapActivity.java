@@ -610,8 +610,6 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-<<<<<<< HEAD
-=======
     private void addPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
         if(mListAnnotations.size() > 0 ) {
@@ -623,7 +621,6 @@ public class MapActivity extends FragmentActivity {
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
     }
->>>>>>> Moved method add picture from gps manager to map activity
 
     private void createBottomInfoView() {
         mBottomTable.initialize(this);

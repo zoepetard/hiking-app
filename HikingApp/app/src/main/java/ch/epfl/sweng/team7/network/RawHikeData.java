@@ -51,6 +51,10 @@ public class RawHikeData {
     private Rating mRating;
     private String mTitle;
     private List<Annotation> mAnnotations;
+<<<<<<< HEAD
+=======
+
+>>>>>>> Created new Object annotations to add comments and pictures
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
@@ -62,7 +66,10 @@ public class RawHikeData {
      * @throws IllegalArgumentException
      */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Created new Object annotations to add comments and pictures
     public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
                        List<RawHikeComment> comments, String title, List<Annotation> annotations) {
 
@@ -97,6 +104,11 @@ public class RawHikeData {
         mRating = new Rating();
         mTitle = title;
         mAnnotations = annotations;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> Created new Object annotations to add comments and pictures
     }
 
     /**
@@ -142,6 +154,7 @@ public class RawHikeData {
     /**
      * Returns the list of annotations
      */
+<<<<<<< HEAD
     public ArrayList<Annotation> getAnnotations() {
         if (mAnnotations.size() < 1){
             return null;
@@ -151,6 +164,15 @@ public class RawHikeData {
     }
 
 
+=======
+    public List<Annotation> getAnnotations() {
+        if (mAnnotations.size() < 1){
+            return null;
+        }else{
+            return new ArrayList<Annotation>(mAnnotations);
+        }
+    }
+>>>>>>> Created new Object annotations to add comments and pictures
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
@@ -196,7 +218,10 @@ public class RawHikeData {
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Created new Object annotations to add comments and pictures
     /**
      * @return a JSON array of the input
      * @throws JSONException
@@ -251,6 +276,11 @@ public class RawHikeData {
             List<RawHikeComment> comments = new ArrayList<>();
             for (int i = 0; i < jsonComments.length(); ++i) {
                 comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
+
+            JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
+            List<Annotation> annotations = new ArrayList<>();
+            for(int i = 0; i < jsonAnnotations.length(); i++){
+                annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
             }
 
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
@@ -266,7 +296,12 @@ public class RawHikeData {
                     date,
                     hikePoints,
                     comments,
+<<<<<<< HEAD
                     jsonObject.getString("title"),
+=======
+                    jsonObject.getString("title"));
+                    date,hikePoints,
+>>>>>>> Created new Object annotations to add comments and pictures
                     annotations);
             if(jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
@@ -328,6 +363,12 @@ public class RawHikeData {
                 }
             }
 
+<<<<<<< HEAD
+=======
+        } catch (Exception e) {
+
+
+>>>>>>> Created new Object annotations to add comments and pictures
         } catch(Exception e) {
             // Parsing should be very forgiving and ignore any exception.
             Log.e(LOG_FLAG, e.getMessage());
@@ -339,6 +380,7 @@ public class RawHikeData {
 
     public void setTitle(String newTitle){
         mTitle = newTitle;
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, null);
     }
 
 

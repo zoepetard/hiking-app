@@ -46,4 +46,5 @@ public class DefaultHikePoint implements HikePoint {
     public Date getTime() {
         return mTime;
     }
+
 }

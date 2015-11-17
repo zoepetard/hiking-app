@@ -41,7 +41,6 @@ public class DefaultHikeDataTest {
         RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints, newHikeComments, "", null);
         mDefaultHikeData = new DefaultHikeData(rawHikeData);
 
-
     }
 
     @Test

@@ -13,6 +13,8 @@ import org.json.JSONException;
 
 import java.util.Date;
 
+import ch.epfl.sweng.team7.database.Annotation;
+
 /**
  * Stores data for one point in a hike.
  */

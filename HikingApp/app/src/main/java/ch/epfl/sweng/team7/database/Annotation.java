@@ -1,12 +1,15 @@
 package ch.epfl.sweng.team7.database;
 
+
 import android.graphics.drawable.Drawable;
+
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import java.util.Date;
 
@@ -79,6 +82,7 @@ public class Annotation {
     }
 
 
+
     /**
      * @return JSONArray [String comment, RawHikePoint rawHikePoint].
      * Storing a JSON array instead of a full JSON object reduces the communication/storage
@@ -94,6 +98,22 @@ public class Annotation {
                 .put(mText)
                 .put(mPictureId);
         return jsonArray;
+    }
+
+
+
+    /**
+     * Parse a RawHikePoint from an appropriate JSON object
+     * @param jsonArray [String comment, double lat, double lng, long date, double elevation]
+     * @return a valid RawHikePoint object
+     * @throws JSONException
+     */
+    public static Annotation parseFromJSON(JSONArray jsonArray) throws JSONException {
+        String comment = new String(jsonArray.getString(0));
+        LatLng latLng = new LatLng(jsonArray.getDouble(1), jsonArray.getDouble(2));
+        Date date = new Date(jsonArray.getLong(3));
+        double elevation = jsonArray.getDouble(4);
+        return new Annotation(new RawHikePoint(latLng, date, elevation), comment, null);
     }
 
 }
