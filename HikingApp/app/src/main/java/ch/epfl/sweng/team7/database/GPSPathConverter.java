@@ -34,6 +34,8 @@ public class GPSPathConverter {
             long ownerId = 0;
             List<RawHikeComment> newHikeComments = new ArrayList<>();
             return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, newHikeComments, "");
+            List<Annotation> mAnnotations = null;
+            return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, mAnnotations );
         } else {
             throw new ArrayIndexOutOfBoundsException("GPS path is empty");
         }
@@ -50,8 +52,7 @@ public class GPSPathConverter {
             LatLng position = gpsFootPrint.getGeoCoords().toLatLng();
             Double elevation = gpsFootPrint.getGeoCoords().getAltitude();
             Date date = new Date(gpsFootPrint.getTimeStamp());
-            String comment = null;
-            hikePoints.add(new RawHikePoint(position, date, elevation, comment));
+            hikePoints.add(new RawHikePoint(position, date, elevation));
         }
         return hikePoints;
     }
