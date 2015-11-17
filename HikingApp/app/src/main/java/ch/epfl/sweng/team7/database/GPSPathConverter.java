@@ -53,8 +53,7 @@ public class GPSPathConverter {
             LatLng position = gpsFootPrint.getGeoCoords().toLatLng();
             Double elevation = gpsFootPrint.getGeoCoords().getAltitude();
             Date date = new Date(gpsFootPrint.getTimeStamp());
-            String comment = null;
-            hikePoints.add(new RawHikePoint(position, date, elevation, comment));
+            hikePoints.add(new RawHikePoint(position, date, elevation));
         }
         return hikePoints;
     }
