@@ -14,6 +14,7 @@ import android.util.Log;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -24,8 +25,9 @@ public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
+    private static LatLngBounds bounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,11 @@ public class MapActivity extends FragmentActivity {
                 setUpMap();
             }
         }
+    }
+
+    public static LatLngBounds getBounds() {
+        bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        return bounds;
     }
 
     /**

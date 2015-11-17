@@ -6,7 +6,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -26,10 +25,4 @@ public class LoginTest {
         onView(withId(R.id.sign_in_button)).check(matches(isDisplayed()));
         onView(withId(R.id.sign_out_and_disconnect)).check(matches(not(isDisplayed())));
     }
-
-    // TODO: test login and choose account
-//    @Test
-//    public void testLogin() {
-//        onView(withId(R.id.sign_in_button)).perform(click());
-//    }
 }
