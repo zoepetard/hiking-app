@@ -59,7 +59,7 @@ public class DataManagerTest {
     public void testGetHikesInWindow() throws Exception {
         LatLngBounds window = new LatLngBounds(DEBUG_LOC_SAOTOME, DEBUG_LOC_ACCRA);
         List<HikeData> hikeDatas = DataManager.getInstance().getHikesInWindow(window);
-        assertEquals(1, hikeDatas.size());
+        assertEquals(2, hikeDatas.size());
         assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
