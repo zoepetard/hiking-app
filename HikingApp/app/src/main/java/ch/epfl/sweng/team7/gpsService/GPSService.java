@@ -19,6 +19,7 @@ import android.util.Log;
  */
 public class GPSService extends Service {
 
+    public static boolean isBound = false;
     private static final String LOG_FLAG = "GPS_Service";
 
     private final IBinder mBinder = new LocalBinder();
@@ -55,6 +56,7 @@ public class GPSService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        isBound = true;
         return mBinder;
     }
 
