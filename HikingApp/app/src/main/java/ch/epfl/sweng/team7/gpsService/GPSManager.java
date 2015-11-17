@@ -37,6 +37,10 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
 
 
+    private GPSManager() {
+        setupServiceConnection();
+    }
+
     public static GPSManager getInstance() {
         return instance;
     }
@@ -45,7 +49,7 @@ public final class GPSManager {
      * Method called to toggle hike tracking
      * on/off, according to previous state.
      */
-    public void toggleTracking()  {
+    public void toggleTracking() {
         if (!isTracking) {
             startTracking();
         } else {
@@ -56,6 +60,7 @@ public final class GPSManager {
 
     /**
      * Method called to get user's last known coordinates.
+     *
      * @return GeoCoords object containing user's last known coordinates
      * @throws NullPointerException whenever there is no last known position
      */
@@ -68,6 +73,7 @@ public final class GPSManager {
 
     /**
      * Method called to start the GPSService, by means of an Intent
+     *
      * @param context the context from which the Intent will be sent.
      */
     public void startService(Context context) {
@@ -79,6 +85,7 @@ public final class GPSManager {
 
     /**
      * Method called to update user's last know coordinates
+     *
      * @param newLocation Location object containing GPS fetched data
      */
     protected void updateCurrentLocation(Location newLocation) {
@@ -90,18 +97,14 @@ public final class GPSManager {
 
     @Override
     public String toString() {
-        String gpsPathInformation = (isTracking && gpsPath != null)?String.format("yes -> %s", gpsPath.toString()):"No";
-        String lastFootPrintCoords = (this.lastFootPrint != null)?this.lastFootPrint.getGeoCoords().toString():"null";
-        long lastFootPrintTimeStamp = (this.lastFootPrint != null)?this.lastFootPrint.getTimeStamp():0;
+        String gpsPathInformation = (isTracking && gpsPath != null) ? String.format("yes -> %s", gpsPath.toString()) : "No";
+        String lastFootPrintCoords = (this.lastFootPrint != null) ? this.lastFootPrint.getGeoCoords().toString() : "null";
+        long lastFootPrintTimeStamp = (this.lastFootPrint != null) ? this.lastFootPrint.getTimeStamp() : 0;
         return String.format("\n|---------------------------\n" +
                 "| Saving to memory: %s\n" +
                 "| Last Coordinates: %s\n" +
                 "| TimeStamp: %d\n" +
                 "|---------------------------", gpsPathInformation, lastFootPrintCoords, lastFootPrintTimeStamp);
-    }
-
-    private GPSManager() {
-        setupServiceConnection();
     }
 
     /**
@@ -113,7 +116,7 @@ public final class GPSManager {
             public void onServiceConnected(ComponentName className, IBinder service) {
                 // This is called when the connection with the service has been
                 // established
-                gpsService = ((GPSService.LocalBinder)service).getService();
+                gpsService = ((GPSService.LocalBinder) service).getService();
                 Log.d(LOG_FLAG, "Successfully connected to service");
             }
 
@@ -172,13 +175,14 @@ public final class GPSManager {
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
     }
+
     /**
      * Method to store in DB the RawHikeData converted from the GPS object
      *
      * @param rawHikeData
      */
-    private  void storeHike(RawHikeData rawHikeData) throws DatabaseClientException {
-        DataManager dataManager =  DataManager.getInstance();
+    private void storeHike(RawHikeData rawHikeData) throws DatabaseClientException {
+        DataManager dataManager = DataManager.getInstance();
         try {
             dataManager.postHike(rawHikeData);
         } catch (DataManagerException e) {
