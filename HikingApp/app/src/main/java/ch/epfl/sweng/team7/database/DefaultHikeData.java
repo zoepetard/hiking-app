@@ -91,39 +91,37 @@ public class DefaultHikeData implements HikeData {
     }
 
     /**
-     * @return the total distance covered by the hike
+     * @return the total distance covered by the hike in kilometers
      */
     public double getDistance() {
         return mDistance;
     }
 
     /**
-     * @return the total elevation gain,
+     * @return the total elevation gain in meters,
      * which is the sum of all position elevation differences, ignoring all downhill
-     * This feature is not yet implemented in the backend
      */
     public double getElevationGain() {
         return mElevationBounds.mElevationGain;
     }
 
     /**
-     * @return the total elevation loss,
+     * @return the total elevation loss in meters,
      * which is the sum of all negative elevation differences, ignoring all uphill
-     * This feature is not yet implemented in the backend
      */
     public double getElevationLoss() {
         return mElevationBounds.mElevationLoss;
     }
 
     /**
-     * * This feature is not yet implemented in the backend
+     * @return the elevation of the hike's highest point, in meters
      */
     public double getMaxElevation() {
         return mElevationBounds.mMaxElevation;
     }
 
     /**
-     * * This feature is not yet implemented in the backend
+     * @return the elevation of the hike's lowest point, in meters
      */
     public double getMinElevation() {
         return mElevationBounds.mMinElevation;
@@ -160,7 +158,7 @@ public class DefaultHikeData implements HikeData {
             float[] distanceBetween = new float[1];
             distanceBetween(currentLoc.latitude, currentLoc.longitude,
                     nextLoc.latitude, nextLoc.longitude, distanceBetween);
-            distance += (double) distanceBetween[0]/1000;
+            distance += (double) distanceBetween[0] / 1000;
         }
         return distance;
     }

@@ -4,15 +4,11 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.util.Log;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -24,32 +20,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
-import ch.epfl.sweng.team7.network.DatabaseClient;
-import ch.epfl.sweng.team7.network.RawHikeData;
-import ch.epfl.sweng.team7.network.RawHikePoint;
-
 import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
+    private final static String EXTRA_HIKE_ID =
+            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
-    private List<HikeData> hikesInWindow;
+    private List<HikeData> mHikesInWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +58,6 @@ public class MapActivity extends FragmentActivity {
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
-
-
     }
 
     @Override
@@ -77,8 +65,6 @@ public class MapActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
     }
-
-
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -115,11 +101,9 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap()  {
-
+        //TODO These are the bounds that should be changed to center on user's location.
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         new DownloadHikeList().execute(bounds);
-
-
     }
 
     private class DownloadHikeList extends AsyncTask<LatLngBounds, Void, List<HikeData>> {
@@ -143,13 +127,13 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayMap(List<HikeData> result) {
-        hikesInWindow = result;
+        mHikesInWindow = result;
         LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
 
-        for (int i = 0; i < hikesInWindow.size(); i++) {
-            HikeData hike = hikesInWindow.get(i);
+        for (int i = 0; i < mHikesInWindow.size(); i++) {
+            HikeData hike = mHikesInWindow.get(i);
             displayMarkers(hike);
-            PolylineOptions polylineOptions = displayHike(hike);
+            displayHike(hike);
             boundingBoxBuilder.include(hike.getStartLocation());
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
@@ -185,8 +169,8 @@ public class MapActivity extends FragmentActivity {
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
-        for (int i = 0; i < hikesInWindow.size(); i++) {
-            HikeData hike = hikesInWindow.get(i);
+        for (int i = 0; i < mHikesInWindow.size(); i++) {
+            HikeData hike = mHikesInWindow.get(i);
             if (marker.getPosition().equals(hike.getStartLocation()) ||
                     marker.getPosition().equals(hike.getFinishLocation())) {
                 displayHikeInfo(hike);
@@ -196,32 +180,41 @@ public class MapActivity extends FragmentActivity {
         return true;
     }
 
-    private PolylineOptions displayHike(final HikeData hike) {
-        PolylineOptions testPolyline = new PolylineOptions();
-
+    private void displayHike(final HikeData hike) {
+        PolylineOptions polylineOptions = new PolylineOptions();
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint: databaseHikePoints) {
-            testPolyline.add(hikePoint.getPosition());
+            polylineOptions.add(hikePoint.getPosition());
         }
-        Polyline polyline = mMap.addPolyline(testPolyline);
-        return testPolyline;
-
+        mMap.addPolyline(polylineOptions);
     }
 
     private void onMapClickHelper(LatLng point) {
-        for (int i = 0; i < hikesInWindow.size(); i++) {
-            HikeData hike = hikesInWindow.get(i);
-            double shortestDistance = 1000;
-            List<HikePoint> hikePoints = hike.getHikePoints();
-            for (HikePoint hikePoint : hikePoints) {
-                float[] distanceBetween = new float[1];
+        Location pointLocation = new Location("Point clicked");
+        pointLocation.setLatitude(point.latitude);
+        pointLocation.setLongitude(point.longitude);
 
+        for (int i = 0; i < mHikesInWindow.size(); i++) {
+            HikeData hike = mHikesInWindow.get(i);
+            double shortestDistance = 100;
+            List<HikePoint> hikePoints = hike.getHikePoints();
+
+
+            for (HikePoint hikePoint : hikePoints) {
+
+                float[] distanceBetween = new float[1];
                 //Computes the approximate distance (in meters) between polyLinePoint and point.
                 //Returns the result as the first element of the float array distanceBetween
                 distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
                         point.latitude, point.longitude, distanceBetween);
-
                 double distance = distanceBetween[0];
+
+                //Alternative using distanceTo()
+                /*Location hikePointLocation = new Location("Current point on hike.");
+                hikePointLocation.setLatitude(hikePoint.getPosition().latitude);
+                hikePointLocation.setLongitude(hikePoint.getPosition().longitude);
+                double distance = pointLocation.distanceTo(hikePointLocation);*/
+
                 if (distance < shortestDistance) {
                     displayHikeInfo(hike);
                     return;
@@ -232,7 +225,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void displayHikeInfo(HikeData hike) {
+    private void displayHikeInfo(final HikeData hike) {
         TableLayout mapTableLayout = (TableLayout)findViewById(R.id.mapTextTable);
         mapTableLayout.removeAllViews();
 
