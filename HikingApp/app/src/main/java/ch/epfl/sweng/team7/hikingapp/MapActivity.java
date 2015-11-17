@@ -1,27 +1,45 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.Intent;
+import android.graphics.Point;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.List;
+
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+
+import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
+    private final static String EXTRA_HIKE_ID =
+            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
+    private List<HikeData> mHikesInWindow;
     private static LatLngBounds bounds;
 
     @Override
@@ -31,7 +49,7 @@ public class MapActivity extends FragmentActivity {
         gps.startService(this);
 
         // nav drawer setup
-        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
         View mapView = getLayoutInflater().inflate(R.layout.activity_map, null);
         mainContentFrame.addView(mapView);
@@ -40,7 +58,7 @@ public class MapActivity extends FragmentActivity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
 
 
     }
@@ -103,23 +121,144 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-        displayTestPoints();
+        //TODO These are the bounds that should be changed to center on user's location.
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
+        new DownloadHikeList().execute(bounds);
     }
 
-    private void displayTestPoints() {
-        LatLng origin = new LatLng(0,0);
-        LatLng accra = new LatLng(5.615986, -0.171533);
-        LatLng saoTome = new LatLng(0.362365, 6.558835);
+    private class DownloadHikeList extends AsyncTask<LatLngBounds, Void, List<HikeData>> {
+        @Override
+        protected List<HikeData> doInBackground(LatLngBounds... bounds) {
+            DataManager dataManager = DataManager.getInstance();
+            try {
+                return dataManager.getHikesInWindow(bounds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
 
-        PolylineOptions testTriangle = new PolylineOptions()
-                .add(origin)
-                .add(accra)
-                .add(saoTome)
-                .add(origin);
-
-        Polyline polyline = mMap.addPolyline(testTriangle);
+        @Override
+        protected void onPostExecute(List<HikeData> result) {
+            if (result != null) {
+                displayMap(result);
+            }
+        }
     }
 
+    private void displayMap(List<HikeData> result) {
+        mHikesInWindow = result;
+        LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
+
+        for (int i = 0; i < mHikesInWindow.size(); i++) {
+            HikeData hike = mHikesInWindow.get(i);
+            displayMarkers(hike);
+            displayHike(hike);
+            boundingBoxBuilder.include(hike.getStartLocation());
+            boundingBoxBuilder.include(hike.getFinishLocation());
+        }
+
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int screenWidth = size.x;
+        int screenHeight = size.y;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                onMapClickHelper(point);
+            }
+        });
+    }
+
+    private void displayMarkers(final HikeData hike) {
+        MarkerOptions startMarker = new MarkerOptions()
+                .position(hike.getStartLocation())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        MarkerOptions finishMarker = new MarkerOptions()
+                .position(hike.getFinishLocation())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker marker) {
+                return onMarkerClickHelper(marker);
+            }
+        });
+        mMap.addMarker(startMarker);
+        mMap.addMarker(finishMarker);
+    }
+
+    private boolean onMarkerClickHelper(Marker marker) {
+        for (int i = 0; i < mHikesInWindow.size(); i++) {
+            HikeData hike = mHikesInWindow.get(i);
+            if (marker.getPosition().equals(hike.getStartLocation()) ||
+                    marker.getPosition().equals(hike.getFinishLocation())) {
+                displayHikeInfo(hike);
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private void displayHike(final HikeData hike) {
+        PolylineOptions polylineOptions = new PolylineOptions();
+        List<HikePoint> databaseHikePoints = hike.getHikePoints();
+        for (HikePoint hikePoint : databaseHikePoints) {
+            polylineOptions.add(hikePoint.getPosition());
+        }
+        mMap.addPolyline(polylineOptions);
+    }
+
+    private void onMapClickHelper(LatLng point) {
+        for (int i = 0; i < mHikesInWindow.size(); i++) {
+            HikeData hike = mHikesInWindow.get(i);
+            double shortestDistance = 100;
+            List<HikePoint> hikePoints = hike.getHikePoints();
+
+
+            for (HikePoint hikePoint : hikePoints) {
+
+                float[] distanceBetween = new float[1];
+                //Computes the approximate distance (in meters) between polyLinePoint and point.
+                //Returns the result as the first element of the float array distanceBetween
+                distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
+                        point.latitude, point.longitude, distanceBetween);
+                double distance = distanceBetween[0];
+
+                if (distance < shortestDistance) {
+                    displayHikeInfo(hike);
+                    return;
+                }
+            }
+            TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
+            mapTableLayout.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void displayHikeInfo(final HikeData hike) {
+        TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
+        mapTableLayout.removeAllViews();
+
+        TextView hikeTitle = new TextView(this);
+        hikeTitle.setText(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+        hikeTitle.setTextSize(20);
+
+        TextView hikeOwner = new TextView(this);
+        hikeOwner.setText(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+
+        TextView hikeDistance = new TextView(this);
+        hikeDistance.setText(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance()));
+
+        mapTableLayout.addView(hikeTitle);
+        mapTableLayout.addView(hikeOwner);
+        mapTableLayout.addView(hikeDistance);
+        mapTableLayout.setVisibility(View.VISIBLE);
+        mapTableLayout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 
 }
