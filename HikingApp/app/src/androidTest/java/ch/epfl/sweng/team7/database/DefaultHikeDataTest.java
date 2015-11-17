@@ -71,7 +71,7 @@ public class DefaultHikeDataTest {
 
     @Test
     public void testDistanceAccess() {
-        assertEquals("Incorrect distance", 2345000, mDefaultHikeData.getDistance(), 5000);
+        assertEquals("Incorrect distance", 2345, mDefaultHikeData.getDistance(), 5000);
     }
 
     @Test
