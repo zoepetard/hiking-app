@@ -79,8 +79,24 @@ public final class GPSManager {
     public void startService(Context context) {
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
+    }
+
+    /**
+     * Method called to bind GPSService to a certain Context
+     * @param context Context to which the GPSService will be bound to
+     */
+    public void bindService(Context context) {
         context.bindService(new Intent(context, GPSService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         Log.d(LOG_FLAG, "Intent sent to bind to GPSService");
+    }
+
+    /**
+     * Method called to unbind GPSService from a certain Context
+     * @param context Context from which the GPSService will be unbound
+     */
+    public void unbindService(Context context) {
+        context.unbindService(serviceConnection);
+        Log.d(LOG_FLAG, "Intent sent to unbind GPSService");
     }
 
     /**
