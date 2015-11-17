@@ -23,24 +23,24 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 
 
-/**
- * Tests the local cache for hikes
- */
+/** Tests the local cache for hikes */
 @RunWith(AndroidJUnit4.class)
 public class DataManagerTest {
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
     private static final LatLng DEBUG_LOC_SAOTOME = new LatLng(0.362365, 6.558835);
-    private long mNewHikeId;
+    private long mNewHikeId, mNewHikeId2;
 
     @Before
     public void setUp() throws Exception {
         MockServer mockServer = new MockServer();
         List<RawHikePoint> newHikePoints = new ArrayList<>();
-        newHikePoints.add(new RawHikePoint(new LatLng(2., 10.), new Date(), 0.0));
-        newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(2.,10.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(2.,11.), new Date(), 0.0));
         RawHikeData newHike = new RawHikeData(2, 15, new Date(), newHikePoints);
+        RawHikeData newHike2 = new RawHikeData(3, 15, new Date(), newHikePoints);
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
+        mNewHikeId2 = DataManager.getInstance().postHike(newHike2);
     }
 
     @Test
@@ -60,10 +60,19 @@ public class DataManagerTest {
     public void testGetHikesInWindow() throws Exception {
         LatLngBounds window = new LatLngBounds(DEBUG_LOC_SAOTOME, DEBUG_LOC_ACCRA);
         List<HikeData> hikeDatas = DataManager.getInstance().getHikesInWindow(window);
-        assertEquals(1, hikeDatas.size());
+        assertEquals(2, hikeDatas.size());
         assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
+    @Test
+    public void testPostHike() throws Exception{
+        List<RawHikePoint> newHikePoints = new ArrayList<>();
+        newHikePoints.add(new RawHikePoint(new LatLng(3.,12.), new Date(), 0.0));
+        newHikePoints.add(new RawHikePoint(new LatLng(4., 13.), new Date(), 0.0));
+        RawHikeData hike = new RawHikeData(11, 15, new Date(), newHikePoints);
+        assertEquals(DataManager.getInstance().getHike(mNewHikeId2).getHikeId(), hike.getHikeId());
+
+    }
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {
         boolean exceptionIsThrown = false;
@@ -110,9 +119,10 @@ public class DataManagerTest {
     @Test
     public void testSetUserData() throws Exception {
     }
+    */
 
     @After
     public void tearDown() {
         DataManager.reset();
-    } */
+    }
 }

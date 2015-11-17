@@ -1,19 +1,15 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.content.Intent;
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -24,8 +20,9 @@ public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
+    private static LatLngBounds bounds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +49,18 @@ public class MapActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        gps.bindService(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gps.unbindService(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     /**
@@ -80,6 +89,11 @@ public class MapActivity extends FragmentActivity {
                 setUpMap();
             }
         }
+    }
+
+    public static LatLngBounds getBounds() {
+        bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        return bounds;
     }
 
     /**

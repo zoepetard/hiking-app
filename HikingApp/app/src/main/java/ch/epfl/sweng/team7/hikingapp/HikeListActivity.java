@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +19,15 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -30,6 +38,8 @@ public class HikeListActivity extends Activity {
     private LatLngBounds bounds;
 
     private final static String LOG_FLAG = "Activity_HikeList";
+    public final static String EXTRA_HIKE_ID =
+            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     //Displays a list of nearby hikes, with a map, the distance and the rating.
     @Override
@@ -48,6 +58,16 @@ public class HikeListActivity extends Activity {
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
+        Bundle bound = getIntent().getParcelableExtra("EXTRA_BOUND");
+        if (bound != null) {
+            LatLng sw = bound.getParcelable("sw");
+            LatLng ne = bound.getParcelable("ne");
+            bounds = new LatLngBounds(sw, ne);
+        } else {
+            // display all hikes if no bounds specified
+            Log.d("msg", "bound null");
+            bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
+        }
         new GetMultHikeAsync().execute(bounds);
     }
 
@@ -164,12 +184,21 @@ public class HikeListActivity extends Activity {
             }
         }
 
-        private void displayHikes(List<HikeData> results) {
+        private void displayHikes(final List<HikeData> results) {
             TableLayout hikeListTable = (TableLayout)findViewById((R.id.hikeListTable));
             for (int i = 0; i < results.size(); i++) {
-                TableRow hikeRow = getHikeRow(i, results.get(i));
+                final HikeData hikeData = results.get(i);
+                final TableRow hikeRow = getHikeRow(i, hikeData);
+                hikeRow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
+                        i.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
+                        startActivity(i);
+                    }
+                });
                 hikeListTable.addView(hikeRow, new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+                        TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
             }
         }
     }

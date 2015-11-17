@@ -76,6 +76,8 @@ public class HikeInfoView {
         imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
+        // Add adapter and onclickmethods to the nav drawer listview
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
 
         galleryImageViews = new ArrayList<>(4);
         /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
@@ -148,9 +150,6 @@ public class HikeInfoView {
             hikeElevation.setText(elevationString);
 
             loadImageScrollView();
-
-            // Add adapter and onclickmethods to the nav drawer listview
-            NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
         }
 
         // create imageviews and add them to the scrollview

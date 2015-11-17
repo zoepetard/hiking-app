@@ -20,12 +20,20 @@ public final class HikeInfoActivity extends Activity {
     private long hikeId;
 
     private final static String LOG_FLAG = "Activity_HikeInfo";
+    private final static String HIKE_ID = "hikeID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
+        Intent intent = getIntent();
+        String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
+        if (hikeIdStr == null && savedInstanceState != null) {
+            hikeId = savedInstanceState.getLong(HIKE_ID);
+        } else if (hikeIdStr != null) {
+            hikeId = Long.valueOf(hikeIdStr);
+        }
         View view = findViewById(android.R.id.content);
 
         // load main content into the navigations drawer's framelayout
@@ -33,9 +41,7 @@ public final class HikeInfoActivity extends Activity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-        hikeId = 1; // test
         HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId);
-
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -63,7 +69,11 @@ public final class HikeInfoActivity extends Activity {
 
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(HIKE_ID, hikeId);
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
     private class ImageViewClickListener implements View.OnClickListener {
         @Override

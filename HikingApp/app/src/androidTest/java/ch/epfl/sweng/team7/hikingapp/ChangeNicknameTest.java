@@ -19,7 +19,8 @@ public class ChangeNicknameTest {
 
     @Test
     public void testRegularChangeNickname() {
-        onView(withId(R.id.edit_nickname)).perform(typeText("newNickname"), closeSoftKeyboard());
-        onView(withId(R.id.edit_nickname)).check(matches(withText("newNickname")));
+        onView(withId(R.id.edit_nickname)).perform(typeText("NewNickname"), closeSoftKeyboard());
+        onView(withId(R.id.edit_nickname)).check(matches(withText("NewNickname")));
+        // check launching MapActivity (segfault with perform(click())
     }
 }
