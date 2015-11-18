@@ -144,7 +144,7 @@ public class HikeListActivity extends Activity {
         double distance = hikeData.getDistance();
         GridLayout.LayoutParams distanceRow = new GridLayout.LayoutParams(row2, col2);
         TextView distanceText = new TextView(this);
-        distanceText.setText("Distance: " + Double.toString(distance) + "km");
+        distanceText.setText("Distance: " + Double.toString(distance / 1000) + "km");
         distanceText.setLayoutParams(distanceRow);
         gridLayout.addView(distanceText, distanceRow);
 

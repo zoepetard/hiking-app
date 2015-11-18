@@ -2,10 +2,6 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
 import android.graphics.Point;
-<<<<<<< HEAD
-=======
-import android.location.Location;
->>>>>>> d2f36f1ae89499806a26c452fd90a8b42de1880d
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -32,7 +28,6 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
-import static android.location.Location.distanceBetween;
 
 import static android.location.Location.distanceBetween;
 
@@ -45,10 +40,7 @@ public class MapActivity extends FragmentActivity {
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
     private List<HikeData> mHikesInWindow;
-<<<<<<< HEAD
     private static LatLngBounds bounds;
-=======
->>>>>>> d2f36f1ae89499806a26c452fd90a8b42de1880d
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +58,9 @@ public class MapActivity extends FragmentActivity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-<<<<<<< HEAD
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
 
 
-=======
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
->>>>>>> d2f36f1ae89499806a26c452fd90a8b42de1880d
     }
 
     @Override
@@ -132,25 +120,15 @@ public class MapActivity extends FragmentActivity {
      * <p/>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
-<<<<<<< HEAD
     private void setUpMap() {
         //TODO These are the bounds that should be changed to center on user's location.
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
-=======
-    private void setUpMap()  {
-        //TODO These are the bounds that should be changed to center on user's location.
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
->>>>>>> d2f36f1ae89499806a26c452fd90a8b42de1880d
         new DownloadHikeList().execute(bounds);
     }
 
     private class DownloadHikeList extends AsyncTask<LatLngBounds, Void, List<HikeData>> {
         @Override
-<<<<<<< HEAD
         protected List<HikeData> doInBackground(LatLngBounds... bounds) {
-=======
-        protected List<HikeData> doInBackground (LatLngBounds...bounds){
->>>>>>> d2f36f1ae89499806a26c452fd90a8b42de1880d
             DataManager dataManager = DataManager.getInstance();
             try {
                 return dataManager.getHikesInWindow(bounds[0]);
@@ -166,7 +144,6 @@ public class MapActivity extends FragmentActivity {
                 displayMap(result);
             }
         }
-<<<<<<< HEAD
     }
 
     private void displayMap(List<HikeData> result) {
@@ -264,115 +241,6 @@ public class MapActivity extends FragmentActivity {
 
         TextView hikeTitle = new TextView(this);
         hikeTitle.setText(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-=======
-    }
-
-    private void displayMap(List<HikeData> result) {
-        mHikesInWindow = result;
-        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
-
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            displayMarkers(hike);
-            displayHike(hike);
-            boundingBoxBuilder.include(hike.getStartLocation());
-            boundingBoxBuilder.include(hike.getFinishLocation());
-        }
-
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        int screenWidth = size.x;
-        int screenHeight = size.y;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng point) {
-                onMapClickHelper(point);
-            }
-        });
-    }
-
-    private void displayMarkers(final HikeData hike) {
-        MarkerOptions startMarker = new MarkerOptions()
-                .position(hike.getStartLocation())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        MarkerOptions finishMarker = new MarkerOptions()
-                .position(hike.getFinishLocation())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            public boolean onMarkerClick(Marker marker) {
-                return onMarkerClickHelper(marker);
-            }
-        });
-        mMap.addMarker(startMarker);
-        mMap.addMarker(finishMarker);
-    }
-
-    private boolean onMarkerClickHelper(Marker marker) {
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            if (marker.getPosition().equals(hike.getStartLocation()) ||
-                    marker.getPosition().equals(hike.getFinishLocation())) {
-                displayHikeInfo(hike);
-                return true;
-            }
-        }
-        return true;
-    }
-
-    private void displayHike(final HikeData hike) {
-        PolylineOptions polylineOptions = new PolylineOptions();
-        List<HikePoint> databaseHikePoints = hike.getHikePoints();
-        for (HikePoint hikePoint: databaseHikePoints) {
-            polylineOptions.add(hikePoint.getPosition());
-        }
-        mMap.addPolyline(polylineOptions);
-    }
-
-    private void onMapClickHelper(LatLng point) {
-        Location pointLocation = new Location("Point clicked");
-        pointLocation.setLatitude(point.latitude);
-        pointLocation.setLongitude(point.longitude);
-
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            double shortestDistance = 100;
-            List<HikePoint> hikePoints = hike.getHikePoints();
-
-
-            for (HikePoint hikePoint : hikePoints) {
-
-                float[] distanceBetween = new float[1];
-                //Computes the approximate distance (in meters) between polyLinePoint and point.
-                //Returns the result as the first element of the float array distanceBetween
-                distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
-                        point.latitude, point.longitude, distanceBetween);
-                double distance = distanceBetween[0];
-
-                //Alternative using distanceTo()
-                /*Location hikePointLocation = new Location("Current point on hike.");
-                hikePointLocation.setLatitude(hikePoint.getPosition().latitude);
-                hikePointLocation.setLongitude(hikePoint.getPosition().longitude);
-                double distance = pointLocation.distanceTo(hikePointLocation);*/
-
-                if (distance < shortestDistance) {
-                    displayHikeInfo(hike);
-                    return;
-                }
-            }
-            TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
-            mapTableLayout.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void displayHikeInfo(final HikeData hike) {
-        TableLayout mapTableLayout = (TableLayout)findViewById(R.id.mapTextTable);
-        mapTableLayout.removeAllViews();
-
-        TextView hikeTitle = new TextView(this);
-        hikeTitle.setText(getResources().getString(R.string.hikeNumberText,hike.getHikeId()));
->>>>>>> d2f36f1ae89499806a26c452fd90a8b42de1880d
         hikeTitle.setTextSize(20);
 
         TextView hikeOwner = new TextView(this);
