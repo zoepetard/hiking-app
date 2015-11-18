@@ -156,6 +156,8 @@ public class DefaultHikeData implements HikeData {
             LatLng currentLoc = rawHikePoints.get(i).getPosition();
             LatLng nextLoc = rawHikePoints.get(i + 1).getPosition();
             float[] distanceBetween = new float[1];
+            //Computes the approximate distance (in meters) between polyLinePoint and point.
+            //Returns the result as the first element of the float array distanceBetween
             distanceBetween(currentLoc.latitude, currentLoc.longitude,
                     nextLoc.latitude, nextLoc.longitude, distanceBetween);
             distance += (double) distanceBetween[0];

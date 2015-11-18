@@ -21,7 +21,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -39,8 +41,10 @@ public class MapActivity extends FragmentActivity {
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
+    DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private static LatLngBounds bounds;
+    private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,6 @@ public class MapActivity extends FragmentActivity {
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
-
 
     }
 
@@ -129,9 +132,9 @@ public class MapActivity extends FragmentActivity {
     private class DownloadHikeList extends AsyncTask<LatLngBounds, Void, List<HikeData>> {
         @Override
         protected List<HikeData> doInBackground(LatLngBounds... bounds) {
-            DataManager dataManager = DataManager.getInstance();
+
             try {
-                return dataManager.getHikesInWindow(bounds[0]);
+                return mDataManager.getHikesInWindow(bounds[0]);
             } catch (DataManagerException e) {
                 e.printStackTrace();
                 return null;
@@ -173,30 +176,36 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayMarkers(final HikeData hike) {
-        MarkerOptions startMarker = new MarkerOptions()
+        MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        MarkerOptions finishMarker = new MarkerOptions()
+        MarkerOptions finishMarkerOptions = new MarkerOptions()
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
                 return onMarkerClickHelper(marker);
             }
         });
-        mMap.addMarker(startMarker);
-        mMap.addMarker(finishMarker);
+        Marker startMarker = mMap.addMarker(startMarkerOptions);
+        Marker finishMarker = mMap.addMarker(finishMarkerOptions);
+
+        mMarkerByHike.put(startMarker, hike.getHikeId());
+        mMarkerByHike.put(finishMarker, hike.getHikeId());
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            if (marker.getPosition().equals(hike.getStartLocation()) ||
-                    marker.getPosition().equals(hike.getFinishLocation())) {
-                displayHikeInfo(hike);
-                return true;
+        if (mMarkerByHike.containsKey(marker)) {
+            long hikeId = mMarkerByHike.get(marker);
+            try {
+                displayHikeInfo(mDataManager.getHike(hikeId));
+            } catch (DataManagerException e) {
+                e.printStackTrace();
             }
+            return true;
         }
+
         return true;
     }
 
@@ -261,5 +270,4 @@ public class MapActivity extends FragmentActivity {
             }
         });
     }
-
 }
