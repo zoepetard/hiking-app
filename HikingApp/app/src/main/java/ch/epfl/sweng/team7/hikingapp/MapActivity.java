@@ -256,6 +256,7 @@ public class MapActivity extends FragmentActivity {
         mapTableLayout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
                 startActivity(intent);
             }
         });
