@@ -118,7 +118,7 @@ public class HikeInfoView {
 
         private void displayHike(HikeData result) {
             String name = "The Super Hike";
-            double distance = result.getDistance();  // in km
+            double distance = result.getDistance() / 1000;  // in km
             float rating = (float) result.getRating();
             double elevationMin = result.getMinElevation();
             double elevationMax = result.getMaxElevation();

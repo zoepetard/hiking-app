@@ -247,7 +247,7 @@ public class MapActivity extends FragmentActivity {
         hikeOwner.setText(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
 
         TextView hikeDistance = new TextView(this);
-        hikeDistance.setText(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance()));
+        hikeDistance.setText(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
 
         mapTableLayout.addView(hikeTitle);
         mapTableLayout.addView(hikeOwner);
