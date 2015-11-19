@@ -18,9 +18,16 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 /**
  * Created by pablo on 23/11/15.
  */
+<<<<<<< HEAD
 
 public class Annotation {
     private final static String LOG_FLAG = "Annotation";
+=======
+public class TextAnnotation {
+
+    private final static String LOG_FLAG = "Text annotation";
+    private String mComment;
+>>>>>>> Added field picture id to annotation and change post/get method's headers and minor refactoring
     private RawHikePoint mRawHikePoint;
     private String mText;
     private Drawable mPicture;
@@ -97,10 +104,10 @@ public class Annotation {
      * @throws JSONException
      */
     public static TextAnnotation parseFromJSON(JSONArray jsonArray) throws JSONException {
-        String comment = new String(jsonArray.getString(0));
-        LatLng latLng = new LatLng(jsonArray.getDouble(1), jsonArray.getDouble(2));
-        Date date = new Date(jsonArray.getLong(3));
-        double elevation = jsonArray.getDouble(4);
+        LatLng latLng = new LatLng(jsonArray.getDouble(0), jsonArray.getDouble(1));
+        Date date = new Date(jsonArray.getLong(2));
+        double elevation = jsonArray.getDouble(3);
+        String comment = new String(jsonArray.getString(4));
         return new TextAnnotation(comment, new RawHikePoint(latLng, date, elevation));
     }
 

@@ -40,10 +40,12 @@ interface LocalCache {
     
     List<Long> searchHike(String query);
 
+
     Drawable getPicture(long pictureId);
 
 
     void putPicture(Drawable picture, long pictureId);
+
 
 }
 
