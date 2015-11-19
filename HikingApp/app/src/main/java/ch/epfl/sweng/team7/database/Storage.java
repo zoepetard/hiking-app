@@ -1,6 +1,6 @@
 package ch.epfl.sweng.team7.database;
 
-<<<<<<< HEAD
+
 import android.content.Context;
 
 import java.io.FileInputStream;
@@ -15,16 +15,18 @@ import java.io.ObjectOutputStream;
 /**
  * Class to save/read a file from the internal storage of the phone
 >>>>>>> Rebase to master
+=======
+/**
+ * Class to save/read a Generic object from the internal storage of the phone
+>>>>>>> Created class to store generic objects in internal memory of the phone to be use to store images and other objects
  * Created by pablo on 18/11/15.
  */
 public class Storage {
-
-<<<<<<< HEAD
-    private final static String LOG_FLAG = "DB_Storage";
     /**
      * Method to save a generic object in the internal memory
+     *
      * @param genericObject
-     * @param ctx the context of the app
+     * @param ctx           the context of the app
      * @return
      * @throws IOException
      */
@@ -38,6 +40,7 @@ public class Storage {
 
     /**
      * Method to read a generic object from the internal memory
+     *
      * @param context
      * @param fileName
      * @return the object with the given filename
@@ -51,9 +54,4 @@ public class Storage {
         return object;
 
     }
-
-
-=======
-    //TODO
->>>>>>> Rebase to master
 }
