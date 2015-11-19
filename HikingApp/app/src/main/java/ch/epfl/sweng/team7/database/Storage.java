@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
  * Created by pablo on 18/11/15.
  */
 public class Storage {
+
+    private final static String LOG_FLAG = "DB_Storage";
     /**
      * Method to save a generic object in the internal memory
      * @param genericObject

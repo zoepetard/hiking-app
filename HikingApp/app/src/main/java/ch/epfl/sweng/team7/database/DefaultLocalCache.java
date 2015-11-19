@@ -18,6 +18,7 @@ class DefaultLocalCache implements LocalCache {
     private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
     private final HashMap<Long, HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private final HashMap<Long, UserData> mUsersCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
+    private final HashMap<Long, Picture> mPicturesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
 
 
     public boolean hasHike(long hikeId) {
@@ -56,6 +57,18 @@ class DefaultLocalCache implements LocalCache {
     public UserData getUserData(long userId) {
         return mUsersCache.get(userId);
     }
+
+    @Override
+    public Picture getPicture(long hikeId, long pictureId) {
+        return null;
+        //find hike with hikeId, then find the pictureID on that hike and return it from the picture list
+    }
+
+    @Override
+    public void postPicture(Picture picture) {
+        //TODO
+    }
+
 
     private class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
         private final int MAX_ENTRIES;

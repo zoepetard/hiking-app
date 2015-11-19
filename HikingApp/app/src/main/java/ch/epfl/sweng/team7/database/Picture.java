@@ -13,8 +13,11 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
  */
 
 public class Picture {
+
+    private final static String LOG_FLAG = "DB_Picture";
     private RawHikePoint mRawHikePoint;
     private long mHikeId;
+    private long mPictureId;
     private Image mPicture;
     public Picture(RawHikePoint rawHikePoint, Image picture ) {
         mRawHikePoint = rawHikePoint;
@@ -28,4 +31,6 @@ public class Picture {
     public long getHikeId () {
         return mHikeId;
     }
+
+    public long getPictureId () { return mPictureId; }
 }
