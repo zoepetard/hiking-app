@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
-import ch.epfl.sweng.team7.mockServer.MockServer;
 
 
 /**
@@ -32,7 +31,7 @@ import ch.epfl.sweng.team7.mockServer.MockServer;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://10.0.3.2:8080";//"http://footpath-1104.appspot.com";//
+    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -294,8 +293,7 @@ public class BackendTest extends TestCase {
      * @return a DatabaseClient object
      */
     private static DatabaseClient createDatabaseClient() throws DatabaseClientException {
-        return new MockServer();
-        //return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
+        return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 
     /**
