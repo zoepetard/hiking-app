@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-#from django.views.generic.simple import direct_to_template
 from django.core import serializers
 
 from google.appengine.api import users
@@ -28,7 +27,7 @@ def get_hike(request):
     #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
     #logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
     #if hikes!=None and len(hikes) > 0:
-    return response_hike(hike)
+    return response_data(hike.to_json())
     
 # Temporary: Function to quickly see the database in browser
 # Get multiple hikes, as specified in a list inside the field
@@ -61,34 +60,28 @@ def get_hikes_in_window(request):
     window_southwest = ndb.GeoPt(lat=lat_min, lon=lng_min)
     window_northeast = ndb.GeoPt(lat=lat_max, lon=lng_max)
     
-    # query database and assemble output
+    # query database
     hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
     
+    # check results of query and assemble output string
     hike_ids = ''
     for hike in hikes:
         if (hike.bb_southwest.lat < window_northeast.lat and hike.bb_southwest.lon < window_northeast.lon
             and hike.bb_northeast.lat > window_southwest.lat and hike.bb_northeast.lon > window_southwest.lon):
             hike_ids += hike_location(hike) + ','
+    # Remove trailing comma
     if(len(hike_ids) > 0):
         hike_ids = hike_ids[:-1]
     hike_ids = '[' + hike_ids + ']'
     
     # return result       
     hike_ids_string = "{\"hike_ids\":" + hike_ids + "}";
-    logger.debug("return string "+hike_ids_string)
-    return HttpResponse(hike_ids_string, content_type='application/json')
-    
+    return response_data(hike_ids_string)
+
+# Format a brief summary of the hike, i.e. it's ID,
+# and location information. Currently only formats the ID.
 def hike_location(hike):
     return str(hike.hike_id).strip('L')
-    
-# Create a hike for testing   
-def create_hike_one():
-    hike_one = Hike.query(Hike.hike_id == 1).fetch()
-    if(len(hike_one) < 1):
-        build_sample_hike(1, 1).put()
-    elif(len(hike_one) > 1):
-        for old_hike in hike_one[1:]:
-            old_hike.key.delete()
     
 def post_hike(request):
     if not request.method == 'POST':
@@ -107,7 +100,7 @@ def post_hike(request):
         for hike in Hike.query().fetch():
             if len(hike.hike_data) < 1000:
                 hike.key.delete()
-        return response_hike_id(342)
+        return response_id('hike_id', 342)
         
     #TODO: set test flag on hikes that should be automatically removed
         
@@ -129,7 +122,7 @@ def post_hike(request):
     hike.hike_id = new_key.id()
     hike.put()
                
-    return response_hike_id(new_key.id())
+    return response_id('hike_id', new_key.id())
     
 # Get a user. The numerical user ID is stored in the http request field "user_id"
 def get_user(request):
@@ -144,7 +137,7 @@ def get_user(request):
     if not user:
         return response_not_found()
         
-    return response_user(user)
+    return response_data(user.to_json())
     
 def post_user(request):
     if not request.method == 'POST':
@@ -174,7 +167,7 @@ def post_user(request):
     
     # Store new user in database and return the new id
     new_key = user.put()               
-    return response_user_id(new_key.id())
+    return response_id('user_id', new_key.id())
     
     
 def response_bad_request():
@@ -189,28 +182,17 @@ def response_not_found():
 def response_internal_error():
     return HttpResponse(status=500)
 
-def response_hike_id(hike_id):
-    return response_id('hike_id', hike_id)
-
-def response_user_id(user_id):
-    return response_id('user_id', user_id)
-
+# Create response to POST, containing JSON for a named int/long quantity.
 def response_id(id_name, id_value):
-    if not isinstance(id_value, ( int, long ) ):
+    if not isinstance(id_value, (int, long)):
         response_internal_error()
     id_string = str(id_value).strip('L')
-    return HttpResponse("{'"+id_name+"':"+id_string+"}",\
-                                content_type='application/json', status=201)
-                                
-def response_hike(hike):
-    hike_string = hike.to_json()
-            
-    logger.info('response_hike: return string '+repr(hike_string))
-    return HttpResponse(hike_string, content_type='application/json')
-    
-                       
-def response_user(user):
-    user_string = user.to_json()
-            
-    logger.info('response_user: return string '+repr(user_string))
-    return HttpResponse(user_string, content_type='application/json')
+    json_string = "{'" + id_name + "':" + id_string + "}"
+    return HttpResponse(json_string, content_type='application/json', status=201)
+        
+# Create response containing the data string. data should be valid JSON string.
+def response_data(data):
+    logger.info('response_string: return string '+data)
+    return HttpResponse(data, content_type='application/json')
+
+
