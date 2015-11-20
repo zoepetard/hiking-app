@@ -279,13 +279,18 @@ public class MapActivity extends FragmentActivity {
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
         toggleButton.setText("Start");
+
+        //Layout rules
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        //Setting button rules and displaying it
         toggleButton.setLayoutParams(lp);
         layout.addView(toggleButton, lp);
 
+        //click listener for button
         toggleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 gps.toggleTracking();
