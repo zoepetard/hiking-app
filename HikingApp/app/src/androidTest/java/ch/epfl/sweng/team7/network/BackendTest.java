@@ -9,7 +9,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import junit.framework.TestCase;
 
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -73,7 +72,9 @@ public class BackendTest extends TestCase {
         RawHikeData hikeData = createHikeData();
         final long hikeId = dbClient.postHike(hikeData);
         assertTrue(hikeId > 0);
-        // TODO remove hike
+
+        Thread.sleep(500);
+        dbClient.deleteHike(hikeId);
     }
 
     /**
@@ -88,7 +89,7 @@ public class BackendTest extends TestCase {
         // post a hike
         final long hikeId = dbClient.postHike(hikeData);
 
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         // retrieve the same hike
         RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
@@ -107,7 +108,8 @@ public class BackendTest extends TestCase {
                     serverHikeData.getHikePoints().get(i).getTime());
         }
 
-        // TODO remove hike
+        Thread.sleep(500);
+        dbClient.deleteHike(hikeId);
     }
 
     /**
@@ -127,7 +129,7 @@ public class BackendTest extends TestCase {
         newHikePoints.remove(2);
         RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints);
 
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         // post a modified hike with the same ID
         final long newHikeId = dbClient.postHike(newHikeData);
@@ -149,7 +151,8 @@ public class BackendTest extends TestCase {
                     serverHikeData.getHikePoints().get(i).getTime());
         }
 
-        // TODO remove hike
+        Thread.sleep(500);
+        dbClient.deleteHike(hikeId);
     }
 
     @Test
@@ -261,15 +264,6 @@ public class BackendTest extends TestCase {
         } catch (DatabaseClientException e) {
             // pass
         }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
-        // TODO(simon) delete test data with specially prepared package,
-        // needs to change once delete-function is implemented
-        dbClient.postHike(DummyHikeBuilder.buildRawHikeData(342));
-        Thread.sleep(1000);
     }
 
     // TODO(simon) test backend reaction to malformed input
