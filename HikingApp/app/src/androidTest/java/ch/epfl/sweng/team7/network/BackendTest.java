@@ -57,8 +57,8 @@ public class BackendTest extends TestCase {
      */
     @Test
     public void testGetHike() throws Exception {
-        final long hikeId = 1;
         DatabaseClient dbClient = createDatabaseClient();
+        final long hikeId = getExistingHikeID(dbClient);
         RawHikeData hikeData = dbClient.fetchSingleHike(hikeId);
         assertEquals(hikeId, hikeData.getHikeId());
     }
@@ -94,7 +94,7 @@ public class BackendTest extends TestCase {
         RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
 
         // Compare
-        assertEquals(serverHikeData.getHikeId(), hikeData.getHikeId());
+        assertEquals(serverHikeData.getHikeId(), hikeId);
         assertEquals(serverHikeData.getOwnerId(), hikeData.getOwnerId());
         assertEquals(serverHikeData.getDate(), hikeData.getDate());
         assertEquals(serverHikeData.getHikePoints().size(), hikeData.getHikePoints().size());
@@ -213,6 +213,16 @@ public class BackendTest extends TestCase {
      */
     private static DatabaseClient createDatabaseClient() throws DatabaseClientException {
         return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
+    }
+
+    /**
+     * Get the ID of some valid hike from the server
+     */
+    private static long getExistingHikeID(DatabaseClient dbClient) throws DatabaseClientException {
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
+        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        assertTrue("No hikes found on server", hikeList.size() > 0);
+        return hikeList.get(0);
     }
 }
 

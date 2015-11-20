@@ -30,26 +30,22 @@ def get_hike(request):
     #if hikes!=None and len(hikes) > 0:
     return response_hike(hike)
     
+# Temporary: Function to quickly see the database in browser
 # Get multiple hikes, as specified in a list inside the field
 # hike_ids of the GET request
 def get_hikes(request):
-    #for hike in Hike.query().fetch():
-    #    hike.key.delete()
-    
-    # Database testing function, TODO remove
-    #create_hike_one()
     
     hikes = Hike.query().fetch()
     
     all_hikes = ""
-    #all_hikes += hikezero.to_json() + '!! key=' + repr(hikezero.key.id()) + '\n'
-    for hike in hikes:#random_hike = hikes[0]
-        hike_string = hike.to_json() #hike_to_json(hike)
+    for hike in hikes:
+        hike_string = hike.to_json()
         all_hikes += hike_string + ' with key=' + repr(hike.key.id()) + '\n'
     
     return HttpResponse(all_hikes, content_type='application/javascript')
-    #return HttpResponse(serializers.serialize("json", random_hike), content_type='application/json')
  
+
+# Gets all hikes in a bounding box specified in the request.
 def get_hikes_in_window(request):
     
     # Get window from input
@@ -109,7 +105,8 @@ def post_hike(request):
         if not old_hike:
             return response_not_found()
             
-        # TODO: Authenticate if new owner matches old owner
+        if old_hike.owner_id != hike.owner_id:
+            return response_forbidden()
         
         hike.key = ndb.Key(Hike, hike.hike_id)
     
@@ -124,6 +121,9 @@ def post_hike(request):
     
 def response_bad_request():
     return HttpResponse(status=400)
+    
+def response_forbidden():
+    return HttpResponse(status=403)
     
 def response_not_found():
     return HttpResponse(status=404)
