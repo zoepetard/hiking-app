@@ -57,6 +57,10 @@ public final class GPSManager {
         }
         toggleListeners();
     }
+    
+    public Boolean tracking() {
+        return this.isTracking;
+    }
 
     /**
      * Method called to get user's last known coordinates.
