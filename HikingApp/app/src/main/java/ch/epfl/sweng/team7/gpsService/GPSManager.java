@@ -63,7 +63,7 @@ public final class GPSManager {
      * @return true if it is tracking, false otherwise
      */
     public Boolean tracking() {
-        return this.mIsTracking;
+        return mIsTracking;
     }
 
     /**
