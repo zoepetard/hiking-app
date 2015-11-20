@@ -281,7 +281,8 @@ public class MapActivity extends FragmentActivity {
         button.setText("Toggle");
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_BOTTOM);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         button.setLayoutParams(lp);
         layout.addView(button, lp);
 
