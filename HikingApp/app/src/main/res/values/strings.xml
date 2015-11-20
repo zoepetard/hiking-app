@@ -49,4 +49,8 @@
     <string name="title_activity_user_data">UserDataActivity</string>
 
     <string name="num_hikes_fmt">Number of hikes: %d</string>
+
+    <!-- IDs -->
+    <item name="button_toggle_tracking" type="id"/>
+
 </resources>
