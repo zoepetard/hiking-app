@@ -124,7 +124,7 @@ public class MockServer implements DatabaseClient {
      * @throws DatabaseClientException if unable to delete user
      */
     public void deleteHike(long hikeId) throws DatabaseClientException {
-        // TODO(simon) iss76 implement
+        mHikeDataBase.remove(hikeId);
     }
 
     /**

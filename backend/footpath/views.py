@@ -205,7 +205,7 @@ def post_user(request):
         if not old_user:
             return response_not_found()
             
-        # TODO: authenticate iss77
+        # TODO(simon) authenticate iss77
         
         # Set the new user's database key to an existing one,
         # so that one will be overwritten
