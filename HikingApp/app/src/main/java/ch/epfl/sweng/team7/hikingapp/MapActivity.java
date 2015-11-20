@@ -276,7 +276,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void createTrackingToggleButton() {
-        final Button button = (Button) findViewById(R.id.button_id);
+        final Button button = (Button) findViewById(R.id.button_toggle_tracking);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 gps.toggleTracking();
