@@ -51,6 +51,10 @@ public class NotificationHandler {
         mNotificationManager.notify(R.id.feedback_notification, mBuilder.build());
     }
 
+    public void display(String title, String content) {
+        
+    }
+
     public void hide() {
         mNotificationManager.cancel(R.id.feedback_notification);
     }
