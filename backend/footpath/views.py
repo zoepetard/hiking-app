@@ -123,7 +123,29 @@ def post_hike(request):
     hike.put()
                
     return response_id('hike_id', new_key.id())
+
+# Delete a user. The hike can only be deleted by its author.
+def delete_hike(request):
+    if not request.method == 'POST':
+        return response_bad_request()
+
+    #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
+    delete_hike_id = int(json.loads(request.body)['hike_id'])
     
+    #if not delete_user_id == visitor_id:
+    #    return response_forbidden()
+    
+    hike_obj = ndb.Key(Hike, delete_hike_id).get()
+    visitor_id = hike.owner_id #TODO(simon) remove iss77
+    if not hike_obj:
+        return response_not_found()
+    if not hike_obj.owner_id == visitor_id:
+        return response_forbidden()
+
+    hike_obj.key.delete()
+    return response_data('')
+
+
 # Get a user. The numerical user ID is stored in the http request field "user_id"
 def get_user(request):
     
@@ -170,12 +192,9 @@ def post_user(request):
     return response_id('user_id', new_key.id())
 
 # Delete a user. The author of this request can only delete himself.
-# Returns the ID that was deleted in the response.
 def delete_user(request):
     if not request.method == 'POST':
         return response_bad_request()
-    
-    logger.info('request: '+request.body)
 
     #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
     delete_user_id = int(json.loads(request.body)['user_id'])

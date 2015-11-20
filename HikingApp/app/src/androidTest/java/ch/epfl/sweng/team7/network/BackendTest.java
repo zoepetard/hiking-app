@@ -247,14 +247,14 @@ public class BackendTest extends TestCase {
     @After
     public void tearDown() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
-        // TODO delete test data with specially prepared package,
+        // TODO(simon) delete test data with specially prepared package,
         // needs to change once delete-function is implemented
         dbClient.postHike(DummyHikeBuilder.buildRawHikeData(342));
         Thread.sleep(1000);
     }
 
-    // TODO test backend reaction to malformed input
-    // TODO test other backend interface (like post_hikes)
+    // TODO(simon) test backend reaction to malformed input
+    // TODO(simon) test other backend interface (like post_hikes)
 
 
 
