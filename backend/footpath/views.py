@@ -176,12 +176,14 @@ def delete_user(request):
         return response_bad_request()
 
     #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
-    delete_user_id = int(json.loads(repr(request.body))['user_id']
+    delete_user_id = int(json.loads(repr(request.body)))['user_id']
+
     #if not delete_user_id == visitor_id:
     #    return response_forbidden()
-                         
-    user = ndb.Key(User, delete_user_id).get()
-    if not user:
+
+    delete_user_id = 0
+    user_obj = ndb.Key(User, delete_user_id).get()
+    if not user_obj:
         return response_not_found()
                          
     user.delete()

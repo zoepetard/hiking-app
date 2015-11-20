@@ -69,7 +69,6 @@ public interface DatabaseClient {
      */
     long postUserData(RawUserData rawUserData) throws DatabaseClientException;
 
-
     /**
      * Fetch data for a user from the server
      *
@@ -79,5 +78,12 @@ public interface DatabaseClient {
      */
     RawUserData fetchUserData(long userId) throws DatabaseClientException;
 
+    /**
+     * Delete a user from the server. A user can only delete himself.
+     *
+     * @param userId - ID of the user
+     * @throws DatabaseClientException if unable to delete user
+     */
+    void deleteUser(long userId) throws DatabaseClientException;
 
 }

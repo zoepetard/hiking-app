@@ -170,7 +170,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * TODO Implement on server side ability to handle this request
      * Fetch data for a user from the server
      *
      * @param userId - mail address of the user
@@ -190,6 +189,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
             throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Delete a user from the server. A user can only delete himself.
+     *
+     * @param userId - ID of the user
+     * @throws DatabaseClientException if unable to delete user
+     */
+    public void deleteUser(long userId) throws DatabaseClientException {
+        try {
+            URL url = new URL(mServerUrl + "/delete_user/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("user_id", Long.toString(userId));
+            conn.connect();
+            String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonUserID = new JSONObject(stringUserData);
+            if(jsonUserID.getLong("user_id") != userId) {
+                throw new DatabaseClientException("Deleting the user failed.");
+            }
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
         }
     }
 
