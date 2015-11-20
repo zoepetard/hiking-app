@@ -5,6 +5,7 @@ from google.appengine.api import users
 
 from footpath.models import *
 from footpath.user import *
+from footpath.auth import *
 
 import logging
 import json
@@ -14,7 +15,10 @@ logger = logging.getLogger(__name__)
 
 def get_hike(request):
     
-    #logger.info('got request %s', repr(request))
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
     request_hike_id = int(request.META.get('HTTP_HIKE_ID', -1))
     logger.info('got request for hike id %s', repr(request_hike_id))
     
@@ -23,10 +27,7 @@ def get_hike(request):
         return response_not_found()
          
     # TODO: remove old query example code
-    #random_hike = Hike.query().order(-Hike.date)
     #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    #logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
-    #if hikes!=None and len(hikes) > 0:
     return response_data(hike.to_json())
     
 # Temporary: Function to quickly see the database in browser
@@ -47,6 +48,10 @@ def get_hikes(request):
 
 # Gets all hikes in a bounding box specified in the request.
 def get_hikes_in_window(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
     
     # Get window from input
     request_bounding_box = request.META.get('HTTP_BOUNDING_BOX', -1)
@@ -84,17 +89,24 @@ def hike_location(hike):
     return str(hike.hike_id).strip('L')
     
 def post_hike(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
     if not request.method == 'POST':
         return response_bad_request()
-    #author = request.POST.get('author') TODO some sort of authentification needs to happen here iss77
+
     logger.info('POST request '+repr(request.body))
     
     # Create new Hike object
     hike = build_hike_from_json(request.body)
     if not hike:
         return response_bad_request()
-        
-        
+
+    #if not visitor_id == hike.owner_id:    #TODO(simon) iss77
+    #return response_forbidden()
+    
     # Temporary: Clear database with specially prepared post request iss77
     if(hike.hike_id == 342):
         for hike in Hike.query().fetch():
@@ -102,14 +114,14 @@ def post_hike(request):
                 hike.key.delete()
         return response_id('hike_id', 342)
         
-    #TODO: set test flag on hikes that should be automatically removed
+    #TODO(simon): set test flag on hikes that should be automatically removed
         
     # If update hike: Authenticate and check for existing hikes in database iss77
     if(hike.hike_id >= 0):
         old_hike = ndb.Key(Hike, hike.hike_id).get()
         
         if not old_hike:
-            return response_forbidden()
+            return response_not_found()
             
         if old_hike.owner_id != hike.owner_id:
             return response_forbidden()
@@ -118,7 +130,6 @@ def post_hike(request):
     
     new_key = hike.put()
     
-    #hike = new_key.get()
     hike.hike_id = new_key.id()
     hike.put()
                
@@ -126,13 +137,17 @@ def post_hike(request):
 
 # Delete a user. The hike can only be deleted by its author.
 def delete_hike(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
     if not request.method == 'POST':
         return response_bad_request()
 
-    #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
     delete_hike_id = int(json.loads(request.body)['hike_id'])
     
-    #if not delete_user_id == visitor_id:
+    #if not delete_user_id == visitor_id: TODO(simon) iss77
     #    return response_forbidden()
     
     hike_obj = ndb.Key(Hike, delete_hike_id).get()
@@ -149,6 +164,10 @@ def delete_hike(request):
 # Get a user. The numerical user ID is stored in the http request field "user_id"
 def get_user(request):
     
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
     request_user_id = int(request.META.get('HTTP_USER_ID', -1))
     logger.info('get_user got request for user id %s', repr(request_user_id))
     
@@ -160,13 +179,17 @@ def get_user(request):
         return response_not_found()
         
     return response_data(user.to_json())
-    
+
+# Create a new user in the database, or update a current one
 def post_user(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
     if not request.method == 'POST':
         return response_bad_request()
         
-    #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
-    
     logger.info('POST request '+repr(request.body))
     
     # Create new Hike object
@@ -193,10 +216,14 @@ def post_user(request):
 
 # Delete a user. The author of this request can only delete himself.
 def delete_user(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
     if not request.method == 'POST':
         return response_bad_request()
 
-    #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
     delete_user_id = int(json.loads(request.body)['user_id'])
 
     #if not delete_user_id == visitor_id:
