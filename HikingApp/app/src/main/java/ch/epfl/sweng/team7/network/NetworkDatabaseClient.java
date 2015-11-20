@@ -200,15 +200,15 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public void deleteUser(long userId) throws DatabaseClientException {
         try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_id", userId);
+
             URL url = new URL(mServerUrl + "/delete_user/");
-            HttpURLConnection conn = getConnection(url, "GET");
-            conn.setRequestProperty("user_id", Long.toString(userId));
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
             conn.connect();
-            String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonUserID = new JSONObject(stringUserData);
-            if(jsonUserID.getLong("user_id") != userId) {
-                throw new DatabaseClientException("Deleting the user failed.");
-            }
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
         } catch (IOException e) {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
