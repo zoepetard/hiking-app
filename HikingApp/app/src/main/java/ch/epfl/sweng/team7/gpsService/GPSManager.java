@@ -190,6 +190,9 @@ public final class GPSManager {
         }
     }
 
+    /**
+     * Method called to store recorded hike
+     */
     private void storeHike() {
         RawHikeData rawHikeData = null;
         try {
