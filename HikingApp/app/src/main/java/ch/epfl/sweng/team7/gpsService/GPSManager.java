@@ -176,7 +176,7 @@ public final class GPSManager {
             //TODO
         }
         try {
-            storeHike(rawHikeData);
+            storeHikeInDB(rawHikeData);
         } catch (DatabaseClientException e) {
             //TODO, we need the button to store hikes to show the error message to the user.
         }
@@ -205,7 +205,7 @@ public final class GPSManager {
      *
      * @param rawHikeData
      */
-    private void storeHike(RawHikeData rawHikeData) throws DatabaseClientException {
+    private void storeHikeInDB(RawHikeData rawHikeData) throws DatabaseClientException {
         DataManager dataManager = DataManager.getInstance();
         try {
             dataManager.postHike(rawHikeData);
