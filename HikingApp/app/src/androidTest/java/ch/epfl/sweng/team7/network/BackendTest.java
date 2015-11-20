@@ -202,6 +202,26 @@ public class BackendTest extends TestCase {
         RawUserData rawUserData = createUserData();
         long userId = dbClient.postUserData(rawUserData);
         assertTrue("Server should set positive user ID", userId >= 0);
+
+        // TODO implement delete user
+        //dbClient.deleteUser(userId);
+    }
+
+    @Test
+    public void testGetUserData() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        RawUserData rawUserData = createUserData();
+        long userId = dbClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+
+        Thread.sleep(500);
+        RawUserData serverRawUserData = dbClient.fetchUserData(userId);
+
+        assertEquals(userId, serverRawUserData.getUserId());
+        assertEquals(rawUserData.getMailAddress(), serverRawUserData.getMailAddress());
+        assertEquals(rawUserData.getUserName(), serverRawUserData.getUserName());
+
+        // TODO implement delete user
         //dbClient.deleteUser(userId);
     }
 

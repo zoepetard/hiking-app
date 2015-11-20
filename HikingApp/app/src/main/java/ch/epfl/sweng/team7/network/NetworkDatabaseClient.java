@@ -146,8 +146,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * Prototype of how to send user data to server
-     * TODO implement user data storage on server and modify this accordingly
+     * Send user data to the server.  Returns the database ID
+     * that this user was assigned from the database.
      *
      * @param rawUserData - RawUserData object
      * @return user id
