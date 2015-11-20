@@ -31,7 +31,7 @@ import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://10.0.3.2:8080";//"http://footpath-1104.appspot.com";//
+    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -45,10 +45,9 @@ public class BackendTest extends TestCase {
         // Get a DefaultNetworkProvider connection
         DefaultNetworkProvider networkProvider = new DefaultNetworkProvider();
         HttpURLConnection connection = networkProvider.getConnection(url);
+        connection.setConnectTimeout(2000);
         connection.connect();
         connection.disconnect();
-        // TODO set network timeout
-        // TODO in DBCLient check for valid internet connection
     }
 
     /**
