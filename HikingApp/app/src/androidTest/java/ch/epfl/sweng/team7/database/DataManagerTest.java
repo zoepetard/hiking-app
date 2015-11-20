@@ -21,6 +21,7 @@ import ch.epfl.sweng.team7.network.RawUserData;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.fail;
 
 
 /**
@@ -78,18 +79,15 @@ public class DataManagerTest {
 
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {
-        boolean exceptionIsThrown = false;
 
         try {
             DataManager dataManager = DataManager.getInstance();
             long unknownId = -1;
             dataManager.getUserData(unknownId);
-        } catch (NullPointerException e) {
-            exceptionIsThrown = true;
+            fail("Unknown user ID didn't trigger exception.");
+        } catch (DataManagerException e) {
+            // pass
         }
-
-        assertEquals("Exception wasn't thrown ", true, exceptionIsThrown);
-
     }
 
 
@@ -98,6 +96,7 @@ public class DataManagerTest {
         boolean exceptionIsThrown = false;
 
         try {
+            // TODO this test should be in RawUserDataTest
             RawUserData rawUserData = new RawUserData(-3, "a", "gmail.com"); // bad data
             DataManager dataManager = DataManager.getInstance();
             dataManager.setUserData(rawUserData);
