@@ -42,4 +42,5 @@ gen-external-apklibs
 *.pyc
 run_server.sh
 set_path.sh
+upload_server.sh
 .DS_Store
