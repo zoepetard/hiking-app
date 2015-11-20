@@ -15,7 +15,7 @@ public class NotificationHandler {
     private static NotificationHandler instance = new NotificationHandler();
 
     private final String DEFAULT_NOTIFICATION_TITLE = "Tracking a hike";
-    private final String DEFAULT_NOTIFICATION_CONTENT = "Click here for more information";
+    private final String DEFAULT_NOTIFICATION_CONTENT = "Click here to check on your progress";
 
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNotificationManager;
