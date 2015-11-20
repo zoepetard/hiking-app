@@ -57,7 +57,11 @@ public final class GPSManager {
         }
         toggleListeners();
     }
-    
+
+    /**
+     * Method called to get the tracking status
+     * @return true if it is tracking, false otherwise
+     */
     public Boolean tracking() {
         return this.isTracking;
     }
