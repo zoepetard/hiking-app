@@ -150,14 +150,14 @@ def delete_hike(request):
     #if not delete_user_id == visitor_id: TODO(simon) iss77
     #    return response_forbidden()
     
-    hike_obj = ndb.Key(Hike, delete_hike_id).get()
+    hike = ndb.Key(Hike, delete_hike_id).get()
     visitor_id = hike.owner_id #TODO(simon) remove iss77
-    if not hike_obj:
+    if not hike:
         return response_not_found()
-    if not hike_obj.owner_id == visitor_id:
+    if not hike.owner_id == visitor_id:
         return response_forbidden()
 
-    hike_obj.key.delete()
+    hike.key.delete()
     return response_data('')
 
 #TODO(simon) iss76: get_user by email with less strict authentication

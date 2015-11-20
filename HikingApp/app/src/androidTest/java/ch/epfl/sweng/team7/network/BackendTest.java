@@ -197,6 +197,25 @@ public class BackendTest extends TestCase {
     }
 
     @Test
+    public void testDeleteHike() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        RawHikeData rawHikeData = createHikeData();
+        long hikeId = dbClient.postHike(rawHikeData);
+        assertTrue("Server should set positive hike ID", hikeId >= 0);
+
+        Thread.sleep(500);
+        dbClient.deleteHike(hikeId);
+
+        Thread.sleep(500);
+        try {
+            dbClient.fetchSingleHike(hikeId);
+            fail("Found hike in the database after deleting it.");
+        } catch (DatabaseClientException e) {
+            // pass
+        }
+    }
+
+    @Test
     public void testPostUserData() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
         RawUserData rawUserData = createUserData();
