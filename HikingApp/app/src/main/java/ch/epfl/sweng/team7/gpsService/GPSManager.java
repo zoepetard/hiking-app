@@ -11,6 +11,7 @@ import android.util.Log;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
+import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
@@ -36,6 +37,7 @@ public final class GPSManager {
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
+    private NotificationHandler notification;
 
     private GPSManager() {
         setupServiceConnection();
@@ -87,6 +89,8 @@ public final class GPSManager {
     public void startService(Context context) {
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
+        notification = NotificationHandler.getInstance();
+        notification.setup(context);
     }
 
     /**
@@ -160,6 +164,7 @@ public final class GPSManager {
     private void startTracking() {
         this.mIsTracking = true;
         gpsPath = new GPSPath();
+        notification.display();
     }
 
     /**
