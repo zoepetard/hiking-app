@@ -7,4 +7,6 @@ public class NotificationHandler {
     public static NotificationHandler getInstance() {
         return instance;
     }
+
+    private NotificationHandler() {}
 }
