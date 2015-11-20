@@ -278,7 +278,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         final Button button = new Button(this);
-        button.setText("Toggle");
+        button.setText("Start");
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -289,6 +289,8 @@ public class MapActivity extends FragmentActivity {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 gps.toggleTracking();
+                Button toggleButton = (Button) findViewById(R.id.button_toggle_tracking);
+                toggleButton.setText((gps.tracking())?"Stop":"Start");
             }
         });
     }
