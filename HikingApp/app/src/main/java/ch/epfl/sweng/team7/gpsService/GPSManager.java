@@ -28,7 +28,7 @@ public final class GPSManager {
 
     //GPS stored information
     private GPSPath gpsPath = null;
-    private boolean isTracking = false;
+    private boolean mIsTracking = false;
     private GPSFootPrint lastFootPrint = null;
 
 
@@ -50,7 +50,7 @@ public final class GPSManager {
      * on/off, according to previous state.
      */
     public void toggleTracking() {
-        if (!isTracking) {
+        if (!mIsTracking) {
             startTracking();
         } else {
             stopTracking();
@@ -63,7 +63,7 @@ public final class GPSManager {
      * @return true if it is tracking, false otherwise
      */
     public Boolean tracking() {
-        return this.isTracking;
+        return this.mIsTracking;
     }
 
     /**
@@ -115,13 +115,13 @@ public final class GPSManager {
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
-            if (this.isTracking) gpsPath.addFootPrint(this.lastFootPrint);
+            if (this.mIsTracking) gpsPath.addFootPrint(this.lastFootPrint);
         }
     }
 
     @Override
     public String toString() {
-        String gpsPathInformation = (isTracking && gpsPath != null) ? String.format("yes -> %s", gpsPath.toString()) : "No";
+        String gpsPathInformation = (mIsTracking && gpsPath != null) ? String.format("yes -> %s", gpsPath.toString()) : "No";
         String lastFootPrintCoords = (this.lastFootPrint != null) ? this.lastFootPrint.getGeoCoords().toString() : "null";
         long lastFootPrintTimeStamp = (this.lastFootPrint != null) ? this.lastFootPrint.getTimeStamp() : 0;
         return String.format("\n|---------------------------\n" +
@@ -158,7 +158,7 @@ public final class GPSManager {
      * storing user's coordinates.
      */
     private void startTracking() {
-        this.isTracking = true;
+        this.mIsTracking = true;
         gpsPath = new GPSPath();
     }
 
@@ -168,7 +168,7 @@ public final class GPSManager {
      * previous ones.
      */
     private void stopTracking() {
-        this.isTracking = false;
+        this.mIsTracking = false;
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         //TODO call storeHike() after issue #86 is fixed
         gpsPath = null;
@@ -180,7 +180,7 @@ public final class GPSManager {
      */
     private void toggleListeners() {
         if (gpsService != null) {
-            if (isTracking) {
+            if (mIsTracking) {
                 gpsService.enableListeners();
             } else {
                 gpsService.disableListeners();
