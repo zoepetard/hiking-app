@@ -6,8 +6,10 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -63,6 +65,9 @@ public class MapActivity extends FragmentActivity {
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
+
+        //creates a start/stop tracking button
+        createTrackingToggleButton();
 
     }
 
@@ -267,6 +272,28 @@ public class MapActivity extends FragmentActivity {
                 Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
                 intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void createTrackingToggleButton() {
+        Button toggleButton = new Button(this);
+        toggleButton.setText("Start");
+        toggleButton.setId(R.id.button_tracking_toggle);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        toggleButton.setLayoutParams(lp);
+        layout.addView(toggleButton, lp);
+
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                gps.toggleTracking();
+                Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
+                toggleButton.setText((gps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
             }
         });
     }

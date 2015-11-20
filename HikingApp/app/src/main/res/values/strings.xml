@@ -36,6 +36,8 @@
     <string name="change_name">Change Nickname</string>
     <string name="goto_map">Go To Map</string>
     <string name="button_done">Done</string>
+    <string name="button_start_tracking">Start</string>
+    <string name="button_stop_tracking">Stop</string>>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
@@ -49,4 +51,8 @@
     <string name="title_activity_user_data">UserDataActivity</string>
 
     <string name="num_hikes_fmt">Number of hikes: %d</string>
+
+    <!-- IDs -->
+    <item name="button_tracking_toggle" type="id"/>
+
 </resources>
