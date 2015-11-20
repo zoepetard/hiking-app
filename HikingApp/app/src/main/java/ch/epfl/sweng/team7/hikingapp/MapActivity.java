@@ -293,7 +293,7 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 gps.toggleTracking();
                 Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                toggleButton.setText((gps.tracking())?R.string.button_stop_tracking:R.string.button_start_tracking);
+                toggleButton.setText((gps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
             }
         });
     }
