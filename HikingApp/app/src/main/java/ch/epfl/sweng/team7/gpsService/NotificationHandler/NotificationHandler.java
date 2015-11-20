@@ -33,6 +33,7 @@ public class NotificationHandler {
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MapActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
