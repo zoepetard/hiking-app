@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -63,6 +64,9 @@ public class MapActivity extends FragmentActivity {
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
+
+        //creates a start/stop tracking button
+        createTrackingToggleButton();
 
     }
 
@@ -267,6 +271,15 @@ public class MapActivity extends FragmentActivity {
                 Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
                 intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void createTrackingToggleButton() {
+        final Button button = (Button) findViewById(R.id.button_id);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                gps.toggleTracking();
             }
         });
     }
