@@ -18,6 +18,7 @@ class User(ndb.Model):
     # Parse JSON string to data. Throw exception on malformed input
     def from_json(self, json_string):
         json_object = json.loads(json_string)
+        self.request_user_id = json_object['user_id']
         self.name = json_object['user_name']
         self.mail_address = json_object['mail_address']
         logger.info('Created user %s with email %s', self.name, self.mail.address)

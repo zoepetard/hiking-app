@@ -23,8 +23,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.team7.database.UserData;
-
 
 /**
  * Class to get and post hikes in the server
@@ -157,7 +155,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/post_user_data");
+            URL url = new URL(mServerUrl + "/post_user/");
             HttpURLConnection conn = getConnection(url, "POST");
             byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
             conn.connect();

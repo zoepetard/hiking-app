@@ -116,7 +116,7 @@ def post_hike(request):
         old_hike = ndb.Key(Hike, hike.hike_id).get()
         
         if not old_hike:
-            return response_not_found()
+            return response_forbidden()
             
         if old_hike.owner_id != hike.owner_id:
             return response_forbidden()
@@ -140,17 +140,41 @@ def get_user(request):
     if request_user_id < 0:
         return response_not_found()
     
-    user = ndb.Key(Hike, request_hike_id).get()
-    if not hike:
+    user = ndb.Key(User, request_user_id).get()
+    if not user:
         return response_not_found()
-         
-    # TODO: remove old query example code
-    #random_hike = Hike.query().order(-Hike.date)
-    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    #logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
-    #if hikes!=None and len(hikes) > 0:
-    return response_hike(hike)
+        
+    return response_user(user)
     
+def post_user(request):
+    if not request.method == 'POST':
+        return response_bad_request()
+        
+    #author = request.POST.get('author') TODO some sort of authentification needs to happen here
+    
+    logger.info('POST request '+repr(request.body))
+    
+    # Create new Hike object
+    user = build_user_from_json(request.body)
+    if not user:
+        return response_bad_request()
+        
+    # If update hike: Authenticate and check for existing hikes in database
+    if(user.request_user_id >= 0):
+        old_user = ndb.Key(User, user.request_user_id).get()
+        
+        if not old_user:
+            return response_forbidden()
+            
+        # TODO: authenticate
+        
+        # Set the new user's database key to an existing one,
+        # so that one will be overwritten
+        user.key = ndb.Key(User, user.request_user_id)
+    
+    # Store new user in database and return the new id
+    new_key = user.put()               
+    return response_user_id(new_key.id())
     
     
 def response_bad_request():
@@ -166,15 +190,27 @@ def response_internal_error():
     return HttpResponse(status=500)
 
 def response_hike_id(hike_id):
-    if not isinstance(hike_id, ( int, long ) ):
+    return response_id('hike_id', hike_id)
+
+def response_user_id(user_id):
+    return response_id('user_id', user_id)
+
+def response_id(id_name, id_value):
+    if not isinstance(id_value, ( int, long ) ):
         response_internal_error()
-    hike_id_string = str(hike_id).strip('L')
-    return HttpResponse("{'hike_id':"+hike_id_string+"}",\
+    id_string = str(id_value).strip('L')
+    return HttpResponse("{'"+id_name+"':"+id_string+"}",\
                                 content_type='application/json', status=201)
                                 
 def response_hike(hike):
     hike_string = hike.to_json()
             
-    logger.info('return string '+repr(hike_string))
+    logger.info('response_hike: return string '+repr(hike_string))
     return HttpResponse(hike_string, content_type='application/json')
     
+                       
+def response_user(user):
+    user_string = user.to_json()
+            
+    logger.info('response_user: return string '+repr(user_string))
+    return HttpResponse(user_string, content_type='application/json')
