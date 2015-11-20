@@ -110,9 +110,16 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public long postHike(RawHikeData hike) throws DatabaseClientException {
-        long hikeId = mAssignedHikeID;
-        mAssignedHikeID++;
-        hike.setHikeId(hikeId);
+        long hikeId = hike.getHikeId();
+        if(hikeId > 0) {
+            if(!hasHike(hikeId)) {
+                throw new DatabaseClientException("Setting Hike that's not there.");
+            }
+        } else {
+            hikeId = mAssignedHikeID;
+            mAssignedHikeID++;
+            hike.setHikeId(hikeId);
+        }
         putHike(hike);
         return hikeId;
     }

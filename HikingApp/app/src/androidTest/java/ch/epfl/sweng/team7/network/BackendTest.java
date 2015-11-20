@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
+import ch.epfl.sweng.team7.mockServer.MockServer;
 
 
 /**
@@ -293,7 +294,8 @@ public class BackendTest extends TestCase {
      * @return a DatabaseClient object
      */
     private static DatabaseClient createDatabaseClient() throws DatabaseClientException {
-        return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
+        return new MockServer();
+        //return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 
     /**
