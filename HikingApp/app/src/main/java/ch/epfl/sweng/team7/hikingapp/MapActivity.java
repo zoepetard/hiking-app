@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -276,7 +277,14 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void createTrackingToggleButton() {
-        final Button button = (Button) findViewById(R.id.button_toggle_tracking);
+        final Button button = new Button(this);
+        button.setText("Toggle");
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_BOTTOM);
+        button.setLayoutParams(lp);
+        layout.addView(button, lp);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 gps.toggleTracking();
