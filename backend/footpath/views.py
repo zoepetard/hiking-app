@@ -75,7 +75,7 @@ def get_hikes_in_window(request):
     
     # return result       
     hike_ids_string = "{\"hike_ids\":" + hike_ids + "}";
-    logger.info("return string "+hike_ids_string)
+    logger.debug("return string "+hike_ids_string)
     return HttpResponse(hike_ids_string, content_type='application/json')
     
 def hike_location(hike):
@@ -100,6 +100,14 @@ def post_hike(request):
     hike = build_hike_from_json(request.body)
     if not hike:
         return response_bad_request()
+        
+        
+    # Temporary: Clear database with specially prepared post request
+    if(hike.hike_id == 342):
+        for hike in Hike.query().fetch():
+            if len(hike.hike_data) < 1000:
+                hike.key.delete()
+        return response_hike_id(342)
         
     #TODO: set test flag on hikes that should be automatically removed
         

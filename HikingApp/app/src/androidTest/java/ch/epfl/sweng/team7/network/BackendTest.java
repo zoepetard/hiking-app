@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import junit.framework.TestCase;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -193,6 +194,15 @@ public class BackendTest extends TestCase {
         LatLngBounds bounds = new LatLngBounds(new LatLng(42.840628, -49.093879), new LatLng(55.971414, -18.178352));
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
         assertEquals("Found Hike in the Atlantic.", 0, hikeList.size());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        // TODO delete test data with specially prepared package,
+        // needs to change once delete-function is implemented
+        dbClient.postHike(DummyHikeBuilder.buildRawHikeData(342));
+        Thread.sleep(1000);
     }
 
     // TODO test backend reaction to malformed input
