@@ -163,9 +163,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("user_id");
         } catch (IOException e) {
-            throw new DatabaseClientException();
+            throw new DatabaseClientException(e);
         } catch (JSONException e) {
-            throw new DatabaseClientException("Post unsuccessful: " + e.getMessage());
+            throw new DatabaseClientException(e);
         }
     }
 

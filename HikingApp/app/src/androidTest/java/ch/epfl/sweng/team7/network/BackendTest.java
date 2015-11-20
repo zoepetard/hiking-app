@@ -196,6 +196,15 @@ public class BackendTest extends TestCase {
         assertEquals("Found Hike in the Atlantic.", 0, hikeList.size());
     }
 
+    @Test
+    public void testPostUserData() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        RawUserData rawUserData = createUserData();
+        long userId = dbClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+        //dbClient.deleteUser(userId);
+    }
+
     @After
     public void tearDown() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
@@ -208,12 +217,22 @@ public class BackendTest extends TestCase {
     // TODO test backend reaction to malformed input
     // TODO test other backend interface (like post_hikes)
 
+
+
     /**
      * Create a valid HikeData object
      * @return a HikeData object
      */
     private static RawHikeData createHikeData() throws HikeParseException {
         return DummyHikeBuilder.buildRawHikeData(RawHikeData.HIKE_ID_UNKNOWN);
+    }
+
+    /**
+     * Create a valid RawUserData object
+     * @return a RawUserData object
+     */
+    private static RawUserData createUserData() throws HikeParseException {
+        return new RawUserData(-1, "Bort", "bort@googlemail.com");
     }
 
     /**
