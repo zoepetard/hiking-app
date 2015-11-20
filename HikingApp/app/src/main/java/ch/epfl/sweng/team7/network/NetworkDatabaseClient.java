@@ -152,7 +152,21 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @throws DatabaseClientException if unable to delete user
      */
     public void deleteHike(long hikeId) throws DatabaseClientException {
-        // TODO(simon) iss76 implement
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("hike_id", hikeId);
+
+            URL url = new URL(mServerUrl + "/delete_hike/");
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
     }
 
     /**
