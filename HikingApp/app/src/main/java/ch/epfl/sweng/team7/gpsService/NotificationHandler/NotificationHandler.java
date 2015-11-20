@@ -21,7 +21,7 @@ public class NotificationHandler {
         return instance;
     }
 
-    public void setupFeedbackNotification(Context context) {
+    public void setup(Context context) {
         mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification_icon)
