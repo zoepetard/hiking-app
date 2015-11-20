@@ -86,7 +86,7 @@ def hike_location(hike):
 def post_hike(request):
     if not request.method == 'POST':
         return response_bad_request()
-    #author = request.POST.get('author') TODO some sort of authentification needs to happen here
+    #author = request.POST.get('author') TODO some sort of authentification needs to happen here iss77
     logger.info('POST request '+repr(request.body))
     
     # Create new Hike object
@@ -95,7 +95,7 @@ def post_hike(request):
         return response_bad_request()
         
         
-    # Temporary: Clear database with specially prepared post request
+    # Temporary: Clear database with specially prepared post request iss77
     if(hike.hike_id == 342):
         for hike in Hike.query().fetch():
             if len(hike.hike_data) < 1000:
@@ -104,7 +104,7 @@ def post_hike(request):
         
     #TODO: set test flag on hikes that should be automatically removed
         
-    # If update hike: Authenticate and check for existing hikes in database
+    # If update hike: Authenticate and check for existing hikes in database iss77
     if(hike.hike_id >= 0):
         old_hike = ndb.Key(Hike, hike.hike_id).get()
         
@@ -143,7 +143,7 @@ def post_user(request):
     if not request.method == 'POST':
         return response_bad_request()
         
-    #author = request.POST.get('author') TODO some sort of authentification needs to happen here
+    #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
     
     logger.info('POST request '+repr(request.body))
     
@@ -157,9 +157,9 @@ def post_user(request):
         old_user = ndb.Key(User, user.request_user_id).get()
         
         if not old_user:
-            return response_forbidden()
+            return response_not_found()
             
-        # TODO: authenticate
+        # TODO: authenticate iss77
         
         # Set the new user's database key to an existing one,
         # so that one will be overwritten
@@ -168,8 +168,26 @@ def post_user(request):
     # Store new user in database and return the new id
     new_key = user.put()               
     return response_id('user_id', new_key.id())
-    
-    
+
+# Delete a user. The author of this request can only delete himself.
+# Returns the ID that was deleted in the response.
+def delete_user(request):
+    if not request.method == 'POST':
+        return response_bad_request()
+
+    #author = request.POST.get('author') TODO iss77 some sort of authentification needs to happen here
+    delete_user_id = int(json.loads(repr(request.body))['user_id']
+    #if not delete_user_id == visitor_id:
+    #    return response_forbidden()
+                         
+    user = ndb.Key(User, delete_user_id).get()
+    if not user:
+        return response_not_found()
+                         
+    user.delete()
+    return response_id('user_id', delete_user_id)
+
+
 def response_bad_request():
     return HttpResponse(status=400)
     
