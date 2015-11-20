@@ -10,14 +10,13 @@ public class SignedInUser {
     private String mMailAddress;
 
     private SignedInUser() {
-
     }
 
     private static class SignedInUserHolder {
         private static final SignedInUser INSTANCE = new SignedInUser();
     }
 
-    public SignedInUser getInstance() {
+    public static SignedInUser getInstance() {
         return SignedInUserHolder.INSTANCE;
     }
 
@@ -39,5 +38,8 @@ public class SignedInUser {
         return mMailAddress;
     }
 
+    public void setUserName(String userName) {
+        mUserName = userName;
+    }
 
 }

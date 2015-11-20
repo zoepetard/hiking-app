@@ -78,6 +78,9 @@ public class LoginActivity extends Activity implements
     private boolean mShouldResolve = false;
     // [END resolution_variables]
 
+    // Initialize the object for the signed in user
+    private SignedInUser mSignedInUser = SignedInUser.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +134,12 @@ public class LoginActivity extends Activity implements
                 if (checkAccountsPermission()) {
                     String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
                     ((TextView) findViewById(R.id.email)).setText(currentAccount);
+
+                    // Initialize the object for the signed in user TODO query db for user id
+                    mSignedInUser.init(-1,name,currentAccount);
                 }
+
+
             } else {
                 // If getCurrentPerson returns null there is generally some error with the
                 // configuration of the application (invalid Client ID, Plus API not enabled, etc).
@@ -158,6 +166,7 @@ public class LoginActivity extends Activity implements
 
     /**
      * Check if we have the GET_ACCOUNTS permission and request it if we do not.
+     *
      * @return true if we have the permission, false if we do not.
      */
     private boolean checkAccountsPermission() {
