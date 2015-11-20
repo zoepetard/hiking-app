@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
@@ -30,7 +31,7 @@ import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    public static final String SERVER_URL = "http://10.0.3.2:8080";//"http://footpath-1104.appspot.com";//
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -46,6 +47,8 @@ public class BackendTest extends TestCase {
         HttpURLConnection connection = networkProvider.getConnection(url);
         connection.connect();
         connection.disconnect();
+        // TODO set network timeout
+        // TODO in DBCLient check for valid internet connection
     }
 
     /**
@@ -68,9 +71,9 @@ public class BackendTest extends TestCase {
     public void testPostHike() throws Exception {
         DatabaseClient dbClient = createDatabaseClient();
         RawHikeData hikeData = createHikeData();
-        hikeData.setHikeId(2);
         final long hikeId = dbClient.postHike(hikeData);
-        assertEquals(hikeId, hikeData.getHikeId());
+        assertTrue(hikeId > 0);
+        // TODO remove hike
     }
 
     /**
@@ -83,9 +86,7 @@ public class BackendTest extends TestCase {
         RawHikeData hikeData = createHikeData();
 
         // post a hike
-        hikeData.setHikeId(3);
         final long hikeId = dbClient.postHike(hikeData);
-        assertEquals(hikeId, hikeData.getHikeId());
 
         Thread.sleep(1000);
 
@@ -93,6 +94,7 @@ public class BackendTest extends TestCase {
         RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
 
         // Compare
+        assertEquals(serverHikeData.getHikeId(), hikeData.getHikeId());
         assertEquals(serverHikeData.getOwnerId(), hikeData.getOwnerId());
         assertEquals(serverHikeData.getDate(), hikeData.getDate());
         assertEquals(serverHikeData.getHikePoints().size(), hikeData.getHikePoints().size());
@@ -104,6 +106,50 @@ public class BackendTest extends TestCase {
             assertEquals(hikeData.getHikePoints().get(i).getTime(),
                     serverHikeData.getHikePoints().get(i).getTime());
         }
+
+        // TODO remove hike
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_hike and get_hike functions
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostAndUpdateHike() throws Exception {
+        DatabaseClient dbClient = createDatabaseClient();
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = dbClient.postHike(hikeData);
+
+        // Prepare a modified Hike
+        List<RawHikePoint> newHikePoints = hikeData.getHikePoints();
+        newHikePoints.remove(2);
+        RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints);
+
+        Thread.sleep(1000);
+
+        // post a modified hike with the same ID
+        final long newHikeId = dbClient.postHike(newHikeData);
+        assertEquals(newHikeId, hikeId);
+        assertTrue(newHikeData.getHikePoints().size() != hikeData.getHikePoints().size());
+
+        // retrieve the same hike
+        RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
+
+        // Compare
+        assertEquals(serverHikeData.getHikeId(), newHikeData.getHikeId());
+        assertEquals(serverHikeData.getHikePoints().size(), newHikeData.getHikePoints().size());
+        for(int i = 0; i < newHikeData.getHikePoints().size(); ++i) {
+            assertEquals(newHikeData.getHikePoints().get(i).getPosition().latitude,
+                    serverHikeData.getHikePoints().get(i).getPosition().latitude, EPS_DOUBLE);
+            assertEquals(newHikeData.getHikePoints().get(i).getPosition().longitude,
+                    serverHikeData.getHikePoints().get(i).getPosition().longitude, EPS_DOUBLE);
+            assertEquals(newHikeData.getHikePoints().get(i).getTime(),
+                    serverHikeData.getHikePoints().get(i).getTime());
+        }
+
+        // TODO remove hike
     }
 
     @Test
@@ -158,7 +204,7 @@ public class BackendTest extends TestCase {
      * @return a HikeData object
      */
     private static RawHikeData createHikeData() throws HikeParseException {
-        return DummyHikeBuilder.buildRawHikeData(1);
+        return DummyHikeBuilder.buildRawHikeData(RawHikeData.HIKE_ID_UNKNOWN);
     }
 
     /**

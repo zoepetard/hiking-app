@@ -13,7 +13,6 @@ import json
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-
 def get_hike(request):
     # Database testing function, TODO remove
     create_hike_one()
@@ -42,13 +41,17 @@ def get_hikes(request):
     hikes = Hike.query().fetch()
     
     #response_text = type(hikes)
+    key_id = hikes[0].key.id()
+    new_key = ndb.Key(Hike, key_id)
+    hikezero = new_key.get()#Hike.query(Hike.key == new_key)
+    if not hikezero:
+        logger.info('success')
     
     all_hikes = ""
+    all_hikes += hikezero.to_json() + '!! key=' + repr(hikezero.key.id()) + '\n'
     for hike in hikes:#random_hike = hikes[0]
         hike_string = hike.to_json() #hike_to_json(hike)
-        all_hikes += hike_string + '\n'
-        debug_new_hike = Hike()
-        debug_new_hike.from_json(hike_string)
+        all_hikes += hike_string + 'key=' + repr(hike.key.id()) + '\n'
     
     return HttpResponse(all_hikes, content_type='application/javascript')
     #return HttpResponse(serializers.serialize("json", random_hike), content_type='application/json')
@@ -93,20 +96,48 @@ def create_hike_one():
             old_hike.key.delete()
     
 def post_hike(request):
-    if request.method == 'POST':
-        logger.error('POST request '+repr(request.body))
-        #author = request.POST.get('author') some sort of idenfication needs to happen here
-        hike = build_hike_from_json(request.body)
-        if hike:
-            # Temporary: Remove old hikes with the same ID (to avoid ID collision)  
-            old_hikes = Hike.query(Hike.hike_id == hike.hike_id).fetch()
-            for old_hike in old_hikes:
-                old_hike.key.delete()
-                
-            hike.put()
-                
-        response = HttpResponse("{'hike_id':"+repr(hike.hike_id)+"}",\
-                                content_type='application/json', status=201)
-        return response
+    if not request.method == 'POST':
+        return response_bad_request()
+    #author = request.POST.get('author') TODO some sort of authentification needs to happen here
+    logger.info('POST request '+repr(request.body))
+    
+    # Create new Hike object
+    hike = build_hike_from_json(request.body)
+    if not hike:
+        return response_bad_request()
+        
+    #TODO: set test flag on hikes that should be automatically removed
+        
+    # If update hike: Authenticate and check for existing hikes in database
+    if(hike.hike_id >= 0):
+        old_hike = ndb.Key(Hike, hike.hike_id).get()
+        
+        if not old_hike:
+            return response_not_found()
+            
+        # TODO: Authenticate if new owner matches old owner
+        
+        hike.key = ndb.Key(Hike, hike.hike_id)
+        #hike.key = old_hike.key
+        #old_hike.key.delete()
+    
+    new_key = hike.put()
+               
+    return response_hike_id(new_key.id())
+    
+    
+def response_bad_request():
+    return HttpResponse(status=400)
+    
+def response_not_found():
     return HttpResponse(status=404)
     
+def response_internal_error():
+    return HttpResponse(status=500)
+
+def response_hike_id(hike_id):
+    if not isinstance(hike_id, ( int, long ) ):
+        response_internal_error()
+    hike_id_string = str(hike_id).strip('L')
+    return HttpResponse("{'hike_id':"+hike_id_string+"}",\
+                                content_type='application/json', status=201)
