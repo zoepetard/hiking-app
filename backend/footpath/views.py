@@ -14,44 +14,38 @@ import json
 logger = logging.getLogger(__name__)
 
 def get_hike(request):
-    # Database testing function, TODO remove
-    create_hike_one()
     
     #logger.info('got request %s', repr(request))
     request_hike_id = int(request.META.get('HTTP_HIKE_ID', -1))
-    logger.info('got request for hike id %s',repr(request_hike_id))
+    logger.info('got request for hike id %s', repr(request_hike_id))
     
+    hike = ndb.Key(Hike, request_hike_id).get()
+    if not hike:
+        return response_not_found()
+         
+    # TODO: remove old query example code
     #random_hike = Hike.query().order(-Hike.date)
-    hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
-    if hikes!=None and len(hikes) > 0:
-        hike_string = hikes[0].to_json()
-            
-        logger.error('return string '+repr(hike_string))
-        return HttpResponse(hike_string, content_type='application/json')
-    return HttpResponse(status=404)
+    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
+    #logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
+    #if hikes!=None and len(hikes) > 0:
+    return response_hike(hike)
     
 # Get multiple hikes, as specified in a list inside the field
 # hike_ids of the GET request
 def get_hikes(request):
-    # Database testing function, TODO remove
-    create_hike_one()
+    #for hike in Hike.query().fetch():
+    #    hike.key.delete()
     
-    #random_hike = Hike.query().order(-Hike.date)
+    # Database testing function, TODO remove
+    #create_hike_one()
+    
     hikes = Hike.query().fetch()
     
-    #response_text = type(hikes)
-    key_id = hikes[0].key.id()
-    new_key = ndb.Key(Hike, key_id)
-    hikezero = new_key.get()#Hike.query(Hike.key == new_key)
-    if not hikezero:
-        logger.info('success')
-    
     all_hikes = ""
-    all_hikes += hikezero.to_json() + '!! key=' + repr(hikezero.key.id()) + '\n'
+    #all_hikes += hikezero.to_json() + '!! key=' + repr(hikezero.key.id()) + '\n'
     for hike in hikes:#random_hike = hikes[0]
         hike_string = hike.to_json() #hike_to_json(hike)
-        all_hikes += hike_string + 'key=' + repr(hike.key.id()) + '\n'
+        all_hikes += hike_string + ' with key=' + repr(hike.key.id()) + '\n'
     
     return HttpResponse(all_hikes, content_type='application/javascript')
     #return HttpResponse(serializers.serialize("json", random_hike), content_type='application/json')
@@ -118,10 +112,12 @@ def post_hike(request):
         # TODO: Authenticate if new owner matches old owner
         
         hike.key = ndb.Key(Hike, hike.hike_id)
-        #hike.key = old_hike.key
-        #old_hike.key.delete()
     
     new_key = hike.put()
+    
+    #hike = new_key.get()
+    hike.hike_id = new_key.id()
+    hike.put()
                
     return response_hike_id(new_key.id())
     
@@ -141,3 +137,10 @@ def response_hike_id(hike_id):
     hike_id_string = str(hike_id).strip('L')
     return HttpResponse("{'hike_id':"+hike_id_string+"}",\
                                 content_type='application/json', status=201)
+                                
+def response_hike(hike):
+    hike_string = hike.to_json()
+            
+    logger.info('return string '+repr(hike_string))
+    return HttpResponse(hike_string, content_type='application/json')
+    
