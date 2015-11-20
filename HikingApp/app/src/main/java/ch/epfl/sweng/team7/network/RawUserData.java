@@ -1,10 +1,7 @@
 package ch.epfl.sweng.team7.network;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 /**
  * Stores the user information as it's stored on the server
@@ -74,8 +71,7 @@ public class RawUserData {
         jsonObject.put("user_id", mUserId);
         jsonObject.put("user_name", mUserName);
         jsonObject.put("mail_address", mMailAddress);
-
-        return new JSONObject();
+        return jsonObject;
     }
 
     public static RawUserData parseFromJSON(JSONObject jsonObject) throws JSONException {
