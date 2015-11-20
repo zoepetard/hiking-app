@@ -52,7 +52,10 @@ public class NotificationHandler {
     }
 
     public void display(String title, String content) {
-        
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(content);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(R.id.feedback_notification, mBuilder.build());
     }
 
     public void hide() {
