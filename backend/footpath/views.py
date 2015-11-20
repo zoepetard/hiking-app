@@ -160,6 +160,7 @@ def delete_hike(request):
     hike_obj.key.delete()
     return response_data('')
 
+#TODO(simon) iss76: get_user by email with less strict authentication
 
 # Get a user. The numerical user ID is stored in the http request field "user_id"
 def get_user(request):

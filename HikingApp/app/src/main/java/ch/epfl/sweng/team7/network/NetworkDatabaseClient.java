@@ -146,6 +146,16 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
+     * Delete a hike from the server. A hike can only be deleted by its owner.
+     *
+     * @param hikeId - ID of the hike
+     * @throws DatabaseClientException if unable to delete user
+     */
+    public void deleteHike(long hikeId) throws DatabaseClientException {
+        // TODO(simon) iss76 implement
+    }
+
+    /**
      * Send user data to the server.  Returns the database ID
      * that this user was assigned from the database.
      *
