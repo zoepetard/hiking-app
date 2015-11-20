@@ -75,7 +75,7 @@ class Hike(ndb.Model):
             title = self.title
         
         hike_data = {
-            'hike_id': self.hike_id,
+            'hike_id': self.key.id(),
             'owner_id': self.owner_id,
             'date': self.date,
             'hike_data': self.hike_data,

@@ -86,7 +86,7 @@ def get_hikes_in_window(request):
 # Format a brief summary of the hike, i.e. it's ID,
 # and location information. Currently only formats the ID.
 def hike_location(hike):
-    return str(hike.hike_id).strip('L')
+    return str(hike.key.id()).strip('L')
     
 def post_hike(request):
     

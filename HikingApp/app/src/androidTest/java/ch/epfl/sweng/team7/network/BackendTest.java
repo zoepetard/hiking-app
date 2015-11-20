@@ -308,7 +308,7 @@ public class BackendTest extends TestCase {
      */
     private static void waitForServerSync() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             //pass
         }
