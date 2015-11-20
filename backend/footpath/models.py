@@ -1,6 +1,5 @@
 from google.appengine.ext import ndb
 import json
-from datetime import datetime
 import logging
 
 DEFAULT_NAME = 'some_global_string'

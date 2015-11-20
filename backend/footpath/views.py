@@ -1,12 +1,12 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 #from django.views.generic.simple import direct_to_template
 from django.core import serializers
 
 from google.appengine.api import users
 
 from footpath.models import *
+from footpath.user import *
 
-import urllib
 import logging
 import json
 
@@ -130,6 +130,27 @@ def post_hike(request):
     hike.put()
                
     return response_hike_id(new_key.id())
+    
+# Get a user. The numerical user ID is stored in the http request field "user_id"
+def get_user(request):
+    
+    request_user_id = int(request.META.get('HTTP_USER_ID', -1))
+    logger.info('get_user got request for user id %s', repr(request_user_id))
+    
+    if request_user_id < 0:
+        return response_not_found()
+    
+    user = ndb.Key(Hike, request_hike_id).get()
+    if not hike:
+        return response_not_found()
+         
+    # TODO: remove old query example code
+    #random_hike = Hike.query().order(-Hike.date)
+    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
+    #logger.info('found '+repr(len(hikes))+' entries for hike '+repr(request_hike_id))
+    #if hikes!=None and len(hikes) > 0:
+    return response_hike(hike)
+    
     
     
 def response_bad_request():
