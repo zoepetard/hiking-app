@@ -169,18 +169,8 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.isTracking = false;
-        RawHikeData rawHikeData = null;
-        try {
-            rawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
-        } catch (Exception e) {
-            //TODO
-        }
-        try {
-            storeHikeInDB(rawHikeData);
-        } catch (DatabaseClientException e) {
-            //TODO, we need the button to store hikes to show the error message to the user.
-        }
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
+        storeHike();
         gpsPath = null;
     }
 
@@ -197,6 +187,20 @@ public final class GPSManager {
             }
         } else {
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
+        }
+    }
+
+    private void storeHike() {
+        RawHikeData rawHikeData = null;
+        try {
+            rawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
+        } catch (Exception e) {
+            //TODO
+        }
+        try {
+            storeHikeInDB(rawHikeData);
+        } catch (DatabaseClientException e) {
+            //TODO, we need the button to store hikes to show the error message to the user.
         }
     }
 
