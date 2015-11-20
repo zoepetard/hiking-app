@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,6 @@ public class MockServer implements DatabaseClient {
     private final HashMap<Long, RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedHikeID = 10;
 
-    // The MockServer can store two users.
     private List<RawUserData> mUsers;
 
 
@@ -74,7 +72,7 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
-        List<RawHikeData> listRawHikeData = new LinkedList<>();
+        List<RawHikeData> listRawHikeData = new ArrayList<>();
         for (Long hikeId : hikeIds) {
             listRawHikeData.add(fetchSingleHike(hikeId));
         }
