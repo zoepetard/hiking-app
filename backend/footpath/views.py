@@ -40,7 +40,8 @@ def get_hikes(request):
     all_hikes = ""
     for hike in hikes:
         hike_string = hike.to_json()
-        all_hikes += hike_string + ' with key=' + repr(hike.key.id()) + '\n'
+        key_string = str(hike.key.id()).strip('L')
+        all_hikes += hike_string + ' with key=' + key_string + '\n'
     
     return HttpResponse(all_hikes, content_type='application/javascript')
  
@@ -63,18 +64,22 @@ def get_hikes_in_window(request):
     # query database and assemble output
     hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
     
-    hike_ids = [];
+    hike_ids = ''
     for hike in hikes:
         if (hike.bb_southwest.lat < window_northeast.lat and hike.bb_southwest.lon < window_northeast.lon
             and hike.bb_northeast.lat > window_southwest.lat and hike.bb_northeast.lon > window_southwest.lon):
-            hike_ids.append(hike.hike_id)
-     
+            hike_ids += hike_location(hike) + ','
+    if(len(hike_ids) > 0):
+        hike_ids = hike_ids[:-1]
+    hike_ids = '[' + hike_ids + ']'
+    
     # return result       
-    hike_ids_string = "{\"hike_ids\":" + repr(hike_ids) + "}";
+    hike_ids_string = "{\"hike_ids\":" + hike_ids + "}";
     logger.info("return string "+hike_ids_string)
     return HttpResponse(hike_ids_string, content_type='application/json')
     
-    
+def hike_location(hike):
+    return str(hike.hike_id).strip('L')
     
 # Create a hike for testing   
 def create_hike_one():
