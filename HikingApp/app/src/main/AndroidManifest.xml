@@ -33,7 +33,8 @@
 
         <activity
             android:name=".MapActivity"
-            android:label="@string/title_activity_map" >
+            android:label="@string/title_activity_map"
+            android:launchMode="singleTop" >
         </activity>
         <activity
             android:name=".HikeListActivity"
