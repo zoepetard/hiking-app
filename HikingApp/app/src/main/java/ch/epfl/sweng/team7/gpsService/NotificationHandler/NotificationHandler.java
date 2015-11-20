@@ -28,8 +28,8 @@ public class NotificationHandler {
         mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle(DEFAULT_NOTIFICATION_TITLE)
+                        .setContentText(DEFAULT_NOTIFICATION_CONTENT);
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MapActivity.class);
