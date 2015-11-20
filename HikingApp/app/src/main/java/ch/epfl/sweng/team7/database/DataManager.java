@@ -143,7 +143,8 @@ public final class DataManager {
     }
 
     /**
-     *  Method to post a hike.
+     * Method to post a hike.
+     *
      * @param rawHikeData
      * @throws DataManagerException
      */
@@ -218,6 +219,23 @@ public final class DataManager {
             } catch (DatabaseClientException e) {
                 throw new DataManagerException(e);
             }
+        }
+    }
+
+    /**
+     * Look up the id for a user using mail address. Typically used directly after signing in via
+     * Google to obtain the id assigned to that account.
+     *
+     * @param mailAddress - user's email address, google address.
+     * @return userId - long stored in database corresponding. throws exception if not found.
+     */
+    public long getIdForUser(String mailAddress) throws DataManagerException {
+        // use database client to query database
+        try {
+            long userId = sDatabaseClient.fetchUserId(mailAddress);
+            return userId;
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e.getMessage());
         }
     }
 

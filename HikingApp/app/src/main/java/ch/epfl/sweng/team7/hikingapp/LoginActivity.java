@@ -135,8 +135,12 @@ public class LoginActivity extends Activity implements
                     String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
                     ((TextView) findViewById(R.id.email)).setText(currentAccount);
 
-                    // Initialize the object for the signed in user TODO query db for user id
-                    mSignedInUser.init(-1,name,currentAccount);
+                    // TODO Authenticate user by quering server for user id corresponding to mail
+                    // before initializing user.
+
+
+                    // Initialize the object for the signed in user TODO use real id as param
+                    mSignedInUser.init(-1, name, currentAccount);
                 }
 
 
