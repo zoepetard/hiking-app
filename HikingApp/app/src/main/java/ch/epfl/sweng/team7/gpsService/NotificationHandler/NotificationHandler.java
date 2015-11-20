@@ -14,12 +14,15 @@ public class NotificationHandler {
 
     private static NotificationHandler instance = new NotificationHandler();
 
+    private NotificationCompat.Builder mBuilder;
+    private NotificationManager mNotificationManager;
+
     public static NotificationHandler getInstance() {
         return instance;
     }
 
     public void setupFeedbackNotification(Context context) {
-        NotificationCompat.Builder mBuilder =
+        mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle("My notification")
@@ -37,8 +40,10 @@ public class NotificationHandler {
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
 
+    public void display() {
         // mId allows you to update the notification later on.
         mNotificationManager.notify(R.id.feedback_notification, mBuilder.build());
     }
