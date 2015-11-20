@@ -170,7 +170,7 @@ public final class GPSManager {
     private void stopTracking() {
         this.isTracking = false;
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
-        //storeHike();
+        //TODO call storeHike() after issue #86 is fixed
         gpsPath = null;
     }
 
