@@ -73,7 +73,7 @@ public class BackendTest extends TestCase {
         final long hikeId = dbClient.postHike(hikeData);
         assertTrue(hikeId > 0);
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteHike(hikeId);
     }
 
@@ -89,7 +89,7 @@ public class BackendTest extends TestCase {
         // post a hike
         final long hikeId = dbClient.postHike(hikeData);
 
-        Thread.sleep(500);
+        waitForServerSync();
 
         // retrieve the same hike
         RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
@@ -108,7 +108,7 @@ public class BackendTest extends TestCase {
                     serverHikeData.getHikePoints().get(i).getTime());
         }
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteHike(hikeId);
     }
 
@@ -129,7 +129,7 @@ public class BackendTest extends TestCase {
         newHikePoints.remove(2);
         RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints);
 
-        Thread.sleep(500);
+        waitForServerSync();
 
         // post a modified hike with the same ID
         final long newHikeId = dbClient.postHike(newHikeData);
@@ -151,7 +151,7 @@ public class BackendTest extends TestCase {
                     serverHikeData.getHikePoints().get(i).getTime());
         }
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteHike(hikeId);
     }
 
@@ -162,6 +162,7 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow() throws Exception {
+        waitForServerSync();
         DatabaseClient dbClient = createDatabaseClient();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
@@ -206,10 +207,10 @@ public class BackendTest extends TestCase {
         long hikeId = dbClient.postHike(rawHikeData);
         assertTrue("Server should set positive hike ID", hikeId >= 0);
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteHike(hikeId);
 
-        Thread.sleep(500);
+        waitForServerSync();
         try {
             dbClient.fetchSingleHike(hikeId);
             fail("Found hike in the database after deleting it.");
@@ -225,7 +226,7 @@ public class BackendTest extends TestCase {
         long userId = dbClient.postUserData(rawUserData);
         assertTrue("Server should set positive user ID", userId >= 0);
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteUser(userId);
     }
 
@@ -236,14 +237,14 @@ public class BackendTest extends TestCase {
         long userId = dbClient.postUserData(rawUserData);
         assertTrue("Server should set positive user ID", userId >= 0);
 
-        Thread.sleep(500);
+        waitForServerSync();
         RawUserData serverRawUserData = dbClient.fetchUserData(userId);
 
         assertEquals(userId, serverRawUserData.getUserId());
         assertEquals(rawUserData.getMailAddress(), serverRawUserData.getMailAddress());
         assertEquals(rawUserData.getUserName(), serverRawUserData.getUserName());
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteUser(userId);
     }
 
@@ -254,10 +255,10 @@ public class BackendTest extends TestCase {
         long userId = dbClient.postUserData(rawUserData);
         assertTrue("Server should set positive user ID", userId >= 0);
 
-        Thread.sleep(500);
+        waitForServerSync();
         dbClient.deleteUser(userId);
 
-        Thread.sleep(500);
+        waitForServerSync();
         try {
             dbClient.fetchUserData(userId);
             fail("Found user in the database after deleting him.");
@@ -299,10 +300,22 @@ public class BackendTest extends TestCase {
      * Get the ID of some valid hike from the server
      */
     private static long getExistingHikeID(DatabaseClient dbClient) throws DatabaseClientException {
+        waitForServerSync();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
         assertTrue("No hikes found on server", hikeList.size() > 0);
         return hikeList.get(0);
+    }
+
+    /**
+     * Wait a short time to make sure the server database is in sync.
+     */
+    private static void waitForServerSync() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //pass
+        }
     }
 }
 
