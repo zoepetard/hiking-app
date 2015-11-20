@@ -45,10 +45,12 @@ public class NavigationDrawerListFactory {
                 switch (itemText) {
                     case LIST_ITEM_ACCOUNT:
                         intent = new Intent(view.getContext(), UserDataActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_MAP:
                         intent = new Intent(view.getContext(), MapActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_HIKES:
@@ -57,11 +59,13 @@ public class NavigationDrawerListFactory {
                         bound.putParcelable("sw", bounds.southwest);
                         bound.putParcelable("ne", bounds.northeast);
                         intent = new Intent(view.getContext(), HikeListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         intent.putExtra(EXTRA_BOUND, bound);
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_LOGOUT:
                         intent = new Intent(view.getContext(), LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         view.getContext().startActivity(intent);
                         break;
                 }
