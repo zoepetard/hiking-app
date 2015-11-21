@@ -35,7 +35,7 @@ public final class GPSPath {
     public long timeElapsedInSeconds() {
         try {
             return (path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp())/1000;
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
             return 0;
         }
     }
@@ -53,7 +53,7 @@ public final class GPSPath {
             lastLoc.setAltitude(path.get(path.size() - 1).getGeoCoords().getAltitude());
 
             return (startLoc.distanceTo(lastLoc));
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
             return 0f;
         }
     }
