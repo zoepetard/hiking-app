@@ -168,9 +168,9 @@ public final class GPSManager {
     private void startTracking() {
         this.mIsTracking = true;
         gpsPath = new GPSPath();
-        infoDisplay.setLiveFeedStatus(true);
-        infoDisplay.setTitle("Current hike");
-        infoDisplay.show();
+        infoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        infoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+        infoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
         notification.display();
     }
 
@@ -184,8 +184,8 @@ public final class GPSManager {
         notification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         //TODO call storeHike() after issue #86 is fixed
-        infoDisplay.setLiveFeedStatus(false);
-        infoDisplay.hide();
+        infoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        infoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
     }
 

@@ -249,25 +249,23 @@ public class MapActivity extends FragmentActivity {
                     return;
                 }
             }
-            BottomInfoView.getInstance().hide();
+            BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
         }
     }
 
     private void displayHikeInfo(final HikeData hike) {
-        if (!bottomTable.isLiveFeed()) {
-            bottomTable.setTitle(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-            bottomTable.setInfoLine1(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
-            bottomTable.setInfoLine2(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-            bottomTable.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
-                    intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
-                    startActivity(intent);
-                }
-            });
+        bottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+        bottomTable.setInfoLine1(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+        bottomTable.setInfoLine2(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+        bottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
+                startActivity(intent);
+            }
+        });
 
-            bottomTable.show();
-        }
+        bottomTable.show(BOTTOM_TABLE_ACCESS_ID);
     }
 
     private void createTrackingToggleButton() {
