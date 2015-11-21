@@ -33,19 +33,19 @@ public final class GPSPath {
     }
 
     public long timeElapsedInSeconds() {
-        try {
+        if (path.size() >= 2) {
             return (path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp())/1000;
-        } catch (IndexOutOfBoundsException e) {
+        } else {
             return 0;
         }
     }
 
     public float distanceToStart() {
-        try {
+        if (path.size() >= 2) {
             Location startLoc = path.get(0).toLocation();
             Location lastLoc = path.get(path.size() - 1).toLocation();
             return (startLoc.distanceTo(lastLoc));
-        } catch (IndexOutOfBoundsException e) {
+        } else {
             return 0f;
         }
     }
