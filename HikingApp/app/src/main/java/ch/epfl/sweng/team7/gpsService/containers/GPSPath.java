@@ -22,11 +22,6 @@ public final class GPSPath {
         if (newFootPrint != null) path.add(newFootPrint);
     }
 
-    public float getAverageSpeed() {
-        //TODO implement this method
-        return 0.0f;
-    }
-
     public long getFootPrintCount() {
         return this.path.size();
     }
