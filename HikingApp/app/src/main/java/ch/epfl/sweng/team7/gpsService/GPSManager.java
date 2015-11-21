@@ -155,6 +155,10 @@ public final class GPSManager {
                 "|---------------------------", gpsPathInformation, lastFootPrintCoords, lastFootPrintTimeStamp);
     }
 
+    /**
+     * Called by the GPSService to access the Context of the app.
+     * @return Context
+     */
     protected Context getContext() {
         return mContext;
     }
