@@ -71,8 +71,7 @@ public class MapActivity extends FragmentActivity {
         createTrackingToggleButton();
 
         //Initializes the BottomInfoView
-        BottomInfoView.getInstance().initialize(this);
-
+        createBottomInfoView();
     }
 
     @Override
@@ -266,11 +265,6 @@ public class MapActivity extends FragmentActivity {
             }
         });
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-
-        layout.addView(bottomTable.getView(), lp);
         bottomTable.show();
     }
 
@@ -294,5 +288,15 @@ public class MapActivity extends FragmentActivity {
                 toggleButton.setText((gps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
             }
         });
+    }
+
+    private void createBottomInfoView() {
+        BottomInfoView bottomTable = BottomInfoView.getInstance();
+        bottomTable.initialize(this);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        layout.addView(bottomTable.getView(), lp);
     }
 }
