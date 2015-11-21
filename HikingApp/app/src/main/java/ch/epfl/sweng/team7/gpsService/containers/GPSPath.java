@@ -30,9 +30,9 @@ public final class GPSPath {
         return path;
     }
 
-    public long timeElapsed() {
+    public long timeElapsedInSeconds() {
         try {
-            return path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp();
+            return (path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp())/1000;
         } catch (Exception e) {
             return 0;
         }
