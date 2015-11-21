@@ -15,6 +15,7 @@ import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
@@ -38,8 +39,10 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
 
     private NotificationHandler notification;
+    private BottomInfoView infoDisplay;
 
     private GPSManager() {
+        infoDisplay = BottomInfoView.getInstance();
         setupServiceConnection();
     }
 
@@ -164,6 +167,9 @@ public final class GPSManager {
     private void startTracking() {
         this.mIsTracking = true;
         gpsPath = new GPSPath();
+        infoDisplay.setLiveFeedStatus(true);
+        infoDisplay.setTitle("Current hike");
+        infoDisplay.show();
         notification.display();
     }
 
@@ -177,6 +183,8 @@ public final class GPSManager {
         notification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         //TODO call storeHike() after issue #86 is fixed
+        infoDisplay.setLiveFeedStatus(false);
+        infoDisplay.hide();
         gpsPath = null;
     }
 
