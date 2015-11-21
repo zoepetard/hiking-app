@@ -126,7 +126,7 @@ public final class GPSManager {
             if (this.mIsTracking) {
                 gpsPath.addFootPrint(this.lastFootPrint);
                 infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, String.format("\t%d s", gpsPath.timeElapsedInSeconds()));
-                infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, String.format("\t%d km travelled", gpsPath.distanceTraveled()));
+                infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, String.format("\t%f m travelled", gpsPath.distanceToStart()));
             }
         }
     }
