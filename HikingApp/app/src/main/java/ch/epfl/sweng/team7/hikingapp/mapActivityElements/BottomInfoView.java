@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import ch.epfl.sweng.team7.hikingapp.R;
 
 public final class BottomInfoView {
@@ -17,8 +19,7 @@ public final class BottomInfoView {
     private Context context;
     private TableLayout mapTableLayout;
     private TextView title;
-    private TextView infoLine1;
-    private TextView infoLine2;
+    private ArrayList<TextView> infoLines;
 
     private int lockEntity = -1;
 
@@ -30,12 +31,9 @@ public final class BottomInfoView {
         this.mapTableLayout.setVisibility(View.INVISIBLE);
         this.title = new TextView(context);
         this.title.setTextSize(DEFAULT_TITLE_SIZE);
-        this.infoLine1 = new TextView(context);
-        this.infoLine2 = new TextView(context);
+        this.infoLines = new ArrayList<TextView>();
 
         this.mapTableLayout.addView(title);
-        this.mapTableLayout.addView(infoLine1);
-        this.mapTableLayout.addView(infoLine2);
     }
 
     public void show(int entity) {
@@ -66,15 +64,20 @@ public final class BottomInfoView {
         }
     }
 
-    public void setInfoLine1(int entity, String infoMessage) {
+    public void setInfoLine(int entity, int index, String infoMessage) {
         if (permissionGranted(entity)) {
-            this.infoLine1.setText(infoMessage);
+            try {
+                infoLines.get(index).setText(infoMessage);
+            } catch (Exception e) {
+            }
         }
     }
 
-    public void setInfoLine2(int entity, String infoMessage) {
+    public void addInfoLine(int entity, String infoMessage) {
         if (permissionGranted(entity)) {
-            this.infoLine2.setText(infoMessage);
+            TextView infoView = new TextView(context);
+            infoView.setText(infoMessage);
+            infoLines.add(infoView);
         }
     }
 
