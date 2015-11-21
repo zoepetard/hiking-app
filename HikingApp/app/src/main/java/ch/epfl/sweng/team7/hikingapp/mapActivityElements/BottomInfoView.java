@@ -25,6 +25,7 @@ public final class BottomInfoView {
         this.mapTableLayout = new TableLayout(context);
         this.mapTableLayout.setId(R.id.mapTextTable);
         this.mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
+        this.mapTableLayout.setVisibility(View.INVISIBLE);
         this.title = new TextView(context);
         this.title.setTextSize(DEFAULT_TITLE_SIZE);
         this.infoLine1 = new TextView(context);
