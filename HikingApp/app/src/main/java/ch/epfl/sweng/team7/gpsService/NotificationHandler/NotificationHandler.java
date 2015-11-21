@@ -14,9 +14,6 @@ public class NotificationHandler {
 
     private static NotificationHandler instance = new NotificationHandler();
 
-    private final String DEFAULT_NOTIFICATION_TITLE = "Tracking a hike";
-    private final String DEFAULT_NOTIFICATION_CONTENT = "Click here to check on your progress";
-
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNotificationManager;
 
@@ -28,8 +25,8 @@ public class NotificationHandler {
         mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle(DEFAULT_NOTIFICATION_TITLE)
-                        .setContentText(DEFAULT_NOTIFICATION_CONTENT);
+                        .setContentTitle(context.getResources().getString(R.string.defaultNotificationTitle))
+                        .setContentText(context.getResources().getString(R.string.defaultNotificationContent));
         
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
