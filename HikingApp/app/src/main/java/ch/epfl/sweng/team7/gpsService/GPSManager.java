@@ -226,7 +226,7 @@ public final class GPSManager {
      *
      * @param message message to be displayed inside a Toast.
      */
-    private void displayToastMessage(String message) {
+    protected void displayToastMessage(String message) {
         Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
         toast.show();
     }
