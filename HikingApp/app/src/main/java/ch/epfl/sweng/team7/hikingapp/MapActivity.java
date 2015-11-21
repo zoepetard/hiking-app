@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,8 +42,8 @@ public class MapActivity extends FragmentActivity {
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GPSManager gps = GPSManager.getInstance();
-    private BottomInfoView bottomTable = BottomInfoView.getInstance();
+    private GPSManager mGps = GPSManager.getInstance();
+    private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private static LatLngBounds bounds;
@@ -55,7 +53,7 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
-        gps.startService(this);
+        mGps.startService(this);
 
         // nav drawer setup
         View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
@@ -80,13 +78,13 @@ public class MapActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        gps.bindService(this);
+        mGps.bindService(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        gps.unbindService(this);
+        mGps.unbindService(this);
     }
 
     @Override
@@ -254,11 +252,11 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayHikeInfo(final HikeData hike) {
-        bottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-        bottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-        bottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
-        bottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-        bottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
+        mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+        mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+        mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
                 intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
@@ -266,7 +264,7 @@ public class MapActivity extends FragmentActivity {
             }
         });
 
-        bottomTable.show(BOTTOM_TABLE_ACCESS_ID);
+        mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
     }
 
     private void createTrackingToggleButton() {
@@ -284,19 +282,19 @@ public class MapActivity extends FragmentActivity {
 
         toggleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                gps.toggleTracking();
+                mGps.toggleTracking();
                 Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                toggleButton.setText((gps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+                toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
             }
         });
     }
 
     private void createBottomInfoView() {
-        bottomTable.initialize(this);
+        mBottomTable.initialize(this);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        layout.addView(bottomTable.getView(), lp);
+        layout.addView(mBottomTable.getView(), lp);
     }
 }
