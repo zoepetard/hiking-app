@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp.mapActivityElements;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public final class BottomInfoView {
         this.context = context;
         this.mapTableLayout = new TableLayout(context);
         this.mapTableLayout.setId(R.id.mapTextTable);
+        this.mapTableLayout.setBackgroundColor(Color.WHITE);
         this.title = new TextView(context);
         this.title.setTextSize(DEFAULT_TITLE_SIZE);
         this.infoLine1 = new TextView(context);
