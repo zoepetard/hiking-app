@@ -41,5 +41,4 @@ public class SignedInUser {
     public void setUserName(String userName) {
         mUserName = userName;
     }
-
 }

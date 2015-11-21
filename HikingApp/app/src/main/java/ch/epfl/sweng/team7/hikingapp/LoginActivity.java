@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -40,6 +41,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
 
 public class LoginActivity extends Activity implements
         View.OnClickListener,
@@ -80,6 +84,8 @@ public class LoginActivity extends Activity implements
 
     // Initialize the object for the signed in user
     private SignedInUser mSignedInUser = SignedInUser.getInstance();
+
+    DataManager mDataManager = DataManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,19 +134,13 @@ public class LoginActivity extends Activity implements
             if (currentPerson != null) {
                 // Show signed-in user's name
                 String name = currentPerson.getDisplayName();
-                mStatus.setText(getString(R.string.signed_in_fmt, name));
+                mStatus.setText(getString(R.string.signed_in_fmt, mSignedInUser.getUserName()));
 
                 // Show users' email address (which requires GET_ACCOUNTS permission)
                 if (checkAccountsPermission()) {
                     String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                    ((TextView) findViewById(R.id.email)).setText(currentAccount);
+                    ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
 
-                    // TODO Authenticate user by quering server for user id corresponding to mail
-                    // before initializing user.
-
-
-                    // Initialize the object for the signed in user TODO use real id as param
-                    mSignedInUser.init(-1, name, currentAccount);
                 }
 
 
@@ -276,10 +276,73 @@ public class LoginActivity extends Activity implements
         Log.d(TAG, "onConnected:" + bundle);
         mShouldResolve = false;
 
-        // Show the signed-in UI
+        // try to user info from database singleton
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+        String mailAddress = "";
+        if (currentPerson != null) {
+            if (checkAccountsPermission()) {
+                mailAddress = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            }
+        }
+
+        new UserAuthenticator().execute(mailAddress);
+
         showSignedInUI();
+
     }
     // [END on_connected]
+
+    private class UserAuthenticator extends AsyncTask<String, Void, String[]> {
+        /**
+         * Looks up an id in the database given a mail address. Sets the signed in user object's
+         * variables.
+         *
+         * @param mailAddress - mail address of user trying to sign in.
+         * @return userInfo - index: 0 = user name, 1 = user mail address , 2 = user id
+         * @see #onPostExecute - initializes signed in users variables with userinfo
+         */
+        @Override
+        protected String[] doInBackground(String... mailAddress) {
+
+            String[] userInfo = new String[3];
+
+            // try to get user info from database
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            if (currentPerson != null) {
+                String name = currentPerson.getDisplayName();
+                userInfo[0] = name;
+
+                // Show users' email address (which requires GET_ACCOUNTS permission)
+                if (checkAccountsPermission()) {
+                    String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                    userInfo[1] = currentAccount;
+
+                    // TODO Authenticate user by quering server for user id corresponding to mail
+                    try {
+                        long userId = mDataManager.getIdForUser(currentAccount);
+                        // Initialize the object for the signed in user TODO use real id as param
+                        userInfo[2] = Long.toString(userId);
+
+                    } catch (DataManagerException e) {
+                        userInfo[2] = String.valueOf(-1);
+                    }
+                }
+            }
+            return userInfo;
+        }
+
+        @Override
+        protected void onPostExecute(String[] userInfo) {
+
+            mSignedInUser.init(Long.parseLong(userInfo[2]), userInfo[0], userInfo[1]);
+            // TODO UPDATE VIEW FROM HERE
+
+            mStatus.setText(userInfo[0]);
+            ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
+
+        }
+    }
+
 
     @Override
     public void onConnectionSuspended(int i) {
