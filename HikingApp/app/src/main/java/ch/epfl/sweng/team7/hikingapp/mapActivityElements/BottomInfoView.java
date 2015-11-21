@@ -16,6 +16,15 @@ public class BottomInfoView {
     private TextView infoLine1;
     private TextView infoLine2;
 
+    public void initialize(Context context) {
+        this.context = context;
+        this.mapTableLayout = new TableLayout(context);
+        this.title = new TextView(context);
+        this.title.setTextSize(DEFAULT_TITLE_SIZE);
+        this.infoLine1 = new TextView(context);
+        this.infoLine2 = new TextView(context);
+    }
+
     public void show() {
         mapTableLayout.setVisibility(View.VISIBLE);
     }
@@ -41,11 +50,5 @@ public class BottomInfoView {
     }
 
     private BottomInfoView() {
-        this.context = context;
-        this.mapTableLayout = new TableLayout(context);
-        this.title = new TextView(context);
-        this.title.setTextSize(DEFAULT_TITLE_SIZE);
-        this.infoLine1 = new TextView(context);
-        this.infoLine2 = new TextView(context);
     }
 }
