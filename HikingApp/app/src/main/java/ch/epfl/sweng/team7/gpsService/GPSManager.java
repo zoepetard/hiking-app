@@ -15,6 +15,7 @@ import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.RawHikeData;
@@ -127,8 +128,8 @@ public final class GPSManager {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
             if (this.mIsTracking) {
                 gpsPath.addFootPrint(this.lastFootPrint);
-                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, String.format("\t%d s", gpsPath.timeElapsedInSeconds()));
-                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, String.format("\t%f m travelled", gpsPath.distanceToStart()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, gpsPath.timeElapsedInSeconds()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, gpsPath.distanceToStart()));
             }
         }
     }
