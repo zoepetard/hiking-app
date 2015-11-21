@@ -20,12 +20,12 @@ public final class BottomInfoView {
     private static final float DEFAULT_TITLE_SIZE = 20f;
     private static final int DEFAULT_BG_COLOR = Color.WHITE;
 
-    private Context context;
+    private Context mContext;
     private TableLayout mapTableLayout;
-    private TextView title;
-    private ArrayList<TextView> infoLines;
+    private TextView mTitle;
+    private ArrayList<TextView> mInfoLines;
 
-    private int lockEntity = -1;
+    private int mLockEntity = -1;
 
     /**
      * Method has to be called once for initialization,
@@ -33,16 +33,16 @@ public final class BottomInfoView {
      * @param context Context of the MapActivity
      */
     public void initialize(Context context) {
-        this.context = context;
-        this.mapTableLayout = new TableLayout(context);
-        this.mapTableLayout.setId(R.id.mapTextTable);
-        this.mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
-        this.mapTableLayout.setVisibility(View.INVISIBLE);
-        this.title = new TextView(context);
-        this.title.setTextSize(DEFAULT_TITLE_SIZE);
-        this.infoLines = new ArrayList<TextView>();
+        mContext = context;
+        mapTableLayout = new TableLayout(context);
+        mapTableLayout.setId(R.id.mapTextTable);
+        mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
+        mapTableLayout.setVisibility(View.INVISIBLE);
+        mTitle = new TextView(context);
+        mTitle.setTextSize(DEFAULT_TITLE_SIZE);
+        mInfoLines = new ArrayList<TextView>();
 
-        this.mapTableLayout.addView(title);
+        mapTableLayout.addView(mTitle);
     }
 
     /**
@@ -69,7 +69,7 @@ public final class BottomInfoView {
      * @return View corresponding to the mapTableLayout
      */
     public View getView() {
-        return this.mapTableLayout;
+        return mapTableLayout;
     }
 
     /**
@@ -83,12 +83,12 @@ public final class BottomInfoView {
     }
 
     /**
-     * Method called to set the title of the information table.
-     * @param title new title for the table.
+     * Method called to set the mTitle of the information table.
+     * @param title new mTitle for the table.
      */
     public void setTitle(int entity, String title) {
         if (permissionGranted(entity)) {
-            this.title.setText(title);
+            mTitle.setText(title);
         }
     }
 
@@ -100,7 +100,7 @@ public final class BottomInfoView {
     public void setInfoLine(int entity, int index, String infoMessage) {
         if (permissionGranted(entity)) {
             try {
-                infoLines.get(index).setText(infoMessage);
+                mInfoLines.get(index).setText(infoMessage);
             } catch (Exception e) {
             }
         }
@@ -112,9 +112,9 @@ public final class BottomInfoView {
      */
     public void addInfoLine(int entity, String infoMessage) {
         if (permissionGranted(entity)) {
-            TextView infoView = new TextView(context);
+            TextView infoView = new TextView(mContext);
             infoView.setText(infoMessage);
-            infoLines.add(infoView);
+            mInfoLines.add(infoView);
             mapTableLayout.addView(infoView);
         }
     }
@@ -124,10 +124,10 @@ public final class BottomInfoView {
      */
     public void clearInfoLines(int entity) {
         if(permissionGranted(entity)) {
-            for (TextView infoLineView : infoLines) {
+            for (TextView infoLineView : mInfoLines) {
                 mapTableLayout.removeView(infoLineView);
             }
-            infoLines.clear();
+            mInfoLines.clear();
         }
     }
 
@@ -138,7 +138,7 @@ public final class BottomInfoView {
      */
     public void requestLock(int entity) {
         if (permissionGranted(entity)) {
-            this.lockEntity = entity;
+            mLockEntity = entity;
         }
     }
 
@@ -149,7 +149,7 @@ public final class BottomInfoView {
      */
     public void releaseLock(int entity) {
         if (permissionGranted(entity)) {
-            this.lockEntity = -1;
+            mLockEntity = -1;
         }
     }
 
@@ -166,6 +166,6 @@ public final class BottomInfoView {
      * @return true if it has permission, false otherwise
      */
     private boolean permissionGranted(int entity) {
-        return (this.lockEntity == entity || this.lockEntity == -1);
+        return (mLockEntity == entity || mLockEntity == -1);
     }
 }
