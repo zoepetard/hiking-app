@@ -40,6 +40,10 @@ public final class BottomInfoView {
         mapTableLayout.setVisibility(View.INVISIBLE);
     }
 
+    public View getView() {
+        return this.mapTableLayout;
+    }
+
     public void setOnClickListener(View.OnClickListener listener) {
         mapTableLayout.setOnClickListener(listener);
     }
