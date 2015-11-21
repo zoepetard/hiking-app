@@ -59,16 +59,22 @@ public final class GPSManager {
      * on/off, according to previous state.
      */
     public void toggleTracking() {
-        if (!mIsTracking) {
-            startTracking();
+        if (gpsService != null) {
+            if (!mIsTracking) {
+                startTracking();
+            } else {
+                stopTracking();
+            }
+            toggleListeners();
         } else {
-            stopTracking();
+            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
+            Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
-        toggleListeners();
     }
 
     /**
      * Method called to get the tracking status
+     *
      * @return true if it is tracking, false otherwise
      */
     public Boolean tracking() {
@@ -103,6 +109,7 @@ public final class GPSManager {
 
     /**
      * Method called to bind GPSService to a certain Context
+     *
      * @param context Context to which the GPSService will be bound to
      */
     public void bindService(Context context) {
@@ -112,6 +119,7 @@ public final class GPSManager {
 
     /**
      * Method called to unbind GPSService from a certain Context
+     *
      * @param context Context from which the GPSService will be unbound
      */
     public void unbindService(Context context) {
@@ -175,19 +183,15 @@ public final class GPSManager {
      * storing user's coordinates.
      */
     private void startTracking() {
-        if (gpsService != null) {
-            this.mIsTracking = true;
-            gpsPath = new GPSPath();
-            mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
-            mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
-            mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-            mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
-            mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
-            mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
-            mNotification.display();
-        } else {
-            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
-        }
+        this.mIsTracking = true;
+        gpsPath = new GPSPath();
+        mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+        mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
+        mNotification.display();
     }
 
     /**
@@ -210,20 +214,16 @@ public final class GPSManager {
      * listeners inside GPSService.
      */
     private void toggleListeners() {
-        if (gpsService != null) {
-            if (mIsTracking) {
-                gpsService.enableListeners();
-            } else {
-                gpsService.disableListeners();
-            }
+        if (mIsTracking) {
+            gpsService.enableListeners();
         } else {
-            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
-            Log.d(LOG_FLAG, "Could not access GPSService (null)");
+            gpsService.disableListeners();
         }
     }
 
     /**
      * Method called internally to give feedback to the user
+     *
      * @param message message to be displayed inside a Toast.
      */
     private void displayToastMessage(String message) {
