@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 public class BottomInfoView {
 
+    private static BottomInfoView instance = new BottomInfoView();
     private static final float DEFAULT_TITLE_SIZE = 20f;
 
     private Context context;
@@ -14,15 +15,6 @@ public class BottomInfoView {
     private TextView title;
     private TextView infoLine1;
     private TextView infoLine2;
-
-    public BottomInfoView(Context context) {
-        this.context = context;
-        this.mapTableLayout = new TableLayout(context);
-        this.title = new TextView(context);
-        this.title.setTextSize(DEFAULT_TITLE_SIZE);
-        this.infoLine1 = new TextView(context);
-        this.infoLine2 = new TextView(context);
-    }
 
     public void show() {
         mapTableLayout.setVisibility(View.VISIBLE);
@@ -46,5 +38,14 @@ public class BottomInfoView {
 
     private void setInfoLine2(String infoMessage) {
         this.infoLine2.setText(infoMessage);
+    }
+
+    private BottomInfoView() {
+        this.context = context;
+        this.mapTableLayout = new TableLayout(context);
+        this.title = new TextView(context);
+        this.title.setTextSize(DEFAULT_TITLE_SIZE);
+        this.infoLine1 = new TextView(context);
+        this.infoLine2 = new TextView(context);
     }
 }
