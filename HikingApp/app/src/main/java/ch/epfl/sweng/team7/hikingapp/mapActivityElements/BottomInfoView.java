@@ -26,6 +26,10 @@ public final class BottomInfoView {
         this.title.setTextSize(DEFAULT_TITLE_SIZE);
         this.infoLine1 = new TextView(context);
         this.infoLine2 = new TextView(context);
+
+        this.mapTableLayout.addView(title);
+        this.mapTableLayout.addView(infoLine1);
+        this.mapTableLayout.addView(infoLine2);
     }
 
     public void show() {
@@ -50,6 +54,10 @@ public final class BottomInfoView {
 
     public void setInfoLine2(String infoMessage) {
         this.infoLine2.setText(infoMessage);
+    }
+
+    public BottomInfoView getInstance() {
+        return instance;
     }
 
     private BottomInfoView() {
