@@ -170,6 +170,7 @@ public final class GPSManager {
         gpsPath = new GPSPath();
         infoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
         infoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+        infoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
         infoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
         notification.display();
     }
