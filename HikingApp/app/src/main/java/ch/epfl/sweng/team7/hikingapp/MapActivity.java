@@ -32,6 +32,7 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 
 import static android.location.Location.distanceBetween;
 
@@ -250,30 +251,25 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayHikeInfo(final HikeData hike) {
-        TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
-        mapTableLayout.removeAllViews();
-
-        TextView hikeTitle = new TextView(this);
-        hikeTitle.setText(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-        hikeTitle.setTextSize(20);
-
-        TextView hikeOwner = new TextView(this);
-        hikeOwner.setText(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
-
-        TextView hikeDistance = new TextView(this);
-        hikeDistance.setText(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-
-        mapTableLayout.addView(hikeTitle);
-        mapTableLayout.addView(hikeOwner);
-        mapTableLayout.addView(hikeDistance);
-        mapTableLayout.setVisibility(View.VISIBLE);
-        mapTableLayout.setOnClickListener(new View.OnClickListener() {
+        BottomInfoView bottomTable = BottomInfoView.getInstance();
+        bottomTable.setTitle(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+        bottomTable.setInfoLine1(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+        bottomTable.setInfoLine2(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+        bottomTable.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
                 intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
                 startActivity(intent);
             }
         });
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        layout.addView(bottomTable.getView(), lp);
+        bottomTable.show();
     }
 
     private void createTrackingToggleButton() {
