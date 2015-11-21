@@ -32,7 +32,7 @@ public final class GPSPath {
 
     public long timeElapsed() {
         try {
-            return path.get(0).getTimeStamp() - path.get(path.size()-1).getTimeStamp();
+            return path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp();
         } catch (Exception e) {
             return 0;
         }
