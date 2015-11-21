@@ -56,7 +56,7 @@ public final class BottomInfoView {
         this.infoLine2.setText(infoMessage);
     }
 
-    public BottomInfoView getInstance() {
+    public static BottomInfoView getInstance() {
         return instance;
     }
 
