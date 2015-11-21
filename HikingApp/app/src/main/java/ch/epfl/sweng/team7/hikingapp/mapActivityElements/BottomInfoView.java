@@ -12,6 +12,7 @@ public final class BottomInfoView {
 
     private static BottomInfoView instance = new BottomInfoView();
     private static final float DEFAULT_TITLE_SIZE = 20f;
+    private static final int DEFAULT_BG_COLOR = Color.WHITE;
 
     private Context context;
     private TableLayout mapTableLayout;
@@ -23,7 +24,7 @@ public final class BottomInfoView {
         this.context = context;
         this.mapTableLayout = new TableLayout(context);
         this.mapTableLayout.setId(R.id.mapTextTable);
-        this.mapTableLayout.setBackgroundColor(Color.WHITE);
+        this.mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
         this.title = new TextView(context);
         this.title.setTextSize(DEFAULT_TITLE_SIZE);
         this.infoLine1 = new TextView(context);
