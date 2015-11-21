@@ -25,6 +25,10 @@ public class GPSFootPrint {
         return this.geoCoords;
     }
 
+    /**
+     * Method called to convert a GPSFootprint to a Location
+     * @return Location object
+     */
     public Location toLocation() {
         Location location = new Location("");
         location.setTime(timeStamp);
