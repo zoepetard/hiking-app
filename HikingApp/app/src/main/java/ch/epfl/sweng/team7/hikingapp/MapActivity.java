@@ -44,6 +44,7 @@ public class MapActivity extends FragmentActivity {
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager gps = GPSManager.getInstance();
+    private BottomInfoView bottomTable = BottomInfoView.getInstance();
     DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private static LatLngBounds bounds;
@@ -252,7 +253,6 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayHikeInfo(final HikeData hike) {
-        BottomInfoView bottomTable = BottomInfoView.getInstance();
         if (!bottomTable.isLiveFeed()) {
             bottomTable.setTitle(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
             bottomTable.setInfoLine1(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
@@ -292,7 +292,6 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void createBottomInfoView() {
-        BottomInfoView bottomTable = BottomInfoView.getInstance();
         bottomTable.initialize(this);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
