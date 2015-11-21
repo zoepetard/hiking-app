@@ -168,7 +168,7 @@ public final class GPSManager {
     private void startTracking() {
         this.mIsTracking = true;
         gpsPath = new GPSPath();
-        infoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        infoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
         infoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
         infoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
         notification.display();
