@@ -175,15 +175,19 @@ public final class GPSManager {
      * storing user's coordinates.
      */
     private void startTracking() {
-        this.mIsTracking = true;
-        gpsPath = new GPSPath();
-        mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
-        mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
-        mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
-        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
-        mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
-        mNotification.display();
+        if (gpsService != null) {
+            this.mIsTracking = true;
+            gpsPath = new GPSPath();
+            mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
+            mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+            mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+            mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+            mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+            mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
+            mNotification.display();
+        } else {
+            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
+        }
     }
 
     /**
