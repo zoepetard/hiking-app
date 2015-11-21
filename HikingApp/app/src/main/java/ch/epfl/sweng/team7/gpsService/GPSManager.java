@@ -123,7 +123,11 @@ public final class GPSManager {
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
-            if (this.mIsTracking) gpsPath.addFootPrint(this.lastFootPrint);
+            if (this.mIsTracking) {
+                gpsPath.addFootPrint(this.lastFootPrint);
+                infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, String.format(" milli", gpsPath.timeElapsed()));
+                infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, String.format(" km travelled", gpsPath.distanceTraveled()));
+            }
         }
     }
 
@@ -171,6 +175,8 @@ public final class GPSManager {
         infoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
         infoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
         infoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        infoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        infoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
         infoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
         notification.display();
     }
