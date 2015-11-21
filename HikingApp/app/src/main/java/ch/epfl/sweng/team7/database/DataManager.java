@@ -229,11 +229,12 @@ public final class DataManager {
      * @param mailAddress - user's email address, google address.
      * @return userId - long stored in database corresponding. throws exception if not found.
      */
-    public long getIdForUser(String mailAddress) throws DataManagerException {
-        // use database client to query database
+    public UserData getUserData(String mailAddress) throws DataManagerException {
+        // use database client to query database for user data
         try {
-            long userId = sDatabaseClient.fetchUserId(mailAddress);
-            return userId;
+            RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
+            UserData userData = new DefaultUserData(rawUserData);
+            return userData;
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e.getMessage());
         }

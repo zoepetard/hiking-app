@@ -81,8 +81,8 @@ public interface DatabaseClient {
 
     /**
      * @param mailAddress - used to query server
-     * @return userId - long corresponding to user's mail address
+     * @return RawUserData - corresponding to user's mail address
      */
-    long fetchUserId(String mailAddress) throws DatabaseClientException;
+    RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
 
 }

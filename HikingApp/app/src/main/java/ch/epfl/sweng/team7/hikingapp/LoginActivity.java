@@ -44,6 +44,9 @@ import com.google.android.gms.plus.model.people.Person;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.DefaultUserData;
+import ch.epfl.sweng.team7.database.UserData;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 public class LoginActivity extends Activity implements
         View.OnClickListener,
@@ -292,7 +295,7 @@ public class LoginActivity extends Activity implements
     }
     // [END on_connected]
 
-    private class UserAuthenticator extends AsyncTask<String, Void, String[]> {
+    private class UserAuthenticator extends AsyncTask<String, Void, UserData> {
         /**
          * Looks up an id in the database given a mail address. Sets the signed in user object's
          * variables.
@@ -302,42 +305,36 @@ public class LoginActivity extends Activity implements
          * @see #onPostExecute - initializes signed in users variables with userinfo
          */
         @Override
-        protected String[] doInBackground(String... mailAddress) {
+        protected UserData doInBackground(String... mailAddress) {
 
-            String[] userInfo = new String[3];
 
             // try to get user info from database
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            if (currentPerson != null) {
-                String name = currentPerson.getDisplayName();
-                userInfo[0] = name;
+            UserData userData;
 
-                // Show users' email address (which requires GET_ACCOUNTS permission)
-                if (checkAccountsPermission()) {
-                    String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                    userInfo[1] = currentAccount;
+            // TODO Authenticate user by quering server for user id corresponding to mail
+            try {
+                userData = mDataManager.getUserData(mailAddress[0]);
 
-                    // TODO Authenticate user by quering server for user id corresponding to mail
-                    try {
-                        long userId = mDataManager.getIdForUser(currentAccount);
-                        // Initialize the object for the signed in user TODO use real id as param
-                        userInfo[2] = Long.toString(userId);
+            } catch (DataManagerException e) {
+                // TODO if fetch fails, provide feedback to user
+                RawUserData rawUserData = new RawUserData(-1, "void", mailAddress[0]);
+                userData = new DefaultUserData(rawUserData);
 
-                    } catch (DataManagerException e) {
-                        userInfo[2] = String.valueOf(-1);
-                    }
-                }
             }
-            return userInfo;
+
+            return userData;
         }
 
         @Override
-        protected void onPostExecute(String[] userInfo) {
+        protected void onPostExecute(UserData userData) {
 
-            mSignedInUser.init(Long.parseLong(userInfo[2]), userInfo[0], userInfo[1]);
+            // Initialize the object for the signed in user TODO use real id as param
+            mSignedInUser.init(userData.getUserId(),
+                    userData.getUserName(),
+                    userData.getMailAddress());
+
             // TODO UPDATE VIEW FROM HERE
-
-            mStatus.setText(userInfo[0]);
+            mStatus.setText(mSignedInUser.getUserName());
             ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
 
         }

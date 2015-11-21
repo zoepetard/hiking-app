@@ -199,26 +199,24 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * TODO implement server backend
      *
      * @param mailAddress - used to query server
-     * @return userId - long corresponding to user's mail address
+     * @return RawUserData - corresponding to user's mail address
      */
-    public long fetchUserId(String mailAddress) throws DatabaseClientException {
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
 
         try {
-            URL url = new URL(mServerUrl + "/get_user_id/");
+            URL url = new URL(mServerUrl + "/get_user/");
             HttpURLConnection conn = getConnection(url, "GET");
             conn.setRequestProperty("user_mail_address", mailAddress);
             conn.connect();
             String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonObject = new JSONObject(stringUserId);
-            long userId = jsonObject.getLong("user_id");
-            return userId;
+            return RawUserData.parseFromJSON(jsonObject);
         } catch (IOException e) {
             throw new DatabaseClientException(e.getMessage());
         } catch (JSONException e) {
             throw new DatabaseClientException("JSONException: " + e.getMessage());
         }
     }
-
 
     /**
      * Method to set the properties of the connection to the server
