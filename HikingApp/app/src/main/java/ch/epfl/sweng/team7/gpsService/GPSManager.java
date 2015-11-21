@@ -155,6 +155,10 @@ public final class GPSManager {
                 "|---------------------------", gpsPathInformation, lastFootPrintCoords, lastFootPrintTimeStamp);
     }
 
+    protected Context getContext() {
+        return mContext;
+    }
+
     /**
      * Private method to setup communication with the
      * GPSService that will be running in the background.
