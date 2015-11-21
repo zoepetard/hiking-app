@@ -11,9 +11,12 @@ import android.util.Log;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
+import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.R;
+import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
@@ -24,6 +27,7 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 public final class GPSManager {
 
     private final static String LOG_FLAG = "GPS_Manager";
+    private final static int BOTTOM_TABLE_ACCESS_ID = 2;
     private static GPSManager instance = new GPSManager();
 
     //GPS stored information
@@ -33,11 +37,15 @@ public final class GPSManager {
 
 
     //GPS service communication
+    private Context mContext;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
+    private NotificationHandler mNotification;
+    private BottomInfoView mInfoDisplay;
 
     private GPSManager() {
+        mInfoDisplay = BottomInfoView.getInstance();
         setupServiceConnection();
     }
 
@@ -85,8 +93,11 @@ public final class GPSManager {
      * @param context the context from which the Intent will be sent.
      */
     public void startService(Context context) {
+        mContext = context;
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
+        mNotification = NotificationHandler.getInstance();
+        mNotification.setup(context);
     }
 
     /**
@@ -115,7 +126,11 @@ public final class GPSManager {
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
-            if (this.mIsTracking) gpsPath.addFootPrint(this.lastFootPrint);
+            if (this.mIsTracking) {
+                gpsPath.addFootPrint(this.lastFootPrint);
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, gpsPath.timeElapsedInSeconds()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, gpsPath.distanceToStart()));
+            }
         }
     }
 
@@ -160,6 +175,13 @@ public final class GPSManager {
     private void startTracking() {
         this.mIsTracking = true;
         gpsPath = new GPSPath();
+        mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+        mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
+        mNotification.display();
     }
 
     /**
@@ -169,8 +191,11 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.mIsTracking = false;
+        mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         //TODO call storeHike() after issue #86 is fixed
+        mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
     }
 
