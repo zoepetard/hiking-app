@@ -20,7 +20,7 @@ public final class BottomInfoView {
     private TextView infoLine1;
     private TextView infoLine2;
 
-    private boolean isLiveFeed = false;
+    private int lockEntity = -1;
 
     public void initialize(Context context) {
         this.context = context;
@@ -38,40 +38,56 @@ public final class BottomInfoView {
         this.mapTableLayout.addView(infoLine2);
     }
 
-    public void show() {
-        mapTableLayout.setVisibility(View.VISIBLE);
+    public void show(int entity) {
+        if (permissionGranted(entity)) {
+            mapTableLayout.setVisibility(View.VISIBLE);
+        }
     }
 
-    public void hide() {
-        mapTableLayout.setVisibility(View.INVISIBLE);
+    public void hide(int entity) {
+        if (permissionGranted(entity)) {
+            mapTableLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     public View getView() {
         return this.mapTableLayout;
     }
 
-    public void setOnClickListener(View.OnClickListener listener) {
-        mapTableLayout.setOnClickListener(listener);
+    public void setOnClickListener(int entity, View.OnClickListener listener) {
+        if (permissionGranted(entity)) {
+            mapTableLayout.setOnClickListener(listener);
+        }
     }
 
-    public void setTitle(String title) {
-        this.title.setText(title);
+    public void setTitle(int entity, String title) {
+        if (permissionGranted(entity)) {
+            this.title.setText(title);
+        }
     }
 
-    public void setInfoLine1(String infoMessage) {
-        this.infoLine1.setText(infoMessage);
+    public void setInfoLine1(int entity, String infoMessage) {
+        if (permissionGranted(entity)) {
+            this.infoLine1.setText(infoMessage);
+        }
     }
 
-    public void setInfoLine2(String infoMessage) {
-        this.infoLine2.setText(infoMessage);
+    public void setInfoLine2(int entity, String infoMessage) {
+        if (permissionGranted(entity)) {
+            this.infoLine2.setText(infoMessage);
+        }
     }
 
-    public void setLiveFeedStatus(boolean status) {
-        this.isLiveFeed = status;
+    public void requestLock(int entity) {
+        if (permissionGranted(entity)) {
+            this.lockEntity = entity;
+        }
     }
 
-    public boolean isLiveFeed() {
-        return this.isLiveFeed;
+    public void releaseLock(int entity) {
+        if (permissionGranted(entity)) {
+            this.lockEntity = -1;
+        }
     }
 
     public static BottomInfoView getInstance() {
@@ -79,5 +95,9 @@ public final class BottomInfoView {
     }
 
     private BottomInfoView() {
+    }
+
+    private boolean permissionGranted(int entity) {
+        return (this.lockEntity == entity || this.lockEntity == -1);
     }
 }
