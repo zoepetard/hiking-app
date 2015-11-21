@@ -247,8 +247,7 @@ public class MapActivity extends FragmentActivity {
                     return;
                 }
             }
-            TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
-            mapTableLayout.setVisibility(View.INVISIBLE);
+            BottomInfoView.getInstance().hide();
         }
     }
 
