@@ -26,6 +26,7 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 public final class GPSManager {
 
     private final static String LOG_FLAG = "GPS_Manager";
+    private final static int BOTTOM_TABLE_ACCESS_ID = 2;
     private static GPSManager instance = new GPSManager();
 
     //GPS stored information
