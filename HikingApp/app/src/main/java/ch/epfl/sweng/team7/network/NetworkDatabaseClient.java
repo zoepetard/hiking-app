@@ -23,8 +23,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.team7.database.UserData;
-
 
 /**
  * Class to get and post hikes in the server
@@ -148,8 +146,32 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * Prototype of how to send user data to server
-     * TODO implement user data storage on server and modify this accordingly
+     * Delete a hike from the server. A hike can only be deleted by its owner.
+     *
+     * @param hikeId - ID of the hike
+     * @throws DatabaseClientException if unable to delete user
+     */
+    public void deleteHike(long hikeId) throws DatabaseClientException {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("hike_id", hikeId);
+
+            URL url = new URL(mServerUrl + "/delete_hike/");
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
+     * Send user data to the server.  Returns the database ID
+     * that this user was assigned from the database.
      *
      * @param rawUserData - RawUserData object
      * @return user id
@@ -157,7 +179,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/post_user_data");
+            URL url = new URL(mServerUrl + "/post_user/");
             HttpURLConnection conn = getConnection(url, "POST");
             byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
             conn.connect();
@@ -165,14 +187,13 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("user_id");
         } catch (IOException e) {
-            throw new DatabaseClientException();
+            throw new DatabaseClientException(e);
         } catch (JSONException e) {
-            throw new DatabaseClientException("Post unsuccessful: " + e.getMessage());
+            throw new DatabaseClientException(e);
         }
     }
 
     /**
-     * TODO Implement on server side ability to handle this request
      * Fetch data for a user from the server
      *
      * @param userId - mail address of the user
@@ -192,6 +213,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
             throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Delete a user from the server. A user can only delete himself.
+     *
+     * @param userId - ID of the user
+     * @throws DatabaseClientException if unable to delete user
+     */
+    public void deleteUser(long userId) throws DatabaseClientException {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_id", userId);
+
+            URL url = new URL(mServerUrl + "/delete_user/");
+            HttpURLConnection conn = getConnection(url, "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
         }
     }
 

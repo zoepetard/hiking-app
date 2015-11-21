@@ -61,6 +61,14 @@ public interface DatabaseClient {
     long postHike(RawHikeData hike) throws DatabaseClientException;
 
     /**
+     * Delete a hike from the server. A hike can only be deleted by its owner.
+     *
+     * @param hikeId - ID of the hike
+     * @throws DatabaseClientException if unable to delete user
+     */
+    void deleteHike(long hikeId) throws DatabaseClientException;
+
+    /**
      * Post user data to the data base
      *
      * @param rawUserData object conatining id,user name and mail address
@@ -68,7 +76,6 @@ public interface DatabaseClient {
      * @throws DatabaseClientException if post is unsuccessful
      */
     long postUserData(RawUserData rawUserData) throws DatabaseClientException;
-
 
     /**
      * Fetch data for a user from the server
@@ -79,5 +86,12 @@ public interface DatabaseClient {
      */
     RawUserData fetchUserData(long userId) throws DatabaseClientException;
 
+    /**
+     * Delete a user from the server. A user can only delete himself.
+     *
+     * @param userId - ID of the user
+     * @throws DatabaseClientException if unable to delete user
+     */
+    void deleteUser(long userId) throws DatabaseClientException;
 
 }
