@@ -20,6 +20,8 @@ public final class BottomInfoView {
     private TextView infoLine1;
     private TextView infoLine2;
 
+    private boolean isLiveFeed = false;
+
     public void initialize(Context context) {
         this.context = context;
         this.mapTableLayout = new TableLayout(context);
@@ -62,6 +64,14 @@ public final class BottomInfoView {
 
     public void setInfoLine2(String infoMessage) {
         this.infoLine2.setText(infoMessage);
+    }
+
+    public void setLiveFeedStatus(boolean status) {
+        this.isLiveFeed = status;
+    }
+
+    public boolean isLiveFeed() {
+        return this.isLiveFeed;
     }
 
     public static BottomInfoView getInstance() {
