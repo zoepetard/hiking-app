@@ -81,6 +81,12 @@ public final class BottomInfoView {
         }
     }
 
+    public void clearInfoLines(int entity) {
+        if(permissionGranted(entity)) {
+            infoLines.clear();
+        }
+    }
+
     public void requestLock(int entity) {
         if (permissionGranted(entity)) {
             this.lockEntity = entity;
