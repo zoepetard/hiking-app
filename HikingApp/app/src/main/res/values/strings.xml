@@ -55,5 +55,6 @@
     <!-- IDs -->
     <item name="button_tracking_toggle" type="id"/>
     <item name="feedback_notification" type="id"/>
+    <item name="mapTextTable" type="id"/>
 
 </resources>
