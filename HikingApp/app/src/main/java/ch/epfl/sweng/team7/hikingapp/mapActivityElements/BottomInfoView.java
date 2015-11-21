@@ -78,11 +78,15 @@ public final class BottomInfoView {
             TextView infoView = new TextView(context);
             infoView.setText(infoMessage);
             infoLines.add(infoView);
+            mapTableLayout.addView(infoView);
         }
     }
 
     public void clearInfoLines(int entity) {
         if(permissionGranted(entity)) {
+            for (TextView infoLineView : infoLines) {
+                mapTableLayout.removeView(infoLineView);
+            }
             infoLines.clear();
         }
     }
