@@ -14,6 +14,7 @@ public class BottomInfoView {
 
     public BottomInfoView(Context context) {
         this.context = context;
+        this.mapTableLayout = new TableLayout(context);
         this.title = new TextView(context);
         this.infoLine1 = new TextView(context);
         this.infoLine2 = new TextView(context);
