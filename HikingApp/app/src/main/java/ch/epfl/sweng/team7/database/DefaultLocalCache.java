@@ -60,6 +60,8 @@ class DefaultLocalCache implements LocalCache {
 
     @Override
     public Picture getPicture(long hikeId, long pictureId) {
+
+        //TODO
         return null;
         //find hike with hikeId, then find the pictureID on that hike and return it from the picture list
     }
