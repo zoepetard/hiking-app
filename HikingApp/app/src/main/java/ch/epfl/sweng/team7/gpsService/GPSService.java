@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import ch.epfl.sweng.team7.hikingapp.R;
+
 /**
  * Class used as a 'background task'. It is in charge of
  * updating user's current position, according to GPS information,
@@ -80,6 +82,7 @@ public class GPSService extends Service {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         } catch (SecurityException e) {
+            gps.displayToastMessage(gps.getContext().getResources().getString(R.string.gps_location_updates_failure));
             Log.d(LOG_FLAG, "Could not request location updates");
         }
     }

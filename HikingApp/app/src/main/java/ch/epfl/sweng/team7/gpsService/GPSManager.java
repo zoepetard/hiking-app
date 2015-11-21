@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -58,16 +59,22 @@ public final class GPSManager {
      * on/off, according to previous state.
      */
     public void toggleTracking() {
-        if (!mIsTracking) {
-            startTracking();
+        if (gpsService != null) {
+            if (!mIsTracking) {
+                startTracking();
+            } else {
+                stopTracking();
+            }
+            toggleListeners();
         } else {
-            stopTracking();
+            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
+            Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
-        toggleListeners();
     }
 
     /**
      * Method called to get the tracking status
+     *
      * @return true if it is tracking, false otherwise
      */
     public Boolean tracking() {
@@ -102,6 +109,7 @@ public final class GPSManager {
 
     /**
      * Method called to bind GPSService to a certain Context
+     *
      * @param context Context to which the GPSService will be bound to
      */
     public void bindService(Context context) {
@@ -111,6 +119,7 @@ public final class GPSManager {
 
     /**
      * Method called to unbind GPSService from a certain Context
+     *
      * @param context Context from which the GPSService will be unbound
      */
     public void unbindService(Context context) {
@@ -147,6 +156,14 @@ public final class GPSManager {
     }
 
     /**
+     * Called by the GPSService to access the Context of the app.
+     * @return Context
+     */
+    protected Context getContext() {
+        return mContext;
+    }
+
+    /**
      * Private method to setup communication with the
      * GPSService that will be running in the background.
      */
@@ -163,6 +180,7 @@ public final class GPSManager {
                 // This is called when the connection with the service has been
                 // unexpectedly disconnected
                 gpsService = null;
+                displayToastMessage(mContext.getResources().getString(R.string.gps_service_connection_dropped));
                 Log.d(LOG_FLAG, "Connection to service was dropped...");
             }
         };
@@ -204,15 +222,21 @@ public final class GPSManager {
      * listeners inside GPSService.
      */
     private void toggleListeners() {
-        if (gpsService != null) {
-            if (mIsTracking) {
-                gpsService.enableListeners();
-            } else {
-                gpsService.disableListeners();
-            }
+        if (mIsTracking) {
+            gpsService.enableListeners();
         } else {
-            Log.d(LOG_FLAG, "Could not access GPSService (null)");
+            gpsService.disableListeners();
         }
+    }
+
+    /**
+     * Method called internally to give feedback to the user
+     *
+     * @param message message to be displayed inside a Toast.
+     */
+    protected void displayToastMessage(String message) {
+        Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     /**

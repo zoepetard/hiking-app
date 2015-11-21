@@ -61,4 +61,9 @@
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
 
+    <!-- Error messages -->
+    <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
+    <string name="gps_service_access_failure">Could not access gps service</string>
+    <string name="gps_location_updates_failure">Could not request location updates</string>
+
 </resources>
