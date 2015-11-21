@@ -215,6 +215,10 @@ public final class GPSManager {
         }
     }
 
+    private void displayToastMessage(String message) {
+        
+    }
+
     /**
      * Method called to store recorded hike
      */
