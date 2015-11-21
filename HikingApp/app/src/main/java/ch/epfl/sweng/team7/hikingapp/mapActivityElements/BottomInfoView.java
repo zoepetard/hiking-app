@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp.mapActivityElements;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -20,15 +21,23 @@ public class BottomInfoView {
         this.infoLine2 = new TextView(context);
     }
 
-    private void setTitle(String title) {
+    public void show() {
+        mapTableLayout.setVisibility(View.VISIBLE);
+    }
 
+    public void hide() {
+        mapTableLayout.setVisibility(View.INVISIBLE);
+    }
+
+    private void setTitle(String title) {
+        this.title.setText(title);
     }
 
     private void setInfoLine1(String infoMessage) {
-
+        this.infoLine1.setText(infoMessage);
     }
 
     private void setInfoLine2(String infoMessage) {
-
+        this.infoLine2.setText(infoMessage);
     }
 }
