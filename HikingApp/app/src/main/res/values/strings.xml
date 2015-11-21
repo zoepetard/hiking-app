@@ -24,11 +24,13 @@
     <!-- Google Play Services error for Toast -->
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
 
-     <!-- Strings related to hike display -->
-     <string name="hikeNumberText">Hike #%1$d</string>
-     <string name="hikeOwnerText">Owner: %1$d</string>
-     <string name="hikeDistanceText">Distance: %1$d km</string>
-     <string name="hikeTimeText">Time: %1$d</string>
+    <!-- Strings related to hike display -->
+    <string name="hikeNumberText">Hike #%1$d</string>
+    <string name="hikeOwnerText">Owner: %1$d</string>
+    <string name="hikeDistanceText">Distance: %1$d km</string>
+    <string name="hikeTimeText">Time: %1$d</string>
+    <string name="defaultNotificationTitle">Tracking a hike</string>
+    <string name="defaultNotificationContent">Click here to check on your progress</string>
 
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
@@ -53,8 +55,8 @@
     <string name="num_hikes_fmt">Number of hikes: %d</string>
 
     <!-- IDs -->
-    <item name="button_tracking_toggle" type="id"/>
-    <item name="feedback_notification" type="id"/>
-    <item name="mapTextTable" type="id"/>
+    <item name="button_tracking_toggle" type="id" />
+    <item name="feedback_notification" type="id" />
+    <item name="mapTextTable" type="id" />
 
 </resources>
