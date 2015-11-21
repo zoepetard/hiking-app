@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-public class BottomInfoView {
+public final class BottomInfoView {
 
     private static BottomInfoView instance = new BottomInfoView();
     private static final float DEFAULT_TITLE_SIZE = 20f;
