@@ -70,6 +70,9 @@ public class MapActivity extends FragmentActivity {
         //creates a start/stop tracking button
         createTrackingToggleButton();
 
+        //Initializes the BottomInfoView
+        BottomInfoView.getInstance().initialize(this);
+
     }
 
     @Override
@@ -264,9 +267,8 @@ public class MapActivity extends FragmentActivity {
         });
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
         layout.addView(bottomTable.getView(), lp);
         bottomTable.show();
