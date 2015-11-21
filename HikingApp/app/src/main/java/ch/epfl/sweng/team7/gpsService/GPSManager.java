@@ -39,11 +39,11 @@ public final class GPSManager {
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
-    private NotificationHandler notification;
-    private BottomInfoView infoDisplay;
+    private NotificationHandler mNotification;
+    private BottomInfoView mInfoDisplay;
 
     private GPSManager() {
-        infoDisplay = BottomInfoView.getInstance();
+        mInfoDisplay = BottomInfoView.getInstance();
         setupServiceConnection();
     }
 
@@ -93,8 +93,8 @@ public final class GPSManager {
     public void startService(Context context) {
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
-        notification = NotificationHandler.getInstance();
-        notification.setup(context);
+        mNotification = NotificationHandler.getInstance();
+        mNotification.setup(context);
     }
 
     /**
@@ -125,8 +125,8 @@ public final class GPSManager {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
             if (this.mIsTracking) {
                 gpsPath.addFootPrint(this.lastFootPrint);
-                infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, String.format("\t%d s", gpsPath.timeElapsedInSeconds()));
-                infoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, String.format("\t%f m travelled", gpsPath.distanceToStart()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, String.format("\t%d s", gpsPath.timeElapsedInSeconds()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, String.format("\t%f m travelled", gpsPath.distanceToStart()));
             }
         }
     }
@@ -172,13 +172,13 @@ public final class GPSManager {
     private void startTracking() {
         this.mIsTracking = true;
         gpsPath = new GPSPath();
-        infoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
-        infoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
-        infoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-        infoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
-        infoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
-        infoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
-        notification.display();
+        mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+        mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
+        mNotification.display();
     }
 
     /**
@@ -188,11 +188,11 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.mIsTracking = false;
-        notification.hide();
+        mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         //TODO call storeHike() after issue #86 is fixed
-        infoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
-        infoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
     }
 
