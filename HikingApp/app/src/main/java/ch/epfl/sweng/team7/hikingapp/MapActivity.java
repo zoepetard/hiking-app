@@ -253,18 +253,20 @@ public class MapActivity extends FragmentActivity {
 
     private void displayHikeInfo(final HikeData hike) {
         BottomInfoView bottomTable = BottomInfoView.getInstance();
-        bottomTable.setTitle(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-        bottomTable.setInfoLine1(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
-        bottomTable.setInfoLine2(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-        bottomTable.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
-                intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
-                startActivity(intent);
-            }
-        });
+        if (!bottomTable.isLiveFeed()) {
+            bottomTable.setTitle(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+            bottomTable.setInfoLine1(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+            bottomTable.setInfoLine2(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+            bottomTable.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                    intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
+                    startActivity(intent);
+                }
+            });
 
-        bottomTable.show();
+            bottomTable.show();
+        }
     }
 
     private void createTrackingToggleButton() {
