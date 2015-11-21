@@ -30,20 +30,7 @@ public class NotificationHandler {
                         .setSmallIcon(R.drawable.notification_icon)
                         .setContentTitle(DEFAULT_NOTIFICATION_TITLE)
                         .setContentText(DEFAULT_NOTIFICATION_CONTENT);
-
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(context, MapActivity.class);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(MapActivity.class);
-
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(resultPendingIntent);
+        
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
