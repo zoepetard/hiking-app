@@ -163,7 +163,7 @@ public final class GPSManager {
                 // This is called when the connection with the service has been
                 // unexpectedly disconnected
                 gpsService = null;
-                displayToastMessage(mContext.getResources().getString(R.string.gps_warning_service_dropped));
+                displayToastMessage(mContext.getResources().getString(R.string.gps_service_connection_dropped));
                 Log.d(LOG_FLAG, "Connection to service was dropped...");
             }
         };
@@ -212,7 +212,7 @@ public final class GPSManager {
                 gpsService.disableListeners();
             }
         } else {
-            displayToastMessage(mContext.getResources().getString(R.string.gps_connection_failure));
+            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
     }
