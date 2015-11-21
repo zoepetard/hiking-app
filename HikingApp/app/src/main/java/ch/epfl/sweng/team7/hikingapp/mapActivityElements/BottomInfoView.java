@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import ch.epfl.sweng.team7.hikingapp.R;
+
 public final class BottomInfoView {
 
     private static BottomInfoView instance = new BottomInfoView();
@@ -19,6 +21,7 @@ public final class BottomInfoView {
     public void initialize(Context context) {
         this.context = context;
         this.mapTableLayout = new TableLayout(context);
+        this.mapTableLayout.setId(R.id.mapTextTable);
         this.title = new TextView(context);
         this.title.setTextSize(DEFAULT_TITLE_SIZE);
         this.infoLine1 = new TextView(context);
