@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 public class BottomInfoView {
 
+    private static final float DEFAULT_TITLE_SIZE = 20f;
+
     private Context context;
     private TableLayout mapTableLayout;
     private TextView title;
@@ -17,6 +19,7 @@ public class BottomInfoView {
         this.context = context;
         this.mapTableLayout = new TableLayout(context);
         this.title = new TextView(context);
+        this.title.setTextSize(DEFAULT_TITLE_SIZE);
         this.infoLine1 = new TextView(context);
         this.infoLine2 = new TextView(context);
     }
