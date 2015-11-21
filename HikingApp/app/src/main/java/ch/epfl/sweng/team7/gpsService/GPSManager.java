@@ -36,6 +36,7 @@ public final class GPSManager {
 
 
     //GPS service communication
+    private Context mContext;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
@@ -91,6 +92,7 @@ public final class GPSManager {
      * @param context the context from which the Intent will be sent.
      */
     public void startService(Context context) {
+        mContext = context;
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
         mNotification = NotificationHandler.getInstance();
