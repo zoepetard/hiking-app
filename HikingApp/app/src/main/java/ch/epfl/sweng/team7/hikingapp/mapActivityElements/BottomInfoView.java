@@ -28,15 +28,15 @@ public class BottomInfoView {
         mapTableLayout.setOnClickListener(listener);
     }
 
-    private void setTitle(String title) {
+    public void setTitle(String title) {
         this.title.setText(title);
     }
 
-    private void setInfoLine1(String infoMessage) {
+    public void setInfoLine1(String infoMessage) {
         this.infoLine1.setText(infoMessage);
     }
 
-    private void setInfoLine2(String infoMessage) {
+    public void setInfoLine2(String infoMessage) {
         this.infoLine2.setText(infoMessage);
     }
 
