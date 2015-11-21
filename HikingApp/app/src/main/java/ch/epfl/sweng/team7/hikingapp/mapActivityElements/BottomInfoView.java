@@ -29,6 +29,10 @@ public class BottomInfoView {
         mapTableLayout.setVisibility(View.INVISIBLE);
     }
 
+    public void setOnClickListener(View.OnClickListener listener) {
+        mapTableLayout.setOnClickListener(listener);
+    }
+
     private void setTitle(String title) {
         this.title.setText(title);
     }
