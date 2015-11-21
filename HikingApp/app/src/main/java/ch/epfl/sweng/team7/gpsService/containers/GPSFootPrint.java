@@ -1,5 +1,7 @@
 package ch.epfl.sweng.team7.gpsService.containers;
 
+import android.location.Location;
+
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 
 /**
@@ -21,6 +23,15 @@ public class GPSFootPrint {
 
     public GeoCoords getGeoCoords() {
         return this.geoCoords;
+    }
+
+    public Location toLocation() {
+        Location location = new Location("");
+        location.setTime(timeStamp);
+        location.setLongitude(geoCoords.getLongitude());
+        location.setLatitude(geoCoords.getLatitude());
+        location.setAltitude(geoCoords.getAltitude());
+        return location;
     }
 
     public long getTimeStamp() {
