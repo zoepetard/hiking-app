@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -218,7 +219,8 @@ public final class GPSManager {
     }
 
     private void displayToastMessage(String message) {
-
+        Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     /**
