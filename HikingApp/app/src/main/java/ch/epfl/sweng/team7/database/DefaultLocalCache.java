@@ -58,8 +58,9 @@ class DefaultLocalCache implements LocalCache {
     public UserData getUserData(long userId) {
         return mUsersCache.get(userId);
     }
-
+    
     public Drawable getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
+
 
     @Override
     public void putPicture(Drawable picture, long id) {
