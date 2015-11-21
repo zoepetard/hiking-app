@@ -30,6 +30,18 @@ public final class GPSPath {
         return path;
     }
 
+    public long timeElapsed() {
+        try {
+            return path.get(0).getTimeStamp() - path.get(path.size()-1).getTimeStamp();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int distanceTraveled() {
+        return 0;
+    }
+
     @Override
     public String toString() {
         return String.format("[FootPrints: %d]", path.size());
