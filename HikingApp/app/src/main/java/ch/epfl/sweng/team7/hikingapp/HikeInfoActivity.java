@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 
+import ch.epfl.sweng.team7.gpsService.GPSManager;
+
 public final class HikeInfoActivity extends Activity {
     private long hikeId;
 
@@ -28,6 +30,19 @@ public final class HikeInfoActivity extends Activity {
         setContentView(R.layout.navigation_drawer);
 
         Intent intent = getIntent();
+        if (intent.getBooleanExtra(GPSManager.IS_NEW_HIKE, false)) {
+            loadHikeInformation(intent, savedInstanceState);
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(HIKE_ID, hikeId);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void loadHikeInformation(Intent intent, Bundle savedInstanceState) {
         String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
         if (hikeIdStr == null && savedInstanceState != null) {
             hikeId = savedInstanceState.getLong(HIKE_ID);
@@ -66,13 +81,6 @@ public final class HikeInfoActivity extends Activity {
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
         hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putLong(HIKE_ID, hikeId);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     private class ImageViewClickListener implements View.OnClickListener {
