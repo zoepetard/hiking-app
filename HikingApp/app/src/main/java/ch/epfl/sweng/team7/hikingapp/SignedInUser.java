@@ -38,7 +38,4 @@ public class SignedInUser {
         return mMailAddress;
     }
 
-    public void setUserName(String userName) {
-        mUserName = userName;
-    }
 }

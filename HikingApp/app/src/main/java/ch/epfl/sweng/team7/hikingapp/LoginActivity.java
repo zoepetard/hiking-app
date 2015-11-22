@@ -306,12 +306,10 @@ public class LoginActivity extends Activity implements
          */
         @Override
         protected UserData doInBackground(String... mailAddress) {
-
-
             // try to get user info from database
             UserData userData;
 
-            // TODO Authenticate user by quering server for user id corresponding to mail
+            // TODO Authenticate user by quering server for user info
             try {
                 userData = mDataManager.getUserData(mailAddress[0]);
 
@@ -319,7 +317,6 @@ public class LoginActivity extends Activity implements
                 // TODO if fetch fails, provide feedback to user
                 RawUserData rawUserData = new RawUserData(-1, "void", mailAddress[0]);
                 userData = new DefaultUserData(rawUserData);
-
             }
 
             return userData;
