@@ -35,7 +35,7 @@ public final class HikeInfoActivity extends Activity {
         if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
             displayEditableHike(intent);
         } else {
-            loadHikeInformation(intent, savedInstanceState);
+            loadStaticHike(intent, savedInstanceState);
         }
 
     }
@@ -53,7 +53,7 @@ public final class HikeInfoActivity extends Activity {
 
     }
 
-    private void loadHikeInformation(Intent intent, Bundle savedInstanceState) {
+    private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
         String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
         if (hikeIdStr == null && savedInstanceState != null) {
             hikeId = savedInstanceState.getLong(HIKE_ID);
