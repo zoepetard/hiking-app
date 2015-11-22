@@ -31,6 +31,8 @@ public final class HikeInfoActivity extends Activity {
 
         Intent intent = getIntent();
         if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
+
+        } else {
             loadHikeInformation(intent, savedInstanceState);
         }
 
