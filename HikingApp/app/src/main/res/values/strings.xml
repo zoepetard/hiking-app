@@ -60,6 +60,7 @@
     <item name="button_tracking_toggle" type="id" />
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
+    <item name="button_save_hike" type="id"></item>
 
     <!-- Error messages -->
     <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
