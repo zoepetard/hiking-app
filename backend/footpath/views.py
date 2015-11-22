@@ -171,7 +171,14 @@ def get_user(request):
     
     request_user_id = int(request.META.get('HTTP_USER_ID', -1))
     logger.info('get_user got request for user id %s', repr(request_user_id))
-    
+
+    # Find user id via email lookup
+    if request_user_id < 0:
+        request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
+        if len(request_user_email) > 0:
+            request_user_id = find_user_with_email(request_user_email)
+
+
     if request_user_id < 0:
         return response_not_found()
     
@@ -180,6 +187,18 @@ def get_user(request):
         return response_not_found()
         
     return response_data(user.to_json())
+
+
+# Get the user ID from an email address. Returns -1 on not found.
+# Returns ID of some user if more than one user have the same address.
+def find_user_with_email(mail_address):
+    users = User.query(User.mail_address == mail_address).fetch(100)
+    if users and len(users)>0:
+        logger.info("Found "+repr(len(users))+" user(s) with email "+mail_address+"!")
+        return users[0].key.id()
+    return -1
+
+
 
 # Create a new user in the database, or update a current one
 def post_user(request):
