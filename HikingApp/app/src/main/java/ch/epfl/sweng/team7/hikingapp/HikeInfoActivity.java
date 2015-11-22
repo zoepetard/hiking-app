@@ -11,11 +11,14 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import ch.epfl.sweng.team7.gpsService.GPSManager;
@@ -50,7 +53,15 @@ public final class HikeInfoActivity extends Activity {
         EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
         hikeName.setInputType(InputType.TYPE_CLASS_TEXT);
 
+        Button saveButton = new Button(this);
+        saveButton.setText("Save");
+        saveButton.setId(R.id.button_save_hike);
 
+        LinearLayout layout = (LinearLayout) findViewById(R.id.hike_name_layout);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        saveButton.setLayoutParams(lp);
+        layout.addView(saveButton, lp);
     }
 
     private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
