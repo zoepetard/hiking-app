@@ -7,9 +7,11 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -31,7 +33,7 @@ public final class HikeInfoActivity extends Activity {
 
         Intent intent = getIntent();
         if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
-
+            displayEditableHike(intent);
         } else {
             loadHikeInformation(intent, savedInstanceState);
         }
@@ -42,6 +44,13 @@ public final class HikeInfoActivity extends Activity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong(HIKE_ID, hikeId);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void displayEditableHike(Intent intent) {
+        EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
+        hikeName.setInputType(InputType.TYPE_CLASS_TEXT);
+
+
     }
 
     private void loadHikeInformation(Intent intent, Bundle savedInstanceState) {
