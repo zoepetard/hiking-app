@@ -69,19 +69,13 @@ def get_hikes_in_window(request):
     hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
     
     # check results of query and assemble output string
-    hike_ids = ''
+    hike_ids = []
     for hike in hikes:
         if (hike.bb_southwest.lat < window_northeast.lat and hike.bb_southwest.lon < window_northeast.lon
             and hike.bb_northeast.lat > window_southwest.lat and hike.bb_northeast.lon > window_southwest.lon):
-            hike_ids += hike_location(hike) + ','
-    # Remove trailing comma
-    if(len(hike_ids) > 0):
-        hike_ids = hike_ids[:-1]
-    hike_ids = '[' + hike_ids + ']'
-    
-    # return result       
-    hike_ids_string = "{\"hike_ids\":" + hike_ids + "}";
-    return response_data(hike_ids_string)
+            hike_ids.append(hike)
+
+    return response_hike_locations(hike_ids)
 
 # Format a brief summary of the hike, i.e. it's ID,
 # and location information. Currently only formats the ID.
@@ -281,5 +275,14 @@ def response_id(id_name, id_value):
 def response_data(data):
     logger.info('response_string: return string '+data)
     return HttpResponse(data, content_type='application/json')
+
+def response_hike_locations(hikes):
+
+    # assemble output string
+    hike_locations = ','.join([hike.to_location() for hike in hikes])
+    
+    # return result
+    hike_ids_string = "{\"hike_ids\":[" + hike_locations + "]}";
+    return response_data(hike_ids_string)
 
 
