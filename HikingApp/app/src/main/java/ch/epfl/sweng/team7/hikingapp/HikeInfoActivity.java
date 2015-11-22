@@ -30,7 +30,7 @@ public final class HikeInfoActivity extends Activity {
         setContentView(R.layout.navigation_drawer);
 
         Intent intent = getIntent();
-        if (intent.getBooleanExtra(GPSManager.IS_NEW_HIKE, false)) {
+        if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
             loadHikeInformation(intent, savedInstanceState);
         }
 

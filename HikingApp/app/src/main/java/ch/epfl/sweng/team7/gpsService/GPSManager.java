@@ -27,6 +27,7 @@ import ch.epfl.sweng.team7.network.RawHikeData;
  */
 public final class GPSManager {
 
+    public static final String NEW_HIKE = "ch.epfl.sweng.team7.gpsService.NEW_HIKE";
     private final static String LOG_FLAG = "GPS_Manager";
     private final static int BOTTOM_TABLE_ACCESS_ID = 2;
     private static GPSManager instance = new GPSManager();
