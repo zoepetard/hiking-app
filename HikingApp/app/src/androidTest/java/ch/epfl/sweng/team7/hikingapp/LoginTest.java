@@ -19,10 +19,5 @@ public class LoginTest {
 
     @Test
     public void testBeforeLogin() {
-        onView(withId(R.id.status)).check(matches(withText("Signed out")));
-        onView(withId(R.id.email)).check(matches(withText("")));
-        onView(withId(R.id.change_display_name_and_goto_map)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.sign_in_button)).check(matches(isDisplayed()));
-        onView(withId(R.id.sign_out_and_disconnect)).check(matches(not(isDisplayed())));
     }
 }
