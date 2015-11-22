@@ -77,6 +77,24 @@ def get_hikes_in_window(request):
 
     return response_hike_locations(hike_ids)
 
+
+# Gets all hikes in a bounding box specified in the request.
+def get_hikes_of_user(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    # Get window from input
+    request_user_id = int(request.META.get('HTTP_USER_ID', -1))
+    logger.info('got request for hikes of user %s', repr(request_user_id))
+    
+    # query database
+    hikes = Hike.query(Hike.owner_id == request_user_id).fetch()
+
+    return response_hike_locations(hikes)
+
+
 # Format a brief summary of the hike, i.e. it's ID,
 # and location information. Currently only formats the ID.
 def hike_location(hike):
