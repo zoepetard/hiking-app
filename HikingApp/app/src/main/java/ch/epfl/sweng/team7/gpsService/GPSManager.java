@@ -16,6 +16,8 @@ import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.HikeInfoActivity;
+import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
@@ -211,11 +213,18 @@ public final class GPSManager {
     private void stopTracking() {
         this.mIsTracking = false;
         mNotification.hide();
+        goToHikeEditor();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         //TODO call storeHike() after issue #86 is fixed
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
+    }
+
+    private void goToHikeEditor() {
+        Intent intent = new Intent(mContext, HikeInfoActivity.class);
+        intent.putExtra(GPSManager.NEW_HIKE, true);
+        mContext.startActivity(intent);
     }
 
     /**

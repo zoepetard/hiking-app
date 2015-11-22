@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -51,17 +52,18 @@ public final class HikeInfoActivity extends Activity {
 
     private void displayEditableHike(Intent intent) {
         EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
-        hikeName.setInputType(InputType.TYPE_CLASS_TEXT);
+        //hikeName.setInputType(InputType.TYPE_CLASS_TEXT);
 
         Button saveButton = new Button(this);
         saveButton.setText("Save");
         saveButton.setId(R.id.button_save_hike);
+        //TODO add click listener to saveButton
+        
+        addButtonToView();
+    }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.hike_name_layout);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-
-        saveButton.setLayoutParams(lp);
-        layout.addView(saveButton, lp);
+    private void addButtonToView() {
+        //TODO add created button to the current View
     }
 
     private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
