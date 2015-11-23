@@ -11,6 +11,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 
 public class LoginTest {
     @Rule
@@ -24,5 +25,28 @@ public class LoginTest {
         onView(withId(R.id.change_display_name_and_goto_map)).check(matches(not(isDisplayed())));
         onView(withId(R.id.sign_in_button)).check(matches(isDisplayed()));
         onView(withId(R.id.sign_out_and_disconnect)).check(matches(not(isDisplayed())));
+    }
+
+    @Test
+    public void testSignedInUser() {
+        SignedInUser user = SignedInUser.getInstance();
+        user.init(1, "team7", "team7@gmail.com");
+
+        assertEquals("ID mismatch", user.getId(), 1);
+        assertEquals("User name mismatch", user.getUserName(), "team7");
+        assertEquals("Email address mismatch", user.getMailAddress(), "team7@gmail.com");
+
+        // test that it's only possible to have one object but multiple references
+        SignedInUser newUser = SignedInUser.getInstance();
+        newUser.init(2, "7team", "7team@gmail.com");
+
+        assertEquals("Wrong ID", newUser.getId(), 2);
+        assertEquals("Wrong user name", newUser.getId(), 2);
+        assertEquals("Wrong email address", newUser.getId(), 2);
+
+        // check that old reference is updated
+        assertEquals("", user.getId(), 2);
+        assertEquals("", user.getUserName(), "7team");
+        assertEquals("", user.getMailAddress(), "7team@gmail.com");
     }
 }
