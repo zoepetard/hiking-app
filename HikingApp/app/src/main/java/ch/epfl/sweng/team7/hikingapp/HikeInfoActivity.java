@@ -105,6 +105,15 @@ public final class HikeInfoActivity extends Activity {
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
         hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
+
+        Button back_button = (Button) findViewById(R.id.back_button);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     private class ImageViewClickListener implements View.OnClickListener {
