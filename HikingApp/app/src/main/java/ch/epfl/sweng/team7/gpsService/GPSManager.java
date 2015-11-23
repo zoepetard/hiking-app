@@ -72,6 +72,10 @@ public final class GPSManager {
         }
     }
 
+    /**
+     * Method called to check on gps status
+     * @return true if it is enabled, false otherwise
+     */
     public boolean enabled() {
         if (gpsService != null) {
             return gpsService.getProviderStatus() && (lastFootPrint != null);
