@@ -58,14 +58,13 @@ public class HikeListActivity extends Activity {
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
-        Bundle bound = getIntent().getParcelableExtra("EXTRA_BOUND");
+        Bundle bound = getIntent().getParcelableExtra("mapBounds");
         if (bound != null) {
             LatLng sw = bound.getParcelable("sw");
             LatLng ne = bound.getParcelable("ne");
             bounds = new LatLngBounds(sw, ne);
         } else {
             // display all hikes if no bounds specified
-            Log.d("msg", "bound null");
             bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
         }
         new GetMultHikeAsync().execute(bounds);
