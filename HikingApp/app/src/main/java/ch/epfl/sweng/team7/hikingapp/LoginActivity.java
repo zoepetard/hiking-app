@@ -129,6 +129,7 @@ public class LoginActivity extends Activity implements
                 // TODO: save name, email and photoUrl to server
 
                 Intent i = new Intent(this, MapActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
             } else {
                 // If getCurrentPerson returns null there is generally some error with the
