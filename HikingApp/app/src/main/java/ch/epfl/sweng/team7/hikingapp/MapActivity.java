@@ -136,14 +136,7 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        LatLng userLatLng;
-        if (mGps.enabled()) {
-            GeoCoords userGeoCoords = mGps.getCurrentCoords();
-            userLatLng = userGeoCoords.toLatLng();
-        } else {
-            userLatLng = new LatLng(46.4, 6.4);
-        }
-
+        LatLng userLatLng = getUserPosition();
         LatLngBounds initialBounds = guessNewLatLng(userLatLng, userLatLng, 0.5);
 
         List<HikeData> hikesFound = new ArrayList<>();
@@ -227,13 +220,7 @@ public class MapActivity extends FragmentActivity {
         int screenHeight = size.y;
 
         if (firstHike) {
-            LatLng userLatLng;
-            if (mGps.enabled()) {
-                GeoCoords userGeoCoords = mGps.getCurrentCoords();
-                userLatLng = userGeoCoords.toLatLng();
-            } else {
-                userLatLng = new LatLng(46.4, 6.4);
-            }
+            LatLng userLatLng = getUserPosition();
             boundingBoxBuilder.include(userLatLng);
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
         }
@@ -365,5 +352,16 @@ public class MapActivity extends FragmentActivity {
         LatLng guessSW = new LatLng(southWest.latitude - delta, southWest.longitude - delta);
         LatLng guessNE = new LatLng(northEast.latitude + delta, northEast.longitude + delta);
         return new LatLngBounds(guessSW, guessNE);
+    }
+
+    private LatLng getUserPosition() {
+        double switzerlandLatitude = 46.4;
+        double switzerlandLongitude = 6.4;
+        if (mGps.enabled()) {
+            GeoCoords userGeoCoords = mGps.getCurrentCoords();
+            return userGeoCoords.toLatLng();
+        } else {
+            return new LatLng(switzerlandLatitude, switzerlandLongitude);
+        }
     }
 }
