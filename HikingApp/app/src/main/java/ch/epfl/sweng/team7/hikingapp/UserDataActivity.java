@@ -33,13 +33,13 @@ public class UserDataActivity extends Activity {
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
         // TODO: add more field when we decide to store more user information
-        TextView user_name = (TextView) findViewById(R.id.user_name);
-        TextView user_email = (TextView) findViewById(R.id.user_email);
+        TextView userName = (TextView) findViewById(R.id.user_name);
+        TextView userEmail = (TextView) findViewById(R.id.user_email);
         String nname = getIntent().getStringExtra("newNickname");
         TextView nickname = (TextView) findViewById(R.id.nickname);
-        TextView num_hikes = (TextView) findViewById(R.id.num_hikes);
-        Button change_nickname = (Button) findViewById(R.id.change_nickname);
-        change_nickname.setOnClickListener(new View.OnClickListener() {
+        TextView numHikes = (TextView) findViewById(R.id.num_hikes);
+        Button changeNickname = (Button) findViewById(R.id.change_nickname);
+        changeNickname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), ChangeNicknameActivity.class);
@@ -47,8 +47,8 @@ public class UserDataActivity extends Activity {
             }
         });
 
-        ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
-        profile_pic.setOnClickListener(new View.OnClickListener() {
+        ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
+        profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(v.getContext())
@@ -69,14 +69,14 @@ public class UserDataActivity extends Activity {
 
         // TODO: use real data stored in local cache after issue #56 is in master
         // for user with this user_id
-        user_name.setText("Team 7");
-        user_email.setText("team7@epfl.ch");
+        userName.setText("Team 7");
+        userEmail.setText("team7@epfl.ch");
         if (nname == null) {
             nickname.setText(getString(R.string.nickname_fmt, "team7"));
         } else {
             nickname.setText(getString(R.string.nickname_fmt, nname));
         }
-        num_hikes.setText(getString(R.string.num_hikes_fmt, 100));
+        numHikes.setText(getString(R.string.num_hikes_fmt, 100));
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
