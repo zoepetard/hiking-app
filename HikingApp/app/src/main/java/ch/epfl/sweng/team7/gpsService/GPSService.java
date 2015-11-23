@@ -73,6 +73,13 @@ public class GPSService extends Service {
         isBound = true;
     }
 
+    protected boolean getProviderStatus() {
+        if (locationManager != null) {
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }
+        return false;
+    }
+
     /**
      * Method called from within GPSManager to control when
      * location updates are necessary.
