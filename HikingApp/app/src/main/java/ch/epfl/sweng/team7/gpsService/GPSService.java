@@ -74,6 +74,17 @@ public class GPSService extends Service {
     }
 
     /**
+     * Method called by GPSManager to check on location provider status
+     * @return true if at least one is enabled, false otherwise
+     */
+    protected boolean getProviderStatus() {
+        if (locationManager != null) {
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }
+        return false;
+    }
+
+    /**
      * Method called from within GPSManager to control when
      * location updates are necessary.
      */
@@ -107,16 +118,35 @@ public class GPSService extends Service {
         gps = GPSManager.getInstance();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
+            @Override
             public void onLocationChanged(Location location) {
                 gps.updateCurrentLocation(location);
                 Log.d(LOG_FLAG, "GPS status: " + gps.toString());
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
-            public void onProviderEnabled(String provider) {}
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
 
-            public void onProviderDisabled(String provider) {}
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
         };
+
+        try {
+            Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (gpsLocation != null) {
+                gps.updateCurrentLocation(gpsLocation);
+            } else {
+                Location netLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                gps.updateCurrentLocation(netLocation);
+            }
+        } catch (SecurityException e) {
+            Log.d(LOG_FLAG, "Could not request location from providers");
+        }
     }
 }
