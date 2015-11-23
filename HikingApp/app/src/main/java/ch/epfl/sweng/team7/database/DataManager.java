@@ -294,12 +294,9 @@ public final class DataManager {
     }
 
     /**
-<<<<<<< HEAD
-=======
-
->>>>>>> Rebasing to master
      * Login for the user with the server.
      */
+
     public void loginUser(LoginRequest loginRequest) throws DataManagerException {
         try {
             sDatabaseClient.loginUser(loginRequest);
@@ -404,8 +401,6 @@ public final class DataManager {
         }
     }
     
-    
-
     /**
      * Creates the LocalCache and DatabaseClient
      */

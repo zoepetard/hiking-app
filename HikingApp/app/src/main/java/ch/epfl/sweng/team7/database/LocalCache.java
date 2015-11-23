@@ -5,8 +5,6 @@
  */
 package ch.epfl.sweng.team7.database;
 
-import java.util.List;
-
 /**
  * The LocalCache saves a limited number of hike objects from the online database.
  * All database access should be routed through the cache.
@@ -33,7 +31,7 @@ interface LocalCache {
 
     UserData getUserData(long userId);
 
-
+    
     void removeHike(long hikeId);
     
     List<Long> searchHike(String query);
@@ -41,5 +39,6 @@ interface LocalCache {
     Picture getPicture(long hikeId, long pictureId);
 
     void postPicture(Picture picture);
+
 }
 

@@ -12,15 +12,15 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 /**
  * Created by pablo on 17/11/15.
  */
-public class TextAnnotation {
+public class TextAnnotation extends Annotation {
 
     private final static String LOG_FLAG = "Text annotation";
     private String mComment;
-    private RawHikePoint mRawHikePoint;
+
 
 
     public TextAnnotation(String comment, RawHikePoint rawHikePoint) {
-        mRawHikePoint = rawHikePoint;
+        super(rawHikePoint);
         mComment = comment;
     }
 
@@ -49,19 +49,14 @@ public class TextAnnotation {
     public JSONArray toJSON() throws JSONException {
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(mComment)
-                .put(mRawHikePoint.getPosition().latitude)
-                .put(mRawHikePoint.getPosition().longitude)
-                .put(mRawHikePoint.getTime())
-                .put(mRawHikePoint.getElevation());
+                .put(super.getRawHikePoint().getPosition().latitude)
+                .put(super.getRawHikePoint().getPosition().longitude)
+                .put(super.getRawHikePoint().getTime())
+                .put(super.getRawHikePoint().getElevation());
         return jsonArray;
     }
 
-
-    public String getComment() {
+    public String getmComment() {
         return mComment;
-    }
-
-    public RawHikePoint getRawHikePoint() {
-        return mRawHikePoint;
     }
 }

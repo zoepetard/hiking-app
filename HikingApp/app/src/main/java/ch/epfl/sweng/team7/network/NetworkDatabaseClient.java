@@ -8,6 +8,7 @@
 
 package ch.epfl.sweng.team7.network;
 
+
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -35,7 +36,11 @@ import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.HikeData;
 
-import ch.epfl.sweng.team7.database.Picture;
+import ch.epfl.sweng.team7.database.PictureAnnotation;
+import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+
+
+
 
 
 
@@ -282,10 +287,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-
-
-
-
     /**
      * Log user into the server, i.e. get user profile information
      *
@@ -328,10 +329,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-    @Override
-    public long postHikePictures(List<Picture> hikePictures) throws DatabaseClientException {
-        return 0;
-    }
+
 
     /**
      * Get an image from the database

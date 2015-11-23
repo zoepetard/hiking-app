@@ -13,7 +13,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
 
+
 import ch.epfl.sweng.team7.authentication.LoginRequest;
+
 
 
 /**
@@ -152,14 +154,13 @@ public interface DatabaseClient {
      */
     long postImage(Drawable drawable) throws DatabaseClientException;
 
+
     /**
      * Delete an image from the database
      * @param imageId the database key of the image
      * @throws DatabaseClientException
      */
     void deleteImage(long imageId) throws DatabaseClientException;
-
-
 
     /**
      * Post a comment to the database

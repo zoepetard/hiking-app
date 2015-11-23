@@ -8,7 +8,6 @@ package ch.epfl.sweng.team7.database;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -18,7 +17,7 @@ class DefaultLocalCache implements LocalCache {
     private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
     private final HashMap<Long, HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private final HashMap<Long, UserData> mUsersCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
-    private final HashMap<Long, Picture> mPicturesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
+    private final HashMap<Long, PictureAnnotation> mPicturesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
 
 
     public boolean hasHike(long hikeId) {
@@ -58,10 +57,10 @@ class DefaultLocalCache implements LocalCache {
         return mUsersCache.get(userId);
     }
 
-    public Picture getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
+    public PictureAnnotation getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
 
 
-    public void putPicture(Picture picture) {
+    public void putPicture(PictureAnnotation picture) {
         if(picture != null){
             mPicturesCache.put(picture.getPictureId(), picture);
         }
