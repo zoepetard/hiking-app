@@ -36,13 +36,6 @@ import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.HikeData;
 
-
-import ch.epfl.sweng.team7.database.Picture;
-
-
-
-
-
 /**
  * Class to get and post hikes in the server
  */
@@ -284,11 +277,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-
-
-
-
-
     /**
      * Log user into the server, i.e. get user profile information
      *
@@ -331,11 +319,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-    @Override
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-        return null;
-
-    }
 
     /**
      * Get an image from the database

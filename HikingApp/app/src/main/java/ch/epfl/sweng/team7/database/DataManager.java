@@ -291,10 +291,6 @@ public final class DataManager {
     }
 
     /**
-<<<<<<< HEAD
-=======
-
->>>>>>> Rebasing to master
      * Login for the user with the server.
      */
 
@@ -436,20 +432,7 @@ public final class DataManager {
             //throw new DataManagerException(e.getMessage());
         }
     }
-    public Picture getPicture(long hikeId, long pictureId) throws  DataManagerException {
-        // Check if Picture is cached
-        Picture picture = sLocalCache.getPicture(pictureId);
-        if (picture != null) {
-            return picture;
-        }
-
-        // Retrieve picture from the server
-        try {
-            return sDatabaseClient.getPicture(hikeId, pictureId);
-        } catch (DatabaseClientException e) {
-            throw new DataManagerException(e);
-        }
-    }
+    
 
     /**
      * Creates the LocalCache and DatabaseClient

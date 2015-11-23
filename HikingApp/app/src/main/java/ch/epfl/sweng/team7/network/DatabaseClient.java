@@ -17,6 +17,7 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 
 
+
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
  * communication protocol and data formats.
@@ -163,8 +164,6 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     void deleteImage(long imageId) throws DatabaseClientException;
-
-
 
     /**
      * Post a comment to the database

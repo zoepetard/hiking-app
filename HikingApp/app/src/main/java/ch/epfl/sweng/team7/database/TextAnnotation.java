@@ -18,7 +18,7 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 /**
  * Created by pablo on 23/11/15.
  */
-<<<<<<< HEAD
+
 
 public class Annotation {
     private final static String LOG_FLAG = "Annotation";
@@ -32,7 +32,6 @@ public class Annotation {
         mRawHikePoint = rawHikePoint;
         mText = text;
         mPicture = picture;
-
     }
 
 
@@ -114,5 +113,6 @@ public class Annotation {
         return mRawHikePoint;
 
     }
+
 
 }
