@@ -357,7 +357,7 @@ public class MapActivity extends FragmentActivity {
         LatLng guessNE = new LatLng(northEast.latitude + delta, northEast.longitude + delta);
         return new LatLngBounds(guessSW, guessNE);
     }
-    
+
     private void setGoToHikesButtonListener() {
         Button goHikeButton = (Button) findViewById(R.id.go_hikes_button);
         goHikeButton.setOnClickListener(new View.OnClickListener() {
