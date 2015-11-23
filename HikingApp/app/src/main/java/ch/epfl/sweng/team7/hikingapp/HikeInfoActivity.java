@@ -58,7 +58,7 @@ public final class HikeInfoActivity extends Activity {
         saveButton.setText("Save");
         saveButton.setId(R.id.button_save_hike);
         //TODO add click listener to saveButton
-        
+
         addButtonToView();
     }
 
