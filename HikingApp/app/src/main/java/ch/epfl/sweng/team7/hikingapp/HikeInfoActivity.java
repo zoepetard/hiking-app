@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -66,6 +67,14 @@ public final class HikeInfoActivity extends Activity {
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
         hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
+
+        Button back_button = (Button) findViewById(R.id.back_button);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
 
