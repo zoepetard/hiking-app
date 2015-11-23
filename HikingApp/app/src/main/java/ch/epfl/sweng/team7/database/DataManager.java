@@ -432,7 +432,7 @@ public final class DataManager {
             //throw new DataManagerException(e.getMessage());
         }
     }
-    
+
 
     /**
      * Creates the LocalCache and DatabaseClient

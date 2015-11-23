@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -18,17 +17,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-
 import ch.epfl.sweng.team7.database.GPSPathConverter;
+import ch.epfl.sweng.team7.database.PictureAnnotation;
+import ch.epfl.sweng.team7.database.TextAnnotation;
 import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
@@ -38,7 +35,6 @@ import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.RawHikeData;
-import ch.epfl.sweng.team7.network.RawHikePoint;
 
 /**
  * Class used to read device's GPS-related information
@@ -67,7 +63,6 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
     private List<Annotation> listAnnotations = new ArrayList<>();
     private RawHikeData rawHikeData;
-
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -201,6 +196,7 @@ public final class GPSManager {
 
     /**
      * Method to add annotations
+<<<<<<< HEAD
      *
      * @param annotation
      */
@@ -362,6 +358,11 @@ public final class GPSManager {
         builder.show();
     }
 
+
+
+    private void storePictures(List<PictureAnnotation> hikePictures) {
+        //TODO when is implemented on server
+    }
     /**
      * Method used to turn on/off the location
      * listeners inside GPSService.
@@ -377,6 +378,7 @@ public final class GPSManager {
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
     }
+
 
 
     private void storeHike() {
@@ -411,7 +413,6 @@ public final class GPSManager {
             DataManager dataManager = DataManager.getInstance();
             try {
                 hikeId = dataManager.postHike(rawHikeData[0]);
-                rawHikeData[0].setHikeId(hikeId);
                 Log.d(LOG_FLAG, "Hike Post correctly");
                 return hikeId;
             } catch (DataManagerException e) {
@@ -452,6 +453,8 @@ public final class GPSManager {
     public void setAnnotations(ArrayList<Annotation> listAnnotations) {
         if (rawHikeData != null) {
             rawHikeData.setAnnotations(listAnnotations);
+
         }
+
     }
 }
