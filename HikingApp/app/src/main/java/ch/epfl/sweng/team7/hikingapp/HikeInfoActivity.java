@@ -112,7 +112,7 @@ public final class HikeInfoActivity extends Activity {
             public void onClick(View v) {
                 finish();
             }
-        });git 
+        });
     }
 
     private class ImageViewClickListener implements View.OnClickListener {
