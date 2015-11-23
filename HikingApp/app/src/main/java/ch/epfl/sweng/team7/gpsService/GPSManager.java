@@ -220,7 +220,6 @@ public final class GPSManager {
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         displaySavePrompt();
-        //TODO call storeHike() after issue #86 is fixed
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
@@ -278,7 +277,7 @@ public final class GPSManager {
         builder.setPositiveButton(mContext.getResources().getString(R.string.button_save_hike), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                //TODO call storeHike() after issue #86 is fixed
             }
         });
         builder.show();
