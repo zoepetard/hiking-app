@@ -65,7 +65,7 @@ public class HikeInfoActivityTest
             }
 
             if(!navDrawerListView.getAdapter().getItem(1).equals("Logout")){
-                fail("Fourth item should be Logout");
+                fail("Second item should be Logout");
             }
         }
     }
