@@ -28,6 +28,18 @@ public final class GPSPath {
         return this.path.size();
     }
 
+    public void removeFootPrintsBefore(int index) {
+        if (path != null && index < path.size() && index >= 0) {
+            path = path.subList(0, index);
+        }
+    }
+
+    public void removeFootPrintsAfter(int index) {
+        if (path != null && index < path.size() && index >= 0) {
+            path = path.subList(index, path.size()-1);
+        }
+    }
+
     public List<GPSFootPrint> getPath() {
         return path;
     }
