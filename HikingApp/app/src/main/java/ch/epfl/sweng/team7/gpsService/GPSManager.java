@@ -282,6 +282,7 @@ public final class GPSManager {
         EditText hikeComment = new EditText(mContext);
         hikeComment.setHint(mContext.getResources().getString(R.string.prompt_comment_hint));
         hikeComment.setInputType(InputType.TYPE_CLASS_TEXT);
+        hikeComment.setSingleLine(false);
         layout.addView(hikeComment);
 
         builder.setView(layout);
