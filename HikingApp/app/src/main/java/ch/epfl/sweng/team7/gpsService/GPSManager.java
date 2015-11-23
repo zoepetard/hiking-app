@@ -217,7 +217,6 @@ public final class GPSManager {
     private void stopTracking() {
         this.mIsTracking = false;
         mNotification.hide();
-        goToHikeEditor();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
         displaySavePrompt();
         //TODO call storeHike() after issue #86 is fixed
