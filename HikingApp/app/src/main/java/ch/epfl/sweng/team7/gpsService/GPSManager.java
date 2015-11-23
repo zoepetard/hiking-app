@@ -72,6 +72,13 @@ public final class GPSManager {
         }
     }
 
+    public boolean enabled() {
+        if (gpsService != null) {
+            return gpsService.getProviderStatus() && (lastFootPrint != null);
+        }
+        return false;
+    }
+
     /**
      * Method called to get the tracking status
      *
