@@ -263,6 +263,20 @@ public class BackendTest extends TestCase {
         }
     }
 
+    @Test
+    public void testGetHikeIdsOfUser() throws Exception {
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
+
+        waitForServerSync();
+        RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints());
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+
+        waitForServerSync();
+        List<Long> hikeList = ((NetworkDatabaseClient) mDatabaseClient).getHikeIdsOfUser(userId);
+        assertEquals(hikeList.get(0), Long.valueOf(hikeId));
+    }
+
     // TODO(simon) test backend reaction to malformed input
     // TODO(simon) test other backend interface (like post_hikes)
 
