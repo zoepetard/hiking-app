@@ -1,8 +1,10 @@
 package ch.epfl.sweng.team7.gpsService;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -123,11 +125,24 @@ public class GPSService extends Service {
                 Log.d(LOG_FLAG, "GPS status: " + gps.toString());
             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
 
-            public void onProviderEnabled(String provider) {}
+            public void onProviderEnabled(String provider) {
+            }
 
-            public void onProviderDisabled(String provider) {}
+            public void onProviderDisabled(String provider) {
+            }
         };
+
+        try {
+            Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location netLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (gpsLocation != null) {
+                gps.updateCurrentLocation(gpsLocation);
+            } else {
+                gps.updateCurrentLocation(netLocation);
+            }
+        } catch (SecurityException e) {}
     }
 }
