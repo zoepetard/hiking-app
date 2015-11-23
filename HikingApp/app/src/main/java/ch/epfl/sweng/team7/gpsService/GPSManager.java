@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
@@ -257,17 +258,22 @@ public final class GPSManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(mContext.getResources().getString(R.string.prompt_title));
 
+        LinearLayout layout = new LinearLayout(mContext);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
         //setup the hike title input field
         EditText hikeTitle = new EditText(mContext);
         hikeTitle.setHint(mContext.getResources().getString(R.string.prompt_title_hint));
         hikeTitle.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(hikeTitle);
+        layout.addView(hikeTitle);
 
         //setup the hike comment input field
         EditText hikeComment = new EditText(mContext);
         hikeComment.setHint(mContext.getResources().getString(R.string.prompt_comment_hint));
         hikeComment.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(hikeComment);
+        layout.addView(hikeComment);
+
+        builder.setView(layout);
 
         builder.setPositiveButton(mContext.getResources().getString(R.string.button_save_hike), new DialogInterface.OnClickListener() {
             @Override
