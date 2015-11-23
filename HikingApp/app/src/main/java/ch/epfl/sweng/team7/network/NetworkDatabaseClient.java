@@ -119,6 +119,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
         return hikeList;
     }
 
+
+    public List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException {
+
+        List<Long> hikeList = new ArrayList<>();
+
+        try {
+            URL url = new URL(mServerUrl + "/get_hikes_of_user/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("user_id", Long.toString(userId));
+            conn.connect();
+            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+
+            // Parse response
+            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
+            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
+                hikeList.add(jsonHikeIdArray.getLong(i));
+            }
+        } catch (IOException | JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+        return hikeList;
+    }
+
     /**
      * Post a hike to the database. Returns the database ID
      * that this hike was assigned from the database.
