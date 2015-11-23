@@ -219,6 +219,7 @@ public final class GPSManager {
         mNotification.hide();
         goToHikeEditor();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
+        displaySavePrompt();
         //TODO call storeHike() after issue #86 is fixed
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
