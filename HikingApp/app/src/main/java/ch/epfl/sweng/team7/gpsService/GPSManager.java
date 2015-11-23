@@ -293,12 +293,7 @@ public final class GPSManager {
                 //TODO call storeHike() after issue #86 is fixed
             }
         });
-        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
+        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
         builder.show();
     }
 
