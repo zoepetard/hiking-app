@@ -75,7 +75,7 @@ public class MapActivity extends FragmentActivity {
         //Initializes the BottomInfoView
         createBottomInfoView();
 
-        createGoToHikesButton();
+        setGoToHikesButtonListener();
     }
 
     @Override
@@ -355,18 +355,8 @@ public class MapActivity extends FragmentActivity {
         return new LatLngBounds(guessSW, guessNE);
     }
 
-    private void createGoToHikesButton() {
-        Button goHikeButton = new Button(this);
-        goHikeButton.setText(R.string.go_hikes);
-
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-
-        goHikeButton.setLayoutParams(lp);
-        layout.addView(goHikeButton, lp);
-
+    private void setGoToHikesButtonListener() {
+        Button goHikeButton = (Button) findViewById(R.id.go_hikes_button);
         goHikeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 LatLngBounds bounds = getBounds();
