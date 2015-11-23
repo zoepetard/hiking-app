@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.IBinder;
 import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -263,6 +265,12 @@ public final class GPSManager {
 
         LinearLayout layout = new LinearLayout(mContext);
         layout.setOrientation(LinearLayout.VERTICAL);
+
+        //setup the horizontal separator
+        View lnSeparator = new View(mContext);
+        lnSeparator.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 5));
+        lnSeparator.setBackgroundColor(Color.parseColor("#B3B3B3"));
+        layout.addView(lnSeparator);
 
         //setup the hike title input field
         EditText hikeTitle = new EditText(mContext);
