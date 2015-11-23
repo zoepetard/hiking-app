@@ -242,9 +242,15 @@ def post_user(request):
         # so that one will be overwritten
         user.key = ndb.Key(User, user.request_user_id)
     
+    # Temporary: Clean Database of test users
+    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
+    for test_user in test_users:
+        test_user.key.delete()
+    
     # Store new user in database and return the new id
     new_key = user.put()               
     return response_id('user_id', new_key.id())
+
 
 # Delete a user. The author of this request can only delete himself.
 def delete_user(request):
