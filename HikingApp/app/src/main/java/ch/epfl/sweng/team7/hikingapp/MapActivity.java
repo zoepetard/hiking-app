@@ -6,21 +6,23 @@ import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.TableLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,27 +32,30 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 
 import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
+    private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GPSManager gps = GPSManager.getInstance();
-    DataManager mDataManager = DataManager.getInstance();
-    private List<HikeData> mHikesInWindow;
     private static LatLngBounds bounds;
+    private GPSManager mGps = GPSManager.getInstance();
+    private BottomInfoView mBottomTable = BottomInfoView.getInstance();
+    private DataManager mDataManager = DataManager.getInstance();
+    private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
-        gps.startService(this);
+        mGps.startService(this);
 
         // nav drawer setup
         View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
@@ -64,19 +69,24 @@ public class MapActivity extends FragmentActivity {
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
 
+        //creates a start/stop tracking button
+        createTrackingToggleButton();
+
+        //Initializes the BottomInfoView
+        createBottomInfoView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
-        gps.bindService(this);
+        mGps.bindService(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        gps.unbindService(this);
+        mGps.unbindService(this);
     }
 
     @Override
@@ -124,17 +134,50 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        //TODO These are the bounds that should be changed to center on user's location.
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
-        new DownloadHikeList().execute(bounds);
+        //TODO center on user's current position (get coords & move camera)
+        LatLng userLatLng = new LatLng(46.4, 6.4);
+
+        LatLngBounds initialBounds = guessNewLatLng(userLatLng, userLatLng, 0.5);
+
+        List<HikeData> hikesFound = new ArrayList<>();
+        boolean firstHike = true;
+        new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, initialBounds, firstHike));
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                onMapClickHelper(point);
+            }
+        });
+
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                onCameraChangeHelper();
+            }
+        });
     }
 
-    private class DownloadHikeList extends AsyncTask<LatLngBounds, Void, List<HikeData>> {
-        @Override
-        protected List<HikeData> doInBackground(LatLngBounds... bounds) {
+    private static class DownloadHikeParams {
+        List<HikeData> mHikesFound;
+        LatLngBounds mOldBounds;
+        boolean mFirstHike;
 
+        DownloadHikeParams(List<HikeData> hikesFound, LatLngBounds oldBounds, boolean firstHike) {
+            mHikesFound = hikesFound;
+            mOldBounds = oldBounds;
+            mFirstHike = firstHike;
+        }
+    }
+
+    private class DownloadHikeList extends AsyncTask<DownloadHikeParams, Void, DownloadHikeParams> {
+        @Override
+        protected DownloadHikeParams doInBackground(DownloadHikeParams... params) {
             try {
-                return mDataManager.getHikesInWindow(bounds[0]);
+                LatLngBounds oldBounds = params[0].mOldBounds;
+                boolean firstHike = params[0].mFirstHike;
+                List<HikeData> hikesFound = mDataManager.getHikesInWindow(oldBounds);
+                return new DownloadHikeParams(hikesFound, oldBounds, firstHike);
             } catch (DataManagerException e) {
                 e.printStackTrace();
                 return null;
@@ -142,15 +185,25 @@ public class MapActivity extends FragmentActivity {
         }
 
         @Override
-        protected void onPostExecute(List<HikeData> result) {
-            if (result != null) {
-                displayMap(result);
+        protected void onPostExecute(DownloadHikeParams postExecuteParams) {
+            List<HikeData> hikesFound = postExecuteParams.mHikesFound;
+            LatLngBounds oldBounds = postExecuteParams.mOldBounds;
+            boolean firstHike = postExecuteParams.mFirstHike;
+
+            if (hikesFound != null) {
+                if (hikesFound.size() > 0) {
+                    displayMap(hikesFound, oldBounds, firstHike);
+                } else {
+                    LatLngBounds newBounds = guessNewLatLng(oldBounds.southwest, oldBounds.northeast, 0.5);// new LatLngBounds(newGuessSW, newGuessNE);
+                    new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, newBounds, firstHike));
+                }
             }
         }
     }
 
-    private void displayMap(List<HikeData> result) {
-        mHikesInWindow = result;
+    private void displayMap(List<HikeData> hikesFound, LatLngBounds bounds, boolean firstHike) {
+
+        mHikesInWindow = hikesFound;
         LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
 
         for (int i = 0; i < mHikesInWindow.size(); i++) {
@@ -165,14 +218,11 @@ public class MapActivity extends FragmentActivity {
         getWindowManager().getDefaultDisplay().getSize(size);
         int screenWidth = size.x;
         int screenHeight = size.y;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng point) {
-                onMapClickHelper(point);
-            }
-        });
+        if (firstHike) {
+            boundingBoxBuilder.include(new LatLng(46.4, 6.4)); //TODO user location here
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
+        }
     }
 
     private void displayMarkers(final HikeData hike) {
@@ -239,35 +289,67 @@ public class MapActivity extends FragmentActivity {
                     return;
                 }
             }
-            TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
-            mapTableLayout.setVisibility(View.INVISIBLE);
+            BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
         }
     }
 
     private void displayHikeInfo(final HikeData hike) {
-        TableLayout mapTableLayout = (TableLayout) findViewById(R.id.mapTextTable);
-        mapTableLayout.removeAllViews();
-
-        TextView hikeTitle = new TextView(this);
-        hikeTitle.setText(getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-        hikeTitle.setTextSize(20);
-
-        TextView hikeOwner = new TextView(this);
-        hikeOwner.setText(getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
-
-        TextView hikeDistance = new TextView(this);
-        hikeDistance.setText(getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-
-        mapTableLayout.addView(hikeTitle);
-        mapTableLayout.addView(hikeOwner);
-        mapTableLayout.addView(hikeDistance);
-        mapTableLayout.setVisibility(View.VISIBLE);
-        mapTableLayout.setOnClickListener(new View.OnClickListener() {
+        mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+        mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+        mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
                 intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
                 startActivity(intent);
             }
         });
+
+        mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
+    }
+
+    private void createTrackingToggleButton() {
+        Button toggleButton = new Button(this);
+        toggleButton.setText("Start");
+        toggleButton.setId(R.id.button_tracking_toggle);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        toggleButton.setLayoutParams(lp);
+        layout.addView(toggleButton, lp);
+
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mGps.toggleTracking();
+                Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
+                toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+            }
+        });
+    }
+
+    private void createBottomInfoView() {
+        mBottomTable.initialize(this);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        layout.addView(mBottomTable.getView(), lp);
+    }
+
+    private void onCameraChangeHelper() {
+        LatLngBounds currentBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        List<HikeData> hikesFound = new ArrayList<>();
+        boolean firstHike = false;
+        new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, currentBounds, firstHike));
+    }
+
+    private LatLngBounds guessNewLatLng(LatLng southWest, LatLng northEast, double delta) {
+        LatLng guessSW = new LatLng(southWest.latitude - delta, southWest.longitude - delta);
+        LatLng guessNE = new LatLng(northEast.latitude + delta, northEast.longitude + delta);
+        return new LatLngBounds(guessSW, guessNE);
     }
 }

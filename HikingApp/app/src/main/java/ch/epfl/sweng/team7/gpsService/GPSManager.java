@@ -7,13 +7,17 @@ import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
+import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.R;
+import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
@@ -24,20 +28,25 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 public final class GPSManager {
 
     private final static String LOG_FLAG = "GPS_Manager";
+    private final static int BOTTOM_TABLE_ACCESS_ID = 2;
     private static GPSManager instance = new GPSManager();
 
     //GPS stored information
     private GPSPath gpsPath = null;
-    private boolean isTracking = false;
+    private boolean mIsTracking = false;
     private GPSFootPrint lastFootPrint = null;
 
 
     //GPS service communication
+    private Context mContext;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
 
+    private NotificationHandler mNotification;
+    private BottomInfoView mInfoDisplay;
 
     private GPSManager() {
+        mInfoDisplay = BottomInfoView.getInstance();
         setupServiceConnection();
     }
 
@@ -50,12 +59,26 @@ public final class GPSManager {
      * on/off, according to previous state.
      */
     public void toggleTracking() {
-        if (!isTracking) {
-            startTracking();
+        if (gpsService != null) {
+            if (!mIsTracking) {
+                startTracking();
+            } else {
+                stopTracking();
+            }
+            toggleListeners();
         } else {
-            stopTracking();
+            displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
+            Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
-        toggleListeners();
+    }
+
+    /**
+     * Method called to get the tracking status
+     *
+     * @return true if it is tracking, false otherwise
+     */
+    public Boolean tracking() {
+        return mIsTracking;
     }
 
     /**
@@ -77,12 +100,16 @@ public final class GPSManager {
      * @param context the context from which the Intent will be sent.
      */
     public void startService(Context context) {
+        mContext = context;
         context.startService(new Intent(context, GPSService.class));
         Log.d(LOG_FLAG, "Intent sent to start GPSService");
+        mNotification = NotificationHandler.getInstance();
+        mNotification.setup(context);
     }
 
     /**
      * Method called to bind GPSService to a certain Context
+     *
      * @param context Context to which the GPSService will be bound to
      */
     public void bindService(Context context) {
@@ -92,6 +119,7 @@ public final class GPSManager {
 
     /**
      * Method called to unbind GPSService from a certain Context
+     *
      * @param context Context from which the GPSService will be unbound
      */
     public void unbindService(Context context) {
@@ -107,13 +135,17 @@ public final class GPSManager {
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
-            if (this.isTracking) gpsPath.addFootPrint(this.lastFootPrint);
+            if (this.mIsTracking) {
+                gpsPath.addFootPrint(this.lastFootPrint);
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, gpsPath.timeElapsedInSeconds()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, gpsPath.distanceToStart()));
+            }
         }
     }
 
     @Override
     public String toString() {
-        String gpsPathInformation = (isTracking && gpsPath != null) ? String.format("yes -> %s", gpsPath.toString()) : "No";
+        String gpsPathInformation = (mIsTracking && gpsPath != null) ? String.format("yes -> %s", gpsPath.toString()) : "No";
         String lastFootPrintCoords = (this.lastFootPrint != null) ? this.lastFootPrint.getGeoCoords().toString() : "null";
         long lastFootPrintTimeStamp = (this.lastFootPrint != null) ? this.lastFootPrint.getTimeStamp() : 0;
         return String.format("\n|---------------------------\n" +
@@ -121,6 +153,14 @@ public final class GPSManager {
                 "| Last Coordinates: %s\n" +
                 "| TimeStamp: %d\n" +
                 "|---------------------------", gpsPathInformation, lastFootPrintCoords, lastFootPrintTimeStamp);
+    }
+
+    /**
+     * Called by the GPSService to access the Context of the app.
+     * @return Context
+     */
+    protected Context getContext() {
+        return mContext;
     }
 
     /**
@@ -140,6 +180,7 @@ public final class GPSManager {
                 // This is called when the connection with the service has been
                 // unexpectedly disconnected
                 gpsService = null;
+                displayToastMessage(mContext.getResources().getString(R.string.gps_service_connection_dropped));
                 Log.d(LOG_FLAG, "Connection to service was dropped...");
             }
         };
@@ -150,8 +191,15 @@ public final class GPSManager {
      * storing user's coordinates.
      */
     private void startTracking() {
-        this.isTracking = true;
+        this.mIsTracking = true;
         gpsPath = new GPSPath();
+        mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
+        mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
+        mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
+        mNotification.display();
     }
 
     /**
@@ -160,19 +208,12 @@ public final class GPSManager {
      * previous ones.
      */
     private void stopTracking() {
-        this.isTracking = false;
-        RawHikeData rawHikeData = null;
-        try {
-            rawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
-        } catch (Exception e) {
-            //TODO
-        }
-        try {
-            storeHike(rawHikeData);
-        } catch (DatabaseClientException e) {
-            //TODO, we need the button to store hikes to show the error message to the user.
-        }
+        this.mIsTracking = false;
+        mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
+        //TODO call storeHike() after issue #86 is fixed
+        mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
     }
 
@@ -181,14 +222,37 @@ public final class GPSManager {
      * listeners inside GPSService.
      */
     private void toggleListeners() {
-        if (gpsService != null) {
-            if (isTracking) {
-                gpsService.enableListeners();
-            } else {
-                gpsService.disableListeners();
-            }
+        if (mIsTracking) {
+            gpsService.enableListeners();
         } else {
-            Log.d(LOG_FLAG, "Could not access GPSService (null)");
+            gpsService.disableListeners();
+        }
+    }
+
+    /**
+     * Method called internally to give feedback to the user
+     *
+     * @param message message to be displayed inside a Toast.
+     */
+    protected void displayToastMessage(String message) {
+        Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    /**
+     * Method called to store recorded hike
+     */
+    private void storeHike() {
+        RawHikeData rawHikeData = null;
+        try {
+            rawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
+        } catch (Exception e) {
+            //TODO
+        }
+        try {
+            storeHikeInDB(rawHikeData);
+        } catch (DatabaseClientException e) {
+            //TODO, we need the button to store hikes to show the error message to the user.
         }
     }
 
@@ -197,7 +261,7 @@ public final class GPSManager {
      *
      * @param rawHikeData
      */
-    private void storeHike(RawHikeData rawHikeData) throws DatabaseClientException {
+    private void storeHikeInDB(RawHikeData rawHikeData) throws DatabaseClientException {
         DataManager dataManager = DataManager.getInstance();
         try {
             dataManager.postHike(rawHikeData);

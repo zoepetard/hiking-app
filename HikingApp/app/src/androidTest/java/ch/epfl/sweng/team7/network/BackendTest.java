@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import junit.framework.TestCase;
 
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +33,12 @@ public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
     public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    DatabaseClient mDatabaseClient;
+
+    @Before
+    public void setUp() throws Exception {
+        mDatabaseClient = createDatabaseClient();
+    }
 
     /**
      * Test the {@link DefaultNetworkProvider}
@@ -57,9 +63,8 @@ public class BackendTest extends TestCase {
      */
     @Test
     public void testGetHike() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
-        final long hikeId = getExistingHikeID(dbClient);
-        RawHikeData hikeData = dbClient.fetchSingleHike(hikeId);
+        final long hikeId = getExistingHikeID(mDatabaseClient);
+        RawHikeData hikeData = mDatabaseClient.fetchSingleHike(hikeId);
         assertEquals(hikeId, hikeData.getHikeId());
     }
 
@@ -69,11 +74,12 @@ public class BackendTest extends TestCase {
      */
     @Test
     public void testPostHike() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
         RawHikeData hikeData = createHikeData();
-        final long hikeId = dbClient.postHike(hikeData);
+        final long hikeId = mDatabaseClient.postHike(hikeData);
         assertTrue(hikeId > 0);
-        // TODO remove hike
+
+        waitForServerSync();
+        mDatabaseClient.deleteHike(hikeId);
     }
 
     /**
@@ -82,16 +88,15 @@ public class BackendTest extends TestCase {
      */
     @Test
     public void testPostAndGetHike() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
         RawHikeData hikeData = createHikeData();
 
         // post a hike
-        final long hikeId = dbClient.postHike(hikeData);
+        final long hikeId = mDatabaseClient.postHike(hikeData);
 
-        Thread.sleep(1000);
+        waitForServerSync();
 
         // retrieve the same hike
-        RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
 
         // Compare
         assertEquals(serverHikeData.getHikeId(), hikeId);
@@ -107,7 +112,8 @@ public class BackendTest extends TestCase {
                     serverHikeData.getHikePoints().get(i).getTime());
         }
 
-        // TODO remove hike
+        waitForServerSync();
+        mDatabaseClient.deleteHike(hikeId);
     }
 
     /**
@@ -116,26 +122,25 @@ public class BackendTest extends TestCase {
      */
     @Test
     public void testPostAndUpdateHike() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
         RawHikeData hikeData = createHikeData();
 
         // post a hike
-        final long hikeId = dbClient.postHike(hikeData);
+        final long hikeId = mDatabaseClient.postHike(hikeData);
 
         // Prepare a modified Hike
         List<RawHikePoint> newHikePoints = hikeData.getHikePoints();
         newHikePoints.remove(2);
         RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints);
 
-        Thread.sleep(1000);
+        waitForServerSync();
 
         // post a modified hike with the same ID
-        final long newHikeId = dbClient.postHike(newHikeData);
+        final long newHikeId = mDatabaseClient.postHike(newHikeData);
         assertEquals(newHikeId, hikeId);
         assertTrue(newHikeData.getHikePoints().size() != hikeData.getHikePoints().size());
 
         // retrieve the same hike
-        RawHikeData serverHikeData = dbClient.fetchSingleHike(hikeId);
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
 
         // Compare
         assertEquals(serverHikeData.getHikeId(), newHikeData.getHikeId());
@@ -149,7 +154,8 @@ public class BackendTest extends TestCase {
                     serverHikeData.getHikePoints().get(i).getTime());
         }
 
-        // TODO remove hike
+        waitForServerSync();
+        mDatabaseClient.deleteHike(hikeId);
     }
 
     @Test
@@ -159,12 +165,12 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
+        waitForServerSync();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
-        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
 
         assertTrue("No hikes found on server", hikeList.size() > 0);
-        RawHikeData rawHikeData = dbClient.fetchSingleHike(hikeList.get(0));
+        RawHikeData rawHikeData = mDatabaseClient.fetchSingleHike(hikeList.get(0));
         boolean onePointInBox = false;
         for(RawHikePoint p : rawHikeData.getHikePoints()) {
             if(bounds.contains(p.getPosition())) {
@@ -182,31 +188,85 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow_AtSouthPole() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-180), new LatLng(-89,180));
-        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
         assertEquals("Found Hike at South Pole", 0, hikeList.size());
     }
 
     @Test
     public void testGetHikesInWindow_InAtlantic() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
         LatLngBounds bounds = new LatLngBounds(new LatLng(42.840628, -49.093879), new LatLng(55.971414, -18.178352));
-        List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
+        List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
         assertEquals("Found Hike in the Atlantic.", 0, hikeList.size());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        DatabaseClient dbClient = createDatabaseClient();
-        // TODO delete test data with specially prepared package,
-        // needs to change once delete-function is implemented
-        dbClient.postHike(DummyHikeBuilder.buildRawHikeData(342));
-        Thread.sleep(1000);
+    @Test
+    public void testDeleteHike() throws Exception {
+        RawHikeData rawHikeData = createHikeData();
+        long hikeId = mDatabaseClient.postHike(rawHikeData);
+        assertTrue("Server should set positive hike ID", hikeId >= 0);
+
+        waitForServerSync();
+        mDatabaseClient.deleteHike(hikeId);
+
+        waitForServerSync();
+        try {
+            mDatabaseClient.fetchSingleHike(hikeId);
+            fail("Found hike in the database after deleting it.");
+        } catch (DatabaseClientException e) {
+            // pass
+        }
     }
 
-    // TODO test backend reaction to malformed input
-    // TODO test other backend interface (like post_hikes)
+    @Test
+    public void testPostUserData() throws Exception {
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+
+        waitForServerSync();
+        mDatabaseClient.deleteUser(userId);
+    }
+
+    @Test
+    public void testGetUserData() throws Exception {
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+
+        waitForServerSync();
+        RawUserData serverRawUserData = mDatabaseClient.fetchUserData(userId);
+
+        assertEquals(userId, serverRawUserData.getUserId());
+        assertEquals(rawUserData.getMailAddress(), serverRawUserData.getMailAddress());
+        assertEquals(rawUserData.getUserName(), serverRawUserData.getUserName());
+
+        waitForServerSync();
+        mDatabaseClient.deleteUser(userId);
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+
+        waitForServerSync();
+        mDatabaseClient.deleteUser(userId);
+
+        waitForServerSync();
+        try {
+            mDatabaseClient.fetchUserData(userId);
+            fail("Found user in the database after deleting him.");
+        } catch (DatabaseClientException e) {
+            // pass
+        }
+    }
+
+    // TODO(simon) test backend reaction to malformed input
+    // TODO(simon) test other backend interface (like post_hikes)
+
+
 
     /**
      * Create a valid HikeData object
@@ -214,6 +274,14 @@ public class BackendTest extends TestCase {
      */
     private static RawHikeData createHikeData() throws HikeParseException {
         return DummyHikeBuilder.buildRawHikeData(RawHikeData.HIKE_ID_UNKNOWN);
+    }
+
+    /**
+     * Create a valid RawUserData object
+     * @return a RawUserData object
+     */
+    private static RawUserData createUserData() throws HikeParseException {
+        return new RawUserData(-1, "Bort", "bort@googlemail.com");
     }
 
     /**
@@ -228,10 +296,22 @@ public class BackendTest extends TestCase {
      * Get the ID of some valid hike from the server
      */
     private static long getExistingHikeID(DatabaseClient dbClient) throws DatabaseClientException {
+        waitForServerSync();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
         assertTrue("No hikes found on server", hikeList.size() > 0);
         return hikeList.get(0);
+    }
+
+    /**
+     * Wait a short time to make sure the server database is in sync.
+     */
+    private static void waitForServerSync() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            //pass
+        }
     }
 }
 

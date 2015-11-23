@@ -40,9 +40,12 @@ public class MockServer implements DatabaseClient {
     private final HashMap<Long, RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedHikeID = 10;
 
+    private List<RawUserData> mUsers;
+
 
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
+        mUsers = new ArrayList<>();
     }
 
     /**
@@ -69,7 +72,7 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public List<RawHikeData> fetchMultipleHikes(List<Long> hikeIds) throws DatabaseClientException {
-        List<RawHikeData> listRawHikeData = new ArrayList<RawHikeData>();
+        List<RawHikeData> listRawHikeData = new ArrayList<>();
         for (Long hikeId : hikeIds) {
             listRawHikeData.add(fetchSingleHike(hikeId));
         }
@@ -105,16 +108,32 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public long postHike(RawHikeData hike) throws DatabaseClientException {
-        long hikeId = mAssignedHikeID;
-        mAssignedHikeID++;
-        hike.setHikeId(hikeId);
+        long hikeId = hike.getHikeId();
+        if(hikeId > 0) {
+            if(!hasHike(hikeId)) {
+                throw new DatabaseClientException("Setting Hike that's not there.");
+            }
+        } else {
+            hikeId = mAssignedHikeID;
+            mAssignedHikeID++;
+            hike.setHikeId(hikeId);
+        }
         putHike(hike);
         return hikeId;
     }
 
     /**
+     * Delete a hike from the server. A hike can only be deleted by its owner.
+     *
+     * @param hikeId - ID of the hike
+     * @throws DatabaseClientException if unable to delete user
+     */
+    public void deleteHike(long hikeId) throws DatabaseClientException {
+        mHikeDataBase.remove(hikeId);
+    }
+
+    /**
      * Post user data to the data base
-     * TODO implement this in mockserver
      *
      * @param rawUserData object conatining id,user name and mail address
      * @return user id
@@ -122,12 +141,25 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
-        return 0;
+        // Positive user ID means the user is in the database
+        if(rawUserData.getUserId() >= 0) {
+            for(int i = 0; i < mUsers.size(); ++i) {
+                if(mUsers.get(i).getUserId() == rawUserData.getUserId()) {
+                    mUsers.set(i, rawUserData);
+                    return i;
+                }
+            }
+            throw new DatabaseClientException("User to update not found in MockServer.");
+        } else {
+            long newUserId = mUsers.size();
+            rawUserData.setUserId(newUserId);
+            mUsers.add(rawUserData);
+            return newUserId;
+        }
     }
 
     /**
      * Fetch data for a user from the server
-     * TODO implement this in mockserver
      *
      * @param userId - id of the user
      * @return RawUserData
@@ -135,7 +167,28 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public RawUserData fetchUserData(long userId) throws DatabaseClientException {
-        return null;
+        for(RawUserData rawUserData : mUsers) {
+            if(rawUserData.getUserId() == userId) {
+                return rawUserData;
+            }
+        }
+        throw new DatabaseClientException("User to fetch not found in MockServer.");
+    }
+
+    /**
+     * Delete a user from the server. A user can only delete himself.
+     *
+     * @param userId - ID of the user
+     * @throws DatabaseClientException if unable to delete user
+     */
+    public void deleteUser(long userId) throws DatabaseClientException {
+        for(int i = 0; i < mUsers.size(); ++i) {
+            if(mUsers.get(i).getUserId() == userId) {
+                mUsers.remove(i);
+                return;
+            }
+        }
+        throw new DatabaseClientException("User to delete not found in MockServer.");
     }
 
     /**

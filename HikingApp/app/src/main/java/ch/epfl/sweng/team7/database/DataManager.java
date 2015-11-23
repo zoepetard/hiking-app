@@ -5,8 +5,6 @@
  */
 package ch.epfl.sweng.team7.database;
 
-import android.provider.ContactsContract;
-
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;

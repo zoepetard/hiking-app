@@ -24,11 +24,15 @@
     <!-- Google Play Services error for Toast -->
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
 
-     <!-- Strings related to hike display -->
-     <string name="hikeNumberText">Hike #%1$d</string>
-     <string name="hikeOwnerText">Owner: %1$d</string>
-     <string name="hikeDistanceText">Distance: %1$d km</string>
-     <string name="hikeTimeText">Time: %1$d</string>
+    <!-- Strings related to hike display -->
+    <string name="hikeNumberText">Hike #%1$d</string>
+    <string name="hikeOwnerText">Owner: %1$d</string>
+    <string name="hikeDistanceText">Distance: %1$d km</string>
+    <string name="hikeTimeText">Time: %1$d</string>
+    <string name="defaultNotificationTitle">Tracking a hike</string>
+    <string name="defaultNotificationContent">Click here to check on your progress</string>
+    <string name="timeElapsedInfo">\t%d s</string>
+    <string name="distanceToStart">\t%f m travelled</string>
 
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
@@ -36,6 +40,8 @@
     <string name="change_name">Change Nickname</string>
     <string name="goto_map">Go To Map</string>
     <string name="button_done">Done</string>
+    <string name="button_start_tracking">Start</string>
+    <string name="button_stop_tracking">Stop</string>>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
@@ -49,4 +55,15 @@
     <string name="title_activity_user_data">UserDataActivity</string>
 
     <string name="num_hikes_fmt">Number of hikes: %d</string>
+
+    <!-- IDs -->
+    <item name="button_tracking_toggle" type="id" />
+    <item name="feedback_notification" type="id" />
+    <item name="mapTextTable" type="id" />
+
+    <!-- Error messages -->
+    <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
+    <string name="gps_service_access_failure">Could not access gps service</string>
+    <string name="gps_location_updates_failure">Could not request location updates</string>
+
 </resources>

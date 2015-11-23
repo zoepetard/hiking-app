@@ -1,5 +1,7 @@
 package ch.epfl.sweng.team7.gpsService.containers;
 
+import android.location.Location;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,17 +24,30 @@ public final class GPSPath {
         if (newFootPrint != null) path.add(newFootPrint);
     }
 
-    public float getAverageSpeed() {
-        //TODO implement this method
-        return 0.0f;
-    }
-
     public long getFootPrintCount() {
         return this.path.size();
     }
 
     public List<GPSFootPrint> getPath() {
         return path;
+    }
+
+    public long timeElapsedInSeconds() {
+        if (path.size() >= 2) {
+            return (path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp())/1000;
+        } else {
+            return 0;
+        }
+    }
+
+    public float distanceToStart() {
+        if (path.size() >= 2) {
+            Location startLoc = path.get(0).toLocation();
+            Location lastLoc = path.get(path.size() - 1).toLocation();
+            return (startLoc.distanceTo(lastLoc));
+        } else {
+            return 0f;
+        }
     }
 
     @Override
