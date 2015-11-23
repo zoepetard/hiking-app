@@ -100,9 +100,6 @@ public class LoginActivity extends Activity implements
         // Large sign-in
         ((SignInButton) findViewById(R.id.sign_in_button)).setSize(SignInButton.SIZE_WIDE);
 
-        // Start with sign-in button disabled until sign-in either succeeds or fails
-        findViewById(R.id.sign_in_button).setEnabled(false);
-
         // [START create_google_api_client]
         // Build GoogleApiClient with access to basic profile
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -113,6 +110,7 @@ public class LoginActivity extends Activity implements
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
         // [END create_google_api_client]
+        mGoogleApiClient.connect();
     }
 
     private void updateUI(boolean isSignedIn) {
@@ -131,7 +129,6 @@ public class LoginActivity extends Activity implements
 //                new LoadProfileImage(profilePic).execute(photoUrl);
 
                 Intent i = new Intent(this, MapActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
             } else {
                 // If getCurrentPerson returns null there is generally some error with the
@@ -193,7 +190,6 @@ public class LoginActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
     }
 
     @Override
