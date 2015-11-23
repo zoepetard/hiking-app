@@ -400,7 +400,7 @@ public final class DataManager {
             throw new DataManagerException(e);
         }
     }
-    
+
     /**
      * Creates the LocalCache and DatabaseClient
      */

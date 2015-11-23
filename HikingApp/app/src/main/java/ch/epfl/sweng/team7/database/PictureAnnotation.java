@@ -14,7 +14,7 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 
 public class PictureAnnotation extends Annotation {
 
-    private final static String LOG_FLAG = "DB_Picture";
+    private final static String LOG_FLAG = "Picture_annotation";
     private RawHikePoint mRawHikePoint;
     private long mHikeId;
     private long mPictureId;

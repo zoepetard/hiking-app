@@ -31,7 +31,7 @@ interface LocalCache {
 
     UserData getUserData(long userId);
 
-    
+
     void removeHike(long hikeId);
     
     List<Long> searchHike(String query);

@@ -13,4 +13,5 @@ public class Annotation {
     }
 
     public RawHikePoint getRawHikePoint(){ return mRawHikePoint; }
+
 }
