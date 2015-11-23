@@ -49,8 +49,6 @@ public class MapActivity extends FragmentActivity {
     private static LatLngBounds bounds;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
-    private final static String EXTRA_BOUND = "ch.epfl.sweng.team7.hikingapp.BOUND";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -320,9 +318,9 @@ public class MapActivity extends FragmentActivity {
                 Bundle bound = new Bundle();
                 bound.putParcelable("sw", bounds.southwest);
                 bound.putParcelable("ne", bounds.northeast);
-                Intent intent = new Intent(getApplicationContext(), HikeListActivity.class);
+                Intent intent = new Intent(v.getContext(), HikeListActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra(EXTRA_BOUND, bound);
+                intent.putExtra("mapBounds", bound);
                 startActivity(intent);
             }
         });
