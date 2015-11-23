@@ -295,16 +295,14 @@ public class LoginActivity extends Activity implements
         protected UserData doInBackground(String... mailAddress) {
             UserData userData = null;
 
+
             // Authenticate user by quering server for user info
             try {
-                userData = mDataManager.getUserData(mailAddress[0]);
-
-            } catch (DataManagerException fetchError) {
-
-                Log.d(TAG, fetchError.getMessage());
-                // fetch failed, if error is HTTP 404 then add new user to DB.
-                if (fetchError.getMessage().equals("Unexpected HTTP Response Code: 404")) {
-
+                Long userId = mDataManager.getUserId(mailAddress[0]);
+                if (userId != null) {
+                    userData = mDataManager.getUserData(userId);
+                } else {
+                    // no user exists with that email so add a new user
                     try {
                         Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
                         String userName = "";
@@ -312,14 +310,18 @@ public class LoginActivity extends Activity implements
                             userName = currentPerson.getDisplayName();
                         }
                         RawUserData newUser = new RawUserData(-1, userName, mailAddress[0]);
-                        long userId = mDataManager.addNewUser(newUser);
+                        userId = mDataManager.addNewUser(newUser);
                         newUser = new RawUserData(userId, userName, mailAddress[0]);
                         userData = new DefaultUserData(newUser);
 
                     } catch (DataManagerException postError) {
-                        Log.d(TAG, "failed to add new user: " + postError.getMessage());
+                        Log.d(TAG, "Failed to add new user: " + postError.getMessage());
+
                     }
                 }
+            } catch (DataManagerException e) {
+                Log.d(TAG, "Couldn't get or add new user: " + e.getMessage());
+
             }
             return userData;
         }

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
 
+    SignedInUser mUser = SignedInUser.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,10 +32,9 @@ public class UserDataActivity extends Activity {
         TextView user_email = (TextView) findViewById(R.id.user_email);
         TextView num_hikes = (TextView) findViewById(R.id.num_hikes);
 
-        // Update view with currently signed-in user's info
-        SignedInUser user = SignedInUser.getInstance();
-        user_name.setText(user.getUserName());
-        user_email.setText(user.getMailAddress());
+        // for user with this user_id
+        user_name.setText("Team 7");
+        user_email.setText("team7@epfl.ch");
         num_hikes.setText(getString(R.string.num_hikes_fmt, 100)); // TODO use real data
     }
 
