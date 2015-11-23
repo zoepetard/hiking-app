@@ -58,7 +58,7 @@ public class HikeListActivity extends Activity {
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
 
-        Bundle bound = getIntent().getParcelableExtra("mapBounds");
+        Bundle bound = getIntent().getParcelableExtra(MapActivity.EXTRA_BOUNDS);
         if (bound != null) {
             LatLng sw = bound.getParcelable("sw");
             LatLng ne = bound.getParcelable("ne");

@@ -35,7 +35,7 @@ public class UserDataActivity extends Activity {
         // TODO: add more field when we decide to store more user information
         TextView userName = (TextView) findViewById(R.id.user_name);
         TextView userEmail = (TextView) findViewById(R.id.user_email);
-        String nname = getIntent().getStringExtra("newNickname");
+        String nname = getIntent().getStringExtra(ChangeNicknameActivity.EXTRA_MESSAGE);
         TextView nickname = (TextView) findViewById(R.id.nickname);
         TextView numHikes = (TextView) findViewById(R.id.num_hikes);
         Button changeNickname = (Button) findViewById(R.id.change_nickname);

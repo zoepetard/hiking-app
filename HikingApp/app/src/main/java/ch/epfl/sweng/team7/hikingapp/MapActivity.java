@@ -51,6 +51,9 @@ public class MapActivity extends FragmentActivity {
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
+    public final static String EXTRA_BOUNDS =
+            "ch.epfl.sweng.team7.hikingapp.BOUNDS";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -365,7 +368,7 @@ public class MapActivity extends FragmentActivity {
                 bound.putParcelable("ne", bounds.northeast);
                 Intent intent = new Intent(v.getContext(), HikeListActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra("mapBounds", bound);
+                intent.putExtra(EXTRA_BOUNDS, bound);
                 startActivity(intent);
             }
         });
