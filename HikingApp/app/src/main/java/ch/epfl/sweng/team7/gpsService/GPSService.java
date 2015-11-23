@@ -145,6 +145,8 @@ public class GPSService extends Service {
                 Location netLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 gps.updateCurrentLocation(netLocation);
             }
-        } catch (SecurityException e) {}
+        } catch (SecurityException e) {
+            Log.d(LOG_FLAG, "Could not request location from providers");
+        }
     }
 }
