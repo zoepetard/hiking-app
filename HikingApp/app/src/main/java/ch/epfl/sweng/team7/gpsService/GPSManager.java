@@ -1,12 +1,16 @@
 package ch.epfl.sweng.team7.gpsService;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.IBinder;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
@@ -250,7 +254,28 @@ public final class GPSManager {
     }
 
     private void displaySavePrompt() {
-        
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(mContext.getResources().getString(R.string.prompt_title));
+
+        //setup the hike title input field
+        EditText hikeTitle = new EditText(mContext);
+        hikeTitle.setHint(mContext.getResources().getString(R.string.prompt_title_hint));
+        hikeTitle.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(hikeTitle);
+
+        //setup the hike comment input field
+        EditText hikeComment = new EditText(mContext);
+        hikeComment.setHint(mContext.getResources().getString(R.string.prompt_comment_hint));
+        hikeComment.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(hikeComment);
+
+        builder.setPositiveButton(mContext.getResources().getString(R.string.button_save_hike), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
     }
 
     /**
