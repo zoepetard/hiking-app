@@ -20,14 +20,7 @@ import static android.support.v4.app.ActivityCompat.startActivity;
 public class NavigationDrawerListFactory {
 
     private Context context;
-
-    private final static String LIST_ITEM_ACCOUNT = "Account";
-    private final static String LIST_ITEM_MAP = "Map";
-    private final static String LIST_ITEM_HIKES = "Hikes";
     private final static String LIST_ITEM_LOGOUT = "Logout";
-
-    private final static String EXTRA_BOUND = "ch.epfl.sweng.team7.hikingapp.BOUND";
-
 
     public NavigationDrawerListFactory(ListView navDrawerList,Context context) {
 
@@ -43,26 +36,6 @@ public class NavigationDrawerListFactory {
                 Intent intent;
 
                 switch (itemText) {
-                    case LIST_ITEM_ACCOUNT:
-                        intent = new Intent(view.getContext(), UserDataActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        view.getContext().startActivity(intent);
-                        break;
-                    case LIST_ITEM_MAP:
-                        intent = new Intent(view.getContext(), MapActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        view.getContext().startActivity(intent);
-                        break;
-                    case LIST_ITEM_HIKES:
-                        LatLngBounds bounds = MapActivity.getBounds();
-                        Bundle bound = new Bundle();
-                        bound.putParcelable("sw", bounds.southwest);
-                        bound.putParcelable("ne", bounds.northeast);
-                        intent = new Intent(view.getContext(), HikeListActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra(EXTRA_BOUND, bound);
-                        view.getContext().startActivity(intent);
-                        break;
                     case LIST_ITEM_LOGOUT:
                         intent = new Intent(view.getContext(), LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -77,7 +50,7 @@ public class NavigationDrawerListFactory {
 
     private void loadNavDrawerItems(ListView navDrawerList) {
 
-        String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_MAP, LIST_ITEM_HIKES, LIST_ITEM_LOGOUT};
+        String[] listViewItems = {LIST_ITEM_LOGOUT};
         ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
 
