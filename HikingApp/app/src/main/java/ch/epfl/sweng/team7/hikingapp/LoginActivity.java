@@ -71,7 +71,7 @@ public class LoginActivity extends Activity implements
     private static final String KEY_SHOULD_RESOLVE = "should_resolve";
 
     /* Client for accessing Google APIs */
-    private static GoogleApiClient mGoogleApiClient;
+    private static GoogleApiClient sGoogleApiClient;
 
     // [START resolution_variables]
     /* Is there a ConnectionResult resolution in progress? */
@@ -102,7 +102,7 @@ public class LoginActivity extends Activity implements
 
         // [START create_google_api_client]
         // Build GoogleApiClient with access to basic profile
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        sGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
@@ -110,19 +110,19 @@ public class LoginActivity extends Activity implements
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
         // [END create_google_api_client]
-        mGoogleApiClient.connect();
+        sGoogleApiClient.connect();
     }
 
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
             if (currentPerson != null) {
                 // Show signed-in user's name
                 String name = currentPerson.getDisplayName();
 
                 // Show users' email address (which requires GET_ACCOUNTS permission)
                 if (checkAccountsPermission()) {
-                    String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                    String currentAccount = Plus.AccountApi.getAccountName(sGoogleApiClient);
                 }
 
                 String photoUrl = currentPerson.getImage().getUrl();
@@ -195,7 +195,7 @@ public class LoginActivity extends Activity implements
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        sGoogleApiClient.disconnect();
     }
     // [END on_start_on_stop]
 
@@ -221,7 +221,7 @@ public class LoginActivity extends Activity implements
             }
 
             mIsResolving = false;
-            mGoogleApiClient.connect();
+            sGoogleApiClient.connect();
         }
     }
     // [END on_activity_result]
@@ -278,7 +278,7 @@ public class LoginActivity extends Activity implements
                 } catch (IntentSender.SendIntentException e) {
                     Log.e(TAG, "Could not resolve ConnectionResult.", e);
                     mIsResolving = false;
-                    mGoogleApiClient.connect();
+                    sGoogleApiClient.connect();
                 }
             } else {
                 // Could not resolve the connection result, show the user an
@@ -333,7 +333,7 @@ public class LoginActivity extends Activity implements
         // User clicked the sign-in button, so begin the sign-in process and automatically
         // attempt to resolve any errors that occur.
         mShouldResolve = true;
-        mGoogleApiClient.connect();
+        sGoogleApiClient.connect();
     }
     // [END on_sign_in_clicked]
 
@@ -341,9 +341,9 @@ public class LoginActivity extends Activity implements
     public static void onSignOutClicked() {
         // Clear the default account so that GoogleApiClient will not automatically
         // connect in the future.
-        if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
+        if (sGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
+            sGoogleApiClient.disconnect();
         }
     }
     // [END on_sign_out_clicked]
