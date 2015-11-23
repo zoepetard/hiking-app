@@ -73,6 +73,10 @@ public class GPSService extends Service {
         isBound = true;
     }
 
+    /**
+     * Method called by GPSManager to check on location provider status
+     * @return true if at least one is enabled, false otherwise
+     */
     protected boolean getProviderStatus() {
         if (locationManager != null) {
             return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
