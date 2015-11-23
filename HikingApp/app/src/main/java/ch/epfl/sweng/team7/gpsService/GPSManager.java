@@ -249,6 +249,10 @@ public final class GPSManager {
         toast.show();
     }
 
+    private void displaySavePrompt() {
+        
+    }
+
     /**
      * Method called to store recorded hike
      */
