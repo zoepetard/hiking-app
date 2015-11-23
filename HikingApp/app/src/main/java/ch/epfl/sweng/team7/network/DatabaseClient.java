@@ -94,4 +94,10 @@ public interface DatabaseClient {
      */
     void deleteUser(long userId) throws DatabaseClientException;
 
+    /**
+     * @param mailAddress - used to query server
+     * @return RawUserData - corresponding to user's mail address
+     */
+    RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
+
 }

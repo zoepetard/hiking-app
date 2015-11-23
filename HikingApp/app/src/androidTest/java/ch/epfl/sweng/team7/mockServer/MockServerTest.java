@@ -1,4 +1,5 @@
 package ch.epfl.sweng.team7.mockServer;
+
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.TestCase;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
  * Created by pablo on 8/11/15.
@@ -78,6 +80,22 @@ public class MockServerTest extends TestCase {
         assertEquals(mRawHikeData1.getHikeId(), hikeId);
         assertTrue(mMockServer.hasHike(mRawHikeData1.getHikeId()));
         assertEquals(mMockServer.getHike(hikeId).getHikeId(), mRawHikeData1.getHikeId());
+    }
+
+    @Test
+    public void testFetchUserByMail() throws Exception{
+        String mail = "bort@googlemail.com";
+        RawUserData rawUserData =  mMockServer.fetchUserData(mail);
+        assertEquals("ID mismatch", rawUserData.getUserId(), 1);
+        assertEquals("Wrong user name",rawUserData.getUserName(),"bort");
+    }
+
+    @Test
+    public void testFetchUserById() throws Exception{
+        long id = 1;
+        RawUserData rawUserData =  mMockServer.fetchUserData(id);
+        assertEquals("Wrong mail address",rawUserData.getMailAddress(),"bort@googlemail.com");
+        assertEquals("Wrong user name",rawUserData.getUserName(),"bort");
     }
 
 }
