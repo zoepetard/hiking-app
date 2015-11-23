@@ -118,17 +118,21 @@ public class GPSService extends Service {
         gps = GPSManager.getInstance();
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
+            @Override
             public void onLocationChanged(Location location) {
                 gps.updateCurrentLocation(location);
                 Log.d(LOG_FLAG, "GPS status: " + gps.toString());
             }
 
+            @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
             }
 
+            @Override
             public void onProviderEnabled(String provider) {
             }
 
+            @Override
             public void onProviderDisabled(String provider) {
             }
         };
