@@ -26,7 +26,7 @@ import java.util.List;
 import static android.support.v4.app.ActivityCompat.startActivity;
 
 /** Class that creates a listview for the navigation drawer */
-public class NavigationDrawerListFactory {
+public class NavigationDrawerListFactory extends Activity {
 
     private Context context;
     private final static String LIST_ITEM_ACCOUNT = "Account";
@@ -44,11 +44,10 @@ public class NavigationDrawerListFactory {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String itemText = (String) parent.getItemAtPosition(position);
-                Intent intent;
 
                 switch (itemText) {
                     case LIST_ITEM_ACCOUNT:
-                        intent = new Intent(view.getContext(), UserDataActivity.class);
+                        Intent intent = new Intent(view.getContext(), UserDataActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         view.getContext().startActivity(intent);
                         break;
