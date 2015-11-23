@@ -245,24 +245,6 @@ public final class DataManager {
      * Google to obtain the id assigned to that account.
      *
      * @param mailAddress - user's email address, google address.
-     * @return UserData - user info stored in database, throws exception if not found.
-     */
-    public UserData getUserData(String mailAddress) throws DataManagerException {
-        // use database client to query database for user data
-        try {
-            RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
-            UserData userData = new DefaultUserData(rawUserData);
-            return userData;
-        } catch (DatabaseClientException e) {
-            throw new DataManagerException(e.getMessage());
-        }
-    }
-
-    /**
-     * Look up the id for a user using mail address. Typically used directly after signing in via
-     * Google to obtain the id assigned to that account.
-     *
-     * @param mailAddress - user's email address, google address.
      * @return userId - user Id stored in database, throws exception if not found.
      */
     public Long getUserId(String mailAddress) throws DataManagerException {

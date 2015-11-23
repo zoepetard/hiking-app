@@ -191,17 +191,6 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("User to delete not found in MockServer.");
     }
 
-    /**
-     * TODO implement this in mockserver
-     *
-     * @param mailAddress - used to query server
-     * @return RawUserData - corresponding to user's mail address
-     */
-    @Override
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-        return null;
-    }
-
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {
