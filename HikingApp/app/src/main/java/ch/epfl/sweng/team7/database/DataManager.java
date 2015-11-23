@@ -227,7 +227,7 @@ public final class DataManager {
      * Google to obtain the id assigned to that account.
      *
      * @param mailAddress - user's email address, google address.
-     * @return userId - long stored in database corresponding. throws exception if not found.
+     * @return UserData - user info stored in database, throws exception if not found.
      */
     public UserData getUserData(String mailAddress) throws DataManagerException {
         // use database client to query database for user data

@@ -157,7 +157,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/post_user_data");
+            URL url = new URL(mServerUrl + "/post_user_data/");
             HttpURLConnection conn = getConnection(url, "POST");
             byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
             conn.connect();

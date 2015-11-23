@@ -137,12 +137,12 @@ public class LoginActivity extends Activity implements
             if (currentPerson != null) {
                 // Show signed-in user's name
                 String name = currentPerson.getDisplayName();
-                mStatus.setText(getString(R.string.signed_in_fmt, mSignedInUser.getUserName()));
+                // TODO REMOVE mStatus.setText(getString(R.string.signed_in_fmt, mSignedInUser.getUserName()));
 
                 // Show users' email address (which requires GET_ACCOUNTS permission)
                 if (checkAccountsPermission()) {
                     String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                    ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
+                    //TODO REMOVE ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
 
                 }
 
@@ -297,7 +297,7 @@ public class LoginActivity extends Activity implements
 
     private class UserAuthenticator extends AsyncTask<String, Void, UserData> {
         /**
-         * Looks up an id in the database given a mail address. Sets the signed in user object's
+         * Looks up user data in the database given a mail address. Sets the signed-in user object's
          * variables.
          *
          * @param mailAddress - mail address of user trying to sign in.
@@ -314,9 +314,18 @@ public class LoginActivity extends Activity implements
                 userData = mDataManager.getUserData(mailAddress[0]);
 
             } catch (DataManagerException e) {
-                // TODO if fetch fails, provide feedback to user
+                // TODO if fetch fails, provide feedback to user, SIGN OUT
+                Log.d(TAG, e.getMessage());
                 RawUserData rawUserData = new RawUserData(-1, "void", mailAddress[0]);
                 userData = new DefaultUserData(rawUserData);
+
+                // if error is HTTP 404 then add new user to DB.
+                if (e.getMessage().equals("Unexpected HTTP Response Code: 404")) {
+                    rawUserData = new RawUserData(-1, "boid", mailAddress[0]);
+                    userData = new DefaultUserData(rawUserData);
+                }
+
+
             }
 
             return userData;
