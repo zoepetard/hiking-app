@@ -36,7 +36,6 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.HikeData;
 
 import ch.epfl.sweng.team7.database.Picture;
-import ch.epfl.sweng.team7.database.UserData;
 
 
 
@@ -327,6 +326,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
         } catch (JSONException e) {
             throw new DatabaseClientException(e);
         }
+    }
+
+    @Override
+    public long postHikePictures(List<Picture> hikePictures) throws DatabaseClientException {
+        return 0;
     }
 
     /**

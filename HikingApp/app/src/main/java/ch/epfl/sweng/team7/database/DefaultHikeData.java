@@ -213,7 +213,7 @@ public class DefaultHikeData implements HikeData {
     }
 
     public List<TextAnnotation> getTextAnnotations() { return mTextAnnotations; }
-    
+
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;
         for (int i = 0; i < rawHikePoints.size() - 1; i++) {

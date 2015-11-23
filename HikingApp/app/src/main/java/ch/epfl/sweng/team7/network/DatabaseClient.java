@@ -119,7 +119,6 @@ public interface DatabaseClient {
     void loginUser(LoginRequest loginRequest) throws DatabaseClientException;
 
     /**
-<<<<<<< HEAD
      * Delete a user from the server. A user can only delete himself.
      *
      * @param userId - ID of the user
@@ -132,6 +131,7 @@ public interface DatabaseClient {
      * @param mailAddress - used to query server
      * @return RawUserData - corresponding to user's mail address
      */
+
     RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
 
     /**
@@ -139,19 +139,10 @@ public interface DatabaseClient {
      * Get an image from the database
      * @param imageId the database key of the image
      * @return the image
-     * @throws DatabaseClientException
-     */
+    */
 
     Drawable getImage(long imageId) throws DatabaseClientException;
 
-    /**
-     * Post an image to the database
-     * @param drawable an image, here as drawable
-     * @param imageId the ID of the image if it should be changed
-     * @return the database key of that image
-     * @throws DatabaseClientException
-     */
-    long postImage(Drawable drawable, long imageId) throws DatabaseClientException;
 
     /**
      * Post an image to the database
@@ -169,11 +160,11 @@ public interface DatabaseClient {
     void deleteImage(long imageId) throws DatabaseClientException;
 
 
+
     /**
      * Post a comment to the database
      * @param
      * //TODO(runjie) iss107 add class Comment and pass comment as a parameter
->>>>>>> Rebase to master
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
@@ -185,11 +176,12 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     void deleteComment(long commentId) throws DatabaseClientException;
-
+    
 
     /**
      * Post a vote about a hike.
      */
     void postVote(RatingVote vote) throws DatabaseClientException;
+
 
 }
