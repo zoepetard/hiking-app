@@ -8,19 +8,18 @@
     android:id="@+id/hikeListLayout">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back_to_map"
-        android:id="@+id/backToMapButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:onClick="backToMap" />
+        android:layout_width="55dp"
+        android:layout_height="50dp"
+        android:text="@string/back"
+        android:id="@+id/back_button"
+        android:textSize="12sp"
+        android:onClick="backToMap"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/hikeListScroll"
-        android:layout_below="@+id/backToMapButton"
+        android:layout_below="@+id/back_button"
         android:layout_alignParentStart="true" >
 
         <TableLayout

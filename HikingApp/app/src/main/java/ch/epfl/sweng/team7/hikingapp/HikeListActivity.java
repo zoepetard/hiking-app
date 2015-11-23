@@ -161,9 +161,7 @@ public class HikeListActivity extends Activity {
     }
 
     public void backToMap(View view) {
-        Intent intent = new Intent(this, MapActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
+        finish();
     }
 
     private class GetMultHikeAsync extends AsyncTask<LatLngBounds, Void, List<HikeData> > {
