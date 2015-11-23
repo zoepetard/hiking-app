@@ -63,7 +63,7 @@ public final class GPSManager {
     private ServiceConnection mServiceConnection;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
-    
+
     RawHikeData rawHikeData = null;
 
     private NotificationHandler mNotification;
@@ -201,13 +201,7 @@ public final class GPSManager {
      */
     public void addAnnotation(Annotation annotation){
         if (annotation.getClass().isInstance(TextAnnotation.class)){
-            if(rawHikeData.getAnnotations()!= null){
-                rawHikeData.getAnnotations().add((TextAnnotation) annotation);
-            }else{
-                List<TextAnnotation> textAnnotationList = new ArrayList<>();
-                textAnnotationList.add((TextAnnotation) annotation);
-                rawHikeData.setAnnotations(textAnnotationList);
-            }
+            textAnnotations.add((TextAnnotation) annotation);
         }else{
             hikePictures.add((PictureAnnotation) annotation);
         }
@@ -298,26 +292,18 @@ public final class GPSManager {
         mGpsPath = null;
     }
 
+
     /**
      * Method called after stopping a hike tracking.
      * This method should take the user to an editable Activity.
      */
+
     private void goToHikeEditor() {
         Intent intent = new Intent(mContext, HikeInfoActivity.class);
         intent.putExtra(GPSManager.NEW_HIKE, true);
         mContext.startActivity(intent);
     }
-    /**
-     * Method used to turn on/off the location
-     * listeners inside GPSService.
-     */
-    private void toggleListeners() {
-        if (mIsTracking) {
-            mGpsService.enableListeners();
-        } else {
-            mGpsService.disableListeners();
-        }
-    }
+    
 
 
     /**
@@ -374,9 +360,8 @@ public final class GPSManager {
 
 
 
-    private void storePictures(List<PictureAnnotation> hikePictures) {
-        //TODO when is implemented on server
-    }
+
+
     /**
      * Method used to turn on/off the location
      * listeners inside GPSService.
@@ -393,6 +378,7 @@ public final class GPSManager {
         }
     }
 
+
     private void storeHike() {
         try {
             rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
@@ -400,6 +386,12 @@ public final class GPSManager {
             new StoreHikeTask().execute(rawHikeData);
         } catch (Exception e) {
             Log.d(LOG_FLAG, "CANNOT CONVERT GPS PATH");
+        }
+    }
+
+    private void storePictures(List<PictureAnnotation> hikePictures) {
+        for (int i = 0; i < hikePictures.size(); i++){
+            new StorePictureTask().execute(hikePictures.get(i));
         }
     }
 
@@ -416,6 +408,7 @@ public final class GPSManager {
             DataManager dataManager = DataManager.getInstance();
             try {
                 hikeId = dataManager.postHike(rawHikeData[0]);
+                rawHikeData[0].setHikeId(hikeId);
                 Log.d(LOG_FLAG, "Hike Post correctly");
                 return hikeId;
             } catch (DataManagerException e) {
@@ -424,6 +417,27 @@ public final class GPSManager {
             return null;
         }
 
+        protected void onPostExecute(Long... hikeId) {
+        }
+    }
+
+    /**
+     * Asynchronous task to make the post request to the server.
+     */
+    private class StorePictureTask extends AsyncTask<PictureAnnotation, Long, Long> {
+        @Override
+        protected Long doInBackground(PictureAnnotation... pictures) {
+            long hikeId;
+            DataManager dataManager = DataManager.getInstance();
+            try {
+                hikeId = dataManager.postPicture(pictures[0]);
+                Log.d(LOG_FLAG, "Picture post correctly");
+                return hikeId;
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, "Error while posting hike");
+            }
+            return null;
+        }
         protected void onPostExecute(Long... hikeId) {
         }
 

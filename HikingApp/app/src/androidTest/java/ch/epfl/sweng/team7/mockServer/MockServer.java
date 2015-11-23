@@ -249,7 +249,7 @@ public class MockServer implements DatabaseClient {
         }
         throw new DatabaseClientException("User to delete not found in MockServer.");
     }
-    
+
     /***
      * @param mailAddress - used to query server
      * @return RawUserData - corresponding to user's mail address
