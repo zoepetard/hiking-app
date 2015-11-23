@@ -253,6 +253,10 @@ public final class GPSManager {
         toast.show();
     }
 
+    /**
+     * Method called to display a Dialog with EditText fields
+     * for the user to edit  some hike settings.
+     */
     private void displaySavePrompt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(mContext.getResources().getString(R.string.prompt_title));
