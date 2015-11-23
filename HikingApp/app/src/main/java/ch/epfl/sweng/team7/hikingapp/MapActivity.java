@@ -3,8 +3,8 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -32,6 +32,7 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 
 import static android.location.Location.distanceBetween;
@@ -139,9 +140,8 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        //TODO center on user's current position (get coords & move camera)
-        LatLng userLatLng = new LatLng(46.4, 6.4);
 
+        LatLng userLatLng = getUserPosition();
         LatLngBounds initialBounds = guessNewLatLng(userLatLng, userLatLng, 0.5);
 
         List<HikeData> hikesFound = new ArrayList<>();
@@ -199,7 +199,7 @@ public class MapActivity extends FragmentActivity {
                 if (hikesFound.size() > 0) {
                     displayMap(hikesFound, oldBounds, firstHike);
                 } else {
-                    LatLngBounds newBounds = guessNewLatLng(oldBounds.southwest, oldBounds.northeast, 0.5);// new LatLngBounds(newGuessSW, newGuessNE);
+                    LatLngBounds newBounds = guessNewLatLng(oldBounds.southwest, oldBounds.northeast, 0.5);
                     new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, newBounds, firstHike));
                 }
             }
@@ -225,7 +225,8 @@ public class MapActivity extends FragmentActivity {
         int screenHeight = size.y;
 
         if (firstHike) {
-            boundingBoxBuilder.include(new LatLng(46.4, 6.4)); //TODO user location here
+            LatLng userLatLng = getUserPosition();
+            boundingBoxBuilder.include(userLatLng);
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
         }
     }
@@ -372,5 +373,16 @@ public class MapActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private LatLng getUserPosition() {
+        double switzerlandLatitude = 46.4;
+        double switzerlandLongitude = 6.4;
+        if (mGps.enabled()) {
+            GeoCoords userGeoCoords = mGps.getCurrentCoords();
+            return userGeoCoords.toLatLng();
+        } else {
+            return new LatLng(switzerlandLatitude, switzerlandLongitude);
+        }
     }
 }
