@@ -87,11 +87,6 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
-<<<<<<< HEAD
-=======
-    private TextAnnotation annotation;
-
->>>>>>> Rebase to master
     private boolean mFollowingUser = false;
     private Polyline mPolyRef;
     private PolylineOptions mCurHike;
@@ -270,8 +265,8 @@ public class MapActivity extends FragmentActivity {
         });
         //TODO These are the bounds that should be changed to center on user's location.
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
-        //new DownloadHikeList().execute(bounds);
 
+        new DownloadHikeList().execute(bounds);
 
     }
 
@@ -351,6 +346,7 @@ public class MapActivity extends FragmentActivity {
         MarkerOptions finishMarkerOptions = new MarkerOptions()
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
+
 
 
         //Display de Annotations
