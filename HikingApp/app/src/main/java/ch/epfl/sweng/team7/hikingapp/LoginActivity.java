@@ -47,6 +47,8 @@ import com.google.android.gms.plus.model.people.Person;
 
 import java.io.InputStream;
 
+// TODO: test login as part of the integration test
+
 public class LoginActivity extends Activity implements
         View.OnClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback,

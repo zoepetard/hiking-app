@@ -86,14 +86,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="Distance"
+                            android:text="@string/distance"
                             android:id="@+id/hikedistance_header" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:text="10 km"
+                            android:text="@string/sample_distance"
                             android:id="@+id/hikeinfo_distance"
                             android:layout_marginTop="10dp" />
                     </LinearLayout>
@@ -116,14 +116,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="Elevation"
+                            android:text="@string/elevation"
                             android:id="@+id/hikeinfo_elevation_text" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:text="Max: 2000m  Min: 1000m"
+                            android:text="@string/sample_elavation"
                             android:id="@+id/hikeinfo_elevation_max_min"
                             android:layout_marginTop="10dp" />
                     </LinearLayout>
@@ -163,7 +163,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="Rating"
+                            android:text="@string/rating"
                             android:id="@+id/hikeinfo_ratingtext" />
 
                         <RatingBar
