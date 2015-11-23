@@ -29,6 +29,7 @@ import static android.support.v4.app.ActivityCompat.startActivity;
 public class NavigationDrawerListFactory extends Activity {
 
     private Context context;
+    private final static String LIST_ITEM_ACCOUNT = "Account";
     private final static String LIST_ITEM_LOGOUT = "Logout";
 
     public NavigationDrawerListFactory(ListView navDrawerList, final Context context) {
@@ -43,17 +44,23 @@ public class NavigationDrawerListFactory extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String itemText = (String) parent.getItemAtPosition(position);
+                Intent intent;
 
                 switch (itemText) {
+                    case LIST_ITEM_ACCOUNT:
+                        intent = new Intent(view.getContext(), UserDataActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        view.getContext().startActivity(intent);
+                        break;
                     case LIST_ITEM_LOGOUT:
                         new AlertDialog.Builder(context)
                                 .setMessage(R.string.logout)
                                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         LoginActivity.onSignOutClicked();
-                                        Intent intent = new Intent(context, LoginActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                        context.startActivity(intent);
+                                        Intent i = new Intent(context, LoginActivity.class);
+                                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                        context.startActivity(i);
                                     }
                                 })
                                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -71,7 +78,7 @@ public class NavigationDrawerListFactory extends Activity {
 
     private void loadNavDrawerItems(ListView navDrawerList) {
 
-        String[] listViewItems = {LIST_ITEM_LOGOUT};
+        String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_LOGOUT};
         ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
 

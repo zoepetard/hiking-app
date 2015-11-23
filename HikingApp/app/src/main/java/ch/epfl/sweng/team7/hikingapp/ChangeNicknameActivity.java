@@ -20,10 +20,10 @@ public class ChangeNicknameActivity extends Activity {
 
 
     public void saveName(View view) {
-        Intent intent = new Intent(this, MapActivity.class);
+        Intent intent = new Intent(this, UserDataActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_nickname);
         String name = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, name);
+        intent.putExtra("newNickname", name);
         startActivity(intent);
     }
 
