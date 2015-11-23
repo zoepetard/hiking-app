@@ -23,7 +23,7 @@ public class ChangeNicknameActivity extends Activity {
         Intent intent = new Intent(this, UserDataActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_nickname);
         String name = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, name);
+        intent.putExtra("newNickname", name);
         startActivity(intent);
     }
 

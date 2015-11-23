@@ -44,10 +44,11 @@ public class NavigationDrawerListFactory extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String itemText = (String) parent.getItemAtPosition(position);
+                Intent intent;
 
                 switch (itemText) {
                     case LIST_ITEM_ACCOUNT:
-                        Intent intent = new Intent(view.getContext(), UserDataActivity.class);
+                        intent = new Intent(view.getContext(), UserDataActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         view.getContext().startActivity(intent);
                         break;
