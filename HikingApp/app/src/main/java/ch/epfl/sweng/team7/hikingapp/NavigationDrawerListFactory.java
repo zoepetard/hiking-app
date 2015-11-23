@@ -26,7 +26,7 @@ import java.util.List;
 import static android.support.v4.app.ActivityCompat.startActivity;
 
 /** Class that creates a listview for the navigation drawer */
-public class NavigationDrawerListFactory extends Activity {
+public class NavigationDrawerListFactory {
 
     private Context context;
     private final static String LIST_ITEM_ACCOUNT = "Account";
