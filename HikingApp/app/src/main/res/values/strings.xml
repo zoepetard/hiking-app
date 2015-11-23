@@ -66,5 +66,6 @@
     <string name="gps_service_access_failure">Could not access gps service</string>
     <string name="gps_location_updates_failure">Could not request location updates</string>
     <string name="back">BACK</string>
+    <string name="go_hikes">See All the Hikes in This Region</string>
 
 </resources>
