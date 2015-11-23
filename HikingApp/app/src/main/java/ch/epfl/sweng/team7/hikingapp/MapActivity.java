@@ -51,6 +51,8 @@ public class MapActivity extends FragmentActivity {
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
+    private final static String EXTRA_BOUND = "ch.epfl.sweng.team7.hikingapp.BOUND";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,8 @@ public class MapActivity extends FragmentActivity {
 
         //Initializes the BottomInfoView
         createBottomInfoView();
+
+        createGoToHikesButton();
     }
 
     @Override
@@ -351,5 +355,31 @@ public class MapActivity extends FragmentActivity {
         LatLng guessSW = new LatLng(southWest.latitude - delta, southWest.longitude - delta);
         LatLng guessNE = new LatLng(northEast.latitude + delta, northEast.longitude + delta);
         return new LatLngBounds(guessSW, guessNE);
+    }
+
+    private void createGoToHikesButton() {
+        Button goHikeButton = new Button(this);
+        goHikeButton.setText(R.string.go_hikes);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        goHikeButton.setLayoutParams(lp);
+        layout.addView(goHikeButton, lp);
+
+        goHikeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                LatLngBounds bounds = getBounds();
+                Bundle bound = new Bundle();
+                bound.putParcelable("sw", bounds.southwest);
+                bound.putParcelable("ne", bounds.northeast);
+                Intent intent = new Intent(getApplicationContext(), HikeListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra(EXTRA_BOUND, bound);
+                startActivity(intent);
+            }
+        });
     }
 }
