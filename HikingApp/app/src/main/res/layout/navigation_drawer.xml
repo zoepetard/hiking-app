@@ -41,18 +41,19 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:orientation="vertical"
-                android:layout_marginLeft="5dp">
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp">
                 <TextView
                     android:id="@+id/profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="test"
+                    android:text="Team 7"
                     android:textSize="24sp"/>
                 <TextView
                     android:id="@+id/profile_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="test"
+                    android:text="team7@epfl.ch"
                     android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>

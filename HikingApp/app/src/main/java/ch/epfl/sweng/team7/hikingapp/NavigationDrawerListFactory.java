@@ -35,7 +35,7 @@ public class NavigationDrawerListFactory extends Activity {
     public NavigationDrawerListFactory(ListView navDrawerList, final Context context) {
         this.context = context;
 
-//        this.getLayoutInflater().inflate(R.layout.navigation_drawer, null);
+        // TODO: set text field of profile_name, email etc using data queried from server
 
         // load items into the Navigation drawer and add listeners
         loadNavDrawerItems(navDrawerList);
@@ -77,19 +77,8 @@ public class NavigationDrawerListFactory extends Activity {
 
 
     private void loadNavDrawerItems(ListView navDrawerList) {
-
         String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_LOGOUT};
         ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
-
-//        LinearLayout user_entry = (LinearLayout) findViewById(R.id.go_to_user);
-//        user_entry.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(v.getContext(), UserDataActivity.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                startActivity(intent);
-//            }
-//        });
     }
 }

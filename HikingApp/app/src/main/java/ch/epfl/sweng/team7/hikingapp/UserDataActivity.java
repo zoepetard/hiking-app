@@ -1,12 +1,16 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,6 +44,26 @@ public class UserDataActivity extends Activity {
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), ChangeNicknameActivity.class);
                 startActivity(i);
+            }
+        });
+
+        ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
+        profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(v.getContext())
+                        .setMessage(R.string.new_profile)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // TODO: choose a new image and change it in the server
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         });
 
