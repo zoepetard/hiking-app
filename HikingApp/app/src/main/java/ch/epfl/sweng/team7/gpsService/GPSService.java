@@ -135,10 +135,10 @@ public class GPSService extends Service {
 
         try {
             Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            Location netLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if (gpsLocation != null) {
                 gps.updateCurrentLocation(gpsLocation);
             } else {
+                Location netLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 gps.updateCurrentLocation(netLocation);
             }
         } catch (SecurityException e) {}
