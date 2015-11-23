@@ -81,18 +81,12 @@
     <string name="new_profile">Choose a new profile picture</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
+
     <string name="hike_name">Hike Name</string>
     <string name="distance">Distance</string>
     <string name="sample_distance">10 km</string>
     <string name="elevation">Elevation</string>
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
-
-    <string name="back">BACK</string>
-    <string name="go_hikes">See All the Hikes in This Region</string>
-    <string name="logout">Are you sure you want to logout?</string>
-    <string name="new_profile">Choose a new profile picture</string>
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
 
 </resources>

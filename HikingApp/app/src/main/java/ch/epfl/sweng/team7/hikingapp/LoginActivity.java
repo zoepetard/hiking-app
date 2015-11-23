@@ -112,7 +112,6 @@ public class LoginActivity extends Activity implements
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
         // [END create_google_api_client]
-
         sGoogleApiClient.connect();
     }
 
