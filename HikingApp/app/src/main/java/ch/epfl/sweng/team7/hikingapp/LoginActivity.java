@@ -306,8 +306,7 @@ public class LoginActivity extends Activity implements
          */
         @Override
         protected UserData doInBackground(String... mailAddress) {
-            // TODO change id to -1 (UNKNOWN_ID), when client is able to comm. with DB
-            UserData userData = new DefaultUserData(new RawUserData(1, "boid", mailAddress[0]));
+            UserData userData = new DefaultUserData(new RawUserData(-1, "bort", mailAddress[0]));
 
             // Authenticate user by quering server for user info
             try {
@@ -344,12 +343,12 @@ public class LoginActivity extends Activity implements
             // if id == -1, sign out user
             if (userData.getUserId() != -1) {
 
-                // Initialize the object for the signed in user TODO use real id as param
+                // Initialize the object for the signed in user
                 mSignedInUser.init(userData.getUserId(),
                         userData.getUserName(),
                         userData.getMailAddress());
 
-                // TODO UPDATE VIEW FROM HERE
+
                 mStatus.setText(mSignedInUser.getUserName());
                 ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
             } else {
@@ -359,7 +358,7 @@ public class LoginActivity extends Activity implements
                     mGoogleApiClient.disconnect();
                 }
                 showSignedOutUI();
-                mStatus.setText("Error connecting to server...");
+                mStatus.setText(getString(R.string.signed_out, "Error connecting to server"));
 
             }
         }
