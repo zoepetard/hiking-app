@@ -126,7 +126,7 @@ public class LoginActivity extends Activity implements
                 }
 
                 String photoUrl = currentPerson.getImage().getUrl();
-//                new LoadProfileImage(profilePic).execute(photoUrl);
+                // TODO: save name, email and photoUrl to server
 
                 Intent i = new Intent(this, MapActivity.class);
                 startActivity(i);
@@ -347,29 +347,4 @@ public class LoginActivity extends Activity implements
         }
     }
     // [END on_sign_out_clicked]
-
-    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public LoadProfileImage(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
 }
