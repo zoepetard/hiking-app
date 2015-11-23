@@ -266,7 +266,7 @@ public class LoginActivity extends Activity implements
         Log.d(TAG, "onConnected:" + bundle);
         mShouldResolve = false;
 
-        // try to user info from database singleton
+        // Use mailAddress to authenticate user against server
         Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String mailAddress = "";
         if (currentPerson != null) {
@@ -275,9 +275,9 @@ public class LoginActivity extends Activity implements
             }
         }
 
+
         new UserAuthenticator().execute(mailAddress);
 
-        showSignedInUI();
 
     }
     // [END on_connected]
@@ -337,6 +337,7 @@ public class LoginActivity extends Activity implements
 
                 mStatus.setText(mSignedInUser.getUserName());
                 ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
+                showSignedInUI();
             } else {
 
                 if (mGoogleApiClient.isConnected()) {
@@ -345,7 +346,7 @@ public class LoginActivity extends Activity implements
                 }
 
                 showSignedOutUI();
-                mStatus.setText(getString(R.string.signed_out, "Error connecting to server"));
+                mStatus.setText(getString(R.string.sign_in_error_connecting_to_server));
             }
         }
     }

@@ -228,7 +228,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             URL url = new URL(mServerUrl + "/get_user/");
             HttpURLConnection conn = getConnection(url, "GET");
             // TODO change 2nd parameter to mailAddress when servers accepts new users
-            conn.setRequestProperty("user_mail_address", "bort@googlemail.com");
+            conn.setRequestProperty("user_mail_address", mailAddress);
             conn.connect();
             String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonObject = new JSONObject(stringUserId);

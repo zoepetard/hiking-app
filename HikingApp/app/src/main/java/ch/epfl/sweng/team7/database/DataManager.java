@@ -192,13 +192,13 @@ public final class DataManager {
             long userId = sDatabaseClient.postUserData(rawUserData);
             return userId;
         } catch (DatabaseClientException e) {
-            throw new DataManagerException(e.getMessage());
+            throw new DataManagerException(e);
         }
     }
 
 
     /**
-     * TODO server side needs to be implemented before this can work
+     *
      * Change user name
      *
      * @param newName,mailAddress the new user name and mailAddress as identifier
