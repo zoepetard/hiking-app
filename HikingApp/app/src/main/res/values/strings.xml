@@ -60,6 +60,14 @@
     <item name="button_tracking_toggle" type="id" />
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
+    <item name="button_save_hike" type="id"></item>
+
+    <!-- Save hike prompt -->
+    <string name="button_save_hike">Save</string>
+    <string name="button_cancel_save">Cancel</string>
+    <string name="prompt_title">Hike finished!</string>
+    <string name="prompt_title_hint">Hike name</string>
+    <string name="prompt_comment_hint">Drop a comment about this hike</string>
 
     <!-- Error messages -->
     <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
