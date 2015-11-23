@@ -52,7 +52,7 @@ public final class HikeInfoActivity extends Activity {
 
     private void displayEditableHike(Intent intent) {
         EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
-        //hikeName.setInputType(InputType.TYPE_CLASS_TEXT);
+        //TODO set it to editable
 
         Button saveButton = new Button(this);
         saveButton.setText("Save");
