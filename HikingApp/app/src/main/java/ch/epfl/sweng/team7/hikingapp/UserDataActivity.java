@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +36,13 @@ public class UserDataActivity extends Activity {
         user_name.setText("Team 7");
         user_email.setText("team7@epfl.ch");
         num_hikes.setText(getString(R.string.num_hikes_fmt, 100));
-    }
 
+        Button back_button = (Button) findViewById(R.id.back_button);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
 }
