@@ -45,8 +45,8 @@ public class LoginTest {
         assertEquals("Wrong email address", newUser.getId(), 2);
 
         // check that old reference is updated
-        assertEquals("", user.getId(), 2);
-        assertEquals("", user.getUserName(), "7team");
-        assertEquals("", user.getMailAddress(), "7team@gmail.com");
+        assertEquals("Wrong ID for old pointer", user.getId(), 2);
+        assertEquals("Wrong user name for old pointer", user.getUserName(), "7team");
+        assertEquals("Wrong email address for old pointer", user.getMailAddress(), "7team@gmail.com");
     }
 }

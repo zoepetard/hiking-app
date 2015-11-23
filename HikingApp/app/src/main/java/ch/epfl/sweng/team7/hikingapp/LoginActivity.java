@@ -134,20 +134,7 @@ public class LoginActivity extends Activity implements
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-            if (currentPerson != null) {
-                // Show signed-in user's name
-                String name = currentPerson.getDisplayName();
-                // TODO REMOVE mStatus.setText(getString(R.string.signed_in_fmt, mSignedInUser.getUserName()));
-
-                // Show users' email address (which requires GET_ACCOUNTS permission)
-                if (checkAccountsPermission()) {
-                    String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                    //TODO REMOVE ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
-
-                }
-
-
-            } else {
+            if (currentPerson == null) {
                 // If getCurrentPerson returns null there is generally some error with the
                 // configuration of the application (invalid Client ID, Plus API not enabled, etc).
                 Log.w(TAG, getString(R.string.error_null_person));
@@ -306,7 +293,7 @@ public class LoginActivity extends Activity implements
          */
         @Override
         protected UserData doInBackground(String... mailAddress) {
-            UserData userData = new DefaultUserData(new RawUserData(-1, "bort", mailAddress[0]));
+            UserData userData = null;
 
             // Authenticate user by quering server for user info
             try {
@@ -340,26 +327,25 @@ public class LoginActivity extends Activity implements
         @Override
         protected void onPostExecute(UserData userData) {
 
-            // if id == -1, sign out user
-            if (userData.getUserId() != -1) {
 
-                // Initialize the object for the signed in user
+            // Initialize the object for the signed in user, sign out if userData == null
+            if (userData != null) {
+
                 mSignedInUser.init(userData.getUserId(),
                         userData.getUserName(),
                         userData.getMailAddress());
 
-
                 mStatus.setText(mSignedInUser.getUserName());
                 ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
             } else {
-                // Sign out if impossible to retrieve user from database
+
                 if (mGoogleApiClient.isConnected()) {
                     Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
                     mGoogleApiClient.disconnect();
                 }
+
                 showSignedOutUI();
                 mStatus.setText(getString(R.string.signed_out, "Error connecting to server"));
-
             }
         }
     }
