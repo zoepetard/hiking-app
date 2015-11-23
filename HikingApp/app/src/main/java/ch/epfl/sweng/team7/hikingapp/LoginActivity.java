@@ -306,43 +306,62 @@ public class LoginActivity extends Activity implements
          */
         @Override
         protected UserData doInBackground(String... mailAddress) {
-            // try to get user info from database
-            UserData userData;
+            // TODO change id to -1 (UNKNOWN_ID), when client is able to comm. with DB
+            UserData userData = new DefaultUserData(new RawUserData(1, "boid", mailAddress[0]));
 
-            // TODO Authenticate user by quering server for user info
+            // Authenticate user by quering server for user info
             try {
                 userData = mDataManager.getUserData(mailAddress[0]);
 
-            } catch (DataManagerException e) {
-                // TODO if fetch fails, provide feedback to user, SIGN OUT
-                Log.d(TAG, e.getMessage());
-                RawUserData rawUserData = new RawUserData(-1, "void", mailAddress[0]);
-                userData = new DefaultUserData(rawUserData);
+            } catch (DataManagerException fetchError) {
 
-                // if error is HTTP 404 then add new user to DB.
-                if (e.getMessage().equals("Unexpected HTTP Response Code: 404")) {
-                    rawUserData = new RawUserData(-1, "boid", mailAddress[0]);
-                    userData = new DefaultUserData(rawUserData);
+                Log.d(TAG, fetchError.getMessage());
+                // fetch failed, if error is HTTP 404 then add new user to DB.
+                if (fetchError.getMessage().equals("Unexpected HTTP Response Code: 404")) {
+
+                    try {
+                        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                        String userName = "";
+                        if (currentPerson != null) {
+                            userName = currentPerson.getDisplayName();
+                        }
+                        RawUserData newUser = new RawUserData(-1, userName, mailAddress[0]);
+                        long userId = mDataManager.addNewUser(newUser);
+                        newUser = new RawUserData(userId, userName, mailAddress[0]);
+                        userData = new DefaultUserData(newUser);
+
+                    } catch (DataManagerException postError) {
+                        Log.d(TAG, "failed to add new user: " + postError.getMessage());
+                    }
                 }
-
-
             }
-
             return userData;
         }
 
         @Override
         protected void onPostExecute(UserData userData) {
 
-            // Initialize the object for the signed in user TODO use real id as param
-            mSignedInUser.init(userData.getUserId(),
-                    userData.getUserName(),
-                    userData.getMailAddress());
+            // if id == -1, sign out user
+            if (userData.getUserId() != -1) {
 
-            // TODO UPDATE VIEW FROM HERE
-            mStatus.setText(mSignedInUser.getUserName());
-            ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
+                // Initialize the object for the signed in user TODO use real id as param
+                mSignedInUser.init(userData.getUserId(),
+                        userData.getUserName(),
+                        userData.getMailAddress());
 
+                // TODO UPDATE VIEW FROM HERE
+                mStatus.setText(mSignedInUser.getUserName());
+                ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
+            } else {
+                // Sign out if impossible to retrieve user from database
+                if (mGoogleApiClient.isConnected()) {
+                    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                    mGoogleApiClient.disconnect();
+                }
+                showSignedOutUI();
+                mStatus.setText("Error connecting to server...");
+
+            }
         }
     }
 

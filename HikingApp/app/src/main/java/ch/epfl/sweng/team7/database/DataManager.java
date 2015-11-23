@@ -183,6 +183,23 @@ public final class DataManager {
     }
 
     /**
+     * Store user data in database
+     *
+     * @param rawUserData - a raw user data object
+     * @return userId - new id assigned by the server
+     */
+    public long addNewUser(RawUserData rawUserData) throws DataManagerException {
+
+        try {
+            long userId = sDatabaseClient.postUserData(rawUserData);
+            return userId;
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e.getMessage());
+        }
+    }
+
+
+    /**
      * TODO server side needs to be implemented before this can work
      * Change user name
      *
