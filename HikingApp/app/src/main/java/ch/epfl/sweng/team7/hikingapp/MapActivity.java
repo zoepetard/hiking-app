@@ -70,7 +70,7 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
-    private TextAnnotation annotation;
+
 
     private boolean mFollowingUser = false;
 
@@ -182,11 +182,11 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
         mScreenWidth = size.x;
         mScreenHeight = size.y;
-
         mUserLocation = getUserPosition();
         LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
@@ -225,6 +225,11 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
+        //TODO These are the bounds that should be changed to center on user's location.
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
+        new DownloadHikeList().execute(bounds);
+
+
     }
 
     private static class DownloadHikeParams {
@@ -304,11 +309,25 @@ public class MapActivity extends FragmentActivity {
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
+        //Display de textAnnotations
+        List<MarkerOptions> annotations = new ArrayList<>();
+        for(int i = 0; i < hike.getTextAnnotations().size(); i++){
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(hike.getTextAnnotations().get(i).getRawHikePoint().getPosition())
+                    .title("Annotation")
+                    .snippet(hike.getTextAnnotations().get(i).getmComment())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            annotations.add(markerOptions);
+            Marker textAnnotation = mMap.addMarker(markerOptions);
+        }
+
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
                 return onMarkerClickHelper(marker);
             }
         });
+
         Marker startMarker = mMap.addMarker(startMarkerOptions);
         Marker finishMarker = mMap.addMarker(finishMarkerOptions);
 
