@@ -25,7 +25,6 @@ import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.database.PictureAnnotation;
-import ch.epfl.sweng.team7.database.TextAnnotation;
 import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
@@ -63,6 +62,7 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
     private List<Annotation> listAnnotations = new ArrayList<>();
     private RawHikeData rawHikeData;
+
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -302,7 +302,6 @@ public final class GPSManager {
         mContext.startActivity(intent);
     }
 
-
     /**
      * Method called internally to give feedback to the user
      *
@@ -360,9 +359,8 @@ public final class GPSManager {
 
 
 
-    private void storePictures(List<PictureAnnotation> hikePictures) {
-        //TODO when is implemented on server
-    }
+
+
     /**
      * Method used to turn on/off the location
      * listeners inside GPSService.
@@ -378,8 +376,6 @@ public final class GPSManager {
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
     }
-
-
 
     private void storeHike() {
         try {
@@ -400,7 +396,6 @@ public final class GPSManager {
         }
     }
 
-
     /**
      * Asynchronous task to make the post request to the server.
      */
@@ -413,6 +408,7 @@ public final class GPSManager {
             DataManager dataManager = DataManager.getInstance();
             try {
                 hikeId = dataManager.postHike(rawHikeData[0]);
+                rawHikeData[0].setHikeId(hikeId);
                 Log.d(LOG_FLAG, "Hike Post correctly");
                 return hikeId;
             } catch (DataManagerException e) {
@@ -428,6 +424,7 @@ public final class GPSManager {
     /**
      * Asynchronous task to make the post request to the server.
      */
+<<<<<<< HEAD
 
     private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
         @Override
@@ -444,7 +441,6 @@ public final class GPSManager {
             }
             return null;
         }
-
         protected void onPostExecute(Long... hikeId) {
         }
 
@@ -455,6 +451,5 @@ public final class GPSManager {
             rawHikeData.setAnnotations(listAnnotations);
 
         }
-
     }
 }
