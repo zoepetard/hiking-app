@@ -53,7 +53,7 @@ public class NavigationDrawerListFactory extends Activity {
                                         LoginActivity.onSignOutClicked();
                                         Intent intent = new Intent(context, LoginActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                        startActivity(intent);
+                                        context.startActivity(intent);
                                     }
                                 })
                                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
