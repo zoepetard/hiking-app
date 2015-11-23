@@ -222,9 +222,13 @@ public class DefaultHikeData implements HikeData {
         return mTitle;
     }
 
+<<<<<<< HEAD
 
 
     public List<Annotation> getAnnotations() { return mAnnotations; }
+=======
+    public List<TextAnnotation> getTextAnnotations() { return mTextAnnotations; }
+>>>>>>> Implement all the backend Text/Picture annotations, to be tested
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;

@@ -38,7 +38,6 @@ import ch.epfl.sweng.team7.database.HikeData;
 
 
 import ch.epfl.sweng.team7.database.Picture;
-import ch.epfl.sweng.team7.database.UserData;
 
 
 
@@ -335,6 +334,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     @Override
     public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
         return null;
+
     }
 
     /**
