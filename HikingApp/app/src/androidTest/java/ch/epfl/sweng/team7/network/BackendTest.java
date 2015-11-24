@@ -300,10 +300,7 @@ public class BackendTest extends TestCase {
         assertEquals(rawUserData.getUserName(), signedInUser.getUserName());
     }
 
-
     // TODO(simon) test backend reaction to malformed input
-    // TODO(simon) test other backend interface (like post_hikes)
-
 
 
     /**

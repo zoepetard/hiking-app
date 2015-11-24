@@ -1,10 +1,11 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import ch.epfl.sweng.team7.network.DatabaseClientException;
+import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
+import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 
 public class UserDataActivity extends Activity {
     private int user_id;
@@ -88,5 +93,37 @@ public class UserDataActivity extends Activity {
                 finish();
             }
         });
+
+        Log.d("SIMON", "Pre-Start Download");
+        new DownloadProfilePicture().execute(new Integer(2));
+        Log.d("SIMON", "Pre2-Start Download");
+    }
+
+
+    // TODO(simon) THIS IS DEBUG CODE AND SHOULD BE REMOVED
+    private class DownloadProfilePicture extends AsyncTask<Integer, Void, Drawable> {
+        @Override
+        protected Drawable doInBackground(Integer... params) {
+            Log.d("SIMON", "Pro-Start Download");
+            try {
+                NetworkDatabaseClient networkDatabaseClient = new NetworkDatabaseClient("http://footpath-1104.appspot.com", new DefaultNetworkProvider());
+                Log.d("SIMON", "Start Download");
+                return networkDatabaseClient.getImage(0);
+            } catch (DatabaseClientException e) {
+                Log.d("SIMON", e.toString());
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Drawable drawable) {
+            Log.d("SIMON", "Finished Download");
+            if(drawable != null) {
+                Log.d("SIMON", "Set Picture.");
+                ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
+                profilePic.setImageDrawable(drawable);
+            }
+        }
     }
 }

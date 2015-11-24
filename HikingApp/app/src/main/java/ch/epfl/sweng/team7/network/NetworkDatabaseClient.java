@@ -8,18 +8,26 @@
 
 package ch.epfl.sweng.team7.network;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +64,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/get_hike/");
-            HttpURLConnection conn = getConnection(url, "GET");
+            HttpURLConnection conn = getConnection("get_hike", "GET");
             conn.setRequestProperty("hike_id", Long.toString(hikeId));
             conn.connect();
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
@@ -103,8 +110,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         List<Long> hikeList = new ArrayList<>();
 
         try {
-            URL url = new URL(mServerUrl + "/get_hikes_in_window/");
-            HttpURLConnection conn = getConnection(url, "GET");
+            HttpURLConnection conn = getConnection("get_hikes_in_window", "GET");
             conn.setRequestProperty("bounding_box", boundingBoxJSON);
             conn.connect();
             String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
@@ -127,8 +133,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         List<Long> hikeList = new ArrayList<>();
 
         try {
-            URL url = new URL(mServerUrl + "/get_hikes_of_user/");
-            HttpURLConnection conn = getConnection(url, "GET");
+            HttpURLConnection conn = getConnection("get_hikes_of_user", "GET");
             conn.setRequestProperty("user_id", Long.toString(userId));
             conn.connect();
             String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
@@ -156,8 +161,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public long postHike(RawHikeData hike) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/post_hike/");
-            HttpURLConnection conn = getConnection(url, "POST");
+            HttpURLConnection conn = getConnection("post_hike", "POST");
             byte[] outputInBytes = hike.toJSON().toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
@@ -182,8 +186,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("hike_id", hikeId);
 
-            URL url = new URL(mServerUrl + "/delete_hike/");
-            HttpURLConnection conn = getConnection(url, "POST");
+            HttpURLConnection conn = getConnection("delete_hike", "POST");
             byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
@@ -205,8 +208,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/post_user/");
-            HttpURLConnection conn = getConnection(url, "POST");
+            HttpURLConnection conn = getConnection("post_user", "POST");
             byte[] outputInBytes = rawUserData.toJSON().toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
@@ -228,8 +230,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public RawUserData fetchUserData(long userId) throws DatabaseClientException {
         try {
-            URL url = new URL(mServerUrl + "/get_user/");
-            HttpURLConnection conn = getConnection(url, "GET");
+            HttpURLConnection conn = getConnection("get_user", "GET");
             conn.setRequestProperty("user_id", Long.toString(userId));
             conn.connect();
             String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
@@ -251,8 +252,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
 
         try {
-            URL url = new URL(mServerUrl + "/get_user/");
-            HttpURLConnection conn = getConnection(url, "GET");
+            HttpURLConnection conn = getConnection("get_user", "GET");
             // TODO change 2nd parameter to mailAddress when servers accepts new users
             conn.setRequestProperty("user_mail_address", mailAddress);
             conn.connect();
@@ -273,8 +273,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         SignedInUser signedInUser = SignedInUser.getInstance();
 
         try {
-            URL url = new URL(mServerUrl + "/login_user/");
-            HttpURLConnection conn = getConnection(url, "GET");
+            HttpURLConnection conn = getConnection("login_user", "GET");
             conn.setRequestProperty("user_mail_address", signedInUser.getMailAddress());
             conn.connect();
             String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
@@ -298,8 +297,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user_id", userId);
 
-            URL url = new URL(mServerUrl + "/delete_user/");
-            HttpURLConnection conn = getConnection(url, "POST");
+            HttpURLConnection conn = getConnection("delete_user", "POST");
             byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
@@ -311,15 +309,57 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
+    // TODO description
+    public Drawable getImage(long imageId) throws DatabaseClientException {
+        try {
+
+            // TODO change: temporary: download some picture from the internet
+            URL url = new URL("http://quarknet.de/fotos/landschaft/himmel/engelsfluegel.jpg");
+
+            Log.d("ImageManager", "download begining");
+            Log.d("ImageManager", "download url:" + url);
+            Log.d("ImageManager", "downloaded file name:" + "image.jpg");
+            URLConnection ucon = url.openConnection();
+
+            InputStream is = ucon.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+
+            return Drawable.createFromStream(bis, "");
+        } catch (IOException e) {
+            throw new DatabaseClientException("ImageManager Error: " + e);
+        }
+    }
+
+    // TODO description
+    public long postImage(Drawable drawable) throws DatabaseClientException {
+
+        try {
+            HttpURLConnection conn = getConnection("post_image", "POST");
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] outputInBytes = stream.toByteArray();
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+            return new JSONObject(serverResponse).getLong("image_id");
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
     /**
      * Method to set the properties of the connection to the server
      *
-     * @param url    the server url
+     * @param function    the server function, without /
      * @param method "GET" or "POST"
      * @return a valid HttpConnection
      * @throws IOException
      */
-    private HttpURLConnection getConnection(URL url, String method) throws IOException {
+    private HttpURLConnection getConnection(String function, String method) throws IOException {
+        URL url = new URL(mServerUrl + "/" + function + "/");
         HttpURLConnection conn = mNetworkProvider.getConnection(url);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setRequestProperty("Content-Type", JSON_CONTENT + ";" + ENCODING);
