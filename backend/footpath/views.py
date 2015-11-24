@@ -332,7 +332,22 @@ def post_image(request):
 
 # Get an existing image
 def get_image(request):
-    return HttpResponse(status=500)
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    request_image_id = int(request.META.get('HTTP_IMAGE_ID', -1))
+    logger.info('get_image got request for image id %s', repr(request_image_id))
+    if request_image_id < 0:
+        return response_bad_request()
+    
+    img = ndb.Key(Image, request_image_id).get()
+    if not img:
+        return response_not_found()
+
+    return response_image(img.image_data)
+
 
 # Delete an image
 def delete_image(request):
@@ -382,6 +397,10 @@ def response_id(id_name, id_value):
 def response_data(data):
     logger.info('response_string: return string '+data)
     return HttpResponse(data, content_type='application/json')
+
+# Create response containing the image. data should be valid JPEG image.
+def response_image(data):
+    return HttpResponse(data, content_type='image/jpeg')
 
 def response_hike_locations(hikes):
 
