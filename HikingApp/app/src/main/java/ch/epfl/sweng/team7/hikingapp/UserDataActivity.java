@@ -62,9 +62,10 @@ public class UserDataActivity extends Activity {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent();
-                                intent.setType("image/*");
+                                intent.setType(getString(R.string.image_intent));
                                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+                                startActivityForResult(Intent.createChooser(intent,
+                                        getString(R.string.selete_pic)), SELECT_PICTURE);
                             }
                         })
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

@@ -88,5 +88,7 @@
     <string name="elevation">Elevation</string>
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
+    <string name="image_intent">image/*</string>
+    <string name="selete_pic">Select Picture</string>
 
 </resources>
