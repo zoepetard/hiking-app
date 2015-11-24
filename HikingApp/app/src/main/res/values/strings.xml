@@ -50,11 +50,12 @@
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
     <string name="title_activity_change_nickname">ChangeNicknameActivity</string>
 
-    <string name="edit_nickname">Choose a new nickname</string>
+    <string name="edit_nickname">Change</string>
     <string name="title_activity_hike_info">HikeInfoActivity</string>
     <string name="title_activity_user_data">UserDataActivity</string>
 
     <string name="num_hikes_fmt">Number of hikes: %d</string>
+    <string name="nickname_fmt">Nickname: %s</string>
 
     <!-- IDs -->
     <item name="button_tracking_toggle" type="id" />
@@ -73,5 +74,19 @@
     <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
     <string name="gps_service_access_failure">Could not access gps service</string>
     <string name="gps_location_updates_failure">Could not request location updates</string>
+
+    <string name="back">BACK</string>
+    <string name="go_hikes">See All the Hikes in This Region</string>
+    <string name="logout">Are you sure you want to logout?</string>
+    <string name="new_profile">Choose a new profile picture</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+
+    <string name="hike_name">Hike Name</string>
+    <string name="distance">Distance</string>
+    <string name="sample_distance">10 km</string>
+    <string name="elevation">Elevation</string>
+    <string name="sample_elavation">Max: 2000m Min: 1000m</string>
+    <string name="rating">Rating</string>
 
 </resources>

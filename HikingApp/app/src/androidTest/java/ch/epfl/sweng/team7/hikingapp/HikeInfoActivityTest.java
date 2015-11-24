@@ -63,14 +63,9 @@ public class HikeInfoActivityTest
             if(!navDrawerListView.getAdapter().getItem(0).equals("Account")){
                 fail("First item should be Account");
             }
-            if(!navDrawerListView.getAdapter().getItem(1).equals("Map")){
-                fail("Second item should be Map");
-            }
-            if(!navDrawerListView.getAdapter().getItem(2).equals("Hikes")){
-                fail("Third item should be Hikes");
-            }
-            if(!navDrawerListView.getAdapter().getItem(3).equals("Logout")){
-                fail("Fourth item should be Logout");
+
+            if(!navDrawerListView.getAdapter().getItem(1).equals("Logout")){
+                fail("Second item should be Logout");
             }
         }
     }

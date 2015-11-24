@@ -52,6 +52,9 @@ public class MapActivity extends FragmentActivity {
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
+    public final static String EXTRA_BOUNDS =
+            "ch.epfl.sweng.team7.hikingapp.BOUNDS";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +78,8 @@ public class MapActivity extends FragmentActivity {
 
         //Initializes the BottomInfoView
         createBottomInfoView();
+
+        setGoToHikesButtonListener();
     }
 
     @Override
@@ -352,6 +357,22 @@ public class MapActivity extends FragmentActivity {
         LatLng guessSW = new LatLng(southWest.latitude - delta, southWest.longitude - delta);
         LatLng guessNE = new LatLng(northEast.latitude + delta, northEast.longitude + delta);
         return new LatLngBounds(guessSW, guessNE);
+    }
+
+    private void setGoToHikesButtonListener() {
+        Button goHikeButton = (Button) findViewById(R.id.go_hikes_button);
+        goHikeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                LatLngBounds bounds = getBounds();
+                Bundle bound = new Bundle();
+                bound.putParcelable("sw", bounds.southwest);
+                bound.putParcelable("ne", bounds.northeast);
+                Intent intent = new Intent(v.getContext(), HikeListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.putExtra(EXTRA_BOUNDS, bound);
+                startActivity(intent);
+            }
+        });
     }
 
     private LatLng getUserPosition() {

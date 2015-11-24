@@ -22,6 +22,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -29,6 +32,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +44,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import java.io.InputStream;
+
+// TODO: test login as part of the integration test
 
 public class LoginActivity extends Activity implements
         View.OnClickListener,
@@ -65,10 +73,7 @@ public class LoginActivity extends Activity implements
     private static final String KEY_SHOULD_RESOLVE = "should_resolve";
 
     /* Client for accessing Google APIs */
-    private GoogleApiClient mGoogleApiClient;
-
-    /* View to display current status (signed-in, signed-out, disconnected, etc) */
-    private TextView mStatus;
+    private static GoogleApiClient sGoogleApiClient;
 
     // [START resolution_variables]
     /* Is there a ConnectionResult resolution in progress? */
@@ -93,23 +98,13 @@ public class LoginActivity extends Activity implements
 
         // Set up button click listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
-        findViewById(R.id.change_name_button).setOnClickListener(this);
-        findViewById(R.id.goto_map_button).setOnClickListener(this);
 
         // Large sign-in
         ((SignInButton) findViewById(R.id.sign_in_button)).setSize(SignInButton.SIZE_WIDE);
 
-        // Start with sign-in button disabled until sign-in either succeeds or fails
-        findViewById(R.id.sign_in_button).setEnabled(false);
-
-        // Set up view instances
-        mStatus = (TextView) findViewById(R.id.status);
-
         // [START create_google_api_client]
         // Build GoogleApiClient with access to basic profile
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        sGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
@@ -117,42 +112,36 @@ public class LoginActivity extends Activity implements
                 .addScope(new Scope(Scopes.EMAIL))
                 .build();
         // [END create_google_api_client]
+        sGoogleApiClient.connect();
     }
 
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
             if (currentPerson != null) {
                 // Show signed-in user's name
                 String name = currentPerson.getDisplayName();
-                mStatus.setText(getString(R.string.signed_in_fmt, name));
 
                 // Show users' email address (which requires GET_ACCOUNTS permission)
                 if (checkAccountsPermission()) {
-                    String currentAccount = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                    ((TextView) findViewById(R.id.email)).setText(currentAccount);
+                    String currentAccount = Plus.AccountApi.getAccountName(sGoogleApiClient);
                 }
+
+                String photoUrl = currentPerson.getImage().getUrl();
+                // TODO: save name, email and photoUrl to server
+
+                Intent i = new Intent(this, MapActivity.class);
+                startActivity(i);
             } else {
                 // If getCurrentPerson returns null there is generally some error with the
                 // configuration of the application (invalid Client ID, Plus API not enabled, etc).
                 Log.w(TAG, getString(R.string.error_null_person));
-                mStatus.setText(getString(R.string.signed_in_err));
             }
-
-            // Set button visibility
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-            findViewById(R.id.change_display_name_and_goto_map).setVisibility(View.VISIBLE);
         } else {
             // Show signed-out message and clear email field
-            mStatus.setText(R.string.signed_out);
-            ((TextView) findViewById(R.id.email)).setText("");
 
             // Set button visibility
             findViewById(R.id.sign_in_button).setEnabled(true);
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-            findViewById(R.id.change_display_name_and_goto_map).setVisibility(View.GONE);
         }
     }
 
@@ -203,13 +192,12 @@ public class LoginActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        sGoogleApiClient.disconnect();
     }
     // [END on_start_on_stop]
 
@@ -235,7 +223,7 @@ public class LoginActivity extends Activity implements
             }
 
             mIsResolving = false;
-            mGoogleApiClient.connect();
+            sGoogleApiClient.connect();
         }
     }
     // [END on_activity_result]
@@ -292,7 +280,7 @@ public class LoginActivity extends Activity implements
                 } catch (IntentSender.SendIntentException e) {
                     Log.e(TAG, "Could not resolve ConnectionResult.", e);
                     mIsResolving = false;
-                    mGoogleApiClient.connect();
+                    sGoogleApiClient.connect();
                 }
             } else {
                 // Could not resolve the connection result, show the user an
@@ -338,18 +326,6 @@ public class LoginActivity extends Activity implements
             case R.id.sign_in_button:
                 onSignInClicked();
                 break;
-            case R.id.sign_out_button:
-                onSignOutClicked();
-                break;
-            case R.id.disconnect_button:
-                onDisconnectClicked();
-                break;
-            case R.id.change_name_button:
-                onChangeNameClicked();
-                break;
-            case R.id.goto_map_button:
-                onGotoMapClicked();
-                break;
         }
     }
     // [END on_click]
@@ -359,52 +335,18 @@ public class LoginActivity extends Activity implements
         // User clicked the sign-in button, so begin the sign-in process and automatically
         // attempt to resolve any errors that occur.
         mShouldResolve = true;
-        mGoogleApiClient.connect();
-
-        // Show a message to the user that we are signing in.
-        mStatus.setText(R.string.signing_in);
+        sGoogleApiClient.connect();
     }
     // [END on_sign_in_clicked]
 
     // [START on_sign_out_clicked]
-    private void onSignOutClicked() {
+    public static void onSignOutClicked() {
         // Clear the default account so that GoogleApiClient will not automatically
         // connect in the future.
-        if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
+        if (sGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
+            sGoogleApiClient.disconnect();
         }
-
-        showSignedOutUI();
     }
     // [END on_sign_out_clicked]
-
-    // [START on_disconnect_clicked]
-    private void onDisconnectClicked() {
-        // Revoke all granted permissions and clear the default account.  The user will have
-        // to pass the consent screen to sign in again.
-        if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
-            mGoogleApiClient.disconnect();
-        }
-
-        showSignedOutUI();
-    }
-    // [END on_disconnect_clicked]
-
-    private void onChangeNameClicked() {
-        Intent i = new Intent(this, ChangeNicknameActivity.class);
-        startActivity(i);
-    }
-
-    private void onGotoMapClicked() {
-        Intent i = new Intent(this, MapActivity.class);
-        TextView textView = (TextView) findViewById(R.id.status);
-        String name = textView.getText().toString();
-        int colon = name.indexOf(":");
-        name = name.substring(colon + 2);
-        i.putExtra(EXTRA_NAME, name);
-        startActivity(i);
-    }
 }

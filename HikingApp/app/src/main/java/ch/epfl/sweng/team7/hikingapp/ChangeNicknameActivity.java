@@ -10,7 +10,7 @@ public class ChangeNicknameActivity extends Activity {
 
     private final static String LOG_FLAG = "Activity_ChangeNickname";
     public final static String EXTRA_MESSAGE =
-            "ch.epfl.sweng.team7.hikingapp.MESSAGE";
+            "ch.epfl.sweng.team7.hikingapp.NICKNAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class ChangeNicknameActivity extends Activity {
 
 
     public void saveName(View view) {
-        Intent intent = new Intent(this, MapActivity.class);
+        Intent intent = new Intent(this, UserDataActivity.class);
         EditText editText = (EditText) findViewById(R.id.edit_nickname);
         String name = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, name);
