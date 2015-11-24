@@ -324,11 +324,12 @@ def post_image(request):
         if not old_image.owner_id == img.owner_id:
             return response_forbidden()
         
-        img.key = ndb.Key(Image, old_image)
+        img.key = old_image.key
 
     new_key = img.put()
     logger.info('respond with ID '+repr(new_key.id()))
     return response_id('image_id', new_key.id())
+
 
 # Get an existing image
 def get_image(request):
@@ -372,6 +373,7 @@ def delete_image(request):
     img.key.delete()
     return response_data('')
 
+
 # Clean server
 def clear_server(request):
     hikes = Hike.query().fetch()
@@ -386,6 +388,9 @@ def clear_server(request):
     images = Image.query().fetch()
     for img in images:
         img.key.delete()
+
+    return response_data('')
+
 
 def response_bad_request():
     return HttpResponse(status=400)

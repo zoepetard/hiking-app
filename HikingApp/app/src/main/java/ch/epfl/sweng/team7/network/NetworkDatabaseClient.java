@@ -326,31 +326,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             return Drawable.createFromStream(bis, "");
-
-
-
-            /*String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            return RawUserData.parseFromJSON(jsonObject);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e.getMessage());
-        } catch (JSONException e) {
-            throw new DatabaseClientException("JSONException: " + e.getMessage());
-        }
-        try {
-
-            // TODO change: temporary: download some picture from the internet
-            URL url = new URL("http://quarknet.de/fotos/landschaft/himmel/engelsfluegel.jpg");
-
-            Log.d("ImageManager", "download begining");
-            Log.d("ImageManager", "download url:" + url);
-            Log.d("ImageManager", "downloaded file name:" + "image.jpg");
-            URLConnection ucon = url.openConnection();
-
-            InputStream is = ucon.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(is);
-
-            return Drawable.createFromStream(bis, "");*/
         } catch (IOException e) {
             throw new DatabaseClientException("ImageManager Error: " + e);
         }
@@ -359,13 +334,15 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Post an image to the database
      * @param drawable an image, here as drawable
+     * @param imageId the ID of the image if it should be changed
      * @return the database key of that image
      * @throws DatabaseClientException
      */
-    public long postImage(Drawable drawable) throws DatabaseClientException {
+    public long postImage(Drawable drawable, long imageId) throws DatabaseClientException {
 
         try {
             HttpURLConnection conn = getConnection("post_image", "POST");
+            conn.setRequestProperty("image_id", Long.toString(imageId));
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -379,6 +356,16 @@ public class NetworkDatabaseClient implements DatabaseClient {
         } catch (JSONException e) {
             throw new DatabaseClientException(e);
         }
+    }
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    public long postImage(Drawable drawable) throws DatabaseClientException {
+        return postImage(drawable, -1);
     }
 
     /**

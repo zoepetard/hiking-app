@@ -312,12 +312,12 @@ public class BackendTest extends TestCase {
     public void testPostAndGetImage() throws Exception {
         Drawable initialImage = loadDebugImage();
 
-        // post a hike
+        // post an image
         final long imageId = mDatabaseClient.postImage(initialImage);
 
         waitForServerSync();
 
-        // retrieve the same hike
+        // retrieve the same image
         Drawable serverImage = mDatabaseClient.getImage(imageId);
 
         assertEquals(serverImage.getBounds().left, initialImage.getBounds().left);
@@ -327,6 +327,51 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
         mDatabaseClient.deleteImage(imageId);
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_image function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testUpdateImage() throws Exception {
+        Drawable initialImage = loadDebugImage();
+
+        // post an image
+        final long imageId = mDatabaseClient.postImage(initialImage);
+
+        waitForServerSync();
+
+        // retrieve the same image
+        final long secondImageId = mDatabaseClient.postImage(initialImage, imageId);
+
+        assertEquals(imageId, secondImageId);
+
+        waitForServerSync();
+        mDatabaseClient.deleteImage(imageId);
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} delete_image function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testDeleteImage() throws Exception {
+        Drawable initialImage = loadDebugImage();
+
+        // post an image
+        final long imageId = mDatabaseClient.postImage(initialImage);
+
+        waitForServerSync();
+        mDatabaseClient.deleteImage(imageId);
+
+        waitForServerSync();
+        try {
+            mDatabaseClient.getImage(imageId);
+            fail("Image found in database after deleting it");
+        } catch (DatabaseClientException e) {
+            // pass
+        }
     }
 
     // TODO(simon) test backend reaction to malformed input

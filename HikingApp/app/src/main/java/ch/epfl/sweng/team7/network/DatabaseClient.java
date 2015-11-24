@@ -116,6 +116,15 @@ public interface DatabaseClient {
     /**
      * Post an image to the database
      * @param drawable an image, here as drawable
+     * @param imageId the ID of the image if it should be changed
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    long postImage(Drawable drawable, long imageId) throws DatabaseClientException;
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
      */

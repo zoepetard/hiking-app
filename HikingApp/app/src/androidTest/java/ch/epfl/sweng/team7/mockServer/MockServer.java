@@ -240,11 +240,22 @@ public class MockServer implements DatabaseClient {
     /**
      * Post an image to the database
      * @param drawable an image, here as drawable
+     * @param imageId the ID of the image if it should be changed
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    public long postImage(Drawable drawable, long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
      */
     public long postImage(Drawable drawable) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented.");
+        return postImage(drawable, -1);
     }
 
     /**
