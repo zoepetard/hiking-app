@@ -45,6 +45,12 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.DefaultUserData;
+import ch.epfl.sweng.team7.database.UserData;
+import ch.epfl.sweng.team7.network.RawUserData;
+
 import java.io.InputStream;
 
 // TODO: test login as part of the integration test
@@ -82,6 +88,11 @@ public class LoginActivity extends Activity implements
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
     // [END resolution_variables]
+
+    // Initialize the object for the signed in user
+    private SignedInUser mSignedInUser = SignedInUser.getInstance();
+
+    DataManager mDataManager = DataManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +158,7 @@ public class LoginActivity extends Activity implements
 
     /**
      * Check if we have the GET_ACCOUNTS permission and request it if we do not.
+     *
      * @return true if we have the permission, false if we do not.
      */
     private boolean checkAccountsPermission() {
@@ -251,10 +263,90 @@ public class LoginActivity extends Activity implements
         Log.d(TAG, "onConnected:" + bundle);
         mShouldResolve = false;
 
-        // Show the signed-in UI
-        showSignedInUI();
+        // Use mailAddress to authenticate user against server
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
+        String mailAddress = "";
+        if (currentPerson != null) {
+            if (checkAccountsPermission()) {
+                mailAddress = Plus.AccountApi.getAccountName(sGoogleApiClient);
+            }
+        }
+
+
+        new UserAuthenticator().execute(mailAddress);
+
+
     }
     // [END on_connected]
+
+    private class UserAuthenticator extends AsyncTask<String, Void, UserData> {
+        /**
+         * Looks up user data in the database given a mail address. Sets the signed-in user object's
+         * variables.
+         *
+         * @param mailAddress - mail address of user trying to sign in.
+         * @return userInfo - index: 0 = user name, 1 = user mail address , 2 = user id
+         * @see #onPostExecute - initializes signed in users variables with userinfo
+         */
+        @Override
+        protected UserData doInBackground(String... mailAddress) {
+            UserData userData = null;
+
+
+            // Authenticate user by quering server for user info
+            try {
+                Long userId = mDataManager.getUserId(mailAddress[0]);
+                if (userId != null) {
+                    userData = mDataManager.getUserData(userId);
+                } else {
+                    // no user exists with that email so add a new user
+                    try {
+                        Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
+                        String userName = "";
+                        if (currentPerson != null) {
+                            userName = currentPerson.getDisplayName();
+                        }
+                        RawUserData newUser = new RawUserData(-1, userName, mailAddress[0]);
+                        userId = mDataManager.addNewUser(newUser);
+                        newUser = new RawUserData(userId, userName, mailAddress[0]);
+                        userData = new DefaultUserData(newUser);
+
+                    } catch (DataManagerException postError) {
+                        Log.d(TAG, "Failed to add new user: " + postError.getMessage());
+
+                    }
+                }
+            } catch (DataManagerException e) {
+                Log.d(TAG, "Couldn't get or add new user: " + e.getMessage());
+
+            }
+            return userData;
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+
+
+            // Initialize the object for the signed in user, sign out if userData == null
+            if (userData != null) {
+
+                mSignedInUser.init(userData.getUserId(),
+                        userData.getUserName(),
+                        userData.getMailAddress());
+
+                showSignedInUI();
+            } else {
+
+                if (sGoogleApiClient.isConnected()) {
+                    Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
+                    sGoogleApiClient.disconnect();
+                }
+
+                showSignedOutUI();
+            }
+        }
+    }
+
 
     @Override
     public void onConnectionSuspended(int i) {

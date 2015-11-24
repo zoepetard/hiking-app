@@ -26,7 +26,7 @@ import ch.epfl.sweng.team7.gpsService.GPSManager;
 
 public final class HikeInfoActivity extends Activity {
     private long hikeId;
-
+    private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
     private final static String HIKE_ID = "hikeID";
 

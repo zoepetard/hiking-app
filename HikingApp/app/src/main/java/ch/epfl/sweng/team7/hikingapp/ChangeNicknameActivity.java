@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 public class ChangeNicknameActivity extends Activity {
 
+    private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_ChangeNickname";
     public final static String EXTRA_MESSAGE =
             "ch.epfl.sweng.team7.hikingapp.NICKNAME";

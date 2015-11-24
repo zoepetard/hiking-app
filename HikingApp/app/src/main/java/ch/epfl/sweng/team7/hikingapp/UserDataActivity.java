@@ -17,20 +17,23 @@ import android.widget.TextView;
 public class UserDataActivity extends Activity {
     private int user_id;
 
+    SignedInUser mUser = SignedInUser.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
         // Inflate Navigation Drawer with main content
-        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer,null);
+        View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
         View userDataView = getLayoutInflater().inflate(R.layout.activity_user_data, null);
         mainContentFrame.addView(userDataView);
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
+        NavigationDrawerListFactory navDrawerListFactory =
+                new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
 
         // TODO: add more field when we decide to store more user information
         TextView userName = (TextView) findViewById(R.id.user_name);

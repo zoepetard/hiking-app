@@ -46,6 +46,13 @@ public class MockServer implements DatabaseClient {
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
         mUsers = new ArrayList<>();
+        long id1 = 1;
+        long id2 = 2;
+        String mail1 = "bort@googlemail.com";
+        String mail2 = "bart@googlemail.com";
+        mUsers.add(new RawUserData(id1, "bort", mail1));
+        mUsers.add(new RawUserData(id2, "bart", mail2));
+
     }
 
     /**
@@ -109,8 +116,8 @@ public class MockServer implements DatabaseClient {
     @Override
     public long postHike(RawHikeData hike) throws DatabaseClientException {
         long hikeId = hike.getHikeId();
-        if(hikeId > 0) {
-            if(!hasHike(hikeId)) {
+        if (hikeId > 0) {
+            if (!hasHike(hikeId)) {
                 throw new DatabaseClientException("Setting Hike that's not there.");
             }
         } else {
@@ -142,9 +149,9 @@ public class MockServer implements DatabaseClient {
     @Override
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         // Positive user ID means the user is in the database
-        if(rawUserData.getUserId() >= 0) {
-            for(int i = 0; i < mUsers.size(); ++i) {
-                if(mUsers.get(i).getUserId() == rawUserData.getUserId()) {
+        if (rawUserData.getUserId() >= 0) {
+            for (int i = 0; i < mUsers.size(); ++i) {
+                if (mUsers.get(i).getUserId() == rawUserData.getUserId()) {
                     mUsers.set(i, rawUserData);
                     return i;
                 }
@@ -167,8 +174,8 @@ public class MockServer implements DatabaseClient {
      */
     @Override
     public RawUserData fetchUserData(long userId) throws DatabaseClientException {
-        for(RawUserData rawUserData : mUsers) {
-            if(rawUserData.getUserId() == userId) {
+        for (RawUserData rawUserData : mUsers) {
+            if (rawUserData.getUserId() == userId) {
                 return rawUserData;
             }
         }
@@ -182,13 +189,27 @@ public class MockServer implements DatabaseClient {
      * @throws DatabaseClientException if unable to delete user
      */
     public void deleteUser(long userId) throws DatabaseClientException {
-        for(int i = 0; i < mUsers.size(); ++i) {
-            if(mUsers.get(i).getUserId() == userId) {
+        for (int i = 0; i < mUsers.size(); ++i) {
+            if (mUsers.get(i).getUserId() == userId) {
                 mUsers.remove(i);
                 return;
             }
         }
         throw new DatabaseClientException("User to delete not found in MockServer.");
+    }
+
+    /***
+     * @param mailAddress - used to query server
+     * @return RawUserData - corresponding to user's mail address
+     */
+    @Override
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
+        for (RawUserData rawUserData : mUsers) {
+            if (rawUserData.getMailAddress().equals(mailAddress)) {
+                return rawUserData;
+            }
+        }
+        throw new DatabaseClientException("User to fetch not found in MockServer.");
     }
 
 
