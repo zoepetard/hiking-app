@@ -18,9 +18,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
-    private int user_id;
-    private static final int SELECT_PICTURE = 1;
-    private String selectedImagePath;
+    private int mUserId;
+    private final int SELECT_PICTURE = 1;
+    private String mSelectedImagePath;
     private ImageView profilePic;
 
     @Override
@@ -100,7 +100,7 @@ public class UserDataActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                selectedImagePath = getPath(selectedImageUri);
+                mSelectedImagePath = getPath(selectedImageUri);
                 profilePic.setImageURI(selectedImageUri);
                 ImageView sidePanelPic = (ImageView)findViewById(R.id.profile_pic_side_panel);
                 sidePanelPic.setImageURI(selectedImageUri);
