@@ -173,7 +173,76 @@ def delete_hike(request):
     hike.key.delete()
     return response_data('')
 
-#TODO(simon) iss76: get_user by email with less strict authentication
+
+# Login a user. The email address is stored in the http request field "user_mail_address"
+def login_user(request):
+    
+    request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
+    if len(request_user_email) == 0:
+        return response_bad_request()
+    
+    logger.info("Searching for user with email "+request_user_email)
+    request_user_id = find_user_with_email(request_user_email)
+    if request_user_id < 0:
+        return response_not_found()
+    
+    user = ndb.Key(User, request_user_id).get()
+    if not user:
+        return response_not_found()
+    
+    return response_data(user.to_json())
+
+
+# Get the user ID from an email address. Returns -1 on not found.
+# Returns ID of some user if more than one user have the same address.
+def find_user_with_email(mail_address):
+    users = User.query(User.mail_address == mail_address).fetch(100)
+    if users and len(users)>0:
+        logger.info("Found "+repr(len(users))+" user(s) with email "+mail_address+"!")
+        return users[0].key.id()
+    return -1
+
+
+# Create a new user in the database, or update a current one
+def post_user(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    logger.info('POST request '+repr(request.body))
+    
+    # Create new Hike object
+    user = build_user_from_json(request.body)
+    if not user:
+        return response_bad_request()
+
+    # If update hike: Authenticate and check for existing hikes in database
+    if(user.request_user_id >= 0):
+        old_user = ndb.Key(User, user.request_user_id).get()
+        
+        if not old_user:
+            return response_not_found()
+        
+        # TODO(simon) authenticate iss77
+        
+        # Set the new user's database key to an existing one,
+        # so that one will be overwritten
+        user.key = ndb.Key(User, user.request_user_id)
+
+    # Temporary: Clean Database of test users
+    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
+    for test_user in test_users:
+        test_user.key.delete()
+
+    # Store new user in database and return the new id
+    new_key = user.put()
+    logger.info('respond with ID '+repr(new_key.id()))
+    return response_id('user_id', new_key.id())
+
 
 # Get a user. The numerical user ID is stored in the http request field "user_id"
 def get_user(request):
@@ -203,78 +272,6 @@ def get_user(request):
     return response_data(user.to_json())
 
 
-# Get a user. The numerical user ID is stored in the http request field "user_id"
-def login_user(request):
-    
-    request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
-    if len(request_user_email) == 0:
-        return response_bad_request()
-
-    logger.info("Searching for user with email "+request_user_email)
-    request_user_id = find_user_with_email(request_user_email)
-    if request_user_id < 0:
-        return response_not_found()
-    
-    user = ndb.Key(User, request_user_id).get()
-    if not user:
-        return response_not_found()
-
-    return response_data(user.to_json())
-
-
-
-# Get the user ID from an email address. Returns -1 on not found.
-# Returns ID of some user if more than one user have the same address.
-def find_user_with_email(mail_address):
-    users = User.query(User.mail_address == mail_address).fetch(100)
-    if users and len(users)>0:
-        logger.info("Found "+repr(len(users))+" user(s) with email "+mail_address+"!")
-        return users[0].key.id()
-    return -1
-
-
-
-# Create a new user in the database, or update a current one
-def post_user(request):
-    
-    visitor_id = authenticate(request)
-    if visitor_id < 0:
-        return response_forbidden()
-    
-    if not request.method == 'POST':
-        return response_bad_request()
-        
-    logger.info('POST request '+repr(request.body))
-    
-    # Create new Hike object
-    user = build_user_from_json(request.body)
-    if not user:
-        return response_bad_request()
-        
-    # If update hike: Authenticate and check for existing hikes in database
-    if(user.request_user_id >= 0):
-        old_user = ndb.Key(User, user.request_user_id).get()
-        
-        if not old_user:
-            return response_not_found()
-            
-        # TODO(simon) authenticate iss77
-        
-        # Set the new user's database key to an existing one,
-        # so that one will be overwritten
-        user.key = ndb.Key(User, user.request_user_id)
-    
-    # Temporary: Clean Database of test users
-    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
-    for test_user in test_users:
-        test_user.key.delete()
-    
-    # Store new user in database and return the new id
-    new_key = user.put()
-    logger.info('respond with ID '+repr(new_key.id()))
-    return response_id('user_id', new_key.id())
-
-
 # Delete a user. The author of this request can only delete himself.
 def delete_user(request):
     
@@ -297,6 +294,61 @@ def delete_user(request):
     user_obj.key.delete()
     return response_data('')
 
+# Post a new image
+def post_image(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    logger.info('POST request '+repr(request.body))
+    
+    # Create new Hike object
+    hike = build_hike_from_json(request.body)
+    if not hike:
+        return response_bad_request()
+    
+    #if not visitor_id == hike.owner_id:    #TODO(simon) iss77
+    #return response_forbidden()
+    
+    # Temporary: Clear database with specially prepared post request iss77
+    if(hike.hike_id == 342):
+        for hike in Hike.query().fetch():
+            if len(hike.hike_data) < 1000:
+                hike.key.delete()
+        return response_id('hike_id', 342)
+
+    #TODO(simon): set test flag on hikes that should be automatically removed
+
+    # If update hike: Authenticate and check for existing hikes in database iss77
+    if(hike.hike_id >= 0):
+        old_hike = ndb.Key(Hike, hike.hike_id).get()
+        
+        if not old_hike:
+            return response_not_found()
+        
+        if old_hike.owner_id != hike.owner_id:
+            return response_forbidden()
+        
+        hike.key = ndb.Key(Hike, hike.hike_id)
+
+    new_key = hike.put()
+    
+    hike.hike_id = new_key.id()
+    hike.put()
+    
+    return response_id('hike_id', new_key.id())
+
+# Get an existing image
+def get_image(request):
+    return HttpResponse(status=500)
+
+# Delete an image
+def delete_image(request):
+    return HttpResponse(status=500)
 
 def response_bad_request():
     return HttpResponse(status=400)
