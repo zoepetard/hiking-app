@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -13,7 +14,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
-    private int user_id;
+    private final static int SELECT_PICTURE = 1;
+
+    private int mUserId;
+    private ImageView profilePic;
 
     SignedInUser mUser = SignedInUser.getInstance();
 
@@ -48,7 +52,7 @@ public class UserDataActivity extends Activity {
             }
         });
 
-        ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
+        profilePic = (ImageView) findViewById(R.id.profile_pic);
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +60,11 @@ public class UserDataActivity extends Activity {
                         .setMessage(R.string.new_profile)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // TODO: choose a new image and change it in the server
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(Intent.createChooser(intent,
+                                        getString(R.string.selete_pic)), SELECT_PICTURE);
                             }
                         })
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -86,5 +94,16 @@ public class UserDataActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                profilePic.setImageURI(selectedImageUri);
+                ImageView sidePanelPic = (ImageView)findViewById(R.id.profile_pic_side_panel);
+                sidePanelPic.setImageURI(selectedImageUri);
+            }
+        }
     }
 }
