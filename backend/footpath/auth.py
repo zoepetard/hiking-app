@@ -3,4 +3,4 @@ from footpath.user import *
 
 def authenticate(request):
     # TODO iss105 authenticate
-    return int(request.META.get('HTTP_AUTH_USER_ID', -1))
+    return int(request.META.get('HTTP_AUTH_USER_ID', 0))
