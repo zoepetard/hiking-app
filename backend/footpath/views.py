@@ -3,8 +3,9 @@ from django.core import serializers
 
 from google.appengine.api import users
 
-from footpath.models import *
+from footpath.hike import *
 from footpath.user import *
+from footpath.image import *
 from footpath.auth import *
 
 import logging
