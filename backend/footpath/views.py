@@ -304,43 +304,29 @@ def post_image(request):
     if not request.method == 'POST':
         return response_bad_request()
     
-    logger.info('POST request '+repr(request.body))
+    logger.info('POST image from '+repr(visitor_id))
+    request_image_id = request.META.get('HTTP_IMAGE_ID', '-1')
     
     # Create new Hike object
-    hike = build_hike_from_json(request.body)
-    if not hike:
+    img = build_image(visitor_id, request.body)
+    if not img:
         return response_bad_request()
-    
-    #if not visitor_id == hike.owner_id:    #TODO(simon) iss77
-    #return response_forbidden()
-    
-    # Temporary: Clear database with specially prepared post request iss77
-    if(hike.hike_id == 342):
-        for hike in Hike.query().fetch():
-            if len(hike.hike_data) < 1000:
-                hike.key.delete()
-        return response_id('hike_id', 342)
-
-    #TODO(simon): set test flag on hikes that should be automatically removed
 
     # If update hike: Authenticate and check for existing hikes in database iss77
-    if(hike.hike_id >= 0):
-        old_hike = ndb.Key(Hike, hike.hike_id).get()
+    if(request_image_id >= 0):
+        old_image = ndb.Key(Image, request_image_id).get()
         
-        if not old_hike:
+        if not old_image:
             return response_not_found()
         
-        if old_hike.owner_id != hike.owner_id:
+        if not old_image.owner_id == img.owner_id:
             return response_forbidden()
         
-        hike.key = ndb.Key(Hike, hike.hike_id)
+        img.key = ndb.Key(Image, old_image)
 
-    new_key = hike.put()
-    
-    hike.hike_id = new_key.id()
-    hike.put()
-    
-    return response_id('hike_id', new_key.id())
+    new_key = img.put()
+    logger.info('respond with ID '+repr(new_key.id()))
+    return response_id('image_id', new_key.id())
 
 # Get an existing image
 def get_image(request):

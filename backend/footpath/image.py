@@ -14,12 +14,16 @@ class Image(ndb.Model):
     image_thumbnail = ndb.BlobProperty()
 
     # Set fields, convert image to thumbnail
-    def from_owner_and_image(self, owner_id, image):
-        self.owner_id = owner_id
-        self.image_data = image
+    def create_thumbnail(self, owner_id, image):
         # TODO(simon) convert image into thumbnail
         
         return True
+
+def build_image(owner_id, image_data):
+    img = Image(owner_id = owner_id, image_data = image_data)
+    img.create_thumbnail()
+    return img
+
 
 import webapp2
 from google.appengine.api import images
