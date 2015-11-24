@@ -11,7 +11,6 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -27,7 +26,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +40,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     private final static String LOG_FLAG = "Network_DatabaseClient";
     private final static int CONNECT_TIMEOUT = 1000;
     private final static String JSON_CONTENT = "application/json";
+    private final static String JPEG_CONTENT = "image/jpeg";
     private final static String ENCODING = "charset=utf-8";
 
     private final String mServerUrl;
@@ -317,6 +316,28 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public Drawable getImage(long imageId) throws DatabaseClientException {
         try {
+            HttpURLConnection conn = getConnection("get_image", "GET");
+            conn.setRequestProperty("image_id", Long.toString(imageId));
+            conn.connect();
+
+            checkResponseType(conn, HttpURLConnection.HTTP_OK, JPEG_CONTENT);
+
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+
+            return Drawable.createFromStream(bis, "");
+
+
+
+            /*String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonObject = new JSONObject(stringUserId);
+            return RawUserData.parseFromJSON(jsonObject);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e.getMessage());
+        } catch (JSONException e) {
+            throw new DatabaseClientException("JSONException: " + e.getMessage());
+        }
+        try {
 
             // TODO change: temporary: download some picture from the internet
             URL url = new URL("http://quarknet.de/fotos/landschaft/himmel/engelsfluegel.jpg");
@@ -329,7 +350,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             InputStream is = ucon.getInputStream();
             BufferedInputStream bis = new BufferedInputStream(is);
 
-            return Drawable.createFromStream(bis, "");
+            return Drawable.createFromStream(bis, "");*/
         } catch (IOException e) {
             throw new DatabaseClientException("ImageManager Error: " + e);
         }
@@ -411,6 +432,26 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @throws IOException
      */
     private String fetchResponse(HttpURLConnection conn, int expectedResponseCode) throws IOException {
+
+        checkResponseType(conn, expectedResponseCode, JSON_CONTENT);
+
+        InputStream input = conn.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+        String line;
+        StringBuilder result = new StringBuilder();
+        while ((line = reader.readLine()) != null) {
+            result.append(line + "\n");
+        }
+
+        conn.disconnect();
+        return result.toString();
+    }
+
+    /**
+     * Method to check the response code and content type of the server
+     */
+    private void checkResponseType(HttpURLConnection conn, int expectedResponseCode, String expectedContentType) throws IOException {
         int responseCode = conn.getResponseCode();
         StringBuilder result = new StringBuilder();
         if (responseCode != expectedResponseCode) {
@@ -420,20 +461,10 @@ public class NetworkDatabaseClient implements DatabaseClient {
         String contentType = conn.getContentType();
         if (contentType == null) {
             throw new IOException("HTTP content type unset");
-        } else if (!contentType.equals(JSON_CONTENT)) {
-            throw new IOException("Invalid HTTP content type: " + contentType);
+        } else if (!contentType.equals(expectedContentType)) {
+            throw new IOException("Invalid HTTP content type: " + contentType + " Expected: " + expectedContentType);
         }
 
-        InputStream input = conn.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-            result.append(line + "\n");
-        }
-
-        conn.disconnect();
-        return result.toString();
     }
 
 }
