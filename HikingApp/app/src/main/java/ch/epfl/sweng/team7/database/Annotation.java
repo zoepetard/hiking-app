@@ -7,6 +7,7 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
  */
 public class Annotation {
     private RawHikePoint mRawHikePoint;
+    private String mComment;
 
     public Annotation (RawHikePoint rawHikePoint){
         mRawHikePoint = rawHikePoint;

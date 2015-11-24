@@ -180,6 +180,7 @@ public class RawHikeData {
         mAnnotations = annotations;
 
     }
+
     /**
      * @return a JSON object representing this hike
      * @throws JSONException
@@ -195,6 +196,7 @@ public class RawHikeData {
         jsonObject.put("annotations", parseAnnotations(mAnnotations));
         return jsonObject;
     }
+
 
 
 
