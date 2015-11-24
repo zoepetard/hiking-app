@@ -15,7 +15,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import ch.epfl.sweng.team7.network.DatabaseClientException;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 
@@ -104,15 +108,49 @@ public class UserDataActivity extends Activity {
     private class DownloadProfilePicture extends AsyncTask<Integer, Void, Drawable> {
         @Override
         protected Drawable doInBackground(Integer... params) {
-            Log.d("SIMON", "Pro-Start Download");
             try {
-                NetworkDatabaseClient networkDatabaseClient = new NetworkDatabaseClient("http://footpath-1104.appspot.com", new DefaultNetworkProvider());
-                Log.d("SIMON", "Start Download");
-                return networkDatabaseClient.getImage(0);
-            } catch (DatabaseClientException e) {
+                Log.d("SIMON", "Pro-Start Download");
+                Drawable initialImage = loadDebugImage();
+                Log.d("SIMON", "Load image "+initialImage.toString());
+
+                // post a hike
+                NetworkDatabaseClient mDatabaseClient = new NetworkDatabaseClient("http://10.0.3.2:8080", new DefaultNetworkProvider());
+                final long imageId = mDatabaseClient.postImage(initialImage);
+                Log.d("SIMON", "Post Image");
+
+                waitForServerSync();
+
+                // retrieve the same hike
+                Drawable serverImage = mDatabaseClient.getImage(imageId);
+                Log.d("SIMON", "Get Image");
+
+                waitForServerSync();
+                mDatabaseClient.deleteImage(imageId);
+                return serverImage;
+            } catch(Exception e) {
                 Log.d("SIMON", e.toString());
-                e.printStackTrace();
                 return null;
+            }
+        }
+
+
+        // TODO(simon) change: temporary: download some picture from the internet
+        private Drawable loadDebugImage() throws Exception {
+            URL url = new URL("http://quarknet.de/fotos/landschaft/himmel/engelsfluegel.jpg");
+            URLConnection ucon = url.openConnection();
+            InputStream is = ucon.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            return Drawable.createFromStream(bis, "");
+        }
+
+        /**
+         * Wait a short time to make sure the server database is in sync.
+         */
+        private void waitForServerSync() {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                //pass
             }
         }
 

@@ -338,7 +338,7 @@ def get_image(request):
         return response_forbidden()
     
     request_image_id = int(request.META.get('HTTP_IMAGE_ID', -1))
-    logger.info('get_image got request for image id %s', repr(request_image_id))
+    logger.info('gget_image got request for image id %s', repr(request_image_id))
     if request_image_id < 0:
         return response_bad_request()
     
@@ -372,6 +372,20 @@ def delete_image(request):
     img.key.delete()
     return response_data('')
 
+# Clean server
+def clear_server(request):
+    hikes = Hike.query().fetch()
+    for hike in hikes:
+        if len(hike.hike_data) < 1000:
+            hike.key.delete()
+
+    users = User.query().fetch()
+    for user in users:
+        user.key.delete()
+
+    images = Image.query().fetch()
+    for img in images:
+        img.key.delete()
 
 def response_bad_request():
     return HttpResponse(status=400)

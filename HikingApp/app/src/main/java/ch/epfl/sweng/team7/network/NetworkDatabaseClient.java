@@ -453,16 +453,15 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     private void checkResponseType(HttpURLConnection conn, int expectedResponseCode, String expectedContentType) throws IOException {
         int responseCode = conn.getResponseCode();
-        StringBuilder result = new StringBuilder();
         if (responseCode != expectedResponseCode) {
-            throw new IOException("Unexpected HTTP Response Code: " + responseCode);
+            throw new IOException("Unexpected HTTP Response Code: " + responseCode + " (Expected: " + expectedResponseCode + ")");
         }
 
         String contentType = conn.getContentType();
         if (contentType == null) {
             throw new IOException("HTTP content type unset");
         } else if (!contentType.equals(expectedContentType)) {
-            throw new IOException("Invalid HTTP content type: " + contentType + " Expected: " + expectedContentType);
+            throw new IOException("Invalid HTTP content type: " + contentType + " (Expected: " + expectedContentType + ")");
         }
 
     }
