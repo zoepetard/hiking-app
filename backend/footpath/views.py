@@ -185,6 +185,7 @@ def get_user(request):
     logger.info('get_user got request for user id %s', repr(request_user_id))
 
     # Find user id via email lookup
+    # this feature will be removed soon
     if request_user_id < 0:
         request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
         if len(request_user_email) > 0:
@@ -199,6 +200,26 @@ def get_user(request):
         return response_not_found()
         
     return response_data(user.to_json())
+
+
+# Get a user. The numerical user ID is stored in the http request field "user_id"
+def login_user(request):
+    
+    request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
+    if len(request_user_email) == 0:
+        return response_bad_request()
+
+    logger.info("Searching for user with email "+request_user_email)
+    request_user_id = find_user_with_email(request_user_email)
+    if request_user_id < 0:
+        return response_not_found()
+    
+    user = ndb.Key(User, request_user_id).get()
+    if not user:
+        return response_not_found()
+
+    return response_data(user.to_json())
+
 
 
 # Get the user ID from an email address. Returns -1 on not found.
@@ -248,7 +269,8 @@ def post_user(request):
         test_user.key.delete()
     
     # Store new user in database and return the new id
-    new_key = user.put()               
+    new_key = user.put()
+    logger.info('respond with ID '+repr(new_key.id()))
     return response_id('user_id', new_key.id())
 
 

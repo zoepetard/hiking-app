@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     (r'^post_user/$', post_user),
     (r'^get_user/$', get_user),
     (r'^delete_user/$', delete_user),
+    (r'^login_user/$', login_user),
 )
