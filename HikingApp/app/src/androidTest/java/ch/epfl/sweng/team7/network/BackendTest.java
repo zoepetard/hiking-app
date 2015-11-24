@@ -1,5 +1,8 @@
 package ch.epfl.sweng.team7.network;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
@@ -13,9 +16,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
@@ -300,6 +306,31 @@ public class BackendTest extends TestCase {
         assertEquals(rawUserData.getUserName(), signedInUser.getUserName());
     }
 
+    /**
+     * Test the {@link NetworkDatabaseClient} post_image and get_image functions
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostAndGetImage() throws Exception {
+        Drawable initialImage = loadDebugImage();
+
+        // post a hike
+        final long imageId = mDatabaseClient.postImage(initialImage);
+
+        waitForServerSync();
+
+        // retrieve the same hike
+        Drawable serverImage = mDatabaseClient.getImage(imageId);
+
+        Bitmap initialBitmap = ((BitmapDrawable) initialImage).getBitmap();
+        Bitmap serverBitmap = ((BitmapDrawable) serverImage).getBitmap();
+
+        assertEquals(initialBitmap, serverBitmap);
+
+        waitForServerSync();
+        mDatabaseClient.deleteImage(imageId);
+    }
+
     // TODO(simon) test backend reaction to malformed input
 
 
@@ -336,6 +367,15 @@ public class BackendTest extends TestCase {
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
         assertTrue("No hikes found on server", hikeList.size() > 0);
         return hikeList.get(0);
+    }
+
+    // TODO(simon) change: temporary: download some picture from the internet
+    private static Drawable loadDebugImage() throws Exception {
+        URL url = new URL("http://quarknet.de/fotos/landschaft/himmel/engelsfluegel.jpg");
+        URLConnection ucon = url.openConnection();
+        InputStream is = ucon.getInputStream();
+        BufferedInputStream bis = new BufferedInputStream(is);
+        return Drawable.createFromStream(bis, "");
     }
 
     /**

@@ -309,7 +309,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-    // TODO description
+    /**
+     * Get an image from the database
+     * @param imageId the database key of the image
+     * @return the image
+     * @throws DatabaseClientException
+     */
     public Drawable getImage(long imageId) throws DatabaseClientException {
         try {
 
@@ -330,7 +335,12 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-    // TODO description
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
     public long postImage(Drawable drawable) throws DatabaseClientException {
 
         try {

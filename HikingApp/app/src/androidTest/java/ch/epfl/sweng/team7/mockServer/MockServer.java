@@ -1,5 +1,7 @@
 package ch.epfl.sweng.team7.mockServer;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
@@ -206,7 +208,10 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("User to fetch not found in MockServer.");
     }
 
-    // TODO(simon) implement
+    /**
+     * Login the user.
+     * @throws DatabaseClientException
+     */
     public void loginUser() throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
         for (RawUserData rawUserData : mUsers) {
@@ -220,6 +225,26 @@ public class MockServer implements DatabaseClient {
             }
         }
         throw new DatabaseClientException("User to fetch not found in MockServer.");
+    }
+
+    /**
+     * Get an image from the database
+     * @param imageId the database key of the image
+     * @return the image
+     * @throws DatabaseClientException
+     */
+    public Drawable getImage(long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    public long postImage(Drawable drawable) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
     }
 
 
