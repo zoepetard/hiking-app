@@ -7,14 +7,22 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
+import ch.epfl.sweng.team7.gpsService.GPSManager;
 
 public final class HikeInfoActivity extends Activity {
     private long hikeId;
@@ -28,6 +36,37 @@ public final class HikeInfoActivity extends Activity {
         setContentView(R.layout.navigation_drawer);
 
         Intent intent = getIntent();
+        if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
+            displayEditableHike(intent);
+        } else {
+            loadStaticHike(intent, savedInstanceState);
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(HIKE_ID, hikeId);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void displayEditableHike(Intent intent) {
+        EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
+        //TODO set it to editable
+
+        Button saveButton = new Button(this);
+        saveButton.setText("Save");
+        saveButton.setId(R.id.button_save_hike);
+        //TODO add click listener to saveButton
+
+        addButtonToView();
+    }
+
+    private void addButtonToView() {
+        //TODO add created button to the current View
+    }
+
+    private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
         String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
         if (hikeIdStr == null && savedInstanceState != null) {
             hikeId = savedInstanceState.getLong(HIKE_ID);
@@ -67,12 +106,13 @@ public final class HikeInfoActivity extends Activity {
 
         hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
 
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putLong(HIKE_ID, hikeId);
-        super.onSaveInstanceState(savedInstanceState);
+        Button back_button = (Button) findViewById(R.id.back_button);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private class ImageViewClickListener implements View.OnClickListener {

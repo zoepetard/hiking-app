@@ -1,201 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/info_scrollview">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <Button
+        android:layout_width="55dp"
+        android:layout_height="50dp"
+        android:text="@string/back"
+        android:id="@+id/back_button"
+        android:layout_marginLeft="20dp"
+        android:textSize="12sp"/>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/info_container_layout">
-
+        android:layout_height="match_parent"
+        android:id="@+id/info_scrollview">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/info_overview_layout"
-            android:visibility="visible">
+            android:layout_height="wrap_content"
+            android:id="@+id/info_container_layout">
+
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:id="@+id/linearLayout">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Hike Name"
-                    android:id="@+id/hikeinfo_name"
-                    android:layout_marginLeft="20dp"
-                    android:textSize="26dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/map_preview_imageview"
-                    android:src="@drawable/login_background"
-                    android:clickable="false"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:maxHeight="200dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:layout_marginTop="20dp">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Distance"
-                        android:id="@+id/hikedistance_header" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="10 km"
-                        android:id="@+id/hikeinfo_distance"
-                        android:layout_marginTop="10dp" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Elevation"
-                        android:id="@+id/hikeinfo_elevation_text" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Max: 2000m  Min: 1000m"
-                        android:id="@+id/hikeinfo_elevation_max_min"
-                        android:layout_marginTop="10dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.jjoe64.graphview.helper.GraphViewXML
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    app:seriesData="0=5;2=5;3=0;4=2"
-                    app:seriesType="line"
-                    app:seriesColor="#ee0000"
-                    android:id="@+id/hike_graph" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp">
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Rating"
-                        android:id="@+id/hikeinfo_ratingtext" />
-
-                    <RatingBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/hikeinfo_ratingbar"
-                        android:numStars="5"
-                        android:rating="0"
-                        android:layout_marginTop="10dp" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:id="@+id/imageScrollView"
-                android:clickable="false"
-                android:focusableInTouchMode="false"
-                android:focusable="false"
-                android:nestedScrollingEnabled="false">
+                android:layout_height="match_parent"
+                android:id="@+id/info_overview_layout"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/image_layout"
-                    android:clickable="false"
-                    android:contextClickable="false">
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/hike_name_layout">
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/hikeinfo_name"
+                        android:textSize="26dp"
+                        android:hint="@+id/prompt_title_hint"
+                        android:background="@android:color/transparent"
+                        android:clickable="false"
+                        android:editable="false"
+                        android:inputType="none" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/map_preview_imageview"
+                        android:src="@drawable/login_background"
+                        android:clickable="false"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:maxHeight="200dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="@string/distance"
+                            android:id="@+id/hikedistance_header" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="@string/sample_distance"
+                            android:id="@+id/hikeinfo_distance"
+                            android:layout_marginTop="10dp" />
+                    </LinearLayout>
 
                 </LinearLayout>
-            </HorizontalScrollView>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="@string/elevation"
+                            android:id="@+id/hikeinfo_elevation_text" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="@string/sample_elavation"
+                            android:id="@+id/hikeinfo_elevation_max_min"
+                            android:layout_marginTop="10dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.jjoe64.graphview.helper.GraphViewXML
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        app:seriesData="0=5;2=5;3=0;4=2"
+                        app:seriesType="line"
+                        app:seriesColor="#ee0000"
+                        android:id="@+id/hike_graph" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="@string/rating"
+                            android:id="@+id/hikeinfo_ratingtext" />
+
+                        <RatingBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/hikeinfo_ratingbar"
+                            android:numStars="5"
+                            android:rating="0"
+                            android:layout_marginTop="10dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:id="@+id/imageScrollView"
+                    android:clickable="false"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
+                    android:nestedScrollingEnabled="false">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/image_layout"
+                        android:clickable="false"
+                        android:contextClickable="false">
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/image_fullscreen_layout"
+                android:visibility="gone"
+                android:clickable="false"
+                android:contextClickable="false"
+                android:background="#000000">
+                <include layout="@layout/hike_info_fullscreen"/>
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/image_fullscreen_layout"
-            android:visibility="gone"
-            android:clickable="false"
-            android:contextClickable="false"
-            android:background="#000000">
-            <include layout="@layout/hike_info_fullscreen"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

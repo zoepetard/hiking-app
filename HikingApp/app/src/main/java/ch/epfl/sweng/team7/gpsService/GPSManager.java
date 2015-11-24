@@ -1,12 +1,19 @@
 package ch.epfl.sweng.team7.gpsService;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.IBinder;
+import android.text.InputType;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
@@ -16,6 +23,8 @@ import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.HikeInfoActivity;
+import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
@@ -27,6 +36,7 @@ import ch.epfl.sweng.team7.network.RawHikeData;
  */
 public final class GPSManager {
 
+    public static final String NEW_HIKE = "ch.epfl.sweng.team7.gpsService.NEW_HIKE";
     private final static String LOG_FLAG = "GPS_Manager";
     private final static int BOTTOM_TABLE_ACCESS_ID = 2;
     private static GPSManager instance = new GPSManager();
@@ -70,6 +80,17 @@ public final class GPSManager {
             displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
+    }
+
+    /**
+     * Method called to check on gps status
+     * @return true if it is enabled, false otherwise
+     */
+    public boolean enabled() {
+        if (gpsService != null) {
+            return gpsService.getProviderStatus() && (lastFootPrint != null);
+        }
+        return false;
     }
 
     /**
@@ -211,10 +232,16 @@ public final class GPSManager {
         this.mIsTracking = false;
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
-        //TODO call storeHike() after issue #86 is fixed
+        displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         gpsPath = null;
+    }
+
+    private void goToHikeEditor() {
+        Intent intent = new Intent(mContext, HikeInfoActivity.class);
+        intent.putExtra(GPSManager.NEW_HIKE, true);
+        mContext.startActivity(intent);
     }
 
     /**
@@ -237,6 +264,48 @@ public final class GPSManager {
     protected void displayToastMessage(String message) {
         Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    /**
+     * Method called to display a Dialog with EditText fields
+     * for the user to edit  some hike settings.
+     */
+    private void displaySavePrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(mContext.getResources().getString(R.string.prompt_title));
+
+        LinearLayout layout = new LinearLayout(mContext);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        //setup the horizontal separator
+        View lnSeparator = new View(mContext);
+        lnSeparator.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 5));
+        lnSeparator.setBackgroundColor(Color.parseColor("#B3B3B3"));
+        layout.addView(lnSeparator);
+
+        //setup the hike title input field
+        EditText hikeTitle = new EditText(mContext);
+        hikeTitle.setHint(mContext.getResources().getString(R.string.prompt_title_hint));
+        hikeTitle.setInputType(InputType.TYPE_CLASS_TEXT);
+        layout.addView(hikeTitle);
+
+        //setup the hike comment input field
+        EditText hikeComment = new EditText(mContext);
+        hikeComment.setHint(mContext.getResources().getString(R.string.prompt_comment_hint));
+        hikeComment.setInputType(InputType.TYPE_CLASS_TEXT);
+        hikeComment.setSingleLine(false);
+        layout.addView(hikeComment);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(mContext.getResources().getString(R.string.button_save_hike), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //TODO call storeHike() after issue #86 is fixed
+            }
+        });
+        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
+        builder.show();
     }
 
     /**
