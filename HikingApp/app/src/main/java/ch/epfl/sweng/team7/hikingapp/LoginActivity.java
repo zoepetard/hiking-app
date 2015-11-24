@@ -264,11 +264,11 @@ public class LoginActivity extends Activity implements
         mShouldResolve = false;
 
         // Use mailAddress to authenticate user against server
-        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
         String mailAddress = "";
         if (currentPerson != null) {
             if (checkAccountsPermission()) {
-                mailAddress = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                mailAddress = Plus.AccountApi.getAccountName(sGoogleApiClient);
             }
         }
 
@@ -301,7 +301,7 @@ public class LoginActivity extends Activity implements
                 } else {
                     // no user exists with that email so add a new user
                     try {
-                        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                        Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
                         String userName = "";
                         if (currentPerson != null) {
                             userName = currentPerson.getDisplayName();
@@ -334,18 +334,15 @@ public class LoginActivity extends Activity implements
                         userData.getUserName(),
                         userData.getMailAddress());
 
-                mStatus.setText(mSignedInUser.getUserName());
-                ((TextView) findViewById(R.id.email)).setText(mSignedInUser.getMailAddress());
                 showSignedInUI();
             } else {
 
-                if (mGoogleApiClient.isConnected()) {
-                    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                    mGoogleApiClient.disconnect();
+                if (sGoogleApiClient.isConnected()) {
+                    Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
+                    sGoogleApiClient.disconnect();
                 }
 
                 showSignedOutUI();
-                mStatus.setText(getString(R.string.sign_in_error_connecting_to_server));
             }
         }
     }
