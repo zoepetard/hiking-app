@@ -29,7 +29,7 @@
             android:id="@+id/go_to_user">
 
             <ImageView
-                android:id="@+id/profile_pic"
+                android:id="@+id/profile_pic_side_panel"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

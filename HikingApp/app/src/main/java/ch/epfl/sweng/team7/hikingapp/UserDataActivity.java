@@ -2,9 +2,12 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +19,9 @@ import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
     private int user_id;
+    private static final int SELECT_PICTURE = 1;
+    private String selectedImagePath;
+    private ImageView profilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,7 @@ public class UserDataActivity extends Activity {
             }
         });
 
-        ImageView profilePic = (ImageView) findViewById(R.id.profile_pic);
+        profilePic = (ImageView) findViewById(R.id.profile_pic);
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +61,10 @@ public class UserDataActivity extends Activity {
                         .setMessage(R.string.new_profile)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                // TODO: choose a new image and change it in the server
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
                             }
                         })
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -85,5 +94,25 @@ public class UserDataActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                selectedImagePath = getPath(selectedImageUri);
+                profilePic.setImageURI(selectedImageUri);
+                ImageView sidePanelPic = (ImageView)findViewById(R.id.profile_pic_side_panel);
+                sidePanelPic.setImageURI(selectedImageUri);
+            }
+        }
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }
