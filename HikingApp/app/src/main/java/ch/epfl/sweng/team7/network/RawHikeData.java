@@ -53,12 +53,6 @@ public class RawHikeData {
     private String mTitle;
     private List<Annotation> mAnnotations;
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> Rebasing to master
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
      *
@@ -145,12 +139,7 @@ public class RawHikeData {
     public String getTitle() {
         return mTitle;
     }
-
-<<<<<<< HEAD
-
-
-
-
+    
     public List<Annotation> getAnnotations() {
 
         if (mAnnotations.size() < 1){
@@ -204,7 +193,6 @@ public class RawHikeData {
         jsonObject.put("annotations", parseAnnotations(mAnnotations));
         return jsonObject;
     }
-
 
     /**
      * @return a JSON array of the input

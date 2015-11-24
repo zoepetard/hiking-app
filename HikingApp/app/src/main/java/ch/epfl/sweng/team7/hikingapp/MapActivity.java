@@ -339,6 +339,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
+
     private void displayMarkers(final HikeData hike) {
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
