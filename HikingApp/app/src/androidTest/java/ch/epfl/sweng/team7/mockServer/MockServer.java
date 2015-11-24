@@ -247,6 +247,15 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("Not implemented.");
     }
 
+    /**
+     * Delete an image from the database
+     * @param imageId the database key of the image
+     * @throws DatabaseClientException
+     */
+    public void deleteImage(long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {

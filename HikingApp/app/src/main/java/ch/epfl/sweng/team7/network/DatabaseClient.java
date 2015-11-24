@@ -112,6 +112,7 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     Drawable getImage(long imageId) throws DatabaseClientException;
+
     /**
      * Post an image to the database
      * @param drawable an image, here as drawable
@@ -119,4 +120,11 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     long postImage(Drawable drawable) throws DatabaseClientException;
+
+    /**
+     * Delete an image from the database
+     * @param imageId the database key of the image
+     * @throws DatabaseClientException
+     */
+    void deleteImage(long imageId) throws DatabaseClientException;
 }

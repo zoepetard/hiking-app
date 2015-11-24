@@ -361,6 +361,26 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
+     * Delete an image from the database
+     * @param imageId the database key of the image
+     * @throws DatabaseClientException
+     */
+    public void deleteImage(long imageId) throws DatabaseClientException {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("image_id", imageId);
+
+            HttpURLConnection conn = getConnection("delete_image", "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
      * Method to set the properties of the connection to the server
      *
      * @param function    the server function, without /
