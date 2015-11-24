@@ -14,7 +14,7 @@ class Image(ndb.Model):
     image_thumbnail = ndb.BlobProperty()
 
     # Set fields, convert image to thumbnail
-    def create_thumbnail(self, owner_id, image):
+    def create_thumbnail(self):
         # TODO(simon) convert image into thumbnail
         
         return True
@@ -47,4 +47,4 @@ class Thumbnailer(webapp2.RequestHandler):
 
         # Either "blob_key" wasn't provided, or there was no value with that ID
         # in the Blobstore.
-    self.error(404)
+        self.error(404)

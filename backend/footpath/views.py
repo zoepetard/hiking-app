@@ -305,7 +305,7 @@ def post_image(request):
         return response_bad_request()
     
     logger.info('POST image from '+repr(visitor_id))
-    request_image_id = request.META.get('HTTP_IMAGE_ID', '-1')
+    request_image_id = int(request.META.get('HTTP_IMAGE_ID', '-1'))
     
     # Create new Hike object
     img = build_image(visitor_id, request.body)
@@ -313,6 +313,7 @@ def post_image(request):
         return response_bad_request()
 
     # If update hike: Authenticate and check for existing hikes in database iss77
+    logger.info('request post to ID '+repr(request_image_id))
     if(request_image_id >= 0):
         old_image = ndb.Key(Image, request_image_id).get()
         

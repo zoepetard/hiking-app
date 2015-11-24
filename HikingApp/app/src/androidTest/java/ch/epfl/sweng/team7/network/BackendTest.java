@@ -1,7 +1,5 @@
 package ch.epfl.sweng.team7.network;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -322,10 +320,10 @@ public class BackendTest extends TestCase {
         // retrieve the same hike
         Drawable serverImage = mDatabaseClient.getImage(imageId);
 
-        Bitmap initialBitmap = ((BitmapDrawable) initialImage).getBitmap();
-        Bitmap serverBitmap = ((BitmapDrawable) serverImage).getBitmap();
-
-        assertEquals(initialBitmap, serverBitmap);
+        assertEquals(serverImage.getBounds().left, initialImage.getBounds().left);
+        assertEquals(serverImage.getBounds().right, initialImage.getBounds().right);
+        assertEquals(serverImage.getBounds().top, initialImage.getBounds().top);
+        assertEquals(serverImage.getBounds().bottom, initialImage.getBounds().bottom);
 
         waitForServerSync();
         mDatabaseClient.deleteImage(imageId);

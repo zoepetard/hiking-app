@@ -396,6 +396,10 @@ public class NetworkDatabaseClient implements DatabaseClient {
         conn.setDoInput(true);
         conn.setDoOutput(method.compareTo("POST") == 0);
         conn.setRequestMethod(method);
+
+        // Authentication
+        SignedInUser signedInUser = SignedInUser.getInstance();
+        conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
         return conn;
     }
 
