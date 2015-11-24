@@ -294,6 +294,7 @@ def delete_user(request):
     user_obj.key.delete()
     return response_data('')
 
+
 # Post a new image
 def post_image(request):
     
@@ -335,7 +336,27 @@ def get_image(request):
 
 # Delete an image
 def delete_image(request):
-    return HttpResponse(status=500)
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    delete_image_id = int(json.loads(request.body)['image_id'])
+
+    # Find image in datastore
+    img = ndb.Key(Image, delete_image_id).get()
+    if not img:
+        return response_not_found()
+
+    if not img.owner_id == visitor_id:
+        return response_forbidden()
+
+    img.key.delete()
+    return response_data('')
+
 
 def response_bad_request():
     return HttpResponse(status=400)
