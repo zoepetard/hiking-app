@@ -414,7 +414,7 @@ public class BackendTest extends TestCase {
 
     // TODO(simon) change: temporary: download some picture from the internet
     private static Drawable loadDebugImage() throws Exception {
-        URL url = new URL("http://quarknet.de/fotos/landschaft/himmel/engelsfluegel.jpg");
+        URL url = new URL("http://www.vidipedija.com/images/thumb/a/a5/Android-logo.jpg/120px-Android-logo.jpg");
         URLConnection ucon = url.openConnection();
         InputStream is = ucon.getInputStream();
         BufferedInputStream bis = new BufferedInputStream(is);
