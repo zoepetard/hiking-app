@@ -12,4 +12,7 @@ urlpatterns = patterns('',
     (r'^get_user/$', get_user),
     (r'^delete_user/$', delete_user),
     (r'^login_user/$', login_user),
+    (r'^post_image/$', post_image),
+    (r'^get_image/$', get_image),
+    (r'^delete_image/$', delete_image),
 )
