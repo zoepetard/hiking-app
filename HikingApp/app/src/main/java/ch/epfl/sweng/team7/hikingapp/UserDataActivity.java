@@ -18,9 +18,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class UserDataActivity extends Activity {
+    private final static int SELECT_PICTURE = 1;
+
     private int mUserId;
-    private final int SELECT_PICTURE = 1;
-    private String mSelectedImagePath;
     private ImageView profilePic;
 
     @Override
@@ -62,7 +62,7 @@ public class UserDataActivity extends Activity {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent();
-                                intent.setType(getString(R.string.image_intent));
+                                intent.setType("image/*");
                                 intent.setAction(Intent.ACTION_GET_CONTENT);
                                 startActivityForResult(Intent.createChooser(intent,
                                         getString(R.string.selete_pic)), SELECT_PICTURE);
@@ -101,19 +101,10 @@ public class UserDataActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                mSelectedImagePath = getPath(selectedImageUri);
                 profilePic.setImageURI(selectedImageUri);
                 ImageView sidePanelPic = (ImageView)findViewById(R.id.profile_pic_side_panel);
                 sidePanelPic.setImageURI(selectedImageUri);
             }
         }
-    }
-
-    public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = this.getContentResolver().query(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
     }
 }
