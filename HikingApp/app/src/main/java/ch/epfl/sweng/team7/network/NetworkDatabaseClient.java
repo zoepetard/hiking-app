@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+
 
 /**
  * Class to get and post hikes in the server
@@ -241,7 +243,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * TODO implement server backend
+     * TODO DEPRECATED - remove from code
      *
      * @param mailAddress - used to query server
      * @return RawUserData - corresponding to user's mail address
@@ -261,6 +263,27 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e.getMessage());
         } catch (JSONException e) {
             throw new DatabaseClientException("JSONException: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Logs in the SignedInUser
+     */
+    public void loginUser() throws DatabaseClientException {
+        SignedInUser signedInUser = SignedInUser.getInstance();
+
+        try {
+            URL url = new URL(mServerUrl + "/login_user/");
+            HttpURLConnection conn = getConnection(url, "GET");
+            conn.setRequestProperty("user_mail_address", signedInUser.getMailAddress());
+            conn.connect();
+            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonObject = new JSONObject(stringUserId);
+            signedInUser.loginFromJSON(jsonObject);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
         }
     }
 

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
+import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 
 
 /**
@@ -32,7 +33,7 @@ import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    public static final String SERVER_URL = "http://10.0.3.2:8080";//"http://footpath-1104.appspot.com";//
     DatabaseClient mDatabaseClient;
 
     @Before
@@ -276,6 +277,29 @@ public class BackendTest extends TestCase {
         List<Long> hikeList = ((NetworkDatabaseClient) mDatabaseClient).getHikeIdsOfUser(userId);
         assertEquals(hikeList.get(0), Long.valueOf(hikeId));
     }
+
+    @Test
+    public void testLoginUser() throws Exception {
+
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+
+        SignedInUser signedInUser = SignedInUser.getInstance();
+        signedInUser.init(-1, "Name Unset", rawUserData.getMailAddress());
+
+        waitForServerSync();
+
+        mDatabaseClient.loginUser();
+
+        waitForServerSync();
+        mDatabaseClient.deleteUser(userId);
+
+        assertEquals(userId, signedInUser.getId());
+        assertEquals(rawUserData.getMailAddress(), signedInUser.getMailAddress());
+        assertEquals(rawUserData.getUserName(), signedInUser.getUserName());
+    }
+
 
     // TODO(simon) test backend reaction to malformed input
     // TODO(simon) test other backend interface (like post_hikes)

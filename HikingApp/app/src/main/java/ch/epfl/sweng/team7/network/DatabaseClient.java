@@ -86,6 +86,8 @@ public interface DatabaseClient {
      */
     RawUserData fetchUserData(long userId) throws DatabaseClientException;
 
+    void loginUser() throws DatabaseClientException;
+
     /**
      * Delete a user from the server. A user can only delete himself.
      *
@@ -95,6 +97,7 @@ public interface DatabaseClient {
     void deleteUser(long userId) throws DatabaseClientException;
 
     /**
+     * TODO DEPRECATED DELETE
      * @param mailAddress - used to query server
      * @return RawUserData - corresponding to user's mail address
      */

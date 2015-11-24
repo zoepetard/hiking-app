@@ -212,6 +212,11 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("User to fetch not found in MockServer.");
     }
 
+    // TODO(simon) implement
+    public void loginUser() throws DatabaseClientException {
+        throw new DatabaseClientException();
+    }
+
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {
