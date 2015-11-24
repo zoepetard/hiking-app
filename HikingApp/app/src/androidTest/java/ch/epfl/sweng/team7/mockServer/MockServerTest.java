@@ -24,6 +24,7 @@ public class MockServerTest extends TestCase {
     public List<Long> mHikeIds;
     public List<RawHikeData> listRawHikes;
     public RawHikeData mRawHikeData1, mRawHikeData2;
+    public long mUserBortId;
 
     private static final String PROPER_JSON_ONEHIKE = "{\n"
             + "  \"hike_id\": 1,\n"
@@ -50,6 +51,7 @@ public class MockServerTest extends TestCase {
         mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
 
+        mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com"));
     }
 
     @Test
@@ -86,14 +88,14 @@ public class MockServerTest extends TestCase {
     public void testFetchUserByMail() throws Exception {
         String mail = "bort@googlemail.com";
         RawUserData rawUserData = mMockServer.fetchUserData(mail);
-        assertEquals("ID mismatch", rawUserData.getUserId(), 1);
+        assertEquals("ID mismatch", rawUserData.getUserId(), mUserBortId);
         assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
     }
 
     @Test
     public void testFetchUserById() throws Exception {
         long id = 1;
-        RawUserData rawUserData = mMockServer.fetchUserData(id);
+        RawUserData rawUserData = mMockServer.fetchUserData(mUserBortId);
         assertEquals("Wrong mail address", rawUserData.getMailAddress(), "bort@googlemail.com");
         assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
     }
