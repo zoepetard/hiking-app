@@ -2,8 +2,6 @@ from google.appengine.ext import ndb
 import json
 import logging
 
-DEFAULT_NAME = 'some_global_string'
-
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -11,10 +9,6 @@ logger = logging.getLogger(__name__)
 # We set a parent key on the 'Greetings' to ensure that they are all in the same
 # entity group. Queries across the single entity group will be consistent.
 # However, the write rate should be limited to ~1/second.
-
-#def _key(key_name=DEFAULT_NAME):
-#    '''Constructs a Datastore key for a _ entity with key_name.'''
-#    return ndb.Key('KeyNameString', key_name)
 
 # A proper response is
 # { 
