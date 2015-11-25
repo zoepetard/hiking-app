@@ -15,6 +15,7 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 
+
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
  * communication protocol and data formats.
@@ -26,8 +27,8 @@ public interface DatabaseClient {
      * @param hikeId The numeric ID of one hike in the database
      * @return A {@link RawHikeData} object encapsulating one hike
      * @throws DatabaseClientException in case the hike could not be
-     * retrieved for any reason external to the application (network failure, etc.)
-     * or the hikeId did not match a valid hike.
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     *                                 or the hikeId did not match a valid hike.
      */
 
     RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException;
@@ -126,6 +127,14 @@ public interface DatabaseClient {
     void deleteUser(long userId) throws DatabaseClientException;
 
     /**
+     * TODO DEPRECATED DELETE
+     * @param mailAddress - used to query server
+     * @return RawUserData - corresponding to user's mail address
+     */
+    RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
+
+    /**
+>>>>>>> Rebase to master
      * Get an image from the database
      * @param imageId the database key of the image
      * @return the image
@@ -157,9 +166,12 @@ public interface DatabaseClient {
      */
     void deleteImage(long imageId) throws DatabaseClientException;
 
+
     /**
      * Post a comment to the database
-     * @param comment the comment to be posted
+     * @param
+     * //TODO(runjie) iss107 add class Comment and pass comment as a parameter
+>>>>>>> Rebase to master
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
@@ -171,6 +183,7 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     void deleteComment(long commentId) throws DatabaseClientException;
+
 
     /**
      * Post a vote about a hike.

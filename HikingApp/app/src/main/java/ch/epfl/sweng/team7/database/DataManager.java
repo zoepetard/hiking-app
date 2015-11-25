@@ -304,6 +304,7 @@ public final class DataManager {
         }
     }
 
+
     public void postVote(RatingVote vote) throws DataManagerException {
         try {
             sLocalCache.getHike(vote.getHikeId()).getRating().update(vote);
@@ -314,6 +315,7 @@ public final class DataManager {
     }
 
     /**
+<<<<<<< HEAD
      * Method to export the hike as a gpx file to the phone's internal storage
      *
      * @param hikeData,context - the hike to be saved, the applications context
@@ -398,7 +400,8 @@ public final class DataManager {
             throw new DataManagerException(e);
         }
     }
-
+    
+    
     /**
      * Creates the LocalCache and DatabaseClient
      */

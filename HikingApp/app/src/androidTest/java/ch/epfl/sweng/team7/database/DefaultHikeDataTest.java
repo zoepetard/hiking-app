@@ -40,8 +40,7 @@ public class DefaultHikeDataTest {
         List<RawHikeComment> newHikeComments = new ArrayList<>();
         RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints, newHikeComments, "");
         mDefaultHikeData = new DefaultHikeData(rawHikeData);
-        mRawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
-        mDefaultHikeData = new DefaultHikeData(mRawHikeData, mListOfComments);
+
 
     }
 

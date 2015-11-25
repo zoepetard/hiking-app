@@ -12,24 +12,31 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 /**
  * Created by pablo on 17/11/15.
  */
-public class Annotation {
+public class TextAnnotation {
     private String mComment;
     private RawHikePoint mRawHikePoint;
 
 
-    public Annotation(String comment, RawHikePoint rawHikePoint ){
-        mComment = comment;
+    public TextAnnotation(String comment, RawHikePoint rawHikePoint) {
         mRawHikePoint = rawHikePoint;
+        mComment = comment;
     }
 
-    public String getmComment() {
-        return mComment;
+    /**
+     * Parse a RawHikePoint from an appropriate JSON object
+     *
+     * @param jsonArray [String comment, double lat, double lng, long date, double elevation]
+     * @return a valid RawHikePoint object
+     * @throws JSONException
+     */
+    public static TextAnnotation parseFromJSON(JSONArray jsonArray) throws JSONException {
+        String comment = new String(jsonArray.getString(0));
+        LatLng latLng = new LatLng(jsonArray.getDouble(1), jsonArray.getDouble(2));
+        Date date = new Date(jsonArray.getLong(3));
+        double elevation = jsonArray.getDouble(4);
+        return new TextAnnotation(comment, new RawHikePoint(latLng, date, elevation));
     }
 
-
-    public RawHikePoint getmRawHikePoint() {
-        return mRawHikePoint;
-    }
 
     /**
      * @return JSONArray [String comment, RawHikePoint rawHikePoint].
@@ -47,17 +54,12 @@ public class Annotation {
         return jsonArray;
     }
 
-    /**
-     * Parse a RawHikePoint from an appropriate JSON object
-     * @param jsonArray [String comment, double lat, double lng, long date, double elevation]
-     * @return a valid RawHikePoint object
-     * @throws JSONException
-     */
-    public static Annotation parseFromJSON(JSONArray jsonArray) throws JSONException {
-        String comment = new String(jsonArray.getString(0));
-        LatLng latLng = new LatLng(jsonArray.getDouble(1), jsonArray.getDouble(2));
-        Date date = new Date(jsonArray.getLong(3));
-        double elevation = jsonArray.getDouble(4);
-        return new Annotation(comment, new RawHikePoint(latLng, date, elevation));
+
+    public String getmComment() {
+        return mComment;
+    }
+
+    public RawHikePoint getRawHikePoint() {
+        return mRawHikePoint;
     }
 }
