@@ -40,6 +40,7 @@ public class RawHikeData {
     private long mOwnerId;   // Database user ID of owner
     private Date mDate;      // A UTC time stamp
     private List<RawHikePoint> mHikePoints;   // Points of the hike, in chronological order
+    private List<RawHikeComment> mComments;
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
@@ -49,7 +50,8 @@ public class RawHikeData {
      * @param hikePoints the list of points on this hike, must be >= 1 point
      * @throws IllegalArgumentException
      */
-    public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints) {
+    public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
+                       List<RawHikeComment> comments) {
 
         // Argument checks
         if (hikeId < 0 && hikeId != HIKE_ID_UNKNOWN) {
@@ -75,6 +77,7 @@ public class RawHikeData {
         mOwnerId = ownerId;
         mDate = date;
         mHikePoints = hikePoints;
+        mComments = comments;
     }
     
     /**
@@ -105,6 +108,10 @@ public class RawHikeData {
         return new ArrayList<RawHikePoint>(mHikePoints);
     }
 
+    public List<RawHikeComment> getAllComments() {
+        return mComments;
+    }
+
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
@@ -127,6 +134,7 @@ public class RawHikeData {
         jsonObject.put("owner_id", mOwnerId);
         jsonObject.put("date", mDate.getTime());
         jsonObject.put("hike_data", parseHikePointsList(mHikePoints));
+        jsonObject.put("comments", parseCommentsList(mComments));
         return jsonObject;
     }
 
@@ -138,6 +146,14 @@ public class RawHikeData {
         JSONArray jsonArray = new JSONArray();
         for(int i = 0; i < hikePoints.size(); ++i) {
             jsonArray.put(hikePoints.get(i).toJSON());
+        }
+        return jsonArray;
+    }
+
+    private JSONArray parseCommentsList(List<RawHikeComment> comments) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for(int i = 0; i < comments.size(); ++i) {
+            jsonArray.put(comments.get(i).toJSON());
         }
         return jsonArray;
     }
@@ -158,12 +174,19 @@ public class RawHikeData {
                 hikePoints.add(RawHikePoint.parseFromJSON(jsonHikePoints.getJSONArray(i)));
             }
 
+            JSONArray jsonComments = jsonObject.getJSONArray("comments");
+            List<RawHikeComment> comments = new ArrayList<>();
+            for (int i = 0; i < jsonComments.length(); ++i) {
+                comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
+            }
+
             Date date = new Date(jsonObject.getLong("date"));
             return new RawHikeData(
                     jsonObject.getLong("hike_id"),
                     jsonObject.getLong("owner_id"),
                     date,
-                    hikePoints);
+                    hikePoints,
+                    comments);
         } catch (JSONException e) {
             throw new HikeParseException(e);
         } catch (IllegalArgumentException e) {
@@ -179,6 +202,7 @@ public class RawHikeData {
     public static RawHikeData parseFromGPXDocument(Document doc) throws HikeParseException {
 
         List<RawHikePoint> hikePoints = new ArrayList<>();
+        List<RawHikeComment> comments = new ArrayList<>();
 
         try {
             // Normalization
@@ -222,7 +246,7 @@ public class RawHikeData {
             throw new HikeParseException(e);
         }
 
-        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints);
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments);
     }
 
 }

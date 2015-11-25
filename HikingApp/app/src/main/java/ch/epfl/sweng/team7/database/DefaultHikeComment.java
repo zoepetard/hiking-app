@@ -1,6 +1,6 @@
 package ch.epfl.sweng.team7.database;
 
-import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 
 public class DefaultHikeComment implements HikeComment {
 
@@ -11,11 +11,11 @@ public class DefaultHikeComment implements HikeComment {
     private final long mCommentOwnerId;
     private final String mCommentText;
 
-    public DefaultHikeComment(RawHikeData rawHikeData) {
-        mCommentId = rawHikeData.getCommentId();
-        mCommentHikeId = rawHikeData.getCommentHikeId();
-        mCommentOwnerId = rawHikeData.getCommentOwnerId();
-        mCommentText = rawHikeData.getCommentText();
+    public DefaultHikeComment(RawHikeComment rawHikeComment) {
+        mCommentId = rawHikeComment.getCommentId();
+        mCommentHikeId = rawHikeComment.getCommentHikeId();
+        mCommentOwnerId = rawHikeComment.getCommentOwnerId();
+        mCommentText = rawHikeComment.getCommentText();
     }
 
 
