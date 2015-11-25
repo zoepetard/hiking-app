@@ -1,19 +1,21 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.SearchView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 
-import com.google.android.gms.ads.search.SearchAdView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -55,6 +57,11 @@ public class MapActivity extends FragmentActivity {
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
+    private SearchView searchView;
+    private ListView suggestionListView;
+    private List<String> suggestionList = new ArrayList<String>();
+    ArrayAdapter<String> suggestionAdapter;
+    private Context context;
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
 
@@ -86,6 +93,7 @@ public class MapActivity extends FragmentActivity {
 
         setUpSearchView();
 
+        context = this;
     }
 
     @Override
@@ -382,24 +390,42 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void setUpSearchView() {
-        SearchView searchView = (SearchView) findViewById(R.id.search_map_view);
+
+        searchView = (SearchView) findViewById(R.id.search_map_view);
+        // setup suggestion list
+        suggestionListView = (ListView) findViewById(R.id.search_suggestions_list);
+        suggestionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // TODO retrieve lat lng from clicked item and center on that location.
+                suggestionListView.setVisibility(View.GONE);
+            }
+        });
+
+        suggestionAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                suggestionList);
+
+        suggestionListView.setAdapter(suggestionAdapter);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                List<String> temp = new ArrayList<String>();
+                temp.add("TJABBA");
+                suggestionList.clear();
+                suggestionList.addAll(temp);
+                suggestionAdapter.notifyDataSetChanged();
+                suggestionListView.setVisibility(View.VISIBLE);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                suggestionListView.setVisibility(View.VISIBLE);
                 return false;
             }
         });
-
-        // setup suggestion list
-        ListView suggestionList = (ListView) findViewById(R.id.search_suggestions_list);
-        
-        //suggestionList.setAdapter();
-
     }
 
     private LatLng getUserPosition() {
