@@ -53,6 +53,12 @@ public class RawHikeData {
     private String mTitle;
     private List<Annotation> mAnnotations;
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> Rebasing to master
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
      *

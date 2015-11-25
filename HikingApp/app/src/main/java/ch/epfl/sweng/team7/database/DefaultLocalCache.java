@@ -62,6 +62,7 @@ class DefaultLocalCache implements LocalCache {
     public Drawable getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
 
 
+
     @Override
     public void putPicture(Drawable picture, long id) {
         if (picture != null) {
@@ -69,6 +70,7 @@ class DefaultLocalCache implements LocalCache {
         }
     }
     
+
 
     private class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
         private final int MAX_ENTRIES;

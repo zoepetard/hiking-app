@@ -120,6 +120,7 @@ public interface DatabaseClient {
     void loginUser(LoginRequest loginRequest) throws DatabaseClientException;
 
     /**
+<<<<<<< HEAD
      * Delete a user from the server. A user can only delete himself.
      *
      * @param userId - ID of the user
@@ -132,7 +133,12 @@ public interface DatabaseClient {
      * Get an image from the database
      * @param imageId the database key of the image
      * @return the image
+<<<<<<< HEAD
     */
+=======
+     * @throws DatabaseClientException
+     */
+>>>>>>> Rebasing to master
 
     Drawable getImage(long imageId) throws DatabaseClientException;
 

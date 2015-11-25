@@ -291,6 +291,10 @@ public final class DataManager {
     }
 
     /**
+<<<<<<< HEAD
+=======
+
+>>>>>>> Rebasing to master
      * Login for the user with the server.
      */
 
@@ -420,6 +424,7 @@ public final class DataManager {
      * @param mailAddress - user's email address, google address.
      * @return userId - user Id stored in database, throws exception if not found.
      */
+
     public Long getUserId(String mailAddress) throws DataManagerException {
         // use database client to query database for user data
         try {
@@ -430,7 +435,20 @@ public final class DataManager {
             return null; // TODO Remove this when server returns a value when not finding id.
             //throw new DataManagerException(e.getMessage());
         }
+    }
+    public Picture getPicture(long hikeId, long pictureId) throws  DataManagerException {
+        // Check if Picture is cached
+        Picture picture = sLocalCache.getPicture(pictureId);
+        if (picture != null) {
+            return picture;
+        }
 
+        // Retrieve picture from the server
+        try {
+            return sDatabaseClient.getPicture(hikeId, pictureId);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
     }
 
     /**
