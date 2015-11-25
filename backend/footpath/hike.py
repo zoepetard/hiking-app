@@ -2,8 +2,6 @@ from google.appengine.ext import ndb
 import json
 import logging
 
-DEFAULT_NAME = 'some_global_string'
-
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -11,10 +9,6 @@ logger = logging.getLogger(__name__)
 # We set a parent key on the 'Greetings' to ensure that they are all in the same
 # entity group. Queries across the single entity group will be consistent.
 # However, the write rate should be limited to ~1/second.
-
-#def _key(key_name=DEFAULT_NAME):
-#    '''Constructs a Datastore key for a _ entity with key_name.'''
-#    return ndb.Key('KeyNameString', key_name)
 
 # A proper response is
 # { 
@@ -82,7 +76,12 @@ class Hike(ndb.Model):
             'title': title,
         }
         return json.dumps(hike_data)
-    
+
+    # Format a brief summary of the hike, i.e. it's ID,
+    # and location information. Currently only formats the ID.
+    def to_location(self):
+        return str(self.key.id()).strip('L')
+
 # Get an array-dict containing the data from the hike_data object
 def get_bounding_box(hike_data):
     latitudes = [point[0] for point in hike_data]

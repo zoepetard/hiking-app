@@ -3,8 +3,9 @@ from django.core import serializers
 
 from google.appengine.api import users
 
-from footpath.models import *
+from footpath.hike import *
 from footpath.user import *
+from footpath.image import *
 from footpath.auth import *
 
 import logging
@@ -69,19 +70,31 @@ def get_hikes_in_window(request):
     hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
     
     # check results of query and assemble output string
-    hike_ids = ''
+    hike_ids = []
     for hike in hikes:
         if (hike.bb_southwest.lat < window_northeast.lat and hike.bb_southwest.lon < window_northeast.lon
             and hike.bb_northeast.lat > window_southwest.lat and hike.bb_northeast.lon > window_southwest.lon):
-            hike_ids += hike_location(hike) + ','
-    # Remove trailing comma
-    if(len(hike_ids) > 0):
-        hike_ids = hike_ids[:-1]
-    hike_ids = '[' + hike_ids + ']'
+            hike_ids.append(hike)
+
+    return response_hike_locations(hike_ids)
+
+
+# Gets all hikes in a bounding box specified in the request.
+def get_hikes_of_user(request):
     
-    # return result       
-    hike_ids_string = "{\"hike_ids\":" + hike_ids + "}";
-    return response_data(hike_ids_string)
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    # Get window from input
+    request_user_id = int(request.META.get('HTTP_USER_ID', -1))
+    logger.info('got request for hikes of user %s', repr(request_user_id))
+    
+    # query database
+    hikes = Hike.query(Hike.owner_id == request_user_id).fetch()
+
+    return response_hike_locations(hikes)
+
 
 # Format a brief summary of the hike, i.e. it's ID,
 # and location information. Currently only formats the ID.
@@ -160,26 +173,35 @@ def delete_hike(request):
     hike.key.delete()
     return response_data('')
 
-#TODO(simon) iss76: get_user by email with less strict authentication
 
-# Get a user. The numerical user ID is stored in the http request field "user_id"
-def get_user(request):
+# Login a user. The email address is stored in the http request field "user_mail_address"
+def login_user(request):
     
-    visitor_id = authenticate(request)
-    if visitor_id < 0:
-        return response_forbidden()
+    request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
+    if len(request_user_email) == 0:
+        return response_bad_request()
     
-    request_user_id = int(request.META.get('HTTP_USER_ID', -1))
-    logger.info('get_user got request for user id %s', repr(request_user_id))
-    
+    logger.info("Searching for user with email "+request_user_email)
+    request_user_id = find_user_with_email(request_user_email)
     if request_user_id < 0:
         return response_not_found()
     
     user = ndb.Key(User, request_user_id).get()
     if not user:
         return response_not_found()
-        
+    
     return response_data(user.to_json())
+
+
+# Get the user ID from an email address. Returns -1 on not found.
+# Returns ID of some user if more than one user have the same address.
+def find_user_with_email(mail_address):
+    users = User.query(User.mail_address == mail_address).fetch(100)
+    if users and len(users)>0:
+        logger.info("Found "+repr(len(users))+" user(s) with email "+mail_address+"!")
+        return users[0].key.id()
+    return -1
+
 
 # Create a new user in the database, or update a current one
 def post_user(request):
@@ -190,30 +212,65 @@ def post_user(request):
     
     if not request.method == 'POST':
         return response_bad_request()
-        
+    
     logger.info('POST request '+repr(request.body))
     
     # Create new Hike object
     user = build_user_from_json(request.body)
     if not user:
         return response_bad_request()
-        
+
     # If update hike: Authenticate and check for existing hikes in database
     if(user.request_user_id >= 0):
         old_user = ndb.Key(User, user.request_user_id).get()
         
         if not old_user:
             return response_not_found()
-            
+        
         # TODO(simon) authenticate iss77
         
         # Set the new user's database key to an existing one,
         # so that one will be overwritten
         user.key = ndb.Key(User, user.request_user_id)
-    
+
+    # Temporary: Clean Database of test users
+    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
+    for test_user in test_users:
+        test_user.key.delete()
+
     # Store new user in database and return the new id
-    new_key = user.put()               
+    new_key = user.put()
+    logger.info('respond with ID '+repr(new_key.id()))
     return response_id('user_id', new_key.id())
+
+
+# Get a user. The numerical user ID is stored in the http request field "user_id"
+def get_user(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    request_user_id = int(request.META.get('HTTP_USER_ID', -1))
+    logger.info('get_user got request for user id %s', repr(request_user_id))
+
+    # Find user id via email lookup
+    # this feature will be removed soon
+    if request_user_id < 0:
+        request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
+        if len(request_user_email) > 0:
+            request_user_id = find_user_with_email(request_user_email)
+
+
+    if request_user_id < 0:
+        return response_not_found()
+    
+    user = ndb.Key(User, request_user_id).get()
+    if not user:
+        return response_not_found()
+        
+    return response_data(user.to_json())
+
 
 # Delete a user. The author of this request can only delete himself.
 def delete_user(request):
@@ -235,6 +292,103 @@ def delete_user(request):
         return response_not_found()
                          
     user_obj.key.delete()
+    return response_data('')
+
+
+# Post a new image
+def post_image(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    logger.info('POST image from '+repr(visitor_id))
+    request_image_id = int(request.META.get('HTTP_IMAGE_ID', '-1'))
+    
+    # Create new Hike object
+    img = build_image(visitor_id, request.body)
+    if not img:
+        return response_bad_request()
+
+    # If update hike: Authenticate and check for existing hikes in database iss77
+    logger.info('request post to ID '+repr(request_image_id))
+    if(request_image_id >= 0):
+        old_image = ndb.Key(Image, request_image_id).get()
+        
+        if not old_image:
+            return response_not_found()
+        
+        if not old_image.owner_id == img.owner_id:
+            return response_forbidden()
+        
+        img.key = old_image.key
+
+    new_key = img.put()
+    logger.info('respond with ID '+repr(new_key.id()))
+    return response_id('image_id', new_key.id())
+
+
+# Get an existing image
+def get_image(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    request_image_id = int(request.META.get('HTTP_IMAGE_ID', -1))
+    logger.info('gget_image got request for image id %s', repr(request_image_id))
+    if request_image_id < 0:
+        return response_bad_request()
+    
+    img = ndb.Key(Image, request_image_id).get()
+    if not img:
+        return response_not_found()
+
+    return response_image(img.image_data)
+
+
+# Delete an image
+def delete_image(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    delete_image_id = int(json.loads(request.body)['image_id'])
+
+    # Find image in datastore
+    img = ndb.Key(Image, delete_image_id).get()
+    if not img:
+        return response_not_found()
+
+    if not img.owner_id == visitor_id:
+        return response_forbidden()
+
+    img.key.delete()
+    return response_data('')
+
+
+# Clean server
+def clear_server(request):
+    hikes = Hike.query().fetch()
+    for hike in hikes:
+        if len(hike.hike_data) < 1000:
+            hike.key.delete()
+
+    users = User.query().fetch()
+    for user in users:
+        user.key.delete()
+
+    images = Image.query().fetch()
+    for img in images:
+        img.key.delete()
+
     return response_data('')
 
 
@@ -262,5 +416,18 @@ def response_id(id_name, id_value):
 def response_data(data):
     logger.info('response_string: return string '+data)
     return HttpResponse(data, content_type='application/json')
+
+# Create response containing the image. data should be valid JPEG image.
+def response_image(data):
+    return HttpResponse(data, content_type='image/jpeg')
+
+def response_hike_locations(hikes):
+
+    # assemble output string
+    hike_locations = ','.join([hike.to_location() for hike in hikes])
+    
+    # return result
+    hike_ids_string = "{\"hike_ids\":[" + hike_locations + "]}";
+    return response_data(hike_ids_string)
 
 

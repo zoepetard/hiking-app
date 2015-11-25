@@ -1,5 +1,7 @@
 package ch.epfl.sweng.team7.mockServer;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
@@ -11,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
@@ -46,13 +49,6 @@ public class MockServer implements DatabaseClient {
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
         mUsers = new ArrayList<>();
-        long id1 = 1;
-        long id2 = 2;
-        String mail1 = "bort@googlemail.com";
-        String mail2 = "bart@googlemail.com";
-        mUsers.add(new RawUserData(id1, "bort", mail1));
-        mUsers.add(new RawUserData(id2, "bart", mail2));
-
     }
 
     /**
@@ -210,6 +206,65 @@ public class MockServer implements DatabaseClient {
             }
         }
         throw new DatabaseClientException("User to fetch not found in MockServer.");
+    }
+
+    /**
+     * Login the user.
+     * @throws DatabaseClientException
+     */
+    public void loginUser() throws DatabaseClientException {
+        SignedInUser signedInUser = SignedInUser.getInstance();
+        for (RawUserData rawUserData : mUsers) {
+            if (rawUserData.getMailAddress().equals(signedInUser.getMailAddress())) {
+                try {
+                    signedInUser.loginFromJSON(rawUserData.toJSON());
+                } catch(JSONException e) {
+                    throw new DatabaseClientException(e);
+                }
+                return;
+            }
+        }
+        throw new DatabaseClientException("User to fetch not found in MockServer.");
+    }
+
+    /**
+     * Get an image from the database
+     * @param imageId the database key of the image
+     * @return the image
+     * @throws DatabaseClientException
+     */
+    public Drawable getImage(long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @param imageId the ID of the image if it should be changed
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    public long postImage(Drawable drawable, long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    public long postImage(Drawable drawable) throws DatabaseClientException {
+        return postImage(drawable, -1);
+    }
+
+    /**
+     * Delete an image from the database
+     * @param imageId the database key of the image
+     * @throws DatabaseClientException
+     */
+    public void deleteImage(long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
     }
 
 
