@@ -36,6 +36,14 @@ import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.HikeData;
 
+
+import ch.epfl.sweng.team7.database.Picture;
+import ch.epfl.sweng.team7.database.UserData;
+
+
+
+
+
 /**
  * Class to get and post hikes in the server
  */
@@ -277,6 +285,28 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
+
+    /**
+     * TODO Implement on server side
+     * Post the list of pictures of a hike
+     */
+    public long postHikePictures(List<Picture> hikePictures) throws DatabaseClientException {
+        //TODO
+        return 0;
+    }
+
+    /**
+     * TODO Implement on server side
+     * Get the pictures which that hikeId
+     * @param hikeId
+     * @return
+     * @throws DatabaseClientException
+     */
+    public Picture getHikePicture(long hikeId) throws DatabaseClientException {
+
+        //TODO
+        return null;
+    }
 
 
     /**

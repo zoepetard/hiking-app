@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -86,6 +87,11 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+<<<<<<< HEAD
+=======
+    private TextAnnotation annotation;
+
+>>>>>>> Rebase to master
     private boolean mFollowingUser = false;
     private Polyline mPolyRef;
     private PolylineOptions mCurHike;

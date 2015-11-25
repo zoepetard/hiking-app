@@ -18,6 +18,7 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 /**
  * Created by pablo on 23/11/15.
  */
+
 public class Annotation {
     private final static String LOG_FLAG = "Annotation";
     private RawHikePoint mRawHikePoint;
@@ -83,6 +84,28 @@ public class Annotation {
 
 
 
+    public TextAnnotation(String comment, RawHikePoint rawHikePoint) {
+        mRawHikePoint = rawHikePoint;
+        mComment = comment;
+    }
+
+    /**
+     * Parse a RawHikePoint from an appropriate JSON object
+     *
+     * @param jsonArray [String comment, double lat, double lng, long date, double elevation]
+     * @return a valid RawHikePoint object
+     * @throws JSONException
+     */
+    public static TextAnnotation parseFromJSON(JSONArray jsonArray) throws JSONException {
+        String comment = new String(jsonArray.getString(0));
+        LatLng latLng = new LatLng(jsonArray.getDouble(1), jsonArray.getDouble(2));
+        Date date = new Date(jsonArray.getLong(3));
+        double elevation = jsonArray.getDouble(4);
+        return new TextAnnotation(comment, new RawHikePoint(latLng, date, elevation));
+    }
+
+
+
     /**
      * @return JSONArray [String comment, RawHikePoint rawHikePoint].
      * Storing a JSON array instead of a full JSON object reduces the communication/storage
@@ -114,6 +137,15 @@ public class Annotation {
         Date date = new Date(jsonArray.getLong(3));
         double elevation = jsonArray.getDouble(4);
         return new Annotation(new RawHikePoint(latLng, date, elevation), comment, null);
+
+    }
+    public String getmComment() {
+        return mComment;
+    }
+
+    public RawHikePoint getRawHikePoint() {
+        return mRawHikePoint;
+
     }
 
 }
