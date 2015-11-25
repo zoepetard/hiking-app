@@ -45,11 +45,6 @@ public final class HikeInfoActivity extends Activity {
     private final static String LOG_FLAG = "Activity_HikeInfo";
     private final static String HIKE_ID = "hikeID";
 
-    private DataManager dataManager = DataManager.getInstance();
-    private ListView commentsListView;
-    private List<HikeComment> commentsArrayList;
-    private CommentListAdapter commentListAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,41 +56,6 @@ public final class HikeInfoActivity extends Activity {
         } else {
             loadStaticHike(intent, savedInstanceState);
         }
-
-        commentsListView = (ListView) findViewById(R.id.commnetsListView);
-        commentsArrayList = new ArrayList<HikeComment>();
-        commentsListView.setTranscriptMode(1);
-        commentListAdapter = new CommentListAdapter(HikeInfoActivity.this, commentsArrayList);
-        commentsListView.setAdapter(commentListAdapter);
-        new GetCommentsAsync().execute(hikeId);
-
-        Button commentButton = (Button) findViewById(R.id.done_edit_comment);
-        commentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText commentEditText = (EditText) findViewById(R.id.comment_text);
-                String commentText = commentEditText.getText().toString();
-                if (!commentText.isEmpty()) {
-                    RawHikeComment rawHikeComment = new RawHikeComment(
-                            RawHikeComment.COMMENT_ID_UNKNOWN,
-                            hikeId, mUser.getId(), commentText);
-                    DefaultHikeComment hikeComment = new DefaultHikeComment(rawHikeComment);
-                    // TODO: wait until DataManager side implementation
-//                    try {
-//                        dataManager.postComment(rawHikeComment);
-//                    } catch (DataManagerException e) {
-//                        e.printStackTrace();
-//                    }
-                    commentEditText.setText("");
-                    commentsArrayList.add(hikeComment);
-                    new GetCommentsAsync().execute(hikeId);
-                } else {
-                    new AlertDialog.Builder(v.getContext())
-                            .setMessage(R.string.type_comment);
-                }
-            }
-        });
-
     }
 
     @Override
@@ -134,7 +94,7 @@ public final class HikeInfoActivity extends Activity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId);
+        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mUser.getId());
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -216,26 +176,6 @@ public final class HikeInfoActivity extends Activity {
             infoView.setVisibility(View.VISIBLE);
             fullScreenView.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.WHITE);
-        }
-    }
-
-    private class GetCommentsAsync extends AsyncTask<Long, Void, List<HikeComment>> {
-
-        @Override
-        protected List<HikeComment> doInBackground(Long... hikeIds) {
-            try {
-                return dataManager.getHike(hikeIds[0]).getAllComments();
-            } catch (DataManagerException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<HikeComment> comments) {
-            commentListAdapter.clear();
-            if (comments != null) commentListAdapter.addAll(comments);
-            commentListAdapter.notifyDataSetChanged();
         }
     }
 }

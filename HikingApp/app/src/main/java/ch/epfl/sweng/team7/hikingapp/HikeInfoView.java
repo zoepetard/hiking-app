@@ -1,10 +1,12 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -19,10 +21,14 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.DefaultHikeComment;
+import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 
 
 /** Class which controls and updates the visual part of the view, not the interaction */
@@ -32,6 +38,7 @@ public class HikeInfoView {
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 
     private long hikeId;
+    private long userId;
     private TextView hikeName;
     private TextView hikeDistance;
     private RatingBar hikeRatingBar;
@@ -47,9 +54,14 @@ public class HikeInfoView {
     private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
+    private ListView commentsListView;
+    private List<HikeComment> commentsArrayList;
+    private CommentListAdapter commentListAdapter;
+    private Button commentButton;
 
-    public HikeInfoView (View view, Context context, long id) {  // add model as argument when creating that
+    public HikeInfoView (final View view, Context context, long id, final long commentUserId) {  // add model as argument when creating that
         hikeId = id;
+        userId = commentUserId;
 
         // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
@@ -85,6 +97,39 @@ public class HikeInfoView {
         EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
+
+        commentsListView = (ListView) view.findViewById(R.id.commnetsListView);
+        commentsArrayList = new ArrayList<HikeComment>();
+        commentsListView.setTranscriptMode(1);
+        commentListAdapter = new CommentListAdapter(context, commentsArrayList);
+        commentsListView.setAdapter(commentListAdapter);
+
+        commentButton = (Button) view.findViewById(R.id.done_edit_comment);
+        commentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText commentEditText = (EditText) view.findViewById(R.id.comment_text);
+                String commentText = commentEditText.getText().toString();
+                if (!commentText.isEmpty()) {
+                    RawHikeComment rawHikeComment = new RawHikeComment(
+                            RawHikeComment.COMMENT_ID_UNKNOWN,
+                            hikeId, userId, commentText);
+                    DefaultHikeComment hikeComment = new DefaultHikeComment(rawHikeComment);
+                    // TODO: wait until DataManager side implementation
+//                    try {
+//                        dataManager.postComment(rawHikeComment);
+//                    } catch (DataManagerException e) {
+//                        e.printStackTrace();
+//                    }
+                    commentEditText.setText("");
+                    commentsArrayList.add(hikeComment);
+                    new GetOneHikeAsync().execute(hikeId);
+                } else {
+                    new AlertDialog.Builder(v.getContext())
+                            .setMessage(R.string.type_comment);
+                }
+            }
+        });
 
         new GetOneHikeAsync().execute(hikeId);
 
@@ -148,6 +193,11 @@ public class HikeInfoView {
 
             String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
             hikeElevation.setText(elevationString);
+
+            List<HikeComment> comments = result.getAllComments();
+            commentListAdapter.clear();
+            if (comments != null) commentListAdapter.addAll(comments);
+            commentListAdapter.notifyDataSetChanged();
 
             loadImageScrollView();
         }
