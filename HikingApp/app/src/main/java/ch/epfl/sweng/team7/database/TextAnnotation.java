@@ -57,7 +57,7 @@ public class TextAnnotation {
     }
 
 
-    public String getmComment() {
+    public String getComment() {
         return mComment;
     }
 

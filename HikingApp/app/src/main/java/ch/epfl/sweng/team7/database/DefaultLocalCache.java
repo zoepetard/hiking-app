@@ -58,19 +58,14 @@ class DefaultLocalCache implements LocalCache {
         return mUsersCache.get(userId);
     }
 
-    @Override
-    public Picture getPicture(long hikeId, long pictureId) {
+    public Picture getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
 
-        //TODO
-        return null;
-        //find hike with hikeId, then find the pictureID on that hike and return it from the picture list
+
+    public void putPicture(Picture picture) {
+        if(picture != null){
+            mPicturesCache.put(picture.getPictureId(), picture);
+        }
     }
-
-    @Override
-    public void postPicture(Picture picture) {
-        //TODO
-    }
-
 
     private class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
         private final int MAX_ENTRIES;

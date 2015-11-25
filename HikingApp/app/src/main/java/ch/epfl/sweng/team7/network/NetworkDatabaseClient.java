@@ -284,27 +284,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
 
-    /**
-     * TODO Implement on server side
-     * Post the list of pictures of a hike
-     */
-    public long postHikePictures(List<Picture> hikePictures) throws DatabaseClientException {
-        //TODO
-        return 0;
-    }
 
-    /**
-     * TODO Implement on server side
-     * Get the pictures which that hikeId
-     * @param hikeId
-     * @return
-     * @throws DatabaseClientException
-     */
-    public Picture getHikePicture(long hikeId) throws DatabaseClientException {
 
-        //TODO
-        return null;
-    }
 
     /**
      * Log user into the server, i.e. get user profile information

@@ -55,6 +55,7 @@ public class RawHikeData {
 
 
 
+
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
      *

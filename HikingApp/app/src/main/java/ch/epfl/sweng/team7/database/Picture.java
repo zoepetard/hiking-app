@@ -33,4 +33,6 @@ public class Picture {
     }
 
     public long getPictureId () { return mPictureId; }
+
+    public Image getImage() { return mPicture; }
 }

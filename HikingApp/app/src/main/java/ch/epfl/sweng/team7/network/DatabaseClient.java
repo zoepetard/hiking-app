@@ -119,6 +119,7 @@ public interface DatabaseClient {
     void loginUser(LoginRequest loginRequest) throws DatabaseClientException;
 
     /**
+<<<<<<< HEAD
      * Delete a user from the server. A user can only delete himself.
      *
      * @param userId - ID of the user
@@ -140,6 +141,7 @@ public interface DatabaseClient {
      * @return the image
      * @throws DatabaseClientException
      */
+
     Drawable getImage(long imageId) throws DatabaseClientException;
 
     /**

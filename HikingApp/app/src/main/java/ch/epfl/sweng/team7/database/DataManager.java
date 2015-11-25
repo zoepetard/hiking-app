@@ -294,6 +294,10 @@ public final class DataManager {
     }
 
     /**
+<<<<<<< HEAD
+=======
+
+>>>>>>> Rebasing to master
      * Login for the user with the server.
      */
     public void loginUser(LoginRequest loginRequest) throws DataManagerException {
@@ -315,7 +319,6 @@ public final class DataManager {
     }
 
     /**
-<<<<<<< HEAD
      * Method to export the hike as a gpx file to the phone's internal storage
      *
      * @param hikeData,context - the hike to be saved, the applications context
@@ -402,6 +405,7 @@ public final class DataManager {
     }
     
     
+
     /**
      * Creates the LocalCache and DatabaseClient
      */
