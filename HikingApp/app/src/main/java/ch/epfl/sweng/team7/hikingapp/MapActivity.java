@@ -5,12 +5,15 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.ads.search.SearchAdView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -80,6 +83,9 @@ public class MapActivity extends FragmentActivity {
         createBottomInfoView();
 
         setGoToHikesButtonListener();
+
+        setUpSearchView();
+
     }
 
     @Override
@@ -373,6 +379,27 @@ public class MapActivity extends FragmentActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void setUpSearchView() {
+        SearchView searchView = (SearchView) findViewById(R.id.search_map_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        // setup suggestion list
+        ListView suggestionList = (ListView) findViewById(R.id.search_suggestions_list);
+        
+        //suggestionList.setAdapter();
+
     }
 
     private LatLng getUserPosition() {

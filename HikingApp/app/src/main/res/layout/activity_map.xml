@@ -30,4 +30,22 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
+    <SearchView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_map_view"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/go_hikes_button" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_suggestions_list"
+        android:layout_below="@+id/go_hikes_button"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/go_hikes_button"
+        android:layout_above="@+id/mapTextTable"
+        android:visibility="gone" />
+
 </RelativeLayout>
