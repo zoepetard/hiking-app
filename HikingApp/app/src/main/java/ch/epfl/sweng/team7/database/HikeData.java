@@ -44,6 +44,8 @@ public interface HikeData {
      */
     List<HikePoint> getHikePoints();
 
+    List<HikeComment> getAllComments();
+
     /**
      * @return the total distance covered by the hike
      */

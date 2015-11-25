@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ch.epfl.sweng.team7.network.RawHikeComment;
+import ch.epfl.sweng.team7.database.HikeComment;
 
-public class CommentListAdapter extends ArrayAdapter<RawHikeComment> {
-    public CommentListAdapter(Context context, List<RawHikeComment> rawHikeComments) {
-        super(context, 0, rawHikeComments);
+public class CommentListAdapter extends ArrayAdapter<HikeComment> {
+    public CommentListAdapter(Context context, List<HikeComment> hikeComments) {
+        super(context, 0, hikeComments);
     }
 
     @Override
@@ -25,10 +25,10 @@ public class CommentListAdapter extends ArrayAdapter<RawHikeComment> {
             holder.userId = (TextView) convertView.findViewById(R.id.comment_userid);
             holder.comment = (TextView) convertView.findViewById(R.id.comment_display_text);
             convertView.setTag(holder);
-            RawHikeComment rawHikeComment = getItem(position);
+            HikeComment hikeComment = getItem(position);
             holder = (ViewHolder)convertView.getTag();
-            long userId = rawHikeComment.getCommentOwnerId();
-            String comment = rawHikeComment.getCommentText();
+            long userId = hikeComment.getCommentOwnerId();
+            String comment = hikeComment.getCommentText();
             holder.userId.setText(Long.toString(userId));
             holder.comment.setText(comment);
         }

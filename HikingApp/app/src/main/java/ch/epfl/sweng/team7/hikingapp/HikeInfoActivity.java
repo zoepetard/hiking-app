@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.text.InputType;
@@ -23,8 +24,18 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.DefaultHikeComment;
+import ch.epfl.sweng.team7.database.DefaultHikeData;
+import ch.epfl.sweng.team7.database.HikeComment;
+import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
@@ -33,6 +44,11 @@ public final class HikeInfoActivity extends Activity {
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
     private final static String HIKE_ID = "hikeID";
+
+    private DataManager dataManager = DataManager.getInstance();
+    private ListView commentsListView;
+    private List<HikeComment> commentsArrayList;
+    private CommentListAdapter commentListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +62,13 @@ public final class HikeInfoActivity extends Activity {
             loadStaticHike(intent, savedInstanceState);
         }
 
+        commentsListView = (ListView) findViewById(R.id.commnetsListView);
+        commentsArrayList = new ArrayList<HikeComment>();
+        commentsListView.setTranscriptMode(1);
+        commentListAdapter = new CommentListAdapter(HikeInfoActivity.this, commentsArrayList);
+        commentsListView.setAdapter(commentListAdapter);
+        new GetCommentsAsync().execute(hikeId);
+
         Button commentButton = (Button) findViewById(R.id.done_edit_comment);
         commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,15 +79,16 @@ public final class HikeInfoActivity extends Activity {
                     RawHikeComment rawHikeComment = new RawHikeComment(
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, mUser.getId(), commentText);
-
-                    DataManager dataManager = DataManager.getInstance();
-                    try {
-                        dataManager.postComment(rawHikeComment);
-                    } catch (DataManagerException e) {
-                        e.printStackTrace();
-                    }
+                    DefaultHikeComment hikeComment = new DefaultHikeComment(rawHikeComment);
+                    // TODO: wait until DataManager side implementation
+//                    try {
+//                        dataManager.postComment(rawHikeComment);
+//                    } catch (DataManagerException e) {
+//                        e.printStackTrace();
+//                    }
                     commentEditText.setText("");
-                    // notify comment list view
+                    commentsArrayList.add(hikeComment);
+                    new GetCommentsAsync().execute(hikeId);
                 } else {
                     new AlertDialog.Builder(v.getContext())
                             .setMessage(R.string.type_comment);
@@ -192,6 +216,26 @@ public final class HikeInfoActivity extends Activity {
             infoView.setVisibility(View.VISIBLE);
             fullScreenView.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    private class GetCommentsAsync extends AsyncTask<Long, Void, List<HikeComment>> {
+
+        @Override
+        protected List<HikeComment> doInBackground(Long... hikeIds) {
+            try {
+                return dataManager.getHike(hikeIds[0]).getAllComments();
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<HikeComment> comments) {
+            commentListAdapter.clear();
+            if (comments != null) commentListAdapter.addAll(comments);
+            commentListAdapter.notifyDataSetChanged();
         }
     }
 }
