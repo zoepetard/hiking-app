@@ -5,8 +5,6 @@
  */
 package ch.epfl.sweng.team7.database;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -241,6 +239,18 @@ public final class DataManager {
     }
 
     /**
+     * Login for the user with the server.
+     * TODO(simon) restructure iss105
+     */
+    public void loginUser() throws DataManagerException {
+        try {
+            sDatabaseClient.loginUser();
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    /**
      * Look up the id for a user using mail address. Typically used directly after signing in via
      * Google to obtain the id assigned to that account.
      *
@@ -250,6 +260,7 @@ public final class DataManager {
     public Long getUserId(String mailAddress) throws DataManagerException {
         // use database client to query database for user data
         try {
+            sDatabaseClient.loginUser();
             RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
             return rawUserData.getUserId();
         } catch (DatabaseClientException e) {

@@ -7,6 +7,8 @@
 
 package ch.epfl.sweng.team7.network;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
@@ -86,6 +88,8 @@ public interface DatabaseClient {
      */
     RawUserData fetchUserData(long userId) throws DatabaseClientException;
 
+    void loginUser() throws DatabaseClientException;
+
     /**
      * Delete a user from the server. A user can only delete himself.
      *
@@ -95,9 +99,41 @@ public interface DatabaseClient {
     void deleteUser(long userId) throws DatabaseClientException;
 
     /**
+     * TODO DEPRECATED DELETE
      * @param mailAddress - used to query server
      * @return RawUserData - corresponding to user's mail address
      */
     RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
 
+    /**
+     * Get an image from the database
+     * @param imageId the database key of the image
+     * @return the image
+     * @throws DatabaseClientException
+     */
+    Drawable getImage(long imageId) throws DatabaseClientException;
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @param imageId the ID of the image if it should be changed
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    long postImage(Drawable drawable, long imageId) throws DatabaseClientException;
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
+    long postImage(Drawable drawable) throws DatabaseClientException;
+
+    /**
+     * Delete an image from the database
+     * @param imageId the database key of the image
+     * @throws DatabaseClientException
+     */
+    void deleteImage(long imageId) throws DatabaseClientException;
 }

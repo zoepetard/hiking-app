@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.network;
 
+import android.graphics.drawable.Drawable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
@@ -13,13 +14,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
+import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 
 
 /**
@@ -263,9 +268,113 @@ public class BackendTest extends TestCase {
         }
     }
 
-    // TODO(simon) test backend reaction to malformed input
-    // TODO(simon) test other backend interface (like post_hikes)
+    @Test
+    public void testGetHikeIdsOfUser() throws Exception {
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
 
+        waitForServerSync();
+        RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints());
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+
+        waitForServerSync();
+        List<Long> hikeList = ((NetworkDatabaseClient) mDatabaseClient).getHikeIdsOfUser(userId);
+        assertEquals(hikeList.get(0), Long.valueOf(hikeId));
+    }
+
+    @Test
+    public void testLoginUser() throws Exception {
+
+        RawUserData rawUserData = createUserData();
+        long userId = mDatabaseClient.postUserData(rawUserData);
+        assertTrue("Server should set positive user ID", userId >= 0);
+
+        SignedInUser signedInUser = SignedInUser.getInstance();
+        signedInUser.init(-1, "Name Unset", rawUserData.getMailAddress());
+
+        waitForServerSync();
+
+        mDatabaseClient.loginUser();
+
+        waitForServerSync();
+        mDatabaseClient.deleteUser(userId);
+
+        assertEquals(userId, signedInUser.getId());
+        assertEquals(rawUserData.getMailAddress(), signedInUser.getMailAddress());
+        assertEquals(rawUserData.getUserName(), signedInUser.getUserName());
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_image and get_image functions
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostAndGetImage() throws Exception {
+        Drawable initialImage = loadDebugImage();
+
+        // post an image
+        final long imageId = mDatabaseClient.postImage(initialImage);
+
+        waitForServerSync();
+
+        // retrieve the same image
+        Drawable serverImage = mDatabaseClient.getImage(imageId);
+
+        assertEquals(serverImage.getBounds().left, initialImage.getBounds().left);
+        assertEquals(serverImage.getBounds().right, initialImage.getBounds().right);
+        assertEquals(serverImage.getBounds().top, initialImage.getBounds().top);
+        assertEquals(serverImage.getBounds().bottom, initialImage.getBounds().bottom);
+
+        waitForServerSync();
+        mDatabaseClient.deleteImage(imageId);
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_image function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testUpdateImage() throws Exception {
+        Drawable initialImage = loadDebugImage();
+
+        // post an image
+        final long imageId = mDatabaseClient.postImage(initialImage);
+
+        waitForServerSync();
+
+        // retrieve the same image
+        final long secondImageId = mDatabaseClient.postImage(initialImage, imageId);
+
+        assertEquals(imageId, secondImageId);
+
+        waitForServerSync();
+        mDatabaseClient.deleteImage(imageId);
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} delete_image function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testDeleteImage() throws Exception {
+        Drawable initialImage = loadDebugImage();
+
+        // post an image
+        final long imageId = mDatabaseClient.postImage(initialImage);
+
+        waitForServerSync();
+        mDatabaseClient.deleteImage(imageId);
+
+        waitForServerSync();
+        try {
+            mDatabaseClient.getImage(imageId);
+            fail("Image found in database after deleting it");
+        } catch (DatabaseClientException e) {
+            // pass
+        }
+    }
+
+    // TODO(simon) test backend reaction to malformed input
 
 
     /**
@@ -301,6 +410,15 @@ public class BackendTest extends TestCase {
         List<Long> hikeList = dbClient.getHikeIdsInWindow(bounds);
         assertTrue("No hikes found on server", hikeList.size() > 0);
         return hikeList.get(0);
+    }
+
+    // TODO(simon) change: temporary: download some picture from the internet
+    private static Drawable loadDebugImage() throws Exception {
+        URL url = new URL("http://www.vidipedija.com/images/thumb/a/a5/Android-logo.jpg/120px-Android-logo.jpg");
+        URLConnection ucon = url.openConnection();
+        InputStream is = ucon.getInputStream();
+        BufferedInputStream bis = new BufferedInputStream(is);
+        return Drawable.createFromStream(bis, "");
     }
 
     /**
