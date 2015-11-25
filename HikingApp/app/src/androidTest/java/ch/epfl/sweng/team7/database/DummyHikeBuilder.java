@@ -36,6 +36,6 @@ public class DummyHikeBuilder {
     }
 
     public static HikeData buildDefaultHikeData(long hikeId) throws HikeParseException {
-        return new DefaultHikeData(buildRawHikeData(hikeId), mListOfComments);
+        return new DefaultHikeData(buildRawHikeData(hikeId));
     }
 }
