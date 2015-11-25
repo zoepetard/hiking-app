@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -25,6 +26,7 @@ public class DefaultHikeData implements HikeData {
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
     private final List<HikePoint> mHikePoints;
+    private final List<HikeComment> mComments;
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -45,6 +47,12 @@ public class DefaultHikeData implements HikeData {
         mHikePoints = new ArrayList<>();
         for (RawHikePoint rawHikePoint : rawHikePoints){
             mHikePoints.add(new DefaultHikePoint(rawHikePoint));
+        }
+
+        List<RawHikeComment> rawHikeComments = rawHikeData.getAllComments();
+        mComments = new ArrayList<>();
+        for (RawHikeComment rawHikeComment : rawHikeComments){
+            mComments.add(new DefaultHikeComment(rawHikeComment));
         }
 
         mDistance = calculateDistance(rawHikePoints);
@@ -88,6 +96,10 @@ public class DefaultHikeData implements HikeData {
      */
     public List<HikePoint> getHikePoints() {
         return mHikePoints;
+    }
+
+    public List<HikeComment> getAllComments() {
+        return mComments;
     }
 
     /**
