@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.AlertDialog;
 import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,10 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 
 public final class HikeInfoActivity extends Activity {
     private long hikeId;
@@ -41,6 +45,32 @@ public final class HikeInfoActivity extends Activity {
         } else {
             loadStaticHike(intent, savedInstanceState);
         }
+
+        Button commentButton = (Button) findViewById(R.id.done_edit_comment);
+        commentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText commentEditText = (EditText) findViewById(R.id.comment_text);
+                String commentText = commentEditText.getText().toString();
+                if (!commentText.isEmpty()) {
+                    RawHikeComment rawHikeComment = new RawHikeComment(
+                            RawHikeComment.COMMENT_ID_UNKNOWN,
+                            hikeId, mUser.getId(), commentText);
+
+                    DataManager dataManager = DataManager.getInstance();
+                    try {
+                        dataManager.postComment(rawHikeComment);
+                    } catch (DataManagerException e) {
+                        e.printStackTrace();
+                    }
+                    commentEditText.setText("");
+                    // notify comment list view
+                } else {
+                    new AlertDialog.Builder(v.getContext())
+                            .setMessage(R.string.type_comment);
+                }
+            }
+        });
 
     }
 
