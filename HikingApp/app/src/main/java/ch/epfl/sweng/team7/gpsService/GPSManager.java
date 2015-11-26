@@ -23,14 +23,14 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+
 import ch.epfl.sweng.team7.database.GPSPathConverter;
-import ch.epfl.sweng.team7.database.PictureAnnotation;
+
 import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.hikingapp.HikeInfoActivity;
-import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.RawHikeData;
@@ -424,7 +424,6 @@ public final class GPSManager {
     /**
      * Asynchronous task to make the post request to the server.
      */
-<<<<<<< HEAD
 
     private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
         @Override

@@ -17,7 +17,6 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 
 
-
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
  * communication protocol and data formats.
