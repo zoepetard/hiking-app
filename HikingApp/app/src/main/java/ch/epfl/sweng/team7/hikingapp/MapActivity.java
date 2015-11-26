@@ -416,19 +416,29 @@ public class MapActivity extends FragmentActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                List<String> temp = new ArrayList<String>();
+                List<String> suggestions = new ArrayList<String>();
                 try{
                     List<Address> searchResults = mGeocoder.getFromLocationName(query,5);
                     for(int i = 0; i<searchResults.size();i++){
-                        temp.add(searchResults.get(i).getFeatureName());
+                        suggestions.add(searchResults.get(i).getFeatureName());
                     }
                 }catch(IOException e){
-                    temp.add("No results");
+                    suggestions.add("No results");
                 }
                 suggestionList.clear();
-                suggestionList.addAll(temp);
+                suggestionList.addAll(suggestions);
                 suggestionAdapter.notifyDataSetChanged();
                 suggestionListView.setVisibility(View.VISIBLE);
+
+                /*
+                CameraUpdate center = CameraUpdateFactory
+                CameraUpdate zoom = CameraUpdateFactory
+
+                mMap.moveCamera();
+                nMap.animateCamera(zoom);
+
+                */
+
                 return true;
             }
 
