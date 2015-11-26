@@ -9,9 +9,11 @@
 package ch.epfl.sweng.team7.network;
 
 
+
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -36,7 +38,6 @@ import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.HikeData;
 
-import ch.epfl.sweng.team7.database.PictureAnnotation;
 import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 
 
@@ -284,6 +285,29 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
             throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
+        }
+    }
+
+    /**
+     * TODO DEPRECATED - remove from code
+     *
+     * @param mailAddress - used to query server
+     * @return RawUserData - corresponding to user's mail address
+     */
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
+
+        try {
+            HttpURLConnection conn = getConnection("get_user", "GET");
+            // TODO change 2nd parameter to mailAddress when servers accepts new users
+            conn.setRequestProperty("user_mail_address", mailAddress);
+            conn.connect();
+            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            JSONObject jsonObject = new JSONObject(stringUserId);
+            return RawUserData.parseFromJSON(jsonObject);
+        } catch (IOException e) {
+            throw new DatabaseClientException(e.getMessage());
+        } catch (JSONException e) {
+            throw new DatabaseClientException("JSONException: " + e.getMessage());
         }
     }
 

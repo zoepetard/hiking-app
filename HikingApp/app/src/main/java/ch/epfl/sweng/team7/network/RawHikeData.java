@@ -32,8 +32,6 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.HikePoint;
 
-
-
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
  * Additional annotations will be added here rather than in the RawHikePoint class, to simplify
@@ -143,16 +141,7 @@ public class RawHikeData {
         return mTitle;
     }
 
-    /**
-     * Returns the list of annotations
-     */
-    public List<TextAnnotation> getAnnotations() {
-        if (mAnnotations.size() < 1){
-            return null;
-        }else{
-            return new ArrayList<TextAnnotation>(mAnnotations);
-        }
-    }
+    
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
