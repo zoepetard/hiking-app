@@ -403,11 +403,19 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // TODO retrieve lat lng from clicked item and center on that location.
+
+                /*
+                CameraUpdate center = CameraUpdateFactory();
+                CameraUpdate zoom = CameraUpdateFactory("Zoom",15);
+                mMap.moveCamera();
+                nMap.animateCamera(zoom);
+                */
+
                 suggestionListView.setVisibility(View.GONE);
             }
         });
 
-        suggestionAdapter = new ArrayAdapter<String>(this,
+        suggestionAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1,
                 suggestionList);
 
@@ -430,14 +438,7 @@ public class MapActivity extends FragmentActivity {
                 suggestionAdapter.notifyDataSetChanged();
                 suggestionListView.setVisibility(View.VISIBLE);
 
-                /*
-                CameraUpdate center = CameraUpdateFactory
-                CameraUpdate zoom = CameraUpdateFactory
 
-                mMap.moveCamera();
-                nMap.animateCamera(zoom);
-
-                */
 
                 return true;
             }
