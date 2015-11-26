@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +16,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
+import android.location.Geocoder;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +65,7 @@ public class MapActivity extends FragmentActivity {
     private List<String> suggestionList = new ArrayList<String>();
     ArrayAdapter<String> suggestionAdapter;
     private Context context;
+    private Geocoder mGeocoder;
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
 
@@ -94,6 +98,7 @@ public class MapActivity extends FragmentActivity {
         setUpSearchView();
 
         context = this;
+        mGeocoder = new Geocoder(this);
     }
 
     @Override
@@ -412,7 +417,14 @@ public class MapActivity extends FragmentActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 List<String> temp = new ArrayList<String>();
-                temp.add("TJABBA");
+                try{
+                    List<Address> searchResults = mGeocoder.getFromLocationName(query,5);
+                    for(int i = 0; i<searchResults.size();i++){
+                        temp.add(searchResults.get(i).getFeatureName());
+                    }
+                }catch(IOException e){
+                    temp.add("No results");
+                }
                 suggestionList.clear();
                 suggestionList.addAll(temp);
                 suggestionAdapter.notifyDataSetChanged();
