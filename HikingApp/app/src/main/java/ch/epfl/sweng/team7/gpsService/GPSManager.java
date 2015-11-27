@@ -44,6 +44,7 @@ public final class GPSManager {
     //GPS stored information
     private GPSPath mGpsPath = null;
     private boolean mIsTracking = false;
+    private boolean mIsPaused = false;
     private GPSFootPrint mLastFootPrint = null;
 
 
