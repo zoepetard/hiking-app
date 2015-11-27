@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     (r'^get_image/$', get_image),
     (r'^delete_image/$', delete_image),
     (r'^clean_datastore/$', clean_datastore),
+    (r'^post_comment/$', post_comment),
 )

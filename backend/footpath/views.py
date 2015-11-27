@@ -382,6 +382,48 @@ def delete_image(request):
     img.key.delete()
     return response_data('')
 
+# Post a new image
+def post_comment(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    logger.info('POST comment from '+repr(visitor_id))
+    request_image_id = int(request.META.get('HTTP_IMAGE_ID', '-1'))
+    
+    # Create new Hike object
+    comment = build_comment_from_json(request.body)
+    if not comment:
+        return response_bad_request()
+
+    if not comment.user_id == visitor_id:
+        return response_forbidden()
+
+    hike = Hike.get_by_id(comment.hike_id)
+    if not hike:
+        return response_bad_request()
+
+    # If update hike: Authenticate and check for existing hikes in database iss77
+    logger.info('request post to ID '+repr(request_image_id))
+    if(comment.comment_id >= 0):
+        old_comment = ndb.Key(Comment, comment.comment_id).get()
+        
+        if not old_comment:
+            return response_not_found()
+        
+        if not old_comment.owner_id == comment.owner_id:
+            return response_forbidden()
+        
+        comment.key = old_comment.key
+    
+    new_key = comment.put()
+    logger.info('respond with ID '+repr(new_key.id()))
+    return response_id('image_id', new_key.id())
+
 
 # Clean datastore: Remove all entities that obviously do not belong here.
 def clean_datastore():
