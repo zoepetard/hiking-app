@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
 import android.graphics.Point;
+import android.location.Location;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -168,8 +169,17 @@ public class MapActivity extends FragmentActivity {
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
-                mFollowingUser = false;
                 onCameraChangeHelper();
+            }
+        });
+
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                if (mFollowingUser) {
+                    focusOnLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                    //TODO draw point at user location
+                }
             }
         });
     }
