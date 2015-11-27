@@ -386,7 +386,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void focusOnLatLng(LatLng latLng) {
+    public void focusOnLatLng(LatLng latLng) {
         //TODO move camera to LatLng with a certain zoom level
     }
 }
