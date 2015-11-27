@@ -24,6 +24,7 @@ import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 
+import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
@@ -60,6 +61,11 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
 
     RawHikeData rawHikeData = null;
+    private Annotation annotation;
+    private List<Annotation> listAnnotations = new ArrayList<>();
+    private RawHikeData rawHikeData;
+
+
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -195,11 +201,7 @@ public final class GPSManager {
      * @param annotation
      */
     public void addAnnotation(Annotation annotation){
-        if (annotation.getClass().isInstance(TextAnnotation.class)){
-            textAnnotations.add((TextAnnotation) annotation);
-        }else{
-            hikePictures.add((PictureAnnotation) annotation);
-        }
+        listAnnotations.add(annotation);
     }
 
     @Override
@@ -281,6 +283,12 @@ public final class GPSManager {
         mIsPaused = false;
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
+        try {
+            rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
+        } catch (Exception e) {
+
+        }
+
         displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
