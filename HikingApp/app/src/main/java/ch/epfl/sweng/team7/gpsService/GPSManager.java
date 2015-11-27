@@ -89,6 +89,9 @@ public final class GPSManager {
      */
     public void togglePause() {
         mIsPaused = !mIsPaused;
+        if (!mIsPaused) {
+            mGpsPath.addFootPrint(mLastFootPrint, true);
+        }
     }
 
     /**
