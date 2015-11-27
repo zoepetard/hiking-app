@@ -170,6 +170,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 onCameraChangeHelper();
+                mFollowingUser = false;
             }
         });
 
