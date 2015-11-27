@@ -130,10 +130,10 @@ public final class GPSManager {
      * @throws NullPointerException whenever there is no last known position
      */
     public GeoCoords getCurrentCoords() throws NullPointerException {
-        if (this.mLastFootPrint == null) {
+        if (mLastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
         }
-        return this.mLastFootPrint.getGeoCoords();
+        return mLastFootPrint.getGeoCoords();
     }
 
     /**
@@ -176,9 +176,9 @@ public final class GPSManager {
      */
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
-            this.mLastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
-            if (this.mIsTracking && !this.mIsPaused) {
-                mGpsPath.addFootPrint(this.mLastFootPrint);
+            mLastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
+            if (mIsTracking && !mIsPaused) {
+                mGpsPath.addFootPrint(mLastFootPrint);
                 mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, mGpsPath.timeElapsedInSeconds()));
                 mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, mGpsPath.distanceToStart()));
             }
@@ -188,8 +188,8 @@ public final class GPSManager {
     @Override
     public String toString() {
         String gpsPathInformation = (mIsTracking && mGpsPath != null) ? String.format("yes -> %s", mGpsPath.toString()) : "No";
-        String lastFootPrintCoords = (this.mLastFootPrint != null) ? this.mLastFootPrint.getGeoCoords().toString() : "null";
-        long lastFootPrintTimeStamp = (this.mLastFootPrint != null) ? this.mLastFootPrint.getTimeStamp() : 0;
+        String lastFootPrintCoords = (mLastFootPrint != null) ? mLastFootPrint.getGeoCoords().toString() : "null";
+        long lastFootPrintTimeStamp = (mLastFootPrint != null) ? mLastFootPrint.getTimeStamp() : 0;
         return String.format("\n|---------------------------\n" +
                 "| Saving to memory: %s\n" +
                 "| Last Coordinates: %s\n" +
@@ -233,8 +233,8 @@ public final class GPSManager {
      * storing user's coordinates.
      */
     private void startTracking() {
-        this.mIsTracking = true;
-        this.mIsPaused = false;
+        mIsTracking = true;
+        mIsPaused = false;
         mGpsPath = new GPSPath();
         mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
@@ -260,8 +260,8 @@ public final class GPSManager {
      * previous ones.
      */
     private void stopTracking() {
-        this.mIsTracking = false;
-        this.mIsPaused = false;
+        mIsTracking = false;
+        mIsPaused = false;
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
         displaySavePrompt();
