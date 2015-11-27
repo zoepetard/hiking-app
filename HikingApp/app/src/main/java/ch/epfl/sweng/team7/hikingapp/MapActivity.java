@@ -336,7 +336,15 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 mGps.toggleTracking();
                 Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                if (mGps.tracking()) {
+                    toggleButton.setText(R.string.button_stop_tracking);
+                    pauseButton.setVisibility(View.VISIBLE);
+                    pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                } else {
+                    toggleButton.setText(R.string.button_start_tracking);
+                    pauseButton.setVisibility(View.INVISIBLE);
+                }
             }
         });
     }
