@@ -17,9 +17,10 @@ class Comment(ndb.Model):
         json_object = json.loads(json_string)
         self.hike_id = json_object['hike_id']
         self.user_id = json_object['user_id']
-        self.comment_text = json_object['comment_text']
+        self.comment_text = str(json_object['comment_text'])
         if 'date' in json_object:
             self.date = json_object['date']
+        return True
 
     # Parse this into JSON string
     def to_json(self):

@@ -27,10 +27,10 @@ def get_hike(request):
     hike = ndb.Key(Hike, request_hike_id).get()
     if not hike:
         return response_not_found()
-         
-    # TODO: remove old query example code
-    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    return response_data(hike.to_json())
+    
+    comments = get_comment_list(request_hike_id)
+    logger.error("Comments are "+str(len(comments)))
+    return response_data(hike.to_json(comments))
     
 # Temporary: Function to quickly see the database in browser
 # Get multiple hikes, as specified in a list inside the field
@@ -127,7 +127,7 @@ def post_hike(request):
             if len(hike.hike_data) < 1000:
                 hike.key.delete()
         return response_id('hike_id', 342)
-        
+    
     #TODO(simon): set test flag on hikes that should be automatically removed
         
     # If update hike: Authenticate and check for existing hikes in database iss77
@@ -146,7 +146,16 @@ def post_hike(request):
     
     hike.hike_id = new_key.id()
     hike.put()
-               
+
+    #TODO(simon): remove test code
+    comment_string = "{\"comment_id\":-1,\"hike_id\":"+repr(hike.hike_id).strip('L')+",\"user_id\":12345,\"comment_text\":\"blablabla\"}"
+    comment = build_comment_from_json(comment_string)
+    if comment:
+        logger.error("Comment was created.")
+        comment.put()
+    else:
+        logger.error("Comment was not created.")
+
     return response_id('hike_id', new_key.id())
 
 # Delete a user. The hike can only be deleted by its author.
@@ -391,6 +400,15 @@ def clear_server(request):
         img.key.delete()
 
     return response_data('')
+
+
+def get_comment_list(hike_id):
+    comment_list = []
+    comments = Comment.query(Comment.hike_id == hike_id).fetch()
+    for comment in comments:
+        comment_list.append(json.loads(comment.to_json()))
+
+    return comment_list
 
 
 def response_bad_request():
