@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.hikingapp.SignedInUser;
@@ -399,7 +400,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
         try {
             HttpURLConnection conn = getConnection("post_comment", "POST");
             //byte[] outputInBytes = comment.toJSON().toString().getBytes("UTF-8"); TODO(runjie) uncomment and remove next line
-            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":"+Long.toString(hikeId)+",\"user_id\":"+SignedInUser.getInstance().getId()+",\"comment_text\":\"blablabla\"}").getBytes();
+            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":"+Long.toString(hikeId)
+                    + ",\"user_id\":"+SignedInUser.getInstance().getId()
+                    + ",\"comment_text\":\"blablabla\",\"date\":" + (new Date()).getTime() + "}").getBytes();
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);

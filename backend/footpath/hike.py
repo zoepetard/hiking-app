@@ -42,6 +42,7 @@ class Hike(ndb.Model):
     
     # Data
     hike_data = ndb.JsonProperty(repeated=True,indexed=False)
+    annotations = ndb.JsonProperty(repeated=True,indexed=False)
 
 
     # Parse JSON string to data. Return false on malformed input
@@ -56,6 +57,10 @@ class Hike(ndb.Model):
             self.title = json_object['title']
         else:
             self.title = "Untitled Hike"
+        
+        if 'annotations' in json_object:
+            self.annotations = json_object['annotations']
+        
         self.hike_data = json_object['hike_data']
         bb = get_bounding_box(self.hike_data)
         self.bb_southwest = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
@@ -80,7 +85,11 @@ class Hike(ndb.Model):
             'title': title,
             'comments': comments
         }
+        if self.annotations:
+            hike_data.update({'annotations':self.annotations})
+        
         return json.dumps(hike_data)
+
 
     # Format a brief summary of the hike, i.e. it's ID,
     # and location information. Currently only formats the ID.

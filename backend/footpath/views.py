@@ -393,7 +393,7 @@ def post_comment(request):
     if not request.method == 'POST':
         return response_bad_request()
     
-    logger.info('POST comment from '+repr(visitor_id))
+    logger.info('POST comment: '+request.body)
     request_image_id = int(request.META.get('HTTP_IMAGE_ID', '-1'))
     
     # Create new Hike object
