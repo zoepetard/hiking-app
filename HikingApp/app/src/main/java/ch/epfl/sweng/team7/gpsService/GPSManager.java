@@ -187,7 +187,7 @@ public final class GPSManager {
 
     @Override
     public String toString() {
-        String gpsPathInformation = (mIsTracking && mGpsPath != null) ? String.format("yes -> %s", mGpsPath.toString()) : "No";
+        String gpsPathInformation = (mIsTracking && !mIsPaused && mGpsPath != null) ? String.format("yes -> %s", mGpsPath.toString()) : "No";
         String lastFootPrintCoords = (mLastFootPrint != null) ? mLastFootPrint.getGeoCoords().toString() : "null";
         long lastFootPrintTimeStamp = (mLastFootPrint != null) ? mLastFootPrint.getTimeStamp() : 0;
         return String.format("\n|---------------------------\n" +
@@ -245,7 +245,7 @@ public final class GPSManager {
         mInfoDisplay.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MapActivity mapActivity = (MapActivity)mContext;
+                MapActivity mapActivity = (MapActivity) mContext;
                 if (mLastFootPrint != null) {
                     mapActivity.focusOnLatLng(mLastFootPrint.getGeoCoords().toLatLng());
                 }
