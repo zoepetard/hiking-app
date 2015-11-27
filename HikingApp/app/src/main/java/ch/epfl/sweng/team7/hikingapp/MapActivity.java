@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -41,6 +42,7 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
+    private final static int DEFAULT_ZOOM = 15;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
@@ -52,6 +54,8 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+
+    private boolean mFollowingUser = false;
 
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -84,6 +88,8 @@ public class MapActivity extends FragmentActivity {
         createBottomInfoView();
 
         setGoToHikesButtonListener();
+
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -162,6 +168,7 @@ public class MapActivity extends FragmentActivity {
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
+                mFollowingUser = false;
                 onCameraChangeHelper();
             }
         });
@@ -422,6 +429,20 @@ public class MapActivity extends FragmentActivity {
     }
 
     public void focusOnLatLng(LatLng latLng) {
-        //TODO move camera to LatLng with a certain zoom level
+        if (latLng != null) {
+            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
+            mMap.animateCamera(target);
+        }
+    }
+
+    public void updateUserLocation(LatLng latLng) {
+        if (latLng != null && mFollowingUser) {
+            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
+            mMap.animateCamera(target);
+        }
+    }
+
+    public void startFollowingUser() {
+        mFollowingUser = true;
     }
 }
