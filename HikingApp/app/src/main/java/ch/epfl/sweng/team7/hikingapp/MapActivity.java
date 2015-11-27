@@ -349,7 +349,7 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
 
         pauseButton.setLayoutParams(lp);
         layout.addView(pauseButton, lp);
