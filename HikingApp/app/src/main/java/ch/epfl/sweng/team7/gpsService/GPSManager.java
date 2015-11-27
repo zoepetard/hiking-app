@@ -178,8 +178,6 @@ public final class GPSManager {
         if (newLocation != null) {
             mLastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
             if (mIsTracking && !mIsPaused) {
-                MapActivity mapActivity = (MapActivity) mContext;
-                mapActivity.updateUserLocation(mLastFootPrint.getGeoCoords().toLatLng());
                 mGpsPath.addFootPrint(mLastFootPrint);
                 mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, mGpsPath.timeElapsedInSeconds()));
                 mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, mGpsPath.distanceToStart()));
