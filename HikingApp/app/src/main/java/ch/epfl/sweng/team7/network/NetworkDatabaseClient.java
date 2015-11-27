@@ -389,6 +389,47 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
+     * Post a comment to the database
+     * @param comment the comment to be posted
+     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
+     * @return the database key of that comment
+     * @throws DatabaseClientException
+     */
+    public long postComment(long hikeId) throws DatabaseClientException {
+        try {
+            HttpURLConnection conn = getConnection("post_comment", "POST");
+            //byte[] outputInBytes = comment.toJSON().toString().getBytes("UTF-8"); TODO(runjie) uncomment and remove next line
+            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":"+Long.toString(hikeId)+",\"user_id\":"+SignedInUser.getInstance().getId()+",\"comment_text\":\"blablabla\"}").getBytes();
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+            return new JSONObject(stringResponse).getLong("comment_id");
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
+     * Delete a comment from the database
+     * @param commentId the database key of the comment
+     * @throws DatabaseClientException
+     */
+    public void deleteComment(long commentId) throws DatabaseClientException {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("comment_id", commentId);
+
+            HttpURLConnection conn = getConnection("delete_image", "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
      * Method to set the properties of the connection to the server
      *
      * @param function    the server function, without /

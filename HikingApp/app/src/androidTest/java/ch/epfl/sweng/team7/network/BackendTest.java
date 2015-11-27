@@ -374,6 +374,26 @@ public class BackendTest extends TestCase {
         }
     }
 
+    /**
+     * Test the {@link NetworkDatabaseClient} post_comment function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostComment() throws Exception {
+        RawHikeData hikeData = createHikeData();
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+        assertTrue(hikeId > 0);
+
+        waitForServerSync();
+        mDatabaseClient.postComment(hikeId);
+
+        waitForServerSync();
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+        mDatabaseClient.deleteHike(hikeId);
+
+        //TODO(runjie) iss107 check if the comment was returned correctly.
+    }
+
     // TODO(simon) test backend reaction to malformed input
 
 

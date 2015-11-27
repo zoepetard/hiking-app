@@ -267,6 +267,26 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("Not implemented.");
     }
 
+    /**
+     * Post a comment to the database
+     * @param comment the comment to be posted
+     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
+     * @return the database key of that comment
+     * @throws DatabaseClientException
+     */
+    public long postComment(long hikeId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Delete a comment from the database
+     * @param commentId the database key of the comment
+     * @throws DatabaseClientException
+     */
+    public void deleteComment(long commentId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {

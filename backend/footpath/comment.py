@@ -12,6 +12,7 @@ class Comment(ndb.Model):
     owner_id = ndb.IntegerProperty()
     comment_text = ndb.BlobProperty(indexed=False)
     date = ndb.IntegerProperty()
+    requested_id = -1
 
     def from_json(self, json_string):
         json_object = json.loads(json_string)
