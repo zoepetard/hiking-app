@@ -321,7 +321,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setText("Start");
+        toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
