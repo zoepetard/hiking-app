@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
 import android.graphics.Point;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -75,6 +76,9 @@ public class MapActivity extends FragmentActivity {
 
         //creates a start/stop tracking button
         createTrackingToggleButton();
+
+        //creates a pause/resume tracking button
+        createPauseTrackingButton();
 
         //Initializes the BottomInfoView
         createBottomInfoView();
@@ -335,6 +339,29 @@ public class MapActivity extends FragmentActivity {
                 toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
             }
         });
+    }
+
+    private void createPauseTrackingButton() {
+        Button pauseButton = new Button(this);
+        pauseButton.setText(R.string.button_pause_tracking);
+        pauseButton.setId(R.id.button_tracking_pause);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        pauseButton.setLayoutParams(lp);
+        layout.addView(pauseButton, lp);
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mGps.togglePauseTracking();
+                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+            }
+        });
+        pauseButton.setVisibility(View.INVISIBLE);
     }
 
     private void createBottomInfoView() {
