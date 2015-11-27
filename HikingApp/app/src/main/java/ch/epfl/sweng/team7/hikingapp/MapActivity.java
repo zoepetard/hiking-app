@@ -385,4 +385,8 @@ public class MapActivity extends FragmentActivity {
             return new LatLng(switzerlandLatitude, switzerlandLongitude);
         }
     }
+
+    private void focusOnLatLng(LatLng latLng) {
+        //TODO move camera to LatLng with a certain zoom level
+    }
 }
