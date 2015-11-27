@@ -41,7 +41,9 @@
     <string name="goto_map">Go To Map</string>
     <string name="button_done">Done</string>
     <string name="button_start_tracking">Start</string>
-    <string name="button_stop_tracking">Stop</string>>
+    <string name="button_stop_tracking">Stop</string>
+    <string name="button_pause_tracking">Pause</string>
+    <string name="button_resume_tracking">Resume</string>>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
@@ -59,9 +61,10 @@
 
     <!-- IDs -->
     <item name="button_tracking_toggle" type="id" />
+    <item name="button_tracking_pause" type="id" />
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
-    <item name="button_save_hike" type="id"></item>
+    <item name="button_save_hike" type="id" />
 
     <!-- Save hike prompt -->
     <string name="button_save_hike">Save</string>

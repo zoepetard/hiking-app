@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
 import android.graphics.Point;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -11,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -20,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
+    private final static int DEFAULT_ZOOM = 15;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
@@ -51,6 +55,11 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+
+    private boolean mFollowingUser = false;
+
+    private Polyline mPolyRef;
+    private PolylineOptions mCurHike;
 
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -76,10 +85,16 @@ public class MapActivity extends FragmentActivity {
         //creates a start/stop tracking button
         createTrackingToggleButton();
 
+        //creates a pause/resume tracking button
+        createPauseTrackingButton();
+
         //Initializes the BottomInfoView
         createBottomInfoView();
 
         setGoToHikesButtonListener();
+
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
     }
 
     @Override
@@ -159,6 +174,22 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 onCameraChangeHelper();
+                mFollowingUser = false;
+            }
+        });
+
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                if (mFollowingUser) {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    focusOnLatLng(latLng);
+                    if (mGps.tracking() && !mGps.paused()) {
+                        List<LatLng> points = mPolyRef.getPoints();
+                        points.add(latLng);
+                        mPolyRef.setPoints(points);
+                    }
+                }
             }
         });
     }
@@ -323,7 +354,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setText("Start");
+        toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
@@ -338,9 +369,42 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 mGps.toggleTracking();
                 Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                if (mGps.tracking()) {
+                    toggleButton.setText(R.string.button_stop_tracking);
+                    pauseButton.setVisibility(View.VISIBLE);
+                    pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                    startHikeDisplay();
+                } else {
+                    toggleButton.setText(R.string.button_start_tracking);
+                    pauseButton.setVisibility(View.INVISIBLE);
+                    stopHikeDisplay();
+                }
             }
         });
+    }
+
+    private void createPauseTrackingButton() {
+        Button pauseButton = new Button(this);
+        pauseButton.setText(R.string.button_pause_tracking);
+        pauseButton.setId(R.id.button_tracking_pause);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
+
+        pauseButton.setLayoutParams(lp);
+        layout.addView(pauseButton, lp);
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mGps.togglePause();
+                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+            }
+        });
+        pauseButton.setVisibility(View.INVISIBLE);
     }
 
     private void createBottomInfoView() {
@@ -390,5 +454,25 @@ public class MapActivity extends FragmentActivity {
         } else {
             return new LatLng(switzerlandLatitude, switzerlandLongitude);
         }
+    }
+
+    public void focusOnLatLng(LatLng latLng) {
+        if (latLng != null) {
+            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
+            mMap.animateCamera(target);
+        }
+    }
+
+    public void startFollowingUser() {
+        mFollowingUser = true;
+    }
+
+    private void startHikeDisplay() {
+        mCurHike = new PolylineOptions();
+        mPolyRef = mMap.addPolyline(mCurHike);
+    }
+
+    private void stopHikeDisplay() {
+        //TODO do something when we stop hiking..?
     }
 }
