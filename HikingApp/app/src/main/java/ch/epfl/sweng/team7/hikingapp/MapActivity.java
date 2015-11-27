@@ -59,6 +59,7 @@ public class MapActivity extends FragmentActivity {
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
     private boolean mFollowingUser = false;
+
     private Polyline mPolyRef;
     private PolylineOptions mCurHike;
 
