@@ -123,9 +123,7 @@ def post_hike(request):
     
     # Temporary: Clear database with specially prepared post request iss77
     if(hike.hike_id == 342):
-        for hike in Hike.query().fetch():
-            if len(hike.hike_data) < 1000:
-                hike.key.delete()
+        delete_datastore()
         return response_id('hike_id', 342)
     
     #TODO(simon): set test flag on hikes that should be automatically removed
@@ -148,6 +146,7 @@ def post_hike(request):
     hike.put()
 
     #TODO(simon): remove test code
+    #clean_datastore()
     comment_string = "{\"comment_id\":-1,\"hike_id\":"+repr(hike.hike_id).strip('L')+",\"user_id\":12345,\"comment_text\":\"blablabla\"}"
     comment = build_comment_from_json(comment_string)
     if comment:
@@ -384,8 +383,59 @@ def delete_image(request):
     return response_data('')
 
 
-# Clean server
-def clear_server(request):
+# Clean datastore: Remove all entities that obviously do not belong here.
+def clean_datastore():
+    hikes = Hike.query().fetch()
+    for hike in hikes:
+        # Remove malformed hikes
+        if(hike.owner_id < 1):
+            hike.key.delete()
+            continue
+        
+        # Remove orphaned hikes
+        logger.error("ID is "+repr(hike.owner_id))
+        owner = User.get_by_id(hike.owner_id)
+        if not owner:
+            hike.key.delete()
+
+    comments = Comment.query().fetch()
+    for comment in comments:
+        # Remove malformed comments
+        if(comment.hike_id < 1):
+            comment.key.delete()
+            continue
+
+        if(comment.user_id < 1):
+            comment.key.delete()
+            continue
+        
+        # Remove orphaned comments
+        hike = ndb.Key(Hike, comment.hike_id).get()
+        if not hike:
+            comment.key.delete()
+
+        # Remove orphaned comments
+        user = ndb.Key(User, comment.user_id).get()
+        if not user:
+            comment.key.delete()
+
+    images = Image.query().fetch()
+    for image in images:
+        # Remove malformed images
+        if(image.owner_id < 1):
+            image.key.delete()
+            continue
+        
+        # Remove orphaned images
+        owner = ndb.Key(User, image.owner_id).get()
+        if not owner:
+            hike.key.delete()
+
+
+# Delete datastore: Remove all entities except the long hikes
+def delete_datastore(request):
+    clean_datastore()
+    
     hikes = Hike.query().fetch()
     for hike in hikes:
         if len(hike.hike_data) < 1000:
@@ -398,6 +448,8 @@ def clear_server(request):
     images = Image.query().fetch()
     for img in images:
         img.key.delete()
+
+
 
     return response_data('')
 
