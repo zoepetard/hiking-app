@@ -7,6 +7,7 @@ from footpath.hike import *
 from footpath.user import *
 from footpath.image import *
 from footpath.auth import *
+from footpath.comment import *
 
 import logging
 import json

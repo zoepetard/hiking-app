@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 import json
 import logging
+from footpath.comment import *
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -20,7 +21,8 @@ logger = logging.getLogger(__name__)
 #      [0.3,89.9, 123204], [0.4, 0.0, 123205]
 #   ]
 # }
-            
+
+
 class Hike(ndb.Model):
     '''Models an individual Hike entry.'''
     # TODO add indexed=False to properties that should not be indexed
@@ -41,6 +43,7 @@ class Hike(ndb.Model):
     # Data
     hike_data = ndb.JsonProperty(repeated=True,indexed=False)
 
+
     # Parse JSON string to data. Return false on malformed input
     # TODO: check input
     def from_json(self, json_string):
@@ -54,15 +57,16 @@ class Hike(ndb.Model):
         else:
             self.title = "Untitled Hike"
         self.hike_data = json_object['hike_data']
-        #self.some_string = json_object['some_string']
         bb = get_bounding_box(self.hike_data)
         self.bb_southwest = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
         self.bb_northeast = ndb.GeoPt(bb['lat_max'], bb['lng_max'])
         logger.info('lat in bounds %s:%s, lng in bounds %s:%s', bb['lat_min'], bb['lat_max'], bb['lng_min'], bb['lng_max'])
         return True
-                
+            
+            
     # Parse this into JSON string
-    def to_json(self):
+    # comments is a list of JSON objects
+    def to_json(self, comments):
         # TODO(simon): remove extra code after migration (24Nov15)
         title = "Untitled Hike"
         if self.title:
@@ -74,6 +78,7 @@ class Hike(ndb.Model):
             'date': self.date,
             'hike_data': self.hike_data,
             'title': title,
+            'comments': comments
         }
         return json.dumps(hike_data)
 
@@ -81,6 +86,7 @@ class Hike(ndb.Model):
     # and location information. Currently only formats the ID.
     def to_location(self):
         return str(self.key.id()).strip('L')
+
 
 # Get an array-dict containing the data from the hike_data object
 def get_bounding_box(hike_data):
@@ -96,13 +102,15 @@ def get_bounding_box(hike_data):
     
     return {'lat_min' : lat_min, 'lng_min' : lng_min, 'lat_max' : lat_max, 'lng_max' : lng_max}
 
+
 # Factory to turn a json-string into a valid hike object
 def build_hike_from_json(json_string):
     t = Hike()
     if(t.from_json(json_string)):
         return t
     return None
-    
+
+
 def build_sample_hike(hike_id, owner_id):
     return build_hike_from_json("{\n"\
             + "  \"hike_id\": "+repr(hike_id)+",\n"\
