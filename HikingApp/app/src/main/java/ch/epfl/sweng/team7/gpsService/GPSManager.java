@@ -83,6 +83,10 @@ public final class GPSManager {
         }
     }
 
+    public void togglePause() {
+        mIsPaused = !mIsPaused;
+    }
+
     /**
      * Method called to check on gps status
      * @return true if it is enabled, false otherwise
@@ -101,6 +105,10 @@ public final class GPSManager {
      */
     public Boolean tracking() {
         return mIsTracking;
+    }
+
+    public Boolean paused() {
+        return mIsPaused;
     }
 
     /**
@@ -214,6 +222,7 @@ public final class GPSManager {
      */
     private void startTracking() {
         this.mIsTracking = true;
+        this.mIsPaused = false;
         mGpsPath = new GPSPath();
         mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
@@ -240,6 +249,7 @@ public final class GPSManager {
      */
     private void stopTracking() {
         this.mIsTracking = false;
+        this.mIsPaused = false;
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
         displaySavePrompt();
