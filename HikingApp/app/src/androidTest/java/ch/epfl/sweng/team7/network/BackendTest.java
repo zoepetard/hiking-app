@@ -385,6 +385,7 @@ public class BackendTest extends TestCase {
         assertTrue(hikeId > 0);
 
         waitForServerSync();
+        //TODO(runjie) iss107 create new comment
         mDatabaseClient.postComment(hikeId);
 
         waitForServerSync();
@@ -392,6 +393,30 @@ public class BackendTest extends TestCase {
         mDatabaseClient.deleteHike(hikeId);
 
         //TODO(runjie) iss107 check if the comment was returned correctly.
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_comment function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testDeleteComment() throws Exception {
+        RawHikeData hikeData = createHikeData();
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+        assertTrue(hikeId > 0);
+
+        waitForServerSync();
+        //TODO(runjie) iss107 create new comment
+        long commentId = mDatabaseClient.postComment(hikeId);
+
+        waitForServerSync();
+        mDatabaseClient.deleteComment(commentId);
+
+        waitForServerSync();
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+        mDatabaseClient.deleteHike(hikeId);
+
+        //TODO(runjie) iss107 check that comment with commentId is not in serverHikeData anymore
     }
 
     // TODO(simon) test backend reaction to malformed input
