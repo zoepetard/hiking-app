@@ -356,7 +356,7 @@ public class MapActivity extends FragmentActivity {
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mGps.togglePauseTracking();
+                mGps.togglePause();
                 Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
                 pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
             }
