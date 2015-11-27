@@ -34,6 +34,8 @@ proguard/
 # Misc
 misc.xml
 
+# Encodings
+encodings.xml
 
 ### Android Patch ###
 gen-external-apklibs
