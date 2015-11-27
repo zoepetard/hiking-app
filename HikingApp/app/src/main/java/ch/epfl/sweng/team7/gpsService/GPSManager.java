@@ -83,6 +83,10 @@ public final class GPSManager {
         }
     }
 
+    /**
+     * Method called to toggle tracking pause
+     * on/off, according to previous state.
+     */
     public void togglePause() {
         mIsPaused = !mIsPaused;
     }
@@ -107,6 +111,11 @@ public final class GPSManager {
         return mIsTracking;
     }
 
+    /**
+     * Method called to get the paused status
+     *
+     * @return true if it is paused, false otherwise
+     */
     public Boolean paused() {
         return mIsPaused;
     }
@@ -258,6 +267,10 @@ public final class GPSManager {
         mGpsPath = null;
     }
 
+    /**
+     * Method called after stopping a hike tracking.
+     * This method should take the user to an editable Activity.
+     */
     private void goToHikeEditor() {
         Intent intent = new Intent(mContext, HikeInfoActivity.class);
         intent.putExtra(GPSManager.NEW_HIKE, true);
