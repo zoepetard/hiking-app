@@ -419,7 +419,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("comment_id", commentId);
 
-            HttpURLConnection conn = getConnection("delete_image", "POST");
+            HttpURLConnection conn = getConnection("delete_comment", "POST");
             byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);

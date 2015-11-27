@@ -426,6 +426,30 @@ def post_comment(request):
     return response_id('comment_id', new_key.id())
 
 
+# Delete a comment
+def delete_comment(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+
+    delete_comment_id = int(json.loads(request.body)['comment_id'])
+
+    # Find comment in datastore
+    comment = ndb.Key(Comment, delete_comment_id).get()
+    if not comment:
+        return response_not_found()
+
+    if not comment.owner_id == visitor_id:
+        return response_forbidden()
+    
+    comment.key.delete()
+    return response_data('')
+
+
 # Clean datastore: Remove all entities that obviously do not belong here.
 def clean_datastore():
     hikes = Hike.query().fetch()
