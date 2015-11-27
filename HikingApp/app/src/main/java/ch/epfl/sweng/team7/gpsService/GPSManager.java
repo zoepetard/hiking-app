@@ -174,7 +174,7 @@ public final class GPSManager {
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
             this.mLastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
-            if (this.mIsTracking) {
+            if (this.mIsTracking && !this.mIsPaused) {
                 mGpsPath.addFootPrint(this.mLastFootPrint);
                 mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, mGpsPath.timeElapsedInSeconds()));
                 mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, mGpsPath.distanceToStart()));
