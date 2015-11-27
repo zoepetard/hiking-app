@@ -445,13 +445,6 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public void updateUserLocation(LatLng latLng) {
-        if (latLng != null && mFollowingUser) {
-            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
-            mMap.animateCamera(target);
-        }
-    }
-
     public void startFollowingUser() {
         mFollowingUser = true;
     }
