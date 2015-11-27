@@ -42,15 +42,15 @@ public final class GPSManager {
     private static GPSManager instance = new GPSManager();
 
     //GPS stored information
-    private GPSPath gpsPath = null;
+    private GPSPath mGpsPath = null;
     private boolean mIsTracking = false;
-    private GPSFootPrint lastFootPrint = null;
+    private GPSFootPrint mLastFootPrint = null;
 
 
     //GPS service communication
     private Context mContext;
-    private GPSService gpsService;
-    private ServiceConnection serviceConnection;
+    private GPSService mGpsService;
+    private ServiceConnection mServiceConnection;
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -69,7 +69,7 @@ public final class GPSManager {
      * on/off, according to previous state.
      */
     public void toggleTracking() {
-        if (gpsService != null) {
+        if (mGpsService != null) {
             if (!mIsTracking) {
                 startTracking();
             } else {
@@ -87,8 +87,8 @@ public final class GPSManager {
      * @return true if it is enabled, false otherwise
      */
     public boolean enabled() {
-        if (gpsService != null) {
-            return gpsService.getProviderStatus() && (lastFootPrint != null);
+        if (mGpsService != null) {
+            return mGpsService.getProviderStatus() && (mLastFootPrint != null);
         }
         return false;
     }
@@ -109,10 +109,10 @@ public final class GPSManager {
      * @throws NullPointerException whenever there is no last known position
      */
     public GeoCoords getCurrentCoords() throws NullPointerException {
-        if (this.lastFootPrint == null) {
+        if (this.mLastFootPrint == null) {
             throw new NullPointerException("Trying to access a null gps footprint");
         }
-        return this.lastFootPrint.getGeoCoords();
+        return this.mLastFootPrint.getGeoCoords();
     }
 
     /**
@@ -134,7 +134,7 @@ public final class GPSManager {
      * @param context Context to which the GPSService will be bound to
      */
     public void bindService(Context context) {
-        context.bindService(new Intent(context, GPSService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(new Intent(context, GPSService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
         Log.d(LOG_FLAG, "Intent sent to bind to GPSService");
     }
 
@@ -144,7 +144,7 @@ public final class GPSManager {
      * @param context Context from which the GPSService will be unbound
      */
     public void unbindService(Context context) {
-        context.unbindService(serviceConnection);
+        context.unbindService(mServiceConnection);
         Log.d(LOG_FLAG, "Intent sent to unbind GPSService");
     }
 
@@ -155,20 +155,20 @@ public final class GPSManager {
      */
     protected void updateCurrentLocation(Location newLocation) {
         if (newLocation != null) {
-            this.lastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
+            this.mLastFootPrint = new GPSFootPrint(GeoCoords.fromLocation(newLocation), newLocation.getTime());
             if (this.mIsTracking) {
-                gpsPath.addFootPrint(this.lastFootPrint);
-                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, gpsPath.timeElapsedInSeconds()));
-                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, gpsPath.distanceToStart()));
+                mGpsPath.addFootPrint(this.mLastFootPrint);
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 0, mContext.getResources().getString(R.string.timeElapsedInfo, mGpsPath.timeElapsedInSeconds()));
+                mInfoDisplay.setInfoLine(BOTTOM_TABLE_ACCESS_ID, 1, mContext.getResources().getString(R.string.distanceToStart, mGpsPath.distanceToStart()));
             }
         }
     }
 
     @Override
     public String toString() {
-        String gpsPathInformation = (mIsTracking && gpsPath != null) ? String.format("yes -> %s", gpsPath.toString()) : "No";
-        String lastFootPrintCoords = (this.lastFootPrint != null) ? this.lastFootPrint.getGeoCoords().toString() : "null";
-        long lastFootPrintTimeStamp = (this.lastFootPrint != null) ? this.lastFootPrint.getTimeStamp() : 0;
+        String gpsPathInformation = (mIsTracking && mGpsPath != null) ? String.format("yes -> %s", mGpsPath.toString()) : "No";
+        String lastFootPrintCoords = (this.mLastFootPrint != null) ? this.mLastFootPrint.getGeoCoords().toString() : "null";
+        long lastFootPrintTimeStamp = (this.mLastFootPrint != null) ? this.mLastFootPrint.getTimeStamp() : 0;
         return String.format("\n|---------------------------\n" +
                 "| Saving to memory: %s\n" +
                 "| Last Coordinates: %s\n" +
@@ -189,18 +189,18 @@ public final class GPSManager {
      * GPSService that will be running in the background.
      */
     private void setupServiceConnection() {
-        serviceConnection = new ServiceConnection() {
+        mServiceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder service) {
                 // This is called when the connection with the service has been
                 // established
-                gpsService = ((GPSService.LocalBinder) service).getService();
+                mGpsService = ((GPSService.LocalBinder) service).getService();
                 Log.d(LOG_FLAG, "Successfully connected to service");
             }
 
             public void onServiceDisconnected(ComponentName className) {
                 // This is called when the connection with the service has been
                 // unexpectedly disconnected
-                gpsService = null;
+                mGpsService = null;
                 displayToastMessage(mContext.getResources().getString(R.string.gps_service_connection_dropped));
                 Log.d(LOG_FLAG, "Connection to service was dropped...");
             }
@@ -213,7 +213,7 @@ public final class GPSManager {
      */
     private void startTracking() {
         this.mIsTracking = true;
-        gpsPath = new GPSPath();
+        mGpsPath = new GPSPath();
         mInfoDisplay.requestLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.setTitle(BOTTOM_TABLE_ACCESS_ID, "Current hike");
         mInfoDisplay.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
@@ -224,8 +224,8 @@ public final class GPSManager {
             @Override
             public void onClick(View v) {
                 MapActivity mapActivity = (MapActivity)mContext;
-                if (lastFootPrint != null) {
-                    mapActivity.focusLatLng(lastFootPrint.getGeoCoords().toLatLng());
+                if (mLastFootPrint != null) {
+                    mapActivity.focusLatLng(mLastFootPrint.getGeoCoords().toLatLng());
                 }
             }
         });
@@ -240,11 +240,11 @@ public final class GPSManager {
     private void stopTracking() {
         this.mIsTracking = false;
         mNotification.hide();
-        Log.d(LOG_FLAG, "Saving GPSPath to memory: " + gpsPath.toString());
+        Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
         displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
-        gpsPath = null;
+        mGpsPath = null;
     }
 
     private void goToHikeEditor() {
@@ -259,9 +259,9 @@ public final class GPSManager {
      */
     private void toggleListeners() {
         if (mIsTracking) {
-            gpsService.enableListeners();
+            mGpsService.enableListeners();
         } else {
-            gpsService.disableListeners();
+            mGpsService.disableListeners();
         }
     }
 
@@ -323,7 +323,7 @@ public final class GPSManager {
     private void storeHike() {
         RawHikeData rawHikeData = null;
         try {
-            rawHikeData = GPSPathConverter.toRawHikeData(gpsPath);
+            rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
         } catch (Exception e) {
             //TODO
         }
