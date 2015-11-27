@@ -191,8 +191,7 @@ public final class DataManager {
     public long addNewUser(RawUserData rawUserData) throws DataManagerException {
 
         try {
-            long userId = sDatabaseClient.postUserData(rawUserData);
-            return userId;
+            return sDatabaseClient.postUserData(rawUserData);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }

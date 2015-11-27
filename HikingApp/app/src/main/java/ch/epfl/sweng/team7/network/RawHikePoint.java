@@ -20,9 +20,9 @@ public class RawHikePoint {
 
     private final static String LOG_FLAG = "Network_RawHikePoint";
 
-    private LatLng mPosition;
-    private Date mTime;         // UTC Timestamp
-    private double mElevation;
+    private final LatLng mPosition;
+    private final Date mTime;         // UTC Timestamp
+    private final double mElevation;
 
     public RawHikePoint(LatLng position, Date time, double elevation) {
         mPosition = position;

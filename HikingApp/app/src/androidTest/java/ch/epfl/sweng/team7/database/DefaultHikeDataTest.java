@@ -21,12 +21,12 @@ import static org.junit.Assert.*;
 
 public class DefaultHikeDataTest {
 
-    private long hikeId = 1;
-    private long ownerId = 1;
-    private Date date = new Date(1000101);
+    private final long hikeId = 1;
+    private final long ownerId = 1;
+    private final Date date = new Date(1000101);
     private List<RawHikePoint> rawHikePoints;
-    private LatLng startLocation = new LatLng(0, 0);
-    private LatLng finishLocation = new LatLng(15, 15);
+    private final LatLng startLocation = new LatLng(0, 0);
+    private final LatLng finishLocation = new LatLng(15, 15);
     private DefaultHikeData mDefaultHikeData;
     private static final double EPS_DOUBLE = 1e-10;
 

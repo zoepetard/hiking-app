@@ -10,7 +10,7 @@ package ch.epfl.sweng.team7.database;
  * Thrown to indicate a problem encountered by the {@link LocalCache} when
  * communicating to the footpath server.
  */
-public class LocalCacheException extends Exception {
+class LocalCacheException extends Exception {
 
     private final static String LOG_FLAG = "DB_LocalCacheException";
     private static final long serialVersionUID = 1L;

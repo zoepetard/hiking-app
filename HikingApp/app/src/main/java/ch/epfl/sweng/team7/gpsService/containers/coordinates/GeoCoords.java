@@ -89,6 +89,6 @@ public class GeoCoords {
         if (object == null) return false;
         if (!(object instanceof GeoCoords)) return false;
         GeoCoords other = (GeoCoords)object;
-        return other.getLatitude() == mLatitude && other.getLongitude() == mLongitude && other.getAltitude() == mAltitude;
+        return (other.getLatitude() == mLatitude && other.getLongitude() == mLongitude && other.getAltitude() == mAltitude);
     }
 }

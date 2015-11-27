@@ -37,8 +37,8 @@ import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
-    DatabaseClient mDatabaseClient;
+    private static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    private DatabaseClient mDatabaseClient;
 
     @Before
     public void setUp() throws Exception {
@@ -434,7 +434,7 @@ public class BackendTest extends TestCase {
      * Create a valid RawUserData object
      * @return a RawUserData object
      */
-    private static RawUserData createUserData() throws HikeParseException {
+    private static RawUserData createUserData() {
         return new RawUserData(-1, "Bort", "bort@googlemail.com");
     }
 
@@ -442,7 +442,7 @@ public class BackendTest extends TestCase {
      * Create a valid DatabaseClient object
      * @return a DatabaseClient object
      */
-    private static DatabaseClient createDatabaseClient() throws DatabaseClientException {
+    private static DatabaseClient createDatabaseClient() {
         return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 
