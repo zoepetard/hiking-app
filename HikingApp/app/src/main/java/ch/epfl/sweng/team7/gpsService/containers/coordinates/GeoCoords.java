@@ -5,35 +5,37 @@ import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Class that represents Geographic coordinates with latitude, longitude and altitude.
+ * Class that represents Geographic coordinates with mLatitude, mLongitude and mAltitude.
  * It is meant to be used solely as a container.
  */
 public class GeoCoords {
 
     private final static String LOG_FLAG = "GPS_GeoCoords";
 
-    private double latitude;
-    private double longitude;
-    private double altitude;
+    private double mLatitude;
+    private double mLongitude;
+    private double mAltitude;
 
     /**
-     * Class's constructor with separated latitude, longitude and altitude arguments
+     * Class's constructor with separated mLatitude, mLongitude and mAltitude arguments
      */
     public GeoCoords(double latitude, double longitude, double altitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.altitude = altitude;
+        mLatitude = latitude;
+        mLongitude = longitude;
+        mAltitude = altitude;
     }
 
     /**
-     * Class' constructor with LatLng and altitude as arguments.
+     * Class' constructor with LatLng and mAltitude as arguments.
      * To be used directly with GoogleMaps API values.
      */
     public GeoCoords(LatLng latLng, double altitude) throws NullPointerException {
-        if (latLng == null) throw new NullPointerException("Cannot create GeoCoords from null LatLng");
-        this.latitude = latLng.latitude;
-        this.longitude = latLng.longitude;
-        this.altitude = altitude;
+        if (latLng == null) {
+            throw new NullPointerException("Cannot create GeoCoords from null LatLng");
+        }
+        mLatitude = latLng.latitude;
+        mLongitude = latLng.longitude;
+        mAltitude = altitude;
     }
 
     /**
@@ -41,7 +43,7 @@ public class GeoCoords {
      * @return LatLng object
      */
     public LatLng toLatLng() {
-        return new LatLng(this.latitude, this.longitude);
+        return new LatLng(mLatitude, mLongitude);
     }
 
     /**
@@ -58,27 +60,27 @@ public class GeoCoords {
     }
 
     public double getLatitude() {
-        return this.latitude;
+        return mLatitude;
     }
 
     public double getLongitude() {
-        return this.longitude;
+        return mLongitude;
     }
 
     public double getAltitude() {
-        return this.altitude;
+        return mAltitude;
     }
 
     @Override
     public String toString() {
-        return String.format("(%f, %f, %f)", this.latitude, this.longitude, this.altitude);
+        return String.format("(%f, %f, %f)", mLatitude, mLongitude, mAltitude);
     }
 
     @Override
     public int hashCode() {
-        int latParcel = (int)((this.latitude != 0)?this.latitude:1);
-        int lngParcel = (int)((this.longitude != 0)?this.longitude:1);
-        int altParcel = (int)((this.altitude != 0)?this.altitude:1);
+        int latParcel = (int)((mLatitude != 0) ? mLatitude  : 1);
+        int lngParcel = (int)((mLongitude != 0)? mLongitude : 1);
+        int altParcel = (int)((mAltitude != 0) ? mAltitude  : 1);
         return latParcel * lngParcel * altParcel;
     }
 
@@ -87,9 +89,6 @@ public class GeoCoords {
         if (object == null) return false;
         if (!(object instanceof GeoCoords)) return false;
         GeoCoords other = (GeoCoords)object;
-        if (other.getLatitude() == this.latitude && other.getLongitude() == this.longitude && other.getAltitude() == this.altitude) {
-            return true;
-        }
-        return false;
+        return other.getLatitude() == mLatitude && other.getLongitude() == mLongitude && other.getAltitude() == mAltitude;
     }
 }
