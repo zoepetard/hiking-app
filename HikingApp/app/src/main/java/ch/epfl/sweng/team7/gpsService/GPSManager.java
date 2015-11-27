@@ -220,6 +220,15 @@ public final class GPSManager {
         mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
         mInfoDisplay.addInfoLine(BOTTOM_TABLE_ACCESS_ID, "");
         mInfoDisplay.show(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapActivity mapActivity = (MapActivity)mContext;
+                if (lastFootPrint != null) {
+                    mapActivity.focusLatLng(lastFootPrint.getGeoCoords().toLatLng());
+                }
+            }
+        });
         mNotification.display();
     }
 
