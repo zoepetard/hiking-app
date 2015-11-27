@@ -61,9 +61,10 @@
 
     <!-- IDs -->
     <item name="button_tracking_toggle" type="id" />
+    <item name="button_tracking_pause" type="id" />
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
-    <item name="button_save_hike" type="id"></item>
+    <item name="button_save_hike" type="id" />
 
     <!-- Save hike prompt -->
     <string name="button_save_hike">Save</string>
