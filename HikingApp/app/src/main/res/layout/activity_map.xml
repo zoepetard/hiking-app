@@ -36,7 +36,9 @@
         android:id="@+id/search_map_view"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/go_hikes_button" />
+        android:layout_toStartOf="@+id/go_hikes_button"
+        android:background="#ffffff"
+        android:alpha="0.7" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -46,6 +48,8 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/go_hikes_button"
         android:layout_above="@+id/mapTextTable"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:background="#ffffff"
+        android:alpha="0.7" />
 
 </RelativeLayout>

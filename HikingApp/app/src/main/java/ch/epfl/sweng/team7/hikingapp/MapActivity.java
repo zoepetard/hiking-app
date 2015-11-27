@@ -213,7 +213,9 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
-            if(postExecuteParams== null){return;} // TODO remove this when done
+            if (postExecuteParams == null) {
+                return;
+            } // TODO remove this when done
 
             List<HikeData> hikesFound = postExecuteParams.mHikesFound;
             LatLngBounds oldBounds = postExecuteParams.mOldBounds;
@@ -402,11 +404,13 @@ public class MapActivity extends FragmentActivity {
     private void setUpSearchView() {
 
         searchView = (SearchView) findViewById(R.id.search_map_view);
-        // setup suggestion list
+
+
         suggestionListView = (ListView) findViewById(R.id.search_suggestions_list);
         suggestionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
 
                 // move the camera to the location corresponding to clicked item
                 suggestionListView.setVisibility(View.GONE);
@@ -415,7 +419,7 @@ public class MapActivity extends FragmentActivity {
                 clickedLocation.getLatitude();
                 clickedLocation.getLongitude();
 
-                LatLng latLng = new LatLng(clickedLocation.getLatitude(),clickedLocation.getLongitude());
+                LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
                 CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
                 CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
 
@@ -441,7 +445,7 @@ public class MapActivity extends FragmentActivity {
                     for (int i = 0; i < locationAddressList.size(); i++) {
                         suggestions.add(locationAddressList.get(i).getFeatureName());
                     }
-                    if(suggestions.size() == 0){
+                    if (suggestions.size() == 0) {
                         suggestions.add("No results");
                     }
                 } catch (IOException e) {
@@ -459,7 +463,7 @@ public class MapActivity extends FragmentActivity {
                 List<String> suggestions = new ArrayList<String>();
 
                 // Provide suggestions if input text is at least 4 characters
-                if(newText.length() >= 4) {
+                if (newText.length() >= 4) {
                     try {
                         locationAddressList = mGeocoder.getFromLocationName(newText, 5);
                         for (int i = 0; i < locationAddressList.size(); i++) {
@@ -473,7 +477,7 @@ public class MapActivity extends FragmentActivity {
                     suggestionList.addAll(suggestions);
                     suggestionAdapter.notifyDataSetChanged();
                     suggestionListView.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     suggestionListView.setVisibility(View.GONE);
                 }
                 return false;
