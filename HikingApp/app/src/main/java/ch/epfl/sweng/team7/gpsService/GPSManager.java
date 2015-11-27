@@ -225,7 +225,7 @@ public final class GPSManager {
             public void onClick(View v) {
                 MapActivity mapActivity = (MapActivity)mContext;
                 if (mLastFootPrint != null) {
-                    mapActivity.focusLatLng(mLastFootPrint.getGeoCoords().toLatLng());
+                    mapActivity.focusOnLatLng(mLastFootPrint.getGeoCoords().toLatLng());
                 }
             }
         });
