@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ public class MapActivity extends FragmentActivity {
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
     private boolean mFollowingUser = false;
+    private Polyline mPolyRef;
+    private PolylineOptions mCurHike;
 
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -180,8 +183,13 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onMyLocationChange(Location location) {
                 if (mFollowingUser) {
-                    focusOnLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                    //TODO draw point at user location
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    focusOnLatLng(latLng);
+                    if (mGps.tracking() && !mGps.paused()) {
+                        List<LatLng> points = mPolyRef.getPoints();
+                        points.add(latLng);
+                        mPolyRef.setPoints(points);
+                    }
                 }
             }
         });
@@ -361,9 +369,11 @@ public class MapActivity extends FragmentActivity {
                     toggleButton.setText(R.string.button_stop_tracking);
                     pauseButton.setVisibility(View.VISIBLE);
                     pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                    startHikeDisplay();
                 } else {
                     toggleButton.setText(R.string.button_start_tracking);
                     pauseButton.setVisibility(View.INVISIBLE);
+                    stopHikeDisplay();
                 }
             }
         });
@@ -450,5 +460,14 @@ public class MapActivity extends FragmentActivity {
 
     public void startFollowingUser() {
         mFollowingUser = true;
+    }
+
+    private void startHikeDisplay() {
+        mCurHike = new PolylineOptions();
+        mPolyRef = mMap.addPolyline(mCurHike);
+    }
+
+    private void stopHikeDisplay() {
+        //TODO do something when we stop hiking..?
     }
 }
