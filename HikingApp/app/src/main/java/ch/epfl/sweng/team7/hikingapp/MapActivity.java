@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.location.Geocoder;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -66,6 +68,7 @@ public class MapActivity extends FragmentActivity {
     ArrayAdapter<String> suggestionAdapter;
     private Context context;
     private Geocoder mGeocoder;
+    private List<Address> locationAddressList = new ArrayList<>();
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
 
@@ -210,6 +213,8 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
+            if(postExecuteParams== null){return;} // TODO remove this when done
+
             List<HikeData> hikesFound = postExecuteParams.mHikesFound;
             LatLngBounds oldBounds = postExecuteParams.mOldBounds;
             boolean firstHike = postExecuteParams.mFirstHike;
@@ -402,16 +407,22 @@ public class MapActivity extends FragmentActivity {
         suggestionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO retrieve lat lng from clicked item and center on that location.
 
-                /*
-                CameraUpdate center = CameraUpdateFactory();
-                CameraUpdate zoom = CameraUpdateFactory("Zoom",15);
-                mMap.moveCamera();
-                nMap.animateCamera(zoom);
-                */
-
+                // move the camera to the location corresponding to clicked item
                 suggestionListView.setVisibility(View.GONE);
+                Address clickedLocation = locationAddressList.get(position);
+
+                clickedLocation.getLatitude();
+                clickedLocation.getLongitude();
+
+                LatLng latLng = new LatLng(clickedLocation.getLatitude(),clickedLocation.getLongitude());
+                CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
+                CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+
+                mMap.moveCamera(center);
+                mMap.animateCamera(zoom);
+
+                // TODO display hikes from bounds
             }
         });
 
@@ -425,27 +436,46 @@ public class MapActivity extends FragmentActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 List<String> suggestions = new ArrayList<String>();
-                try{
-                    List<Address> searchResults = mGeocoder.getFromLocationName(query,5);
-                    for(int i = 0; i<searchResults.size();i++){
-                        suggestions.add(searchResults.get(i).getFeatureName());
+                try {
+                    locationAddressList = mGeocoder.getFromLocationName(query, 5);
+                    for (int i = 0; i < locationAddressList.size(); i++) {
+                        suggestions.add(locationAddressList.get(i).getFeatureName());
                     }
-                }catch(IOException e){
+                    if(suggestions.size() == 0){
+                        suggestions.add("No results");
+                    }
+                } catch (IOException e) {
                     suggestions.add("No results");
                 }
                 suggestionList.clear();
                 suggestionList.addAll(suggestions);
                 suggestionAdapter.notifyDataSetChanged();
-                suggestionListView.setVisibility(View.VISIBLE);
 
-
-
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                suggestionListView.setVisibility(View.VISIBLE);
+                List<String> suggestions = new ArrayList<String>();
+
+                // Provide suggestions if input text is at least 4 characters
+                if(newText.length() >= 4) {
+                    try {
+                        locationAddressList = mGeocoder.getFromLocationName(newText, 5);
+                        for (int i = 0; i < locationAddressList.size(); i++) {
+                            suggestions.add(locationAddressList.get(i).getFeatureName());
+                        }
+
+                    } catch (IOException e) {
+                        suggestions.add("No results");
+                    }
+                    suggestionList.clear();
+                    suggestionList.addAll(suggestions);
+                    suggestionAdapter.notifyDataSetChanged();
+                    suggestionListView.setVisibility(View.VISIBLE);
+                }else {
+                    suggestionListView.setVisibility(View.GONE);
+                }
                 return false;
             }
         });
