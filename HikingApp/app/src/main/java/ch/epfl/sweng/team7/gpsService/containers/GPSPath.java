@@ -22,6 +22,10 @@ public final class GPSPath {
         this.mTotalTime = 0;
     }
 
+    public void addFootPrint(GPSFootPrint newFootPrint) {
+        addFootPrint(newFootPrint, false);
+    }
+
     public void addFootPrint(GPSFootPrint newFootPrint, boolean resumeFootPrint) {
         if (path.size() >= 1 && !resumeFootPrint) mTotalTime += newFootPrint.getTimeStamp() - path.get(path.size() - 1).getTimeStamp();
         if (newFootPrint != null) path.add(newFootPrint);
