@@ -110,7 +110,7 @@ public final class GPSManager {
      *
      * @return true if it is tracking, false otherwise
      */
-    public Boolean tracking() {
+    public boolean tracking() {
         return mIsTracking;
     }
 
@@ -119,7 +119,7 @@ public final class GPSManager {
      *
      * @return true if it is paused, false otherwise
      */
-    public Boolean paused() {
+    public boolean paused() {
         return mIsPaused;
     }
 
