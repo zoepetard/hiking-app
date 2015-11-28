@@ -199,19 +199,23 @@ def login_user(request):
     logger.info("Searching for user with email "+request_user_email)
     user = find_user_with_email(request_user_email)
     if not user:
-        request_user_name = login_request['user_name_hint']
-        user = build_user_from_name_and_address(request_user_name, request_user_email)
+        name = login_request['user_name_hint']
+        id_token = login_request['id_token']
+        user = build_user_from_name_and_address(name, request_user_email, id_token)
+        logger.error("built user "+repr(user))
         if not user:
             return response_internal_error()
         user.put()
-    
-    return response_data(user.to_json())
+
+    logger.error("found user "+repr(user))
+    logger.error("user token is "+user.db_token)
+    return response_data(user.to_login_json())
 
 
 # Get the user ID from an email address. Returns -1 on not found.
 # Returns ID of some user if more than one user have the same address.
 def find_user_with_email(mail_address):
-    users = User.query(User.mail_address == mail_address).fetch(100)
+    users = User.query(User.mail_address == mail_address).fetch()
     if users and len(users)>0:
         logger.info("Found "+repr(len(users))+" user(s) with email "+mail_address+"!")
         return users[0]
@@ -247,6 +251,9 @@ def post_user(request):
         # Set the new user's database key to an existing one,
         # so that one will be overwritten
         user.key = ndb.Key(User, user.request_user_id)
+        user.db_token = old_user.db_token
+    else:
+        return response_bad_request()
 
     # Store new user in database and return the new id
     new_key = user.put()
@@ -294,11 +301,6 @@ def delete_user(request):
         return response_not_found()
 
     user_obj.key.delete()
-
-    # Temporary: Clean Database of test users
-    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
-    for test_user in test_users:
-        test_user.key.delete()        
 
     return response_data('')
 
@@ -471,7 +473,7 @@ def clean_datastore():
             comment.key.delete()
             continue
 
-        if(comment.user_id < 1):
+        if(comment.owner_id < 1):
             comment.key.delete()
             continue
         
@@ -481,7 +483,7 @@ def clean_datastore():
             comment.key.delete()
 
         # Remove orphaned comments
-        user = ndb.Key(User, comment.user_id).get()
+        user = ndb.Key(User, comment.owner_id).get()
         if not user:
             comment.key.delete()
 
@@ -496,6 +498,13 @@ def clean_datastore():
         owner = ndb.Key(User, image.owner_id).get()
         if not owner:
             hike.key.delete()
+
+    # Clean Database of test user
+    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
+    for test_user in test_users:
+        test_user.key.delete()
+
+    return
 
 
 # Delete datastore: Remove all entities except the long hikes
@@ -514,8 +523,6 @@ def delete_datastore(request):
     images = Image.query().fetch()
     for img in images:
         img.key.delete()
-
-
 
     return response_data('')
 

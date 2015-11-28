@@ -303,7 +303,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             return Drawable.createFromStream(bis, "");
-        } catch (IOException e) {
+        } catch (IOException|JSONException e) {
             throw new DatabaseClientException("ImageManager Error: " + e);
         }
     }
@@ -416,7 +416,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @return a valid HttpConnection
      * @throws IOException
      */
-    private HttpURLConnection getConnection(String function, String method) throws IOException {
+    private HttpURLConnection getConnection(String function, String method) throws IOException, JSONException {
         URL url = new URL(mServerUrl + "/" + function + "/");
         HttpURLConnection conn = mNetworkProvider.getConnection(url);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -427,7 +427,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
         // Authentication
         SignedInUser signedInUser = SignedInUser.getInstance();
-        conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
+        //conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
+        conn.setRequestProperty("auth_header", signedInUser.buildAuthHeader().toString());
         return conn;
     }
 

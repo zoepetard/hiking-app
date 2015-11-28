@@ -44,7 +44,7 @@ public class BackendTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         mDatabaseClient = createDatabaseClient();
-        mDatabaseClient.loginUser(new LoginRequest("bort@googlemail.com", "Bort"));
+        mDatabaseClient.loginUser(new LoginRequest("bort@googlemail.com", "Bort", ""));
     }
 
     /**
@@ -172,7 +172,6 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow() throws Exception {
-        waitForServerSync();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
 
@@ -229,17 +228,18 @@ public class BackendTest extends TestCase {
     public void testPostUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
+        assertTrue("Server should set positive user ID", userId > 0);
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);
+        waitForServerSync();
     }
 
     @Test
     public void testGetUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
+        assertTrue("Server should set positive user ID", userId > 0);
 
         waitForServerSync();
         RawUserData serverRawUserData = mDatabaseClient.fetchUserData(userId);
@@ -247,9 +247,6 @@ public class BackendTest extends TestCase {
         assertEquals(userId, serverRawUserData.getUserId());
         assertEquals(rawUserData.getMailAddress(), serverRawUserData.getMailAddress());
         assertEquals(rawUserData.getUserName(), serverRawUserData.getUserName());
-
-        waitForServerSync();
-        mDatabaseClient.deleteUser(userId);
     }
 
     @Test
