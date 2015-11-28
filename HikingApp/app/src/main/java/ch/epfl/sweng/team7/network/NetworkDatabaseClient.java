@@ -9,11 +9,9 @@
 package ch.epfl.sweng.team7.network;
 
 
-
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -279,6 +277,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
+<<<<<<< HEAD
     /**
      * TODO DEPRECATED - remove from code
      *
@@ -428,6 +427,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
+
 
     /**
      * Post a comment to the database

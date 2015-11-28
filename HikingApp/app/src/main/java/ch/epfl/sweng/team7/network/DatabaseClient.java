@@ -127,7 +127,6 @@ public interface DatabaseClient {
      */
     void deleteUser(long userId) throws DatabaseClientException;
 
-
     /**
      * Get an image from the database
      * @param imageId the database key of the image
@@ -138,14 +137,6 @@ public interface DatabaseClient {
     Drawable getImage(long imageId) throws DatabaseClientException;
 
 
-    /**
-     * Post an image to the database
-     * @param drawable an image, here as drawable
-     * @return the database key of that image
-     * @throws DatabaseClientException
-     */
-
-    long postImage(Drawable drawable, long id) throws DatabaseClientException;
 
     /**
      * Post an image to the database
@@ -154,8 +145,6 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     long postImage(Drawable drawable) throws DatabaseClientException;
-
-
 
     /**
      * Delete an image from the database
