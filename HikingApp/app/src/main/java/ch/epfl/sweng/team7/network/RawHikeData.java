@@ -32,6 +32,7 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.HikePoint;
 
+
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
  * Additional annotations will be added here rather than in the RawHikePoint class, to simplify
@@ -61,9 +62,9 @@ public class RawHikeData {
      * @throws IllegalArgumentException
      */
 
+
     public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
                        List<RawHikeComment> comments, String title, List<Annotation> annotations) {
-
 
 
         // Argument checks
@@ -136,8 +137,10 @@ public class RawHikeData {
 
     public String getTitle() {
         return mTitle;
-    }
 
+    /**
+     * Returns the list of annotations
+     */
     public List<Annotation> getAnnotations() {
         if (mAnnotations.size() < 1){
             return null;
@@ -254,7 +257,6 @@ public class RawHikeData {
             for(int i = 0; i < jsonAnnotations.length(); i++){
                 annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
             }
-
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
             List<Annotation> annotations = new ArrayList<>();
             for(int i = 0; i < jsonAnnotations.length(); i++){

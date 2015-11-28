@@ -90,4 +90,5 @@ public interface HikeData {
 
     List<Annotation> getAnnotations();
 
+
 }

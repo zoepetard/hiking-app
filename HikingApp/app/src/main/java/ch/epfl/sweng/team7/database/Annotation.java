@@ -38,7 +38,7 @@ public class Annotation {
         mPictureId = pictureId;
     }
 
-    public void setmPicture (Drawable picture) {
+    public void setPicture (Drawable picture) {
         mPicture = picture;
     }
 

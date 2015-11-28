@@ -45,7 +45,6 @@ public class DefaultHikeData implements HikeData {
     private final List<HikeComment> mComments;
 
     private final List<Annotation> mAnnotations;
-
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -76,11 +75,12 @@ public class DefaultHikeData implements HikeData {
         mComments = new ArrayList<>();
         for (RawHikeComment rawHikeComment : rawHikeComments) {
             mComments.add(new DefaultHikeComment(rawHikeComment));
+        }
 
-        List<TextAnnotation> textAnnotations = rawHikeData.getAnnotations();
-        mTextAnnotations = new ArrayList<>();
-        for(TextAnnotation textAnnotation : textAnnotations){
-            mTextAnnotations.add(textAnnotation);
+        List<Annotation> annotations = rawHikeData.getAnnotations();
+        mAnnotations = new ArrayList<>();
+        for(Annotation annotation : annotations){
+            mAnnotations.add(annotation);
         }
 
         List<Annotation> annotations = rawHikeData.getAnnotations();
@@ -222,13 +222,11 @@ public class DefaultHikeData implements HikeData {
         return mTitle;
     }
 
-<<<<<<< HEAD
+
 
 
     public List<Annotation> getAnnotations() { return mAnnotations; }
-=======
-    public List<TextAnnotation> getTextAnnotations() { return mTextAnnotations; }
->>>>>>> Implement all the backend Text/Picture annotations, to be tested
+
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;
