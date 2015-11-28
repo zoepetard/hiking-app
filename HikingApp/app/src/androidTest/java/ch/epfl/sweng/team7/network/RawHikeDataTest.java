@@ -18,6 +18,7 @@ import org.xml.sax.InputSource;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class RawHikeDataTest extends TestCase {
 
     @Test
     public void testParseFromGPX() throws Exception {
+        Calendar cal = Calendar.getInstance();
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(new InputSource(new StringReader(PROPER_GPX_ONEHIKE)));
@@ -75,13 +77,20 @@ public class RawHikeDataTest extends TestCase {
         assertEquals(0, rawHikeData.getOwnerId());
         //assertEquals("Rochers de Naye", rawHikeData.getTitle()); TODO uncomment when title is implemented
         assertEquals(2, rawHikeData.getHikePoints().size());
+        cal.setTime(rawHikeData.getHikePoints().get(0).getTime());
         assertEquals(46.451290, rawHikeData.getHikePoints().get(0).getPosition().latitude, EPS_DOUBLE);
         assertEquals(6.976647, rawHikeData.getHikePoints().get(0).getPosition().longitude, EPS_DOUBLE);
-        assertEquals(1448657355000l, rawHikeData.getHikePoints().get(0).getTime().getTime());
+        assertEquals(2015, cal.get(Calendar.YEAR));
+        assertEquals(Calendar.NOVEMBER, cal.get(Calendar.MONTH));
+        assertEquals(27, cal.get(Calendar.DAY_OF_MONTH));
+        assertEquals(15, cal.get(Calendar.SECOND));
         assertEquals(1509.0, rawHikeData.getHikePoints().get(0).getElevation(), EPS_DOUBLE);
+
+        cal.setTime(rawHikeData.getHikePoints().get(1).getTime());
         assertEquals(46.451195, rawHikeData.getHikePoints().get(1).getPosition().latitude, EPS_DOUBLE);
         assertEquals(6.976807, rawHikeData.getHikePoints().get(1).getPosition().longitude, EPS_DOUBLE);
-        assertEquals(1448657395000l, rawHikeData.getHikePoints().get(1).getTime().getTime());
+        assertEquals(2015, cal.get(Calendar.YEAR));
+        assertEquals(55, cal.get(Calendar.SECOND));
         assertEquals(1512.0, rawHikeData.getHikePoints().get(1).getElevation(), EPS_DOUBLE);
     }
 
