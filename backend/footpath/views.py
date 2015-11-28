@@ -31,7 +31,8 @@ def get_hike(request):
     comments = get_comment_list(request_hike_id)
     logger.error("Comments are "+str(len(comments)))
     return response_data(hike.to_json(comments))
-    
+
+
 # Temporary: Function to quickly see the database in browser
 # Get multiple hikes, as specified in a list inside the field
 # hike_ids of the GET request
@@ -101,7 +102,8 @@ def get_hikes_of_user(request):
 # and location information. Currently only formats the ID.
 def hike_location(hike):
     return str(hike.key.id()).strip('L')
-    
+
+
 def post_hike(request):
     
     visitor_id = authenticate(request)
@@ -157,6 +159,7 @@ def post_hike(request):
 
     return response_id('hike_id', new_key.id())
 
+
 # Delete a user. The hike can only be deleted by its author.
 def delete_hike(request):
     
@@ -186,18 +189,21 @@ def delete_hike(request):
 # Login a user. The email address is stored in the http request field "user_mail_address"
 def login_user(request):
     
-    request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
-    if len(request_user_email) == 0:
+    login_request = request.META.get('HTTP_LOGIN_REQUEST', '')
+    if len(login_request) == 0:
         return response_bad_request()
+
+    login_request = json.loads(login_request)
+    request_user_email = login_request['mail_address']
     
     logger.info("Searching for user with email "+request_user_email)
-    request_user_id = find_user_with_email(request_user_email)
-    if request_user_id < 0:
-        return response_not_found()
-    
-    user = ndb.Key(User, request_user_id).get()
+    user = find_user_with_email(request_user_email)
     if not user:
-        return response_not_found()
+        request_user_name = login_request['user_name_hint']
+        user = build_user_from_name_and_address(request_user_name, request_user_email)
+        if not user:
+            return response_internal_error()
+        user.put()
     
     return response_data(user.to_json())
 
@@ -208,8 +214,8 @@ def find_user_with_email(mail_address):
     users = User.query(User.mail_address == mail_address).fetch(100)
     if users and len(users)>0:
         logger.info("Found "+repr(len(users))+" user(s) with email "+mail_address+"!")
-        return users[0].key.id()
-    return -1
+        return users[0]
+    return None
 
 
 # Create a new user in the database, or update a current one
@@ -224,13 +230,13 @@ def post_user(request):
     
     logger.info('POST request '+repr(request.body))
     
-    # Create new Hike object
+    # Create new User object
     user = build_user_from_json(request.body)
     if not user:
         return response_bad_request()
 
     # If update hike: Authenticate and check for existing hikes in database
-    if(user.request_user_id >= 0):
+    if(user.request_user_id > 0):
         old_user = ndb.Key(User, user.request_user_id).get()
         
         if not old_user:
@@ -241,11 +247,6 @@ def post_user(request):
         # Set the new user's database key to an existing one,
         # so that one will be overwritten
         user.key = ndb.Key(User, user.request_user_id)
-
-    # Temporary: Clean Database of test users
-    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
-    for test_user in test_users:
-        test_user.key.delete()
 
     # Store new user in database and return the new id
     new_key = user.put()
@@ -263,16 +264,8 @@ def get_user(request):
     request_user_id = int(request.META.get('HTTP_USER_ID', -1))
     logger.info('get_user got request for user id %s', repr(request_user_id))
 
-    # Find user id via email lookup
-    # this feature will be removed soon
-    if request_user_id < 0:
-        request_user_email = request.META.get('HTTP_USER_MAIL_ADDRESS', '')
-        if len(request_user_email) > 0:
-            request_user_id = find_user_with_email(request_user_email)
-
-
-    if request_user_id < 0:
-        return response_not_found()
+    if request_user_id <= 0:
+        return response_bad_request()
     
     user = ndb.Key(User, request_user_id).get()
     if not user:
@@ -299,8 +292,14 @@ def delete_user(request):
     user_obj = ndb.Key(User, delete_user_id).get()
     if not user_obj:
         return response_not_found()
-                         
+
     user_obj.key.delete()
+
+    # Temporary: Clean Database of test users
+    test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
+    for test_user in test_users:
+        test_user.key.delete()        
+
     return response_data('')
 
 

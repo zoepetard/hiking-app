@@ -41,3 +41,9 @@ def build_user_from_json(json_string):
     if(user.from_json(json_string)):
         return user
     return None
+
+def build_user_from_name_and_address(name, mail_address):
+    user = User()
+    user.name = name
+    user.mail_address = mail_address
+    return user

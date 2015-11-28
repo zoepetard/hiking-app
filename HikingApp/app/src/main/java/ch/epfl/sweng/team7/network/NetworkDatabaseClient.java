@@ -258,9 +258,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             signedInUser.loginFromJSON(new JSONObject(stringResponse));
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException|JSONException e) {
             throw new DatabaseClientException(e);
         }
     }

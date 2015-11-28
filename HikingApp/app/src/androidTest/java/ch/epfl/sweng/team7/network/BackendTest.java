@@ -23,6 +23,7 @@ import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 
@@ -37,12 +38,13 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    private static final String SERVER_URL = "http://10.0.3.2:8080";//"https://footpath-1104.appspot.com";//
     private DatabaseClient mDatabaseClient;
 
     @Before
     public void setUp() throws Exception {
         mDatabaseClient = createDatabaseClient();
+        mDatabaseClient.loginUser(new LoginRequest("bort@googlemail.com", "Bort"));
     }
 
     /**
@@ -270,10 +272,8 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikeIdsOfUser() throws Exception {
-        RawUserData rawUserData = createUserData();
-        long userId = mDatabaseClient.postUserData(rawUserData);
+        Long userId = SignedInUser.getInstance().getId();
 
-        waitForServerSync();
         RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints());
         final long hikeId = mDatabaseClient.postHike(hikeData);
 
@@ -284,22 +284,12 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testLoginUser() throws Exception {
-
-        RawUserData rawUserData = createUserData();
-        long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
-
         SignedInUser signedInUser = SignedInUser.getInstance();
-        signedInUser.init(-1, rawUserData.getMailAddress());
+        assertTrue("User not logged in", signedInUser.getLoggedIn());
+        assertTrue("User ID not set", signedInUser.getId() > 0);
+        RawUserData rawUserData = mDatabaseClient.fetchUserData(signedInUser.getId());
 
-        waitForServerSync();
-
-        mDatabaseClient.loginUser(null);//TODO(simon)
-
-        waitForServerSync();
-        mDatabaseClient.deleteUser(userId);
-
-        assertEquals(userId, signedInUser.getId());
+        assertEquals(rawUserData.getUserId(), signedInUser.getId());
         assertEquals(rawUserData.getMailAddress(), signedInUser.getMailAddress());
     }
 
@@ -434,7 +424,7 @@ public class BackendTest extends TestCase {
      * @return a RawUserData object
      */
     private static RawUserData createUserData() {
-        return new RawUserData(-1, "Bort", "bort@googlemail.com");
+        return new RawUserData(SignedInUser.getInstance().getId(), "Bort", "bort@googlemail.com");
     }
 
     /**
