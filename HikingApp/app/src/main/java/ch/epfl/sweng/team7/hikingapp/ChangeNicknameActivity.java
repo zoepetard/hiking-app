@@ -1,10 +1,12 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.view.View;
 import android.widget.EditText;
+
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 public class ChangeNicknameActivity extends Activity {
 

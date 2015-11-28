@@ -1,9 +1,7 @@
-package ch.epfl.sweng.team7.hikingapp;
+package ch.epfl.sweng.team7.authentication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
  * Creates a singleton representation of the user that is signed in
@@ -11,7 +9,6 @@ import ch.epfl.sweng.team7.network.RawUserData;
 public class SignedInUser {
 
     private long mId;
-    private String mUserName;
     private String mMailAddress;
     private boolean mLoggedIn;
 
@@ -27,18 +24,13 @@ public class SignedInUser {
         return SignedInUserHolder.INSTANCE;
     }
 
-    public void init(long id, String userName, String mailAddress) {
+    public void init(long id, String mailAddress) {
         mId = id;
-        mUserName = userName;
         mMailAddress = mailAddress;
     }
 
     public long getId() {
         return mId;
-    }
-
-    public String getUserName() {
-        return mUserName;
     }
 
     public String getMailAddress() {
@@ -55,12 +47,8 @@ public class SignedInUser {
      * @param jsonObject the return JSON of the server login_user request
      */
     public void loginFromJSON(JSONObject jsonObject) throws JSONException {
-        RawUserData rawUserData = RawUserData.parseFromJSON(jsonObject);
-        if(!mMailAddress.equals(rawUserData.getMailAddress())) {
-            throw new JSONException("User email address does not match previous.");
-        }
-        mUserName = rawUserData.getUserName();
-        mId = rawUserData.getUserId();
+        mMailAddress = jsonObject.getString("mail_address");
+        mId = jsonObject.getInt("user_id");
         mLoggedIn = true;
     }
 }

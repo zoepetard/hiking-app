@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 
 /**

@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 
 /**
@@ -290,7 +290,7 @@ public class BackendTest extends TestCase {
         assertTrue("Server should set positive user ID", userId >= 0);
 
         SignedInUser signedInUser = SignedInUser.getInstance();
-        signedInUser.init(-1, "Name Unset", rawUserData.getMailAddress());
+        signedInUser.init(-1, rawUserData.getMailAddress());
 
         waitForServerSync();
 
@@ -301,7 +301,6 @@ public class BackendTest extends TestCase {
 
         assertEquals(userId, signedInUser.getId());
         assertEquals(rawUserData.getMailAddress(), signedInUser.getMailAddress());
-        assertEquals(rawUserData.getUserName(), signedInUser.getUserName());
     }
 
     /**

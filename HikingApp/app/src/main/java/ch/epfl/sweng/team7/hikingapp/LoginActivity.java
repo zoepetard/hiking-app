@@ -42,6 +42,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 
@@ -82,7 +83,7 @@ public class LoginActivity extends Activity implements
     // [END resolution_variables]
 
     // Initialize the object for the signed in user
-    private ch.epfl.sweng.team7.hikingapp.SignedInUser mSignedInUser = ch.epfl.sweng.team7.hikingapp.SignedInUser.getInstance();
+    private SignedInUser mSignedInUser = SignedInUser.getInstance();
 
     DataManager mDataManager = DataManager.getInstance();
 
@@ -336,7 +337,7 @@ public class LoginActivity extends Activity implements
                 /*mSignedInUser.init(userData.getUserId(),
                         userData.getUserName(),
                         userData.getMailAddress()); TODO(simon) remove*/
-            if(ch.epfl.sweng.team7.hikingapp.SignedInUser.getInstance().getLoggedIn()) {
+            if(SignedInUser.getInstance().getLoggedIn()) {
                 showSignedInUI();
             } else {
 
