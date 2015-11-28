@@ -23,6 +23,8 @@ def get_hike(request):
     
     request_hike_id = int(request.META.get('HTTP_HIKE_ID', -1))
     logger.info('got request for hike id %s', repr(request_hike_id))
+    if request_hike_id <= 0:
+        return response_bad_request()
     
     hike = ndb.Key(Hike, request_hike_id).get()
     if not hike:
@@ -170,7 +172,16 @@ def login_user(request):
     
     login_request = request.META.get('HTTP_LOGIN_REQUEST', '')
     if len(login_request) == 0:
-        return response_bad_request()
+        #return response_bad_request() TODO(simon) compatibility activate
+        #logger.error(repr(request))
+        user = find_user_with_email(request.META.get('HTTP_USER_MAIL_ADDRESS', ''))
+    
+        test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
+        for test_user in test_users:
+            if test_user.key.id() != user.key.id():
+                test_user.key.delete()
+
+        return response_data(user.to_json())
 
     login_request = json.loads(login_request)
     request_user_email = login_request['mail_address']
@@ -215,10 +226,16 @@ def post_user(request):
     if not user:
         return response_bad_request()
 
+    if user.request_user_id <= 0:
+        #return response_bad_request() TODO(simon) compatibility activate
+        user.put()
+        user.request_user_id = user.key.id()
+
+    
     # If update hike: Authenticate and check for existing hikes in database
     if not has_write_permission(visitor_id, user.request_user_id):
         return response_forbidden()
-        
+    
     old_user = ndb.Key(User, user.request_user_id).get()
         
     if not old_user:
