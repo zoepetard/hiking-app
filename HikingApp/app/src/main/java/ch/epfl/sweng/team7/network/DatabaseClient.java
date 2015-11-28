@@ -106,13 +106,6 @@ public interface DatabaseClient {
     void deleteUser(long userId) throws DatabaseClientException;
 
     /**
-     * TODO DEPRECATED DELETE
-     * @param mailAddress - used to query server
-     * @return RawUserData - corresponding to user's mail address
-     */
-    RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
-
-    /**
      * Get an image from the database
      * @param imageId the database key of the image
      * @return the image

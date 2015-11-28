@@ -85,14 +85,6 @@ public class MockServerTest extends TestCase {
     }
 
     @Test
-    public void testFetchUserByMail() throws Exception {
-        String mail = "bort@googlemail.com";
-        RawUserData rawUserData = mMockServer.fetchUserData(mail);
-        assertEquals("ID mismatch", rawUserData.getUserId(), mUserBortId);
-        assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
-    }
-
-    @Test
     public void testFetchUserById() throws Exception {
         long id = 1;
         RawUserData rawUserData = mMockServer.fetchUserData(mUserBortId);

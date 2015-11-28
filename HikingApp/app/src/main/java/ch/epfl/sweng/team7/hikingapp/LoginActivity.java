@@ -288,6 +288,7 @@ public class LoginActivity extends Activity implements
 
                 LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName);
                 mDataManager.loginUser(loginRequest);
+
             } catch (DataManagerException e) {
                 Log.d(TAG, "Failed to add new user: " + e.getMessage());
             }
