@@ -22,8 +22,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,8 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -50,8 +46,6 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.DefaultUserData;
 import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.network.RawUserData;
-
-import java.io.InputStream;
 
 // TODO: test login as part of the integration test
 
@@ -90,7 +84,7 @@ public class LoginActivity extends Activity implements
     // [END resolution_variables]
 
     // Initialize the object for the signed in user
-    private SignedInUser mSignedInUser = SignedInUser.getInstance();
+    private ch.epfl.sweng.team7.hikingapp.SignedInUser mSignedInUser = ch.epfl.sweng.team7.hikingapp.SignedInUser.getInstance();
 
     DataManager mDataManager = DataManager.getInstance();
 
@@ -272,10 +266,7 @@ public class LoginActivity extends Activity implements
             }
         }
 
-
         new UserAuthenticator().execute(mailAddress);
-
-
     }
     // [END on_connected]
 
@@ -328,12 +319,12 @@ public class LoginActivity extends Activity implements
 
 
             // Initialize the object for the signed in user, sign out if userData == null
-            if (userData != null) {
+            //if (userData != null) {
 
-                mSignedInUser.init(userData.getUserId(),
+                /*mSignedInUser.init(userData.getUserId(),
                         userData.getUserName(),
-                        userData.getMailAddress());
-
+                        userData.getMailAddress()); TODO(simon) remove*/
+            if(ch.epfl.sweng.team7.hikingapp.SignedInUser.getInstance().getLoggedIn()) {
                 showSignedInUI();
             } else {
 

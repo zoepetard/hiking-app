@@ -37,7 +37,7 @@ import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    private static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
     private DatabaseClient mDatabaseClient;
 
     @Before
@@ -52,7 +52,7 @@ public class BackendTest extends TestCase {
     public void testCanOpenNetwork() throws IOException {
 
         // Create a URL
-        URL url = new URL("http://www.epfl.ch");
+        URL url = new URL("https://www.epfl.ch");
 
         // Get a DefaultNetworkProvider connection
         DefaultNetworkProvider networkProvider = new DefaultNetworkProvider();
@@ -294,7 +294,7 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
 
-        mDatabaseClient.loginUser();
+        mDatabaseClient.loginUser(null);//TODO(simon)
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);

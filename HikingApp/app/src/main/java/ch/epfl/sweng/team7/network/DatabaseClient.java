@@ -13,6 +13,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
+
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
  * communication protocol and data formats.
@@ -88,7 +90,12 @@ public interface DatabaseClient {
      */
     RawUserData fetchUserData(long userId) throws DatabaseClientException;
 
-    void loginUser() throws DatabaseClientException;
+    /**
+     * Log user into the server, i.e. get user profile information
+     * @param loginRequest
+     * @throws DatabaseClientException
+     */
+    void loginUser(LoginRequest loginRequest) throws DatabaseClientException;
 
     /**
      * Delete a user from the server. A user can only delete himself.

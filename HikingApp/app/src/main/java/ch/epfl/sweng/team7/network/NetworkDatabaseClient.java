@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 
 
@@ -267,18 +268,19 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * Logs in the SignedInUser
+     * Log user into the server, i.e. get user profile information
+     * @param loginRequest
+     * @throws DatabaseClientException
      */
-    public void loginUser() throws DatabaseClientException {
+    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
 
         try {
             HttpURLConnection conn = getConnection("login_user", "GET");
-            conn.setRequestProperty("user_mail_address", signedInUser.getMailAddress());
+            conn.setRequestProperty("login_request", loginRequest.toJSON().toString());
             conn.connect();
-            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            signedInUser.loginFromJSON(jsonObject);
+            String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            signedInUser.loginFromJSON(new JSONObject(stringResponse));
         } catch (IOException e) {
             throw new DatabaseClientException(e);
         } catch (JSONException e) {

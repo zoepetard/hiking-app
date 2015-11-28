@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
@@ -241,9 +242,9 @@ public final class DataManager {
      * Login for the user with the server.
      * TODO(simon) restructure iss105
      */
-    public void loginUser() throws DataManagerException {
+    public void loginUser(LoginRequest loginRequest) throws DataManagerException {
         try {
-            sDatabaseClient.loginUser();
+            sDatabaseClient.loginUser(loginRequest);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }
@@ -259,7 +260,7 @@ public final class DataManager {
     public Long getUserId(String mailAddress) throws DataManagerException {
         // use database client to query database for user data
         try {
-            sDatabaseClient.loginUser();
+            sDatabaseClient.loginUser(null);
             RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
             return rawUserData.getUserId();
         } catch (DatabaseClientException e) {

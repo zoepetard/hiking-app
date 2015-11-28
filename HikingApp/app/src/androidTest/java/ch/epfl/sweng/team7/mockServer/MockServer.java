@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
@@ -209,19 +210,20 @@ public class MockServer implements DatabaseClient {
     }
 
     /**
-     * Login the user.
+     * Log user into the server, i.e. get user profile information
+     * @param loginRequest
      * @throws DatabaseClientException
      */
-    public void loginUser() throws DatabaseClientException {
+    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
         for (RawUserData rawUserData : mUsers) {
-            if (rawUserData.getMailAddress().equals(signedInUser.getMailAddress())) {
-                try {
-                    signedInUser.loginFromJSON(rawUserData.toJSON());
-                } catch(JSONException e) {
-                    throw new DatabaseClientException(e);
+            try {
+                if (rawUserData.getMailAddress().equals(loginRequest.toJSON().getString("mail_address"))) {
+                        signedInUser.loginFromJSON(rawUserData.toJSON());
+                    return;
                 }
-                return;
+            } catch(JSONException e) {
+                throw new DatabaseClientException(e);
             }
         }
         throw new DatabaseClientException("User to fetch not found in MockServer.");
