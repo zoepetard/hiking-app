@@ -413,10 +413,10 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
                 mSearchView.onActionViewCollapsed();
-                // move the camera to the location corresponding to clicked item
                 mSuggestionListView.setVisibility(View.GONE);
+
+                // move the camera to the location corresponding to clicked item
                 if (mLocationAddressList.size() != 0) {
                     Address clickedLocation = mLocationAddressList.get(position);
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
@@ -435,52 +435,70 @@ public class MapActivity extends FragmentActivity {
         mSuggestionAdapter = new SuggestionAdapter(this, mSuggestionList);
         mSuggestionListView.setAdapter(mSuggestionAdapter);
 
-
-
-
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                loadSearchSuggestions(true, query);
+                new HikeSearcher().execute(new SearchHikeParams(query, true));
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                loadSearchSuggestions(false, newText);
+                new HikeSearcher().execute(new SearchHikeParams(newText, false));
+                return false;
+            }
+        });
+    }
+
+    private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
+
+        /**
+         * Searches for a locations from a query
+         * TODO query the server for hikes when backend is in place
+         *
+         * @param params - Query & boolean indicating whether the user is done typing
+         * @return boolean informing postexecute to either hide or show the suggestions
+         */
+        @Override
+        protected Boolean doInBackground(SearchHikeParams... params) {
+
+            String query = params[0].mQuery;
+            boolean isDoneTyping = params[0].mIsDoneTyping;
+
+            if (query.length() <= 3 && !isDoneTyping) {
                 return false;
             }
 
-            public void loadSearchSuggestions(boolean isDoneTyping, String searchString) {
-
-                if (searchString.length() <= 3 && !isDoneTyping) {
-
-                    mSuggestionListView.setVisibility(View.GONE);
-                    return;
+            List<Address> suggestions = new ArrayList<>();
+            try {
+                mLocationAddressList = mGeocoder.getFromLocationName(query, 10);
+                for (int i = 0; i < mLocationAddressList.size(); i++) {
+                    suggestions.add(mLocationAddressList.get(i));
                 }
-
-                List<Address> suggestions = new ArrayList<>();
-                try {
-                    mLocationAddressList = mGeocoder.getFromLocationName(searchString, 5);
-                    for (int i = 0; i < mLocationAddressList.size(); i++) {
-                        suggestions.add(mLocationAddressList.get(i));
-                    }
-                    if (isDoneTyping && suggestions.size() == 0) {
-                        Address address = new Address(Locale.ENGLISH);
-                        address.setFeatureName("No results");
-                        suggestions.add(address);
-                    }
-                } catch (IOException e) {
+                if (isDoneTyping && suggestions.size() == 0) {
                     Address address = new Address(Locale.ENGLISH);
-                    address.setFeatureName("An error occurred");
+                    address.setFeatureName("No results");
                     suggestions.add(address);
                 }
-                mSuggestionList.clear();
-                mSuggestionList.addAll(suggestions);
-                mSuggestionAdapter.notifyDataSetChanged();
-                mSuggestionListView.setVisibility(View.VISIBLE);
+            } catch (IOException e) {
+                Address address = new Address(Locale.ENGLISH);
+                address.setFeatureName("An error occurred");
+                suggestions.add(address);
             }
-        });
+            mSuggestionList.clear();
+            mSuggestionList.addAll(suggestions);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean listIsVisible) {
+            if (listIsVisible) {
+                mSuggestionListView.setVisibility(View.VISIBLE);
+            } else {
+                mSuggestionListView.setVisibility(View.GONE);
+            }
+            mSuggestionAdapter.notifyDataSetChanged();
+        }
     }
 
     private LatLng getUserPosition() {
@@ -525,7 +543,7 @@ public class MapActivity extends FragmentActivity {
         String mQuery;
         boolean mIsDoneTyping;
 
-        SearchHikeParams(String query,boolean isDoneTyping){
+        SearchHikeParams(String query, boolean isDoneTyping) {
             mQuery = query;
             mIsDoneTyping = isDoneTyping;
         }
