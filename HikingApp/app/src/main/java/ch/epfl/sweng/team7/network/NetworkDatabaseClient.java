@@ -250,14 +250,13 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @throws DatabaseClientException
      */
     public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
-        SignedInUser signedInUser = SignedInUser.getInstance();
 
         try {
             HttpURLConnection conn = getConnection("login_user", "GET");
             conn.setRequestProperty("login_request", loginRequest.toJSON().toString());
             conn.connect();
             String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            signedInUser.loginFromJSON(new JSONObject(stringResponse));
+            SignedInUser.getInstance().loginFromJSON(new JSONObject(stringResponse));
         } catch (IOException|JSONException e) {
             throw new DatabaseClientException(e);
         }

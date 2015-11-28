@@ -17,15 +17,19 @@ import org.json.JSONObject;
 public class LoginRequest {
     private final String mMailAddress;
     private final String mUserNameHint;
-    public LoginRequest(String mailAddress, String userNameHint) {
+    private final String mIdToken;
+
+    public LoginRequest(String mailAddress, String userNameHint, String idToken) {
         mMailAddress = mailAddress;
         mUserNameHint = userNameHint;
+        mIdToken = idToken;
     }
 
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user_name_hint", mUserNameHint);
         jsonObject.put("mail_address", mMailAddress);
+        jsonObject.put("id_token", mIdToken);
         return jsonObject;
     }
 }

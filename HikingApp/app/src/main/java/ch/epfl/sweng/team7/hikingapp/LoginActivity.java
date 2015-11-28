@@ -82,9 +82,6 @@ public class LoginActivity extends Activity implements
     private boolean mShouldResolve = false;
     // [END resolution_variables]
 
-    // Initialize the object for the signed in user
-    private SignedInUser mSignedInUser = SignedInUser.getInstance();
-
     DataManager mDataManager = DataManager.getInstance();
 
     @Override
@@ -280,6 +277,7 @@ public class LoginActivity extends Activity implements
          */
         @Override
         protected Void doInBackground(String... mailAddress) {
+
             try {
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
                 String userName = mailAddress[0];
@@ -287,56 +285,18 @@ public class LoginActivity extends Activity implements
                     userName = currentPerson.getDisplayName();
                 }
 
-                LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName);
+                LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName, "");
                 mDataManager.loginUser(loginRequest);
 
             } catch (DataManagerException e) {
                 Log.d(TAG, "Failed to add new user: " + e.getMessage());
             }
             return null;
-            /*UserData userData = null;
-
-
-            // Authenticate user by quering server for user info
-            try {
-                Long userId = mDataManager.getUserId(mailAddress[0]);
-                if (userId != null) {
-                    userData = mDataManager.getUserData(userId);
-                } else {
-                    // no user exists with that email so add a new user
-                    try {
-                        Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
-                        String userName = "";
-                        if (currentPerson != null) {
-                            userName = currentPerson.getDisplayName();
-                        }
-                        RawUserData newUser = new RawUserData(-1, userName, mailAddress[0]);
-                        userId = mDataManager.addNewUser(newUser);
-                        newUser = new RawUserData(userId, userName, mailAddress[0]);
-                        userData = new DefaultUserData(newUser);
-
-                    } catch (DataManagerException postError) {
-                        Log.d(TAG, "Failed to add new user: " + postError.getMessage());
-
-                    }
-                }
-            } catch (DataManagerException e) {
-                Log.d(TAG, "Couldn't get or add new user: " + e.getMessage());
-
-            }
-            return userData; TODO(simon) remove*/
         }
 
         @Override
         protected void onPostExecute(Void retVar) {
 
-
-            // Initialize the object for the signed in user, sign out if userData == null
-            //if (userData != null) {
-
-                /*mSignedInUser.init(userData.getUserId(),
-                        userData.getUserName(),
-                        userData.getMailAddress()); TODO(simon) remove*/
             if(SignedInUser.getInstance().getLoggedIn()) {
                 showSignedInUI();
             } else {
