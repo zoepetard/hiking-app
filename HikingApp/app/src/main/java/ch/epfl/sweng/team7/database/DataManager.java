@@ -9,6 +9,8 @@ package ch.epfl.sweng.team7.database;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.graphics.drawable.Drawable;
+
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -328,7 +330,6 @@ public final class DataManager {
     }
 
     /**
-<<<<<<< HEAD
      * Method to export the hike as a gpx file to the phone's internal storage
      * @param hikeData,context - the hike to be saved, the applications context
      * @return filepath as a string
@@ -416,11 +417,11 @@ public final class DataManager {
     }
 
     /**
-     *
+     * Look up the id for a user using mail address. Typically used directly after signing in via
+     * Google to obtain the id assigned to that account.
      * @param mailAddress - user's email address, google address.
      * @return userId - user Id stored in database, throws exception if not found.
      */
-
     public Long getUserId(String mailAddress) throws DataManagerException {
         // use database client to query database for user data
         try {

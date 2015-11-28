@@ -88,8 +88,6 @@ public interface HikeData {
 
     LatLng getFinishLocation();
 
-
-
-    List<ch.epfl.sweng.team7.database.Annotation> getAnnotations();
+    List<Annotation> getAnnotations();
 
 }

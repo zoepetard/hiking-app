@@ -393,6 +393,7 @@ public final class GPSManager {
         }
     }
 
+<<<<<<< HEAD
     private void storePictures(List<Annotation> annotations) {
         if (annotations != null || annotations.size() > 1) {
             for (int i = 0; i < annotations.size(); i++) {
