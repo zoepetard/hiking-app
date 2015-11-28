@@ -5,6 +5,8 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * The LocalCache saves a limited number of hike objects from the online database.
  * All database access should be routed through the cache.
@@ -36,9 +38,9 @@ interface LocalCache {
     
     List<Long> searchHike(String query);
 
-    Picture getPicture(long hikeId, long pictureId);
+    Drawable getPicture(long pictureId);
 
-    void postPicture(Picture picture);
+    void putPicture(Drawable picture);
 
 }
 

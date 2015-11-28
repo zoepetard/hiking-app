@@ -5,7 +5,9 @@
  */
 package ch.epfl.sweng.team7.database;
 
+
 import java.util.ArrayList;
+import android.graphics.drawable.Drawable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -57,7 +59,7 @@ class DefaultLocalCache implements LocalCache {
         return mUsersCache.get(userId);
     }
 
-    public PictureAnnotation getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
+    public Drawable getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
 
 
     public void putPicture(PictureAnnotation picture) {

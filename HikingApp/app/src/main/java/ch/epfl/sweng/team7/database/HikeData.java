@@ -89,5 +89,5 @@ public interface HikeData {
     LatLng getFinishLocation();
 
 
-    List<TextAnnotation> getTextAnnotations();
+    List<Annotation> getAnnotations();
 }

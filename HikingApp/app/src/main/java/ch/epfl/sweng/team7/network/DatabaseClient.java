@@ -127,6 +127,7 @@ public interface DatabaseClient {
      */
     void deleteUser(long userId) throws DatabaseClientException;
 
+<<<<<<< HEAD
     /**
      * TODO DEPRECATED DELETE
      * @param mailAddress - used to query server
@@ -134,6 +135,8 @@ public interface DatabaseClient {
      */
 
     RawUserData fetchUserData(String mailAddress) throws DatabaseClientException;
+=======
+>>>>>>> Changed methods from type PictureAnnotation to Drawable
 
     /**
 >>>>>>> Rebase to master
@@ -151,8 +154,14 @@ public interface DatabaseClient {
      * @return the database key of that image
      * @throws DatabaseClientException
      */
+<<<<<<< HEAD
     long postImage(Drawable drawable) throws DatabaseClientException;
 
+=======
+    long postPicture (Drawable picture) throws DatabaseClientException;
+
+    Drawable getPicture (long pictureId) throws  DatabaseClientException;
+>>>>>>> Changed methods from type PictureAnnotation to Drawable
 
     /**
      * Delete an image from the database

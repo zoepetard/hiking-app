@@ -392,7 +392,7 @@ public final class GPSManager {
         }
     }
 
-    private void storePictures(List<PictureAnnotation> hikePictures) {
+    private void storePictures(List<Annotation> hikePictures) {
         for (int i = 0; i < hikePictures.size(); i++){
             new StorePictureTask().execute(hikePictures.get(i));
         }

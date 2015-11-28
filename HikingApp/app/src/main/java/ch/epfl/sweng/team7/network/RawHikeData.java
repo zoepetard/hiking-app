@@ -141,7 +141,7 @@ public class RawHikeData {
         return mTitle;
     }
 
-    
+
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
