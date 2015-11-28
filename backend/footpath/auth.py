@@ -22,3 +22,9 @@ def authenticate(request):
         return -1
 
     return user_id
+
+def has_query_permission(visitor_id):
+    return visitor_id > 0
+
+def has_write_permission(visitor_id, owner_id):
+    return visitor_id == owner_id
