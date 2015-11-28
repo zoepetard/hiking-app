@@ -18,7 +18,7 @@ public class Annotation {
     private RawHikePoint mRawHikePoint;
     private String mText;
     private Drawable mPicture;
-    private String mPictureId;
+    private long mPictureId;
 
 
     public Annotation (RawHikePoint rawHikePoint, String text, Drawable picture){
@@ -32,9 +32,9 @@ public class Annotation {
 
     public String getAnnotation() { return mText; }
 
-    public String getPictureId() { return mPictureId; }
+    public long getPictureId() { return mPictureId; }
 
-    public void setPicturedId (String pictureId) {
+    public void setPicturedId (long pictureId) {
         mPictureId = pictureId;
     }
 
@@ -54,7 +54,7 @@ public class Annotation {
         Date date = new Date(jsonArray.getLong(2));
         double elevation = jsonArray.getDouble(3);
         String text = new String(jsonArray.getString(4));
-        String pictureId = new String(jsonArray.getString(5));
+        long pictureId = jsonArray.getLong(5);
         Annotation annotation = new Annotation(new RawHikePoint(latLng, date, elevation), text, null);
         annotation.setPicturedId(pictureId);
         return annotation;

@@ -9,11 +9,9 @@
 package ch.epfl.sweng.team7.network;
 
 
-
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -37,15 +35,6 @@ import java.util.Map;
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.HikeData;
-
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
-
-
-
-
-
-
-
 
 /**
  * Class to get and post hikes in the server
@@ -288,6 +277,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
+<<<<<<< HEAD
     /**
      * TODO DEPRECATED - remove from code
      *
@@ -317,8 +307,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @param loginRequest
      * @throws DatabaseClientException
      */
-    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
 
+    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         try {
             HttpURLConnection conn = getConnection("login_user", "GET");
             conn.setRequestProperty("login_request", loginRequest.toJSON().toString());
@@ -352,7 +342,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
-
 
 
     /**
@@ -438,6 +427,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
+
 
     /**
      * Post a comment to the database
