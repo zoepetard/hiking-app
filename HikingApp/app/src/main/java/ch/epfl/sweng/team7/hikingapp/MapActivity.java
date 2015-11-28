@@ -8,10 +8,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import ch.epfl.sweng.team7.database.DataManager;
@@ -66,8 +69,8 @@ public class MapActivity extends FragmentActivity {
 
     private SearchView searchView;
     private ListView suggestionListView;
-    private List<String> suggestionList = new ArrayList<String>();
-    ArrayAdapter<String> suggestionAdapter;
+    private List<Address> suggestionList = new ArrayList<>();
+    private SuggestionAdapter suggestionAdapter;
     private Geocoder mGeocoder;
     private List<Address> locationAddressList = new ArrayList<>();
     public final static String EXTRA_BOUNDS =
@@ -173,6 +176,7 @@ public class MapActivity extends FragmentActivity {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
+                searchView.onActionViewCollapsed(); // remove focus from searchview
                 onMapClickHelper(point);
             }
         });
@@ -404,56 +408,31 @@ public class MapActivity extends FragmentActivity {
     private void setUpSearchView() {
 
         searchView = (SearchView) findViewById(R.id.search_map_view);
-
-
         suggestionListView = (ListView) findViewById(R.id.search_suggestions_list);
         suggestionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
+                searchView.onActionViewCollapsed();
                 // move the camera to the location corresponding to clicked item
                 suggestionListView.setVisibility(View.GONE);
-                Address clickedLocation = locationAddressList.get(position);
+                if (locationAddressList.size() != 0) {
+                    Address clickedLocation = locationAddressList.get(position);
 
-                clickedLocation.getLatitude();
-                clickedLocation.getLongitude();
+                    clickedLocation.getLatitude();
+                    clickedLocation.getLongitude();
+                    LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
-                LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
-                CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
-                CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-
-                mMap.moveCamera(center);
-                mMap.animateCamera(zoom);
-
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
+                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+                    mMap.moveCamera(center);
+                    mMap.animateCamera(zoom);
+                }
                 // TODO display hikes from bounds
             }
         });
 
-        /*
-        ArrayAdapter<List<String>> suggestionAdapter = new ArrayAdapter<List<String>>(this, android.R.layout.simple_list_item_2, android.R.id.text1, suggestionList) {
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-
-
-                View view = super.getView(position, convertView, parent);
-
-                TextView upperTextView = (TextView) view.findViewById(android.R.id.text1);
-                TextView lowerTextView = (TextView) view.findViewById(android.R.id.text2);
-
-                upperTextView.setText(suggestionList.get(0));
-                lowerTextView.setText(suggestionList.get(0));
-
-                return view;
-
-            }
-
-        };
-        */
-
-        suggestionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, suggestionList);
-
+        suggestionAdapter = new SuggestionAdapter(this, suggestionList);
         suggestionListView.setAdapter(suggestionAdapter);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -471,23 +450,27 @@ public class MapActivity extends FragmentActivity {
 
             public void loadSearchSuggestions(boolean isDoneTyping, String searchString) {
 
-                if (searchString.length() <= 4 && !isDoneTyping) {
+                if (searchString.length() <= 3 && !isDoneTyping) {
 
                     suggestionListView.setVisibility(View.GONE);
                     return;
                 }
 
-                List<String> suggestions = new ArrayList<>();
+                List<Address> suggestions = new ArrayList<>();
                 try {
                     locationAddressList = mGeocoder.getFromLocationName(searchString, 5);
                     for (int i = 0; i < locationAddressList.size(); i++) {
-                        suggestions.add(locationAddressList.get(i).getFeatureName());
+                        suggestions.add(locationAddressList.get(i));
                     }
                     if (isDoneTyping && suggestions.size() == 0) {
-                        suggestions.add("No results");
+                        Address address = new Address(Locale.ENGLISH);
+                        address.setFeatureName("No results");
+                        suggestions.add(address);
                     }
                 } catch (IOException e) {
-                    suggestions.add("No results");
+                    Address address = new Address(Locale.ENGLISH);
+                    address.setFeatureName("An error occurred");
+                    suggestions.add(address);
                 }
                 suggestionList.clear();
                 suggestionList.addAll(suggestions);
@@ -507,5 +490,33 @@ public class MapActivity extends FragmentActivity {
         } else {
             return new LatLng(switzerlandLatitude, switzerlandLongitude);
         }
+    }
+
+}
+
+
+class SuggestionAdapter extends ArrayAdapter<Address> {
+
+    private List<Address> mAddressList;
+
+    public SuggestionAdapter(Context context, List<Address> addressList) {
+        super(context, android.R.layout.simple_list_item_2, android.R.id.text1, addressList);
+        mAddressList = addressList;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = super.getView(position, convertView, parent);
+        TextView upperText = (TextView) view.findViewById(android.R.id.text1);
+        TextView lowerText = (TextView) view.findViewById(android.R.id.text2);
+
+        upperText.setText(mAddressList.get(position).getFeatureName());
+        if (mAddressList.get(position).getCountryName() != null) {
+            lowerText.setText(mAddressList.get(position).getCountryName());
+        } else {
+            lowerText.setText("");
+        }
+
+        return view;
     }
 }
