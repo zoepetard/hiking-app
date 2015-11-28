@@ -41,11 +41,9 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-import ch.epfl.sweng.team7.database.DefaultUserData;
-import ch.epfl.sweng.team7.database.UserData;
-import ch.epfl.sweng.team7.network.RawUserData;
 
 // TODO: test login as part of the integration test
 
@@ -270,7 +268,7 @@ public class LoginActivity extends Activity implements
     }
     // [END on_connected]
 
-    private class UserAuthenticator extends AsyncTask<String, Void, UserData> {
+    private class UserAuthenticator extends AsyncTask<String, Void, Void> {
         /**
          * Looks up user data in the database given a mail address. Sets the signed-in user object's
          * variables.
@@ -280,8 +278,21 @@ public class LoginActivity extends Activity implements
          * @see #onPostExecute - initializes signed in users variables with userinfo
          */
         @Override
-        protected UserData doInBackground(String... mailAddress) {
-            UserData userData = null;
+        protected Void doInBackground(String... mailAddress) {
+            try {
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
+                String userName = mailAddress[0];
+                if (currentPerson != null) {
+                    userName = currentPerson.getDisplayName();
+                }
+
+                LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName);
+                mDataManager.loginUser(loginRequest);
+            } catch (DataManagerException e) {
+                Log.d(TAG, "Failed to add new user: " + e.getMessage());
+            }
+            return null;
+            /*UserData userData = null;
 
 
             // Authenticate user by quering server for user info
@@ -311,11 +322,11 @@ public class LoginActivity extends Activity implements
                 Log.d(TAG, "Couldn't get or add new user: " + e.getMessage());
 
             }
-            return userData;
+            return userData; TODO(simon) remove*/
         }
 
         @Override
-        protected void onPostExecute(UserData userData) {
+        protected void onPostExecute(Void retVar) {
 
 
             // Initialize the object for the signed in user, sign out if userData == null
