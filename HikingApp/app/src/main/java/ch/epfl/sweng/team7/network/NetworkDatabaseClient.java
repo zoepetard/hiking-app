@@ -277,7 +277,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-<<<<<<< HEAD
+
     /**
      * TODO DEPRECATED - remove from code
      *
@@ -285,7 +285,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @return RawUserData - corresponding to user's mail address
      */
     public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-
+        return null;
+    }
+    public void loginUser() throws DatabaseClientException {
         try {
             HttpURLConnection conn = getConnection("get_user", "GET");
             // TODO change 2nd parameter to mailAddress when servers accepts new users
@@ -341,6 +343,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
         } catch (JSONException e) {
             throw new DatabaseClientException(e);
         }
+    }
+
+    @Override
+    public long postPicture(Drawable picture) throws DatabaseClientException {
+        return 0;
     }
 
 
@@ -427,7 +434,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
-
 
     /**
      * Post a comment to the database

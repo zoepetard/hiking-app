@@ -25,9 +25,9 @@ public class DummyHikeBuilder {
             + "  \"title\": \"test hike title\"\n"
             + "  ]\n"
             + "  \"annotations\": [\n"
-            + "    {\"point\":[0.0, 0.0, 123201, 1.0], \"text_annotation\": blablablabla, \"picture_id\": 13]},\n"
-            + "    {\"point\":[0.1, 0.1, 123202, 2.0], \"text_annotation\": bleblebleble, \"picture_id\": 14]},\n"
-            + "    {\"point\":[0.2, 0.0, 123203, 1.1], \"text_annotation\": blibliblibli, \"picture_id\": 15]}\n"
+            + "    {\"point\":[0.0, 0.0, 123201, 1.0], \"text_annotation\": \"blablablabla\", \"picture_id\": 13]},\n"
+            + "    {\"point\":[0.1, 0.1, 123202, 2.0], \"text_annotation\": \"bleblebleble\", \"picture_id\": 14]},\n"
+            + "    {\"point\":[0.2, 0.0, 123203, 1.1], \"text_annotation\": \"blibliblibli\", \"picture_id\": 15]}\n"
             + " ]\n"
             + "}\n";
 
