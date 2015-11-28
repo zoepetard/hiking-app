@@ -41,8 +41,10 @@ public class DefaultHikeData implements HikeData {
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
     private final List<HikePoint> mHikePoints;
+
     private final List<HikeComment> mComments;
-    private final List<TextAnnotation> mTextAnnotations;
+
+    private final List<Annotation> mAnnotations;
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -73,11 +75,12 @@ public class DefaultHikeData implements HikeData {
         mComments = new ArrayList<>();
         for (RawHikeComment rawHikeComment : rawHikeComments) {
             mComments.add(new DefaultHikeComment(rawHikeComment));
+        }
 
-        List<TextAnnotation> textAnnotations = rawHikeData.getAnnotations();
-        mTextAnnotations = new ArrayList<>();
-        for(TextAnnotation textAnnotation : textAnnotations){
-            mTextAnnotations.add(textAnnotation);
+        List<Annotation> annotations = rawHikeData.getAnnotations();
+        mAnnotations = new ArrayList<>();
+        for(Annotation annotation : annotations){
+            mAnnotations.add(annotation);
         }
 
         mDistance = calculateDistance(rawHikePoints);
@@ -208,11 +211,14 @@ public class DefaultHikeData implements HikeData {
     }
 
 
+
     public String getTitle() {
         return mTitle;
     }
 
-    public List<TextAnnotation> getTextAnnotations() { return mTextAnnotations; }
+
+    public List<Annotation> getAnnotations() { return mAnnotations; }
+
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;

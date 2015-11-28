@@ -32,6 +32,7 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.HikePoint;
 
+
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
  * Additional annotations will be added here rather than in the RawHikePoint class, to simplify
@@ -51,9 +52,6 @@ public class RawHikeData {
     private String mTitle;
     private List<Annotation> mAnnotations;
 
-
-
-
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
      *
@@ -64,9 +62,9 @@ public class RawHikeData {
      * @throws IllegalArgumentException
      */
 
+
     public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
                        List<RawHikeComment> comments, String title, List<Annotation> annotations) {
-
 
 
         // Argument checks
@@ -139,6 +137,16 @@ public class RawHikeData {
 
     public String getTitle() {
         return mTitle;
+
+    /**
+     * Returns the list of annotations
+     */
+    public List<Annotation> getAnnotations() {
+        if (mAnnotations.size() < 1){
+            return null;
+        }else{
+            return new ArrayList<Annotation>(mAnnotations);
+        }
     }
 
 
@@ -214,7 +222,7 @@ public class RawHikeData {
      * @param mAnnotations
      * @return a JSON array of the input
      */
-    private JSONArray parseAnnotations(List<TextAnnotation> mAnnotations) throws JSONException {
+    private JSONArray parseAnnotations(List<Annotation> mAnnotations) throws JSONException {
         JSONArray jsonArray = new JSONArray();
         for(int i = 0; i < mAnnotations.size(); ++i) {
             jsonArray.put(mAnnotations.get(i).toJSON());
@@ -246,9 +254,9 @@ public class RawHikeData {
             }
 
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
-            List<TextAnnotation> annotations = new ArrayList<>();
+            List<Annotation> annotations = new ArrayList<>();
             for(int i = 0; i < jsonAnnotations.length(); i++){
-                annotations.add(TextAnnotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
+                annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
             }
 
             Date date = new Date(jsonObject.getLong("date"));
