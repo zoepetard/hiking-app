@@ -535,12 +535,13 @@ public class MapActivity extends FragmentActivity {
         pictureButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (mGps.tracking()) {
-                    annotationText.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                    startActivityForResult(intent, 0);
                 }
             }
         });
     }
-
+    
 
     private void createBottomInfoView() {
         mBottomTable.initialize(this);
