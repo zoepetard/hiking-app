@@ -312,27 +312,28 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void onMapClickHelper(LatLng point) {
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            double shortestDistance = 100;
-            List<HikePoint> hikePoints = hike.getHikePoints();
+        if (mHikesInWindow != null) {
+            for (int i = 0; i < mHikesInWindow.size(); i++) {
+                HikeData hike = mHikesInWindow.get(i);
+                double shortestDistance = 100;
+                List<HikePoint> hikePoints = hike.getHikePoints();
 
+                for (HikePoint hikePoint : hikePoints) {
 
-            for (HikePoint hikePoint : hikePoints) {
+                    float[] distanceBetween = new float[1];
+                    //Computes the approximate distance (in meters) between polyLinePoint and point.
+                    //Returns the result as the first element of the float array distanceBetween
+                    distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
+                            point.latitude, point.longitude, distanceBetween);
+                    double distance = distanceBetween[0];
 
-                float[] distanceBetween = new float[1];
-                //Computes the approximate distance (in meters) between polyLinePoint and point.
-                //Returns the result as the first element of the float array distanceBetween
-                distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
-                        point.latitude, point.longitude, distanceBetween);
-                double distance = distanceBetween[0];
-
-                if (distance < shortestDistance) {
-                    displayHikeInfo(hike);
-                    return;
+                    if (distance < shortestDistance) {
+                        displayHikeInfo(hike);
+                        return;
+                    }
                 }
+                BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
             }
-            BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
         }
     }
 
