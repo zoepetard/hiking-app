@@ -14,7 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -71,16 +75,18 @@ public class MapActivity extends FragmentActivity {
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
 
 
+
+
     private boolean mFollowingUser = false;
 
     private Polyline mPolyRef;
     private PolylineOptions mCurHike;
-
     private SearchView mSearchView;
     private ListView mSuggestionListView;
     private List<Address> mSuggestionList = new ArrayList<>();
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
+    private final EditText annotationText = new EditText(this);
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -110,6 +116,14 @@ public class MapActivity extends FragmentActivity {
         //creates a pause/resume tracking button
         createPauseTrackingButton();
 
+        //creates a AddAnnotation button
+        createAnnotationButton();
+        //creates a Add Picture button
+        createAddPictureButton();
+
+        //Create Annotation EditText
+        createAnnotationEditText();
+
         //Initializes the BottomInfoView
         createBottomInfoView();
 
@@ -122,6 +136,9 @@ public class MapActivity extends FragmentActivity {
 
         mGeocoder = new Geocoder(this);
     }
+
+
+
 
     @Override
     protected void onResume() {
@@ -226,7 +243,7 @@ public class MapActivity extends FragmentActivity {
         });
         //TODO These are the bounds that should be changed to center on user's location.
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
-        new DownloadHikeList().execute(bounds);
+        //new DownloadHikeList().execute(bounds);
 
 
     }
@@ -311,11 +328,11 @@ public class MapActivity extends FragmentActivity {
 
         //Display de textAnnotations
         List<MarkerOptions> annotations = new ArrayList<>();
-        for(int i = 0; i < hike.getTextAnnotations().size(); i++){
+        for(int i = 0; i < hike.getAnnotations().size(); i++){
             MarkerOptions markerOptions = new MarkerOptions()
-                    .position(hike.getTextAnnotations().get(i).getRawHikePoint().getPosition())
+                    .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
                     .title("Annotation")
-                    .snippet(hike.getTextAnnotations().get(i).getmComment())
+                    .snippet(hike.getAnnotations().get(i).getAnnotation())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
             annotations.add(markerOptions);
             Marker textAnnotation = mMap.addMarker(markerOptions);
@@ -456,6 +473,74 @@ public class MapActivity extends FragmentActivity {
         });
         pauseButton.setVisibility(View.INVISIBLE);
     }
+
+    private void createAnnotationButton() {
+        Button annotationButton = new Button(this);
+        annotationButton.setText(R.string.button_create_annotation);
+        annotationButton.setId(R.id.button_annotation_create);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.button_annotation_create);
+
+        annotationButton.setLayoutParams(lp);
+        layout.addView(annotationButton, lp);
+        annotationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mGps.tracking()) {
+                    annotationText.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void createAnnotationEditText() {
+        annotationText.setId(R.id.annotation_text);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.annotation_text);
+
+        annotationText.setLayoutParams(lp);
+        layout.addView(annotationText, lp);
+
+        annotationText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    String annotation = annotationText.getText().toString();
+                    mGps.createAnnotation(annotation);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+    }
+
+    private void createAddPictureButton() {
+        Button pictureButton = new Button(this);
+        pictureButton.setText(R.string.button_add_picture);
+        pictureButton.setId(R.id.button_picture);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
+
+        pictureButton.setLayoutParams(lp);
+        layout.addView(pictureButton, lp);
+        pictureButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mGps.tracking()) {
+                    annotationText.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
 
     private void createBottomInfoView() {
         mBottomTable.initialize(this);

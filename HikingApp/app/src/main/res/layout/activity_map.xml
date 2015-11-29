@@ -30,6 +30,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
+<<<<<<< HEAD
     <SearchView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,5 +52,11 @@
         android:visibility="gone"
         android:background="#ffffff"
         android:alpha="0.7" />
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:imeActionLabel="@string/Add" />/>
 
 </RelativeLayout>

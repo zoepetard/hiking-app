@@ -399,6 +399,10 @@ public final class GPSManager {
         }
     }
 
+    public void createAnnotation(String annotation) {
+
+    }
+
 
     /**
      * Asynchronous task to make the post request to the server.

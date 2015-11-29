@@ -47,6 +47,9 @@
     <string name="button_resume_tracking">Resume</string>>
     <string name="button_export_hike">Export Hike as GPX</string>
 
+
+    <string name="button_create_annotation">Add Annotation</string>>
+    <string name="button_add_picture">Add Picture</string>>
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
 
@@ -67,6 +70,9 @@
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
     <item name="button_save_hike" type="id" />
+    <item name="button_annotation_create" type="id" />
+    <item name="button_picture" type="id" />
+    <item name="annotation_text" type="id" />
 
     <!-- Save hike prompt -->
     <string name="button_save_hike">Save</string>
@@ -95,6 +101,7 @@
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
     <string name="selete_pic">Select Picture</string>
+    <string name="Add" />
 
     <string name="comments">Comments</string>
     <string name="button_comment">Comment</string>
