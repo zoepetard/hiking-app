@@ -7,6 +7,7 @@ from footpath.hike import *
 from footpath.user import *
 from footpath.image import *
 from footpath.auth import *
+from footpath.comment import *
 
 import logging
 import json
@@ -26,10 +27,10 @@ def get_hike(request):
     hike = ndb.Key(Hike, request_hike_id).get()
     if not hike:
         return response_not_found()
-         
-    # TODO: remove old query example code
-    #hikes = Hike.query(Hike.hike_id == request_hike_id).fetch(1)
-    return response_data(hike.to_json())
+    
+    comments = get_comment_list(request_hike_id)
+    logger.error("Comments are "+str(len(comments)))
+    return response_data(hike.to_json(comments))
     
 # Temporary: Function to quickly see the database in browser
 # Get multiple hikes, as specified in a list inside the field
@@ -122,11 +123,9 @@ def post_hike(request):
     
     # Temporary: Clear database with specially prepared post request iss77
     if(hike.hike_id == 342):
-        for hike in Hike.query().fetch():
-            if len(hike.hike_data) < 1000:
-                hike.key.delete()
+        delete_datastore()
         return response_id('hike_id', 342)
-        
+    
     #TODO(simon): set test flag on hikes that should be automatically removed
         
     # If update hike: Authenticate and check for existing hikes in database iss77
@@ -145,7 +144,17 @@ def post_hike(request):
     
     hike.hike_id = new_key.id()
     hike.put()
-               
+
+    #TODO(simon): remove test code
+    #clean_datastore()
+    comment_string = "{\"comment_id\":-1,\"hike_id\":"+repr(hike.hike_id).strip('L')+",\"user_id\":12345,\"comment_text\":\"blablabla\"}"
+    comment = build_comment_from_json(comment_string)
+    if comment:
+        logger.error("Comment was created.")
+        comment.put()
+    else:
+        logger.error("Comment was not created.")
+
     return response_id('hike_id', new_key.id())
 
 # Delete a user. The hike can only be deleted by its author.
@@ -374,8 +383,126 @@ def delete_image(request):
     return response_data('')
 
 
-# Clean server
-def clear_server(request):
+# Post a new image
+def post_comment(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    logger.info('POST comment: '+request.body)
+    request_image_id = int(request.META.get('HTTP_IMAGE_ID', '-1'))
+    
+    # Create new Hike object
+    comment = build_comment_from_json(request.body)
+    if not comment:
+        return response_bad_request()
+
+    if not comment.owner_id == visitor_id:
+        return response_forbidden()
+
+    hike = Hike.get_by_id(comment.hike_id)
+    if not hike:
+        return response_bad_request()
+
+    # If update hike: Authenticate and check for existing hikes in database iss77
+    logger.info('request post to ID '+repr(request_image_id))
+    if(comment.requested_id >= 0):
+        old_comment = ndb.Key(Comment, comment.comment_id).get()
+        
+        if not old_comment:
+            return response_not_found()
+        
+        if not old_comment.owner_id == comment.owner_id:
+            return response_forbidden()
+        
+        comment.key = old_comment.key
+    
+    new_key = comment.put()
+    logger.info('respond with ID '+repr(new_key.id()))
+    return response_id('comment_id', new_key.id())
+
+
+# Delete a comment
+def delete_comment(request):
+    
+    visitor_id = authenticate(request)
+    if visitor_id < 0:
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+
+    delete_comment_id = int(json.loads(request.body)['comment_id'])
+
+    # Find comment in datastore
+    comment = ndb.Key(Comment, delete_comment_id).get()
+    if not comment:
+        return response_not_found()
+
+    if not comment.owner_id == visitor_id:
+        return response_forbidden()
+    
+    comment.key.delete()
+    return response_data('')
+
+
+# Clean datastore: Remove all entities that obviously do not belong here.
+def clean_datastore():
+    hikes = Hike.query().fetch()
+    for hike in hikes:
+        # Remove malformed hikes
+        if(hike.owner_id < 1):
+            hike.key.delete()
+            continue
+        
+        # Remove orphaned hikes
+        logger.error("ID is "+repr(hike.owner_id))
+        owner = User.get_by_id(hike.owner_id)
+        if not owner:
+            hike.key.delete()
+
+    comments = Comment.query().fetch()
+    for comment in comments:
+        # Remove malformed comments
+        if(comment.hike_id < 1):
+            comment.key.delete()
+            continue
+
+        if(comment.user_id < 1):
+            comment.key.delete()
+            continue
+        
+        # Remove orphaned comments
+        hike = ndb.Key(Hike, comment.hike_id).get()
+        if not hike:
+            comment.key.delete()
+
+        # Remove orphaned comments
+        user = ndb.Key(User, comment.user_id).get()
+        if not user:
+            comment.key.delete()
+
+    images = Image.query().fetch()
+    for image in images:
+        # Remove malformed images
+        if(image.owner_id < 1):
+            image.key.delete()
+            continue
+        
+        # Remove orphaned images
+        owner = ndb.Key(User, image.owner_id).get()
+        if not owner:
+            hike.key.delete()
+
+
+# Delete datastore: Remove all entities except the long hikes
+def delete_datastore(request):
+    clean_datastore()
+    
     hikes = Hike.query().fetch()
     for hike in hikes:
         if len(hike.hike_data) < 1000:
@@ -389,7 +516,18 @@ def clear_server(request):
     for img in images:
         img.key.delete()
 
+
+
     return response_data('')
+
+
+def get_comment_list(hike_id):
+    comment_list = []
+    comments = Comment.query(Comment.hike_id == hike_id).fetch()
+    for comment in comments:
+        comment_list.append(json.loads(comment.to_json()))
+
+    return comment_list
 
 
 def response_bad_request():
