@@ -39,7 +39,7 @@ public final class GPSManager {
     public static final String NEW_HIKE = "ch.epfl.sweng.team7.gpsService.NEW_HIKE";
     private final static String LOG_FLAG = "GPS_Manager";
     private final static int BOTTOM_TABLE_ACCESS_ID = 2;
-    private static GPSManager instance = new GPSManager();
+    private final static GPSManager instance = new GPSManager();
 
     //GPS stored information
     private GPSPath mGpsPath = null;
@@ -99,10 +99,7 @@ public final class GPSManager {
      * @return true if it is enabled, false otherwise
      */
     public boolean enabled() {
-        if (mGpsService != null) {
-            return mGpsService.getProviderStatus() && (mLastFootPrint != null);
-        }
-        return false;
+        return (mGpsService != null && mGpsService.getProviderStatus() && (mLastFootPrint != null));
     }
 
     /**

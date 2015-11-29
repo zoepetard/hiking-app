@@ -30,7 +30,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 
 /**
@@ -244,44 +245,19 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * TODO DEPRECATED - remove from code
-     *
-     * @param mailAddress - used to query server
-     * @return RawUserData - corresponding to user's mail address
+     * Log user into the server, i.e. get user profile information
+     * @param loginRequest
+     * @throws DatabaseClientException
      */
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-
-        try {
-            HttpURLConnection conn = getConnection("get_user", "GET");
-            // TODO change 2nd parameter to mailAddress when servers accepts new users
-            conn.setRequestProperty("user_mail_address", mailAddress);
-            conn.connect();
-            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            return RawUserData.parseFromJSON(jsonObject);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e.getMessage());
-        } catch (JSONException e) {
-            throw new DatabaseClientException("JSONException: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Logs in the SignedInUser
-     */
-    public void loginUser() throws DatabaseClientException {
-        SignedInUser signedInUser = SignedInUser.getInstance();
+    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
 
         try {
             HttpURLConnection conn = getConnection("login_user", "GET");
-            conn.setRequestProperty("user_mail_address", signedInUser.getMailAddress());
+            conn.setRequestProperty("login_request", loginRequest.toJSON().toString());
             conn.connect();
-            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            signedInUser.loginFromJSON(jsonObject);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+            String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            SignedInUser.getInstance().loginFromJSON(new JSONObject(stringResponse));
+        } catch (IOException|JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -327,7 +303,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             return Drawable.createFromStream(bis, "");
-        } catch (IOException e) {
+        } catch (IOException|JSONException e) {
             throw new DatabaseClientException("ImageManager Error: " + e);
         }
     }
@@ -440,7 +416,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @return a valid HttpConnection
      * @throws IOException
      */
-    private HttpURLConnection getConnection(String function, String method) throws IOException {
+    private HttpURLConnection getConnection(String function, String method) throws IOException, JSONException {
         URL url = new URL(mServerUrl + "/" + function + "/");
         HttpURLConnection conn = mNetworkProvider.getConnection(url);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -451,7 +427,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
         // Authentication
         SignedInUser signedInUser = SignedInUser.getInstance();
-        conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
+        //conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
+        conn.setRequestProperty("auth_header", signedInUser.buildAuthHeader().toString());
         return conn;
     }
 

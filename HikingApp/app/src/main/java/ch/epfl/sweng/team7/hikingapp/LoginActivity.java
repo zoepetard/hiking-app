@@ -22,8 +22,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,8 +30,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -45,13 +41,10 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-import ch.epfl.sweng.team7.database.DefaultUserData;
-import ch.epfl.sweng.team7.database.UserData;
-import ch.epfl.sweng.team7.network.RawUserData;
-
-import java.io.InputStream;
 
 // TODO: test login as part of the integration test
 
@@ -88,9 +81,6 @@ public class LoginActivity extends Activity implements
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
     // [END resolution_variables]
-
-    // Initialize the object for the signed in user
-    private SignedInUser mSignedInUser = SignedInUser.getInstance();
 
     DataManager mDataManager = DataManager.getInstance();
 
@@ -272,14 +262,11 @@ public class LoginActivity extends Activity implements
             }
         }
 
-
         new UserAuthenticator().execute(mailAddress);
-
-
     }
     // [END on_connected]
 
-    private class UserAuthenticator extends AsyncTask<String, Void, UserData> {
+    private class UserAuthenticator extends AsyncTask<String, Void, Void> {
         /**
          * Looks up user data in the database given a mail address. Sets the signed-in user object's
          * variables.
@@ -289,51 +276,28 @@ public class LoginActivity extends Activity implements
          * @see #onPostExecute - initializes signed in users variables with userinfo
          */
         @Override
-        protected UserData doInBackground(String... mailAddress) {
-            UserData userData = null;
+        protected Void doInBackground(String... mailAddress) {
 
-
-            // Authenticate user by quering server for user info
             try {
-                Long userId = mDataManager.getUserId(mailAddress[0]);
-                if (userId != null) {
-                    userData = mDataManager.getUserData(userId);
-                } else {
-                    // no user exists with that email so add a new user
-                    try {
-                        Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
-                        String userName = "";
-                        if (currentPerson != null) {
-                            userName = currentPerson.getDisplayName();
-                        }
-                        RawUserData newUser = new RawUserData(-1, userName, mailAddress[0]);
-                        userId = mDataManager.addNewUser(newUser);
-                        newUser = new RawUserData(userId, userName, mailAddress[0]);
-                        userData = new DefaultUserData(newUser);
-
-                    } catch (DataManagerException postError) {
-                        Log.d(TAG, "Failed to add new user: " + postError.getMessage());
-
-                    }
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
+                String userName = mailAddress[0];
+                if (currentPerson != null) {
+                    userName = currentPerson.getDisplayName();
                 }
-            } catch (DataManagerException e) {
-                Log.d(TAG, "Couldn't get or add new user: " + e.getMessage());
 
+                LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName, "");
+                mDataManager.loginUser(loginRequest);
+
+            } catch (DataManagerException e) {
+                Log.d(TAG, "Failed to add new user: " + e.getMessage());
             }
-            return userData;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(UserData userData) {
+        protected void onPostExecute(Void retVar) {
 
-
-            // Initialize the object for the signed in user, sign out if userData == null
-            if (userData != null) {
-
-                mSignedInUser.init(userData.getUserId(),
-                        userData.getUserName(),
-                        userData.getMailAddress());
-
+            if(SignedInUser.getInstance().getLoggedIn()) {
                 showSignedInUI();
             } else {
 
