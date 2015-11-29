@@ -133,3 +133,22 @@ def build_sample_hike(hike_id, owner_id):
             + "    [0.4, 0.0, 123205, 1.0]\n"\
             + "  ]\n"\
             + "}")
+
+
+# The Rating class models one vote for one hike.
+# It can be set by the user, but never returned individually.
+class Rating(ndb.Model):
+    '''Models an individual Rating entry.'''
+    owner_id = ndb.IntegerProperty()
+    hike_id = ndb.IntegerProperty()
+    value = ndb.IntegerProperty(indexed=False)
+
+    def from_json(self, json_string):
+        json_object = json.loads(json_string)
+        self.hike_id = json_object['hike_id']
+        self.owner_id = json_object['owner_id']
+        self.value = json_object['value']
+
+    # A to_json function does not make sense,
+    # because ratings are converted into average on output
+
