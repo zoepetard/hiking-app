@@ -58,15 +58,13 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp">
 
-                    <ImageView
+                    <fragment
+                        android:id="@+id/mapHikeInfo"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/map_preview_imageview"
-                        android:src="@drawable/login_background"
-                        android:clickable="false"
-                        android:adjustViewBounds="true"
+                        android:layout_height="200dp"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:scaleType="fitXY"
-                        android:maxHeight="200dp" />
+                        android:maxHeight="200dp"/>
                 </LinearLayout>
 
                 <LinearLayout

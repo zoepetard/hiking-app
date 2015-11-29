@@ -50,6 +50,7 @@ public class MapActivity extends FragmentActivity {
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
+    private static LatLng mUserLocation;
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
@@ -156,8 +157,8 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        LatLng userLatLng = getUserPosition();
-        LatLngBounds initialBounds = guessNewLatLng(userLatLng, userLatLng, 0.5);
+        mUserLocation = getUserPosition();
+        LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
 
         List<HikeData> hikesFound = new ArrayList<>();
         boolean firstHike = true;
@@ -262,8 +263,7 @@ public class MapActivity extends FragmentActivity {
         int screenHeight = size.y;
 
         if (firstHike) {
-            LatLng userLatLng = getUserPosition();
-            boundingBoxBuilder.include(userLatLng);
+            boundingBoxBuilder.include(mUserLocation);
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
         }
     }
@@ -312,27 +312,28 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void onMapClickHelper(LatLng point) {
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            double shortestDistance = 100;
-            List<HikePoint> hikePoints = hike.getHikePoints();
+        if (mHikesInWindow != null) {
+            for (int i = 0; i < mHikesInWindow.size(); i++) {
+                HikeData hike = mHikesInWindow.get(i);
+                double shortestDistance = 100;
+                List<HikePoint> hikePoints = hike.getHikePoints();
 
+                for (HikePoint hikePoint : hikePoints) {
 
-            for (HikePoint hikePoint : hikePoints) {
+                    float[] distanceBetween = new float[1];
+                    //Computes the approximate distance (in meters) between polyLinePoint and point.
+                    //Returns the result as the first element of the float array distanceBetween
+                    distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
+                            point.latitude, point.longitude, distanceBetween);
+                    double distance = distanceBetween[0];
 
-                float[] distanceBetween = new float[1];
-                //Computes the approximate distance (in meters) between polyLinePoint and point.
-                //Returns the result as the first element of the float array distanceBetween
-                distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
-                        point.latitude, point.longitude, distanceBetween);
-                double distance = distanceBetween[0];
-
-                if (distance < shortestDistance) {
-                    displayHikeInfo(hike);
-                    return;
+                    if (distance < shortestDistance) {
+                        displayHikeInfo(hike);
+                        return;
+                    }
                 }
+                BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
             }
-            BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
         }
     }
 
@@ -446,12 +447,12 @@ public class MapActivity extends FragmentActivity {
     }
 
     private LatLng getUserPosition() {
-        double switzerlandLatitude = 46.4;
-        double switzerlandLongitude = 6.4;
         if (mGps.enabled()) {
             GeoCoords userGeoCoords = mGps.getCurrentCoords();
             return userGeoCoords.toLatLng();
         } else {
+            double switzerlandLatitude = 46.4;
+            double switzerlandLongitude = 6.4;
             return new LatLng(switzerlandLatitude, switzerlandLongitude);
         }
     }
