@@ -21,7 +21,7 @@ class DefaultLocalCache implements LocalCache {
     private final HashMap<Long, HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private final HashMap<Long, UserData> mUsersCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private final HashMap<Long, Drawable> mPicturesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
-
+    
     public boolean hasHike(long hikeId) {
         return mHikesCache.containsKey(hikeId);
     }
@@ -68,6 +68,8 @@ class DefaultLocalCache implements LocalCache {
         }
     }
     
+
+
 
 
     private class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
