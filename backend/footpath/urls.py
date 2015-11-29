@@ -18,4 +18,5 @@ urlpatterns = patterns('',
     (r'^delete_datastore/$', delete_datastore),
     (r'^post_comment/$', post_comment),
     (r'^delete_comment/$', delete_comment),
+    (r'^post_vote/$', post_vote),
 )

@@ -185,3 +185,14 @@ class Rating(ndb.Model):
     # A to_json function does not make sense,
     # because ratings are converted into average on output
 
+
+# Factory to turn a json-string into a valid hike object
+def build_rating_from_json(json_string):
+    r = Rating()
+    if(r.from_json(json_string)):
+        return r
+    return None
+
+
+
+
