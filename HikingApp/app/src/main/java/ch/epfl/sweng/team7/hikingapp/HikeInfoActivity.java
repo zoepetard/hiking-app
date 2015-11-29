@@ -1,30 +1,24 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.app.LauncherActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.app.Activity;
-import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 
-public final class HikeInfoActivity extends Activity {
+public final class HikeInfoActivity extends FragmentActivity {
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
@@ -80,7 +74,10 @@ public final class HikeInfoActivity extends Activity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId);
+        GoogleMap mapHikeInfo = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapHikeInfo))
+                .getMap();
+
+        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -104,7 +101,7 @@ public final class HikeInfoActivity extends Activity {
 
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
-        hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
+        mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -130,9 +127,9 @@ public final class HikeInfoActivity extends Activity {
         }
     }
 
-    private class MapPreviewClickListener implements View.OnClickListener {
+    private class MapPreviewClickListener implements GoogleMap.OnMapClickListener {
         @Override
-        public void onClick(View v) {
+        public void onMapClick(LatLng point) {
             // segue to map activity!
 
         }

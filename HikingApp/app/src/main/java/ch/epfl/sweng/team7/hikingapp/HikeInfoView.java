@@ -12,11 +12,15 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Polyline;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -40,13 +44,13 @@ public class HikeInfoView {
     private ArrayList<ImageView> galleryImageViews; // make ImageViews accessible in controller.
     private Button backButton;
     private ImageView fullScreenImage;
-    private ImageView mapPreview;
+    private GoogleMap mapPreview;
     private GraphView hikeGraph;
     private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
 
-    public HikeInfoView (View view, Context context, long id) {  // add model as argument when creating that
+    public HikeInfoView (View view, Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
         hikeId = id;
 
         // initializing UI element in the layout for the HikeInfoView.
@@ -67,7 +71,7 @@ public class HikeInfoView {
 
         fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
 
-        mapPreview = (ImageView) view.findViewById(R.id.map_preview_imageview);
+        mapPreview = mapHikeInfo;
 
         hikeGraph = (GraphView) view.findViewById(R.id.hike_graph);
 
@@ -120,6 +124,12 @@ public class HikeInfoView {
             float rating = (float) result.getRating();
             double elevationMin = result.getMinElevation();
             double elevationMax = result.getMaxElevation();
+
+            List<HikeData> hikesToDisplay = Arrays.asList(result);
+            List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
+            MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
+            MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
+            MapDisplay.setCamera(hikesToDisplay, mapPreview);
 
             /* didn't find elevation change in database so still use fake data*/
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
@@ -194,7 +204,7 @@ public class HikeInfoView {
         return galleryImageViews;
     }
 
-    public ImageView getMapPreview() {
+    public GoogleMap getMapPreview() {
         return mapPreview;
     }
 
