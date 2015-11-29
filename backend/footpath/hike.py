@@ -71,13 +71,14 @@ class Hike(ndb.Model):
             
     # Parse this into JSON string
     # comments is a list of JSON objects
-    def to_json(self):
+    def to_json(self, visitor_id):
         # TODO(simon): remove extra code after migration (24Nov15)
         title = "Untitled Hike"
         if self.title:
             title = self.title
-        
-        comments = get_comment_list(self.key.id())
+                
+        comments = get_comment_list(self.key.id(), visitor_id)
+        rating = get_rating(self.key.id(), visitor_id)
         
         hike_data = {
             'hike_id': self.key.id(),
@@ -122,13 +123,31 @@ def build_hike_from_json(json_string):
     return None
 
 
-def get_comment_list(hike_id):
+# Get a list of all comments on a specific hike
+def get_comment_list(hike_id, visitor_id):
     comment_list = []
     comments = Comment.query(Comment.hike_id == hike_id).fetch()
     for comment in comments:
         comment_list.append(json.loads(comment.to_json()))
     
     return comment_list
+
+
+# Gets the average rating of a specific hike
+def get_rating(hike_id, visitor_id):
+    ratings = Rating.query(Rating.hike_id == hike_id).fetch()
+    if (not ratings) or (len(ratings) == 0):
+        return {"rating":3,"count":0,"visitor_rating":-1}
+    
+    count = len(ratings)
+    sum_rating = 0
+    visitor_rating = -1
+    for rating in ratings:
+        if rating.owner_id == visitor_id:
+            visitor_rating = rating.value
+        sum_rating += rating.value
+    
+    return {"rating":(sum_rating/count),"count":count,"visitor_rating":visitor_rating}
 
 
 def build_sample_hike(hike_id, owner_id):

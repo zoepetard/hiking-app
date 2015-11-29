@@ -30,7 +30,7 @@ def get_hike(request):
     if not hike:
         return response_not_found()
 
-    return response_data(hike.to_json())
+    return response_data(hike.to_json(visitor_id))
 
 
 # Temporary: Function to quickly see the database in browser
@@ -42,7 +42,7 @@ def get_hikes(request):
     
     all_hikes = ""
     for hike in hikes:
-        hike_string = hike.to_json()
+        hike_string = hike.to_json(visitor_id)
         key_string = str(hike.key.id()).strip('L')
         all_hikes += hike_string + ' with key=' + key_string + '\n'
     
