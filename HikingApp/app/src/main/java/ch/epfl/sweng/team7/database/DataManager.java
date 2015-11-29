@@ -326,8 +326,9 @@ public final class DataManager {
         if (picture != null) {
             return picture;
         }
-        return sDatabaseClient.getPicture(pictureId);
+        return sDatabaseClient.getImage(pictureId);
     }
+
     /**
      * Method to export the hike as a gpx file to the phone's internal storage
      * @param hikeData,context - the hike to be saved, the applications context
@@ -414,7 +415,6 @@ public final class DataManager {
             throw new DataManagerException(e);
         }
     }
-
     /**
      * Creates the LocalCache and DatabaseClient
      */

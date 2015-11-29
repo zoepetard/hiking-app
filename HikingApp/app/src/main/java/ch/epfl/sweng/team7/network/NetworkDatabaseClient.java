@@ -278,30 +278,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
 
-    /**
-     * TODO DEPRECATED - remove from code
-     *
-     * @param mailAddress - used to query server
-     * @return RawUserData - corresponding to user's mail address
-     */
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-        return null;
-    }
-    public void loginUser() throws DatabaseClientException {
-        try {
-            HttpURLConnection conn = getConnection("get_user", "GET");
-            // TODO change 2nd parameter to mailAddress when servers accepts new users
-            conn.setRequestProperty("user_mail_address", mailAddress);
-            conn.connect();
-            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            return RawUserData.parseFromJSON(jsonObject);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e.getMessage());
-        } catch (JSONException e) {
-            throw new DatabaseClientException("JSONException: " + e.getMessage());
-        }
-    }
 
     /**
      * Log user into the server, i.e. get user profile information
@@ -346,10 +322,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     @Override
-    public long postPicture(Drawable picture) throws DatabaseClientException {
-        return 0;
+    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
+        return null;
     }
-
 
     /**
      * Get an image from the database
