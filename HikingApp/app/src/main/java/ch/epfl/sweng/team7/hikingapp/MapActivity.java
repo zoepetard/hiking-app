@@ -24,7 +24,6 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import android.view.ViewGroup;
-
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -106,7 +105,6 @@ public class MapActivity extends FragmentActivity {
 
 
     private final EditText annotationText = new EditText(this);
-
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -511,9 +509,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void createAnnotationButton() {
-
         final Button annotationButton = new Button(this);
-
         annotationButton.setText(R.string.button_create_annotation);
         annotationButton.setId(R.id.button_annotation_create);
 
@@ -535,6 +531,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void createAnnotationEditText() {
+        annotationText = (EditText) findViewById(R.id.editText);
         annotationText.setId(R.id.annotation_text);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
@@ -543,8 +540,10 @@ public class MapActivity extends FragmentActivity {
         lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.annotation_text);
 
         annotationText.setLayoutParams(lp);
-        layout.addView(annotationText, lp);
-
+        if(annotationText.getParent() != null){
+            ((ViewGroup)annotationText.getParent()).removeView(annotationText);
+            layout.addView(annotationText, lp);
+        }
         annotationText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -601,7 +600,6 @@ public class MapActivity extends FragmentActivity {
         annotationEditText.setSingleLine(false);
         layout.addView(annotationEditText);
 
-<<<<<<< HEAD
         builder.setView(layout);
 
         builder.setPositiveButton(this.getResources().getString(R.string.add_annotation), new DialogInterface.OnClickListener() {
