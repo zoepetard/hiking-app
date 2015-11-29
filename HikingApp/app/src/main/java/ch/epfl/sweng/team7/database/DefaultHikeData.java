@@ -55,7 +55,13 @@ public class DefaultHikeData implements HikeData {
         mStartLocation = rawHikePoints.get(0).getPosition();
         mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
         mElevationBounds = calculateElevationBounds(rawHikePoints);
-        mRating = rawHikeData.getRating();
+
+        // Hike rating is optional in RawHikeData, but this class is guaranteed to have it.
+        if(rawHikeData.getRating() != null) {
+            mRating = rawHikeData.getRating();
+        } else {
+            mRating = new Rating();
+        }
     }
     /**
      * @return the hike ID.

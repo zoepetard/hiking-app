@@ -120,7 +120,7 @@ public class HikeInfoView {
             final int ELEVATION_POINT_COUNT = 100;
             String name = "The Super Hike";
             double distance = hikeData.getDistance() / 1000;  // in km
-            float rating = (float) hikeData.getRating();
+            float rating = (float) hikeData.getRating().getDisplayRating();
             double elevationMin = hikeData.getMinElevation();
             double elevationMax = hikeData.getMaxElevation();
 
