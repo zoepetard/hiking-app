@@ -32,6 +32,10 @@ class DefaultLocalCache implements LocalCache {
         }
     }
 
+    public void removeHike(long hikeId) {
+        mHikesCache.remove(hikeId);
+    }
+
     public int cachedHikesCount() {
         return mHikesCache.size();
     }

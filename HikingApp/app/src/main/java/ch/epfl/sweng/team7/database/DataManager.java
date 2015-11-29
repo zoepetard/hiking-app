@@ -15,6 +15,7 @@ import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
+import ch.epfl.sweng.team7.network.RatingVote;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
@@ -240,11 +241,19 @@ public final class DataManager {
 
     /**
      * Login for the user with the server.
-     * TODO(simon) restructure iss105
      */
     public void loginUser(LoginRequest loginRequest) throws DataManagerException {
         try {
             sDatabaseClient.loginUser(loginRequest);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    public void postVote(RatingVote vote) throws DataManagerException {
+        try {
+            sLocalCache.getHike(vote.getHikeId()).getRating().update(vote);
+            sDatabaseClient.postVote(vote);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }

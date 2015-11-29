@@ -409,6 +409,53 @@ public class BackendTest extends TestCase {
 
 
     /**
+     * Test the {@link NetworkDatabaseClient} post_vote function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostVote() throws Exception {
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+
+        waitForServerSync();
+
+        // retrieve the same hike
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+
+        // Compare
+        assertEquals(0, serverHikeData.getRating().getVoteCount());
+        assertFalse(serverHikeData.getRating().userHasVoted());
+
+        mDatabaseClient.postVote(new RatingVote(hikeId, 2));
+
+        waitForServerSync();
+
+        // retrieve the same hike
+        serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+
+        // Compare
+        assertEquals(1, serverHikeData.getRating().getVoteCount());
+        assertEquals(2, serverHikeData.getRating().getDisplayRating(), EPS_DOUBLE);
+        assertTrue(serverHikeData.getRating().userHasVoted());
+
+        mDatabaseClient.postVote(new RatingVote(hikeId, 5));
+
+        waitForServerSync();
+
+        // retrieve the same hike
+        serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+
+        // Compare
+        assertEquals(1, serverHikeData.getRating().getVoteCount());
+        assertEquals(5, serverHikeData.getRating().getDisplayRating(), EPS_DOUBLE);
+        assertTrue(serverHikeData.getRating().userHasVoted());
+
+        mDatabaseClient.deleteHike(hikeId);
+    }
+
+    /**
      * Create a valid HikeData object
      * @return a HikeData object
      */

@@ -18,6 +18,7 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
+import ch.epfl.sweng.team7.network.RatingVote;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
@@ -272,6 +273,13 @@ public class MockServer implements DatabaseClient {
      * @throws DatabaseClientException
      */
     public void deleteComment(long commentId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post a vote about a hike.
+     */
+    public void postVote(RatingVote vote) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented.");
     }
 

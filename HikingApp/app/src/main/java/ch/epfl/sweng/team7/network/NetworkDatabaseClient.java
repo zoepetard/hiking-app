@@ -409,6 +409,26 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
+     * Post a vote about a hike.
+     */
+    public void postVote(RatingVote vote) throws DatabaseClientException {
+        try {
+            HttpURLConnection conn = getConnection("post_vote", "POST");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("owner_id", SignedInUser.getInstance().getId());
+            jsonObject.put("hike_id", vote.getHikeId());
+            jsonObject.put("value", vote.getRating());
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+        return;
+    }
+
+    /**
      * Method to set the properties of the connection to the server
      *
      * @param function    the server function, without /

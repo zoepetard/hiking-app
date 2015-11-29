@@ -29,10 +29,8 @@ def get_hike(request):
     hike = ndb.Key(Hike, request_hike_id).get()
     if not hike:
         return response_not_found()
-    
-    comments = get_comment_list(request_hike_id)
-    logger.error("Comments are "+str(len(comments)))
-    return response_data(hike.to_json(comments))
+
+    return response_data(hike.to_json(visitor_id))
 
 
 # Temporary: Function to quickly see the database in browser
@@ -44,7 +42,7 @@ def get_hikes(request):
     
     all_hikes = ""
     for hike in hikes:
-        hike_string = hike.to_json()
+        hike_string = hike.to_json(visitor_id)
         key_string = str(hike.key.id()).strip('L')
         all_hikes += hike_string + ' with key=' + key_string + '\n'
     
@@ -188,6 +186,12 @@ def login_user(request):
     
     logger.info("Searching for user with email "+request_user_email)
     user = find_user_with_email(request_user_email)
+
+    #if user:
+        #TODO(simon) compatibility delete
+        #user.key.delete()
+        #user = None
+
     if not user:
         name = login_request['user_name_hint']
         id_token = login_request['id_token']
@@ -377,7 +381,7 @@ def delete_image(request):
     return response_data('')
 
 
-# Post a new image
+# Post a new comment
 def post_comment(request):
     
     visitor_id = authenticate(request)
@@ -388,7 +392,6 @@ def post_comment(request):
         return response_bad_request()
     
     logger.info('POST comment: '+request.body)
-    request_image_id = int(request.META.get('HTTP_IMAGE_ID', '-1'))
     
     # Create new Hike object
     comment = build_comment_from_json(request.body)
@@ -402,8 +405,6 @@ def post_comment(request):
     if not hike:
         return response_bad_request()
 
-    # If update hike: Authenticate and check for existing hikes in database iss77
-    logger.info('request post to ID '+repr(request_image_id))
     if(comment.requested_id > 0):
         old_comment = ndb.Key(Comment, comment.comment_id).get()
         
@@ -442,6 +443,41 @@ def delete_comment(request):
     
     comment.key.delete()
     return response_data('')
+
+
+
+# Post a new image
+def post_vote(request):
+    
+    visitor_id = authenticate(request)
+    if not has_query_permission(visitor_id):
+        return response_forbidden()
+    
+    if not request.method == 'POST':
+        return response_bad_request()
+    
+    logger.info('POST vote: '+request.body)
+
+    # Create new Hike object
+    rating = build_rating_from_json(request.body)
+    if not rating:
+        return response_bad_request()
+    
+    if not has_write_permission(visitor_id, rating.owner_id):
+        return response_forbidden()
+    
+    hike = Hike.get_by_id(rating.hike_id)
+    if not hike:
+        return response_bad_request()
+
+    # Remove previous votes of visitor for hike
+    old_ratings = Rating.query(ndb.AND(Rating.owner_id == rating.owner_id,Rating.hike_id == rating.hike_id)).fetch()
+    for old_rating in old_ratings:
+        old_rating.key.delete()
+
+    rating.put()
+    return response_id('success', 1)
+
 
 
 # Clean datastore: Remove all entities that obviously do not belong here.
@@ -490,7 +526,31 @@ def clean_datastore():
         # Remove orphaned images
         owner = ndb.Key(User, image.owner_id).get()
         if not owner:
-            hike.key.delete()
+            image.key.delete()
+
+    # Clean votes
+    ratings = Rating.query().fetch()
+    for rating in ratings:
+        # Remove malformed ratings
+        if(rating.owner_id < 1):
+            rating.key.delete()
+            continue
+        
+        # Remove orphaned ratings
+        owner = ndb.Key(User, rating.owner_id).get()
+        if not owner:
+            rating.key.delete()
+
+        # Remove malformed ratings
+        if(rating.hike_id < 1):
+            rating.key.delete()
+            continue
+        
+        # Remove orphaned ratings
+        hike = ndb.Key(Hike, rating.hike_id).get()
+        if not hike:
+            rating.key.delete()
+
 
     # Clean Database of test user
     test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()
@@ -518,15 +578,6 @@ def delete_datastore(request):
         img.key.delete()
 
     return response_data('')
-
-
-def get_comment_list(hike_id):
-    comment_list = []
-    comments = Comment.query(Comment.hike_id == hike_id).fetch()
-    for comment in comments:
-        comment_list.append(json.loads(comment.to_json()))
-
-    return comment_list
 
 
 def response_bad_request():

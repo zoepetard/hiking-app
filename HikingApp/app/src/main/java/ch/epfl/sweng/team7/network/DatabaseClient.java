@@ -153,4 +153,8 @@ public interface DatabaseClient {
      */
     void deleteComment(long commentId) throws DatabaseClientException;
 
+    /**
+     * Post a vote about a hike.
+     */
+    void postVote(RatingVote vote) throws DatabaseClientException;
 }
