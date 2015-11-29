@@ -3,7 +3,6 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -17,7 +16,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -52,6 +50,7 @@ public class MapActivity extends FragmentActivity {
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
+    private static LatLng mUserLocation;
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
@@ -158,8 +157,8 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        LatLng userLatLng = getUserPosition();
-        LatLngBounds initialBounds = guessNewLatLng(userLatLng, userLatLng, 0.5);
+        mUserLocation = getUserPosition();
+        LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
 
         List<HikeData> hikesFound = new ArrayList<>();
         boolean firstHike = true;
@@ -258,8 +257,7 @@ public class MapActivity extends FragmentActivity {
         int screenHeight = size.y;
 
         if (firstHike) {
-            LatLng userLatLng = getUserPosition();
-            boundingBoxBuilder.include(userLatLng);
+            boundingBoxBuilder.include(mUserLocation);
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
         }
     }
