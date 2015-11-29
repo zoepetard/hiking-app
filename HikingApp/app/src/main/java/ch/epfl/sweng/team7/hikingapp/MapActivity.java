@@ -22,7 +22,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.view.KeyEvent;
 import android.view.View;
+
 import android.view.ViewGroup;
+
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -99,8 +101,8 @@ public class MapActivity extends FragmentActivity {
     private Geocoder mGeocoder;
     private ImageView mImageView;
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
+    private final EditText annotationText = new EditText(this);
 
-    
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -365,6 +367,7 @@ public class MapActivity extends FragmentActivity {
                 Marker textAnnotation = mMap.addMarker(markerOptions);
                 textAnnotation.showInfoWindow();
             }
+
         }
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -504,13 +507,15 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void createAnnotationButton() {
+
         final Button annotationButton = new Button(this);
+
         annotationButton.setText(R.string.button_create_annotation);
         annotationButton.setId(R.id.button_annotation_create);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.button_annotation_create);
 
         annotationButton.setLayoutParams(lp);
@@ -519,7 +524,33 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 if (mGps.tracking()) {
                     displayAddAnnotationPrompt();
+                    annotationText.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+    }
+
+    private void createAnnotationEditText() {
+        annotationText.setId(R.id.annotation_text);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.annotation_text);
+
+        annotationText.setLayoutParams(lp);
+        layout.addView(annotationText, lp);
+
+        annotationText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    String annotation = annotationText.getText().toString();
+                    mGps.createAnnotation(annotation);
+                    handled = true;
+                }
+                return handled;
             }
         });
     }
@@ -531,7 +562,6 @@ public class MapActivity extends FragmentActivity {
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
 
         pictureButton.setLayoutParams(lp);
@@ -541,12 +571,13 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                     startActivityForResult(intent, 0);
+
+                    annotationText.setVisibility(View.VISIBLE);
+
                 }
             }
         });
     }
-
-
     private void displayAddAnnotationPrompt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(this.getResources().getString(R.string.prompt_add_tile));
