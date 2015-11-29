@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
@@ -20,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -73,12 +75,7 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
-
-
-
-
     private boolean mFollowingUser = false;
-
     private Polyline mPolyRef;
     private PolylineOptions mCurHike;
     private SearchView mSearchView;
@@ -86,6 +83,9 @@ public class MapActivity extends FragmentActivity {
     private List<Address> mSuggestionList = new ArrayList<>();
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
+    private ImageView imageView;
+
+
     private final EditText annotationText = new EditText(this);
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -542,6 +542,14 @@ public class MapActivity extends FragmentActivity {
         });
     }
     
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0  && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);
+            mGps.createPicture(imageView.getDrawable());
+        }
+    }
+
 
     private void createBottomInfoView() {
         mBottomTable.initialize(this);
