@@ -548,6 +548,7 @@ public class MapActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0  && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView = new ImageView(this);
             imageView.setImageBitmap(photo);
             mGps.createPicture(imageView.getDrawable());
         }
