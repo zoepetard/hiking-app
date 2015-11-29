@@ -241,7 +241,6 @@ public final class DataManager {
 
     /**
      * Login for the user with the server.
-     * TODO(simon) restructure iss105
      */
     public void loginUser(LoginRequest loginRequest) throws DataManagerException {
         try {
@@ -253,6 +252,7 @@ public final class DataManager {
 
     public void postVote(RatingVote vote) throws DataManagerException {
         try {
+            sLocalCache.getHike(vote.getHikeId()).getRating().update(vote);
             sDatabaseClient.postVote(vote);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);

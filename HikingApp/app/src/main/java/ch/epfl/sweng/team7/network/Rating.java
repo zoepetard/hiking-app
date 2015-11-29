@@ -10,14 +10,14 @@ public class Rating {
     private final static double DEFAULT_AVERAGE = 3;
     private final double mAverage;
     private final int mCount;
-    private final Integer mUserRating;
+    private Float mUserRating;
 
-    public Rating(double average, int count, int userRating) {
+    public Rating(double average, int count, float userRating) {
         mAverage = average;
         mCount = count;
         // A negative rating denotes "not voted yet"
         if(userRating >= 0) {
-            mUserRating = new Integer(userRating);
+            mUserRating = new Float(userRating);
         } else {
             mUserRating = null;
         }
@@ -46,6 +46,14 @@ public class Rating {
 
     public int getVoteCount() {
         return mCount;
+    }
+
+    /**
+     * Update the rating with a vote. This is a shortcut for updating the information
+     * while data is sent to the server at the same time.
+     */
+    public void update(RatingVote vote) {
+        mUserRating = new Float(vote.getRating());
     }
 
     public static Rating parseFromJSON(JSONObject jsonObject) throws JSONException {

@@ -80,8 +80,9 @@ public final class HikeInfoActivity extends Activity {
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ratingBar.setRating(rating);
-                new SubmitVoteTask().execute(new RatingVote(hikeId, rating));
+                if(fromUser) {
+                    new SubmitVoteTask().execute(new RatingVote(hikeId, rating));
+                }
             }
         });
 

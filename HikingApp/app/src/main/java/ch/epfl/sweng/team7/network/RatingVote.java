@@ -13,11 +13,11 @@ public class RatingVote {
         mRating = rating;
     }
 
-    long getHikeId() {
+    public long getHikeId() {
         return mHikeId;
     }
 
-    float getRating() {
+    public float getRating() {
         return mRating;
     }
 }

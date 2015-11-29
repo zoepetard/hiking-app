@@ -37,7 +37,6 @@ public interface HikeData {
 
     /**
      * @return the rating of the hike
-     * This feature is not yet implemented in the backend
      */
     Rating getRating();
 
