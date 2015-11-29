@@ -101,6 +101,10 @@ public class MapActivity extends FragmentActivity {
     private Geocoder mGeocoder;
     private ImageView mImageView;
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
+
+    private ImageView imageView;
+
+
     private final EditText annotationText = new EditText(this);
 
     public final static String EXTRA_BOUNDS =
@@ -597,6 +601,7 @@ public class MapActivity extends FragmentActivity {
         annotationEditText.setSingleLine(false);
         layout.addView(annotationEditText);
 
+<<<<<<< HEAD
         builder.setView(layout);
 
         builder.setPositiveButton(this.getResources().getString(R.string.add_annotation), new DialogInterface.OnClickListener() {
@@ -632,14 +637,6 @@ public class MapActivity extends FragmentActivity {
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(photo);
             addPicture(mImageView.getDrawable());
-            /*
-            RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
-            imageView.setLayoutParams(lp);
-            layout.addView(imageView,lp);
-            */
         }
     }
 

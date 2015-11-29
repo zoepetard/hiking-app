@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -17,7 +18,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.database.Annotation;
@@ -34,6 +38,7 @@ import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.RawHikeData;
+import ch.epfl.sweng.team7.network.RawHikePoint;
 
 /**
  * Class used to read device's GPS-related information
@@ -60,6 +65,7 @@ public final class GPSManager {
     private ServiceConnection mServiceConnection;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
+    private Annotation annotation;
     private List<Annotation> listAnnotations = new ArrayList<>();
     private RawHikeData rawHikeData;
 
@@ -392,7 +398,7 @@ public final class GPSManager {
         } catch (Exception e) {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
         }
-    }
+
 
     private void storePictures(List<Annotation> annotations) {
         if (annotations != null || annotations.size() > 1) {
@@ -402,11 +408,35 @@ public final class GPSManager {
         }
     }
 
+    public void createAnnotation(String text) {
+        LatLng position = mLastFootPrint.getGeoCoords().toLatLng();
+        Double elevation = mLastFootPrint.getGeoCoords().getAltitude();
+        Date date = new Date(mLastFootPrint.getTimeStamp());
+        Annotation annotation = new Annotation(new RawHikePoint(position, date, elevation),
+                                               text, null);
+        listAnnotations.add(annotation);
+    }
+
+    public void createPicture(Drawable drawable) {
+        LatLng position = mLastFootPrint.getGeoCoords().toLatLng();
+        Double elevation = mLastFootPrint.getGeoCoords().getAltitude();
+        Date date = new Date(mLastFootPrint.getTimeStamp());
+        RawHikePoint rawHikePoint = new RawHikePoint(position, date, elevation);
+        if(listAnnotations.size() > 0) {
+            if (listAnnotations.get(listAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
+                listAnnotations.get(listAnnotations.size() - 1).setPicture(drawable);
+            }
+        }else{
+            Annotation annotation = new Annotation(rawHikePoint, null, drawable);
+            listAnnotations.add(annotation);
+        }
+    }
+
+
 
     /**
      * Asynchronous task to make the post request to the server.
      */
-
 
     private class StoreHikeTask extends AsyncTask<RawHikeData, Long, Long> {
         @Override
@@ -432,8 +462,8 @@ public final class GPSManager {
      * Asynchronous task to make the post request to the server.
      */
 
+
     private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
-        @Override
         protected Long doInBackground(Annotation... pictures) {
             long pictureId;
             DataManager dataManager = DataManager.getInstance();
@@ -452,10 +482,4 @@ public final class GPSManager {
 
     }
 
-    public void setAnnotations(ArrayList<Annotation> listAnnotations) {
-        if (rawHikeData != null) {
-            rawHikeData.setAnnotations(listAnnotations);
-
-        }
-    }
 }

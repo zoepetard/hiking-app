@@ -8,11 +8,13 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
+<<<<<<< HEAD
 
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 
 import ch.epfl.sweng.team7.network.RawHikeData;
@@ -38,6 +40,7 @@ public class GPSPathConverter {
             List<RawHikePoint> rawHikePoints = getHikePointsFromGPS(gpsPath);
             //Waiting for #iss56, by now is 0 by default
             long ownerId = 0;
+
             List<RawHikeComment> newHikeComments = new ArrayList<>();
             List<Annotation> mAnnotations = null;
             return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, newHikeComments, "", mAnnotations);
