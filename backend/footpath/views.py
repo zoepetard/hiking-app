@@ -187,10 +187,10 @@ def login_user(request):
     logger.info("Searching for user with email "+request_user_email)
     user = find_user_with_email(request_user_email)
 
-    if user:
+    #if user:
         #TODO(simon) compatibility delete
-        user.key.delete()
-        user = None
+        #user.key.delete()
+        #user = None
 
     if not user:
         name = login_request['user_name_hint']

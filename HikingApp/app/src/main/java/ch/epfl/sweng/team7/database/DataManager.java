@@ -22,7 +22,7 @@ import ch.epfl.sweng.team7.network.RawUserData;
 public final class DataManager {
 
     private final static String LOG_FLAG = "DB_DataManager";
-    private static final String SERVER_URL = "http://10.0.3.2:8080";//"https://footpath-1104.appspot.com";//
+    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
     private static LocalCache sLocalCache;
     private static DatabaseClient sDatabaseClient;
 
