@@ -3,14 +3,15 @@ package ch.epfl.sweng.team7.database;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
 public class DummyHikeBuilder {
 
     private static final String PROPER_JSON_ONEHIKE = "{\n"
-            + "  \"hike_id\": 143,\n"
-            + "  \"owner_id\": 48,\n"
+            + "  \"hike_id\": %d,\n"
+            + "  \"owner_id\": %d,\n"
             + "  \"date\": 123201,\n"
             + "  \"hike_data\": [\n"
             + "    [0.0, 0.0, 123201, 1.0],\n"
@@ -23,8 +24,8 @@ public class DummyHikeBuilder {
 
     public static RawHikeData buildRawHikeData(long hikeId) throws HikeParseException {
         try {
-            RawHikeData rawHikeData = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
-            rawHikeData.setHikeId(hikeId);
+            String properJsonOneHike = String.format(PROPER_JSON_ONEHIKE, hikeId, SignedInUser.getInstance().getId());
+            RawHikeData rawHikeData = RawHikeData.parseFromJSON(new JSONObject(properJsonOneHike));
             return rawHikeData;
         } catch(JSONException e) {
             throw new HikeParseException(e);

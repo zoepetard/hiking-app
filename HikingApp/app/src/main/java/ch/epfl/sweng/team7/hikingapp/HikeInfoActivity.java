@@ -3,26 +3,18 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.app.AlertDialog;
 import android.app.LauncherActivity;
 import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
-import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -30,6 +22,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.DefaultHikeComment;
@@ -38,6 +31,7 @@ import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.network.RawHikeComment;
+import ch.epfl.sweng.team7.network.RatingVote;
 
 public final class HikeInfoActivity extends Activity {
     private long hikeId;
@@ -99,13 +93,9 @@ public final class HikeInfoActivity extends Activity {
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-
-                    /* Here we would actually save the new rating in our Data Model and let it notify us of the change.
-                    There won't be a need to update the UI directly from here.
-                    */
-
-                ratingBar.setRating(rating);
-
+                if(fromUser) {
+                    new SubmitVoteTask().execute(new RatingVote(hikeId, rating));
+                }
             }
         });
 
@@ -127,6 +117,26 @@ public final class HikeInfoActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    private class SubmitVoteTask extends AsyncTask<RatingVote, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(RatingVote... vote) {
+            try {
+                DataManager.getInstance().postVote(vote[0]);
+                return Boolean.TRUE;
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return Boolean.FALSE;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if(!success) {
+                // TODO(simon) display error?
+            }
+        }
     }
 
     private class ImageViewClickListener implements View.OnClickListener {

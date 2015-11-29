@@ -47,7 +47,7 @@ public class DefaultNetworkProvider implements NetworkProvider {
      */
     @Override
     public HttpURLConnection getConnection(URL url) throws IOException {
-        if(mContext != null && isNetworkAvailable() == false) {
+        if(mContext != null && !isNetworkAvailable()) {
             throw new IOException("Network unavailable");
         }
         return (HttpURLConnection) url.openConnection();

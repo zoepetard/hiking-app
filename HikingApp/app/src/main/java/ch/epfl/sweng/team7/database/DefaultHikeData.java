@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.network.Rating;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
@@ -33,6 +34,7 @@ public class DefaultHikeData implements HikeData {
     private final LatLng mStartLocation;
     private final LatLng mFinishLocation;
     private final ElevationBounds mElevationBounds;
+    private final Rating mRating;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -61,6 +63,13 @@ public class DefaultHikeData implements HikeData {
         mStartLocation = rawHikePoints.get(0).getPosition();
         mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
         mElevationBounds = calculateElevationBounds(rawHikePoints);
+
+        // Hike rating is optional in RawHikeData, but this class is guaranteed to have it.
+        if(rawHikeData.getRating() != null) {
+            mRating = rawHikeData.getRating();
+        } else {
+            mRating = new Rating();
+        }
     }
     /**
      * @return the hike ID.
@@ -87,8 +96,8 @@ public class DefaultHikeData implements HikeData {
      * @return the rating of the hike
      * This feature is not yet implemented in the backend
      */
-    public double getRating() {
-        return 3;
+    public Rating getRating() {
+        return mRating;
     }
 
     /**
