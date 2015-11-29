@@ -11,6 +11,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.network.Rating;
+
 /**
  * This is the interface that the UI should program against.
  * A HikeData object is usually created from a RawHikeData, but calculates much more information
@@ -37,7 +39,7 @@ public interface HikeData {
      * @return the rating of the hike
      * This feature is not yet implemented in the backend
      */
-    double getRating();
+    Rating getRating();
 
     /**
      * @return an ordered list of the waypoints on this hike

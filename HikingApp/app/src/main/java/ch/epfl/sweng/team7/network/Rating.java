@@ -1,4 +1,4 @@
-package ch.epfl.sweng.team7.database;
+package ch.epfl.sweng.team7.network;
 
 import org.json.JSONException;
 import org.json.JSONObject;
