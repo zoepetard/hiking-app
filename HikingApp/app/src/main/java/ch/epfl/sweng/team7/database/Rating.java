@@ -7,6 +7,7 @@ import org.json.JSONObject;
  * Created by simon on 11/29/15.
  */
 public class Rating {
+    private final static double DEFAULT_AVERAGE = 3;
     private final double mAverage;
     private final int mCount;
     private final Integer mUserRating;
@@ -20,6 +21,12 @@ public class Rating {
         } else {
             mUserRating = null;
         }
+    }
+
+    public Rating() {
+        mAverage = DEFAULT_AVERAGE;
+        mCount = 0;
+        mUserRating = null;
     }
 
     public boolean userHasVoted() {
