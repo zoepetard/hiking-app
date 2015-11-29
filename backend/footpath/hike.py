@@ -86,7 +86,8 @@ class Hike(ndb.Model):
             'date': self.date,
             'hike_data': self.hike_data,
             'title': title,
-            'comments': comments
+            'comments': comments,
+            'rating': rating
         }
         if self.annotations:
             hike_data.update({'annotations':self.annotations})
