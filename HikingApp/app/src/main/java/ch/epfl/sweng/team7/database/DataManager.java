@@ -434,7 +434,6 @@ public final class DataManager {
         }
     }
 
-
     /**
      * Creates the LocalCache and DatabaseClient
      */
