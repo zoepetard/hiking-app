@@ -409,6 +409,42 @@ public class BackendTest extends TestCase {
 
 
     /**
+     * Test the {@link NetworkDatabaseClient} post_hike and get_hike functions
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostVote() throws Exception {
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+
+        waitForServerSync();
+
+        mDatabaseClient.postVote(hikeId, 1);
+
+        // retrieve the same hike
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+
+        // Compare
+        assertEquals(serverHikeData.getHikeId(), hikeId);
+        assertEquals(serverHikeData.getOwnerId(), hikeData.getOwnerId());
+        assertEquals(serverHikeData.getDate(), hikeData.getDate());
+        assertEquals(serverHikeData.getHikePoints().size(), hikeData.getHikePoints().size());
+        for(int i = 0; i < hikeData.getHikePoints().size(); ++i) {
+            assertEquals(hikeData.getHikePoints().get(i).getPosition().latitude,
+                    serverHikeData.getHikePoints().get(i).getPosition().latitude, EPS_DOUBLE);
+            assertEquals(hikeData.getHikePoints().get(i).getPosition().longitude,
+                    serverHikeData.getHikePoints().get(i).getPosition().longitude, EPS_DOUBLE);
+            assertEquals(hikeData.getHikePoints().get(i).getTime(),
+                    serverHikeData.getHikePoints().get(i).getTime());
+        }
+
+        waitForServerSync();
+        mDatabaseClient.deleteHike(hikeId);
+    }
+
+    /**
      * Create a valid HikeData object
      * @return a HikeData object
      */

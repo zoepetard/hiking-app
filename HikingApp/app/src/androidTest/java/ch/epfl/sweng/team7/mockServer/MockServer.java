@@ -275,6 +275,15 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("Not implemented.");
     }
 
+    /**
+     * Post a vote about a hike.
+     * @param hikeId the hike the vote is about
+     * @param value the vote value
+     */
+    public void postVote(long hikeId, int value) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
 
     // Internal database management functions
     public boolean hasHike(long hikeId) {
