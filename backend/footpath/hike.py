@@ -181,6 +181,7 @@ class Rating(ndb.Model):
         self.hike_id = json_object['hike_id']
         self.owner_id = json_object['owner_id']
         self.value = json_object['value']
+        return True
 
     # A to_json function does not make sense,
     # because ratings are converted into average on output

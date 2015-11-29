@@ -471,7 +471,7 @@ def post_vote(request):
         return response_bad_request()
 
     # Remove previous votes of visitor for hike
-    old_ratings = ndb.Rating.query(Rating.owner_id == rating.owner_id).query(Rating.hike_id == rating.hike_id).fetch()
+    old_ratings = Rating.query(ndb.AND(Rating.owner_id == rating.owner_id,Rating.hike_id == rating.hike_id)).fetch()
     for old_rating in old_ratings:
         old_rating.key.delete()
 

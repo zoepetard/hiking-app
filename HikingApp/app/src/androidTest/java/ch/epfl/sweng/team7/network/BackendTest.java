@@ -409,7 +409,7 @@ public class BackendTest extends TestCase {
 
 
     /**
-     * Test the {@link NetworkDatabaseClient} post_hike and get_hike functions
+     * Test the {@link NetworkDatabaseClient} post_vote function
      * This test assumes that the server is online and returns good results.
      */
     @Test
@@ -421,26 +421,25 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
 
-        mDatabaseClient.postVote(hikeId, 1);
-
         // retrieve the same hike
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
 
         // Compare
-        assertEquals(serverHikeData.getHikeId(), hikeId);
-        assertEquals(serverHikeData.getOwnerId(), hikeData.getOwnerId());
-        assertEquals(serverHikeData.getDate(), hikeData.getDate());
-        assertEquals(serverHikeData.getHikePoints().size(), hikeData.getHikePoints().size());
-        for(int i = 0; i < hikeData.getHikePoints().size(); ++i) {
-            assertEquals(hikeData.getHikePoints().get(i).getPosition().latitude,
-                    serverHikeData.getHikePoints().get(i).getPosition().latitude, EPS_DOUBLE);
-            assertEquals(hikeData.getHikePoints().get(i).getPosition().longitude,
-                    serverHikeData.getHikePoints().get(i).getPosition().longitude, EPS_DOUBLE);
-            assertEquals(hikeData.getHikePoints().get(i).getTime(),
-                    serverHikeData.getHikePoints().get(i).getTime());
-        }
+        assertEquals(0, serverHikeData.getRating().getVoteCount());
+        assertFalse(serverHikeData.getRating().userHasVoted());
+
+        mDatabaseClient.postVote(hikeId, 2);
 
         waitForServerSync();
+
+        // retrieve the same hike
+        serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+
+        // Compare
+        assertEquals(1, serverHikeData.getRating().getVoteCount());
+        assertEquals(2, serverHikeData.getRating().getDisplayRating(), EPS_DOUBLE);
+        assertTrue(serverHikeData.getRating().userHasVoted());
+
         mDatabaseClient.deleteHike(hikeId);
     }
 
