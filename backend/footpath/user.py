@@ -58,6 +58,5 @@ def build_user_from_name_and_address(name, mail_address, token):
     user = User()
     user.name = name
     user.mail_address = mail_address
-    user.db_token = "test"
-    #hashlib.sha224(name + mail_address + repr(time()) + token).hexdigest()
+    user.db_token = hashlib.sha224(name + mail_address + repr(time()) + token).hexdigest()
     return user

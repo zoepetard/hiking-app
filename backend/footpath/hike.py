@@ -71,11 +71,13 @@ class Hike(ndb.Model):
             
     # Parse this into JSON string
     # comments is a list of JSON objects
-    def to_json(self, comments):
+    def to_json(self):
         # TODO(simon): remove extra code after migration (24Nov15)
         title = "Untitled Hike"
         if self.title:
             title = self.title
+        
+        comments = get_comment_list(self.key.id())
         
         hike_data = {
             'hike_id': self.key.id(),
@@ -118,6 +120,15 @@ def build_hike_from_json(json_string):
     if(t.from_json(json_string)):
         return t
     return None
+
+
+def get_comment_list(hike_id):
+    comment_list = []
+    comments = Comment.query(Comment.hike_id == hike_id).fetch()
+    for comment in comments:
+        comment_list.append(json.loads(comment.to_json()))
+    
+    return comment_list
 
 
 def build_sample_hike(hike_id, owner_id):

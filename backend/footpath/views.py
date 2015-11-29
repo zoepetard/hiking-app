@@ -29,10 +29,8 @@ def get_hike(request):
     hike = ndb.Key(Hike, request_hike_id).get()
     if not hike:
         return response_not_found()
-    
-    comments = get_comment_list(request_hike_id)
-    logger.error("Comments are "+str(len(comments)))
-    return response_data(hike.to_json(comments))
+
+    return response_data(hike.to_json())
 
 
 # Temporary: Function to quickly see the database in browser
@@ -518,15 +516,6 @@ def delete_datastore(request):
         img.key.delete()
 
     return response_data('')
-
-
-def get_comment_list(hike_id):
-    comment_list = []
-    comments = Comment.query(Comment.hike_id == hike_id).fetch()
-    for comment in comments:
-        comment_list.append(json.loads(comment.to_json()))
-
-    return comment_list
 
 
 def response_bad_request():
