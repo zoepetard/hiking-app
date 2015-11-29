@@ -186,6 +186,12 @@ def login_user(request):
     
     logger.info("Searching for user with email "+request_user_email)
     user = find_user_with_email(request_user_email)
+
+    if user:
+        #TODO(simon) compatibility delete
+        user.key.delete()
+        user = None
+
     if not user:
         name = login_request['user_name_hint']
         id_token = login_request['id_token']
@@ -488,7 +494,31 @@ def clean_datastore():
         # Remove orphaned images
         owner = ndb.Key(User, image.owner_id).get()
         if not owner:
-            hike.key.delete()
+            image.key.delete()
+
+    # Clean votes
+    ratings = Rating.query().fetch()
+    for rating in ratings:
+        # Remove malformed ratings
+        if(rating.owner_id < 1):
+            rating.key.delete()
+            continue
+        
+        # Remove orphaned ratings
+        owner = ndb.Key(User, rating.owner_id).get()
+        if not owner:
+            rating.key.delete()
+
+        # Remove malformed ratings
+        if(rating.hike_id < 1):
+            rating.key.delete()
+            continue
+        
+        # Remove orphaned ratings
+        hike = ndb.Key(Hike, rating.hike_id).get()
+        if not hike:
+            rating.key.delete()
+
 
     # Clean Database of test user
     test_users = User.query(User.mail_address == "bort@googlemail.com").fetch()

@@ -136,13 +136,15 @@ def get_comment_list(hike_id, visitor_id):
 
 # Gets the average rating of a specific hike
 def get_rating(hike_id, visitor_id):
+    NO_VISITOR_RATING = -1
+    
     ratings = Rating.query(Rating.hike_id == hike_id).fetch()
     if (not ratings) or (len(ratings) == 0):
-        return {"rating":3,"count":0,"visitor_rating":-1}
+        return {"rating":2.5,"count":0,"visitor_rating":NO_VISITOR_RATING}
     
     count = len(ratings)
     sum_rating = 0
-    visitor_rating = -1
+    visitor_rating = NO_VISITOR_RATING
     for rating in ratings:
         if rating.owner_id == visitor_id:
             visitor_rating = rating.value
