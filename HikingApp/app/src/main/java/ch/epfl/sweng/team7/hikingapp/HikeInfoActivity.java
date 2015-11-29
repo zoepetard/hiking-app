@@ -47,7 +47,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     }
 
     private void displayEditableHike(Intent intent) {
-        EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
+        EditText hikeName = (EditText) findViewById(R.id.hikeinfo_name);
         //TODO set it to editable
 
         Button saveButton = new Button(this);
@@ -103,7 +103,9 @@ public final class HikeInfoActivity extends FragmentActivity {
 
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
-        mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
+        if (mapHikeInfo != null) {
+            mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
+        }
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
