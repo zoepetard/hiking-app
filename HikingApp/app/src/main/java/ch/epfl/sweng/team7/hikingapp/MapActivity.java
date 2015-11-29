@@ -440,12 +440,12 @@ public class MapActivity extends FragmentActivity {
     }
 
     private LatLng getUserPosition() {
-        double switzerlandLatitude = 46.4;
-        double switzerlandLongitude = 6.4;
         if (mGps.enabled()) {
             GeoCoords userGeoCoords = mGps.getCurrentCoords();
             return userGeoCoords.toLatLng();
         } else {
+            double switzerlandLatitude = 46.4;
+            double switzerlandLongitude = 6.4;
             return new LatLng(switzerlandLatitude, switzerlandLongitude);
         }
     }
