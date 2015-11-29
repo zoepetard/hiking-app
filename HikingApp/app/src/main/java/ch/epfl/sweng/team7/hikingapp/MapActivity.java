@@ -571,9 +571,7 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
                     startActivityForResult(intent, 0);
-
                     annotationText.setVisibility(View.VISIBLE);
-
                 }
             }
         });
@@ -614,7 +612,6 @@ public class MapActivity extends FragmentActivity {
         builder.setNegativeButton(this.getResources().getString(R.string.button_cancel_save), null);
         builder.show();
     }
-
 
     private void addAnnotation(String annotation) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
@@ -657,7 +654,7 @@ public class MapActivity extends FragmentActivity {
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
     }
-
+    
     private void createBottomInfoView() {
         mBottomTable.initialize(this);
 

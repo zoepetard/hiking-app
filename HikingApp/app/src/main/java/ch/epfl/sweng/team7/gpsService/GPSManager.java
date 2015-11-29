@@ -393,7 +393,7 @@ public final class GPSManager {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
         }
     }
-    
+
     private void storePictures(List<Annotation> annotations) {
         if (annotations != null || annotations.size() > 1) {
             for (int i = 0; i < annotations.size(); i++) {
