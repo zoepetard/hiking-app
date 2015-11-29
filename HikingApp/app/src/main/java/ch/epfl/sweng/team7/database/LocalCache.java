@@ -40,7 +40,8 @@ interface LocalCache {
 
     Drawable getPicture(long pictureId);
 
-    void putPicture(Drawable picture);
+
+    void putPicture(Drawable picture, long pictureId);
 
 }
 
