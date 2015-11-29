@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.network.RatingVote;
 
 public final class HikeInfoActivity extends Activity {
     private long hikeId;
@@ -78,18 +80,8 @@ public final class HikeInfoActivity extends Activity {
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-
-                    /* Here we would actually save the new rating in our Data Model and let it notify us of the change.
-                    There won't be a need to update the UI directly from here.
-                    */
-
                 ratingBar.setRating(rating);
-                try {
-                    DataManager.getInstance().postVote(hikeId, rating);
-                } catch (DataManagerException e) {
-                    // todo(simon) display message
-                }
-
+                new SubmitVoteTask().execute(new RatingVote(hikeId, rating));
             }
         });
 
@@ -111,6 +103,26 @@ public final class HikeInfoActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    private class SubmitVoteTask extends AsyncTask<RatingVote, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(RatingVote... vote) {
+            try {
+                DataManager.getInstance().postVote(vote[0]);
+                return Boolean.TRUE;
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return Boolean.FALSE;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if(!success) {
+                // TODO(simon) display error?
+            }
+        }
     }
 
     private class ImageViewClickListener implements View.OnClickListener {

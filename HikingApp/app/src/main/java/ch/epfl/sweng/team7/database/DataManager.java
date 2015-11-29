@@ -15,6 +15,7 @@ import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
+import ch.epfl.sweng.team7.network.RatingVote;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
@@ -250,9 +251,9 @@ public final class DataManager {
         }
     }
 
-    public void postVote(long hikeId, float rating) throws DataManagerException {
+    public void postVote(RatingVote vote) throws DataManagerException {
         try {
-            sDatabaseClient.postVote(hikeId, rating);
+            sDatabaseClient.postVote(vote);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }

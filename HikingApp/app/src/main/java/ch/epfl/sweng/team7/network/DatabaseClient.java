@@ -155,8 +155,6 @@ public interface DatabaseClient {
 
     /**
      * Post a vote about a hike.
-     * @param hikeId the hike the vote is about
-     * @param value the vote value
      */
-    void postVote(long hikeId, float value) throws DatabaseClientException;
+    void postVote(RatingVote vote) throws DatabaseClientException;
 }

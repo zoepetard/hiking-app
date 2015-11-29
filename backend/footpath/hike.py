@@ -174,13 +174,17 @@ class Rating(ndb.Model):
     '''Models an individual Rating entry.'''
     owner_id = ndb.IntegerProperty()
     hike_id = ndb.IntegerProperty()
-    value = ndb.IntegerProperty(indexed=False)
+    value = ndb.FloatProperty(indexed=False)
 
     def from_json(self, json_string):
         json_object = json.loads(json_string)
         self.hike_id = json_object['hike_id']
         self.owner_id = json_object['owner_id']
         self.value = json_object['value']
+        
+        # Voting must be between 0 and 5 stars
+        if(self.value < 0 or self.value > 5):
+            return False
         return True
 
     # A to_json function does not make sense,
