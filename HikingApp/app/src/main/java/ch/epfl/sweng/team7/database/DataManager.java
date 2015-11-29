@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
@@ -20,7 +21,7 @@ import ch.epfl.sweng.team7.network.RawUserData;
 public final class DataManager {
 
     private final static String LOG_FLAG = "DB_DataManager";
-    private static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";
+    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
     private static LocalCache sLocalCache;
     private static DatabaseClient sDatabaseClient;
 
@@ -191,8 +192,7 @@ public final class DataManager {
     public long addNewUser(RawUserData rawUserData) throws DataManagerException {
 
         try {
-            long userId = sDatabaseClient.postUserData(rawUserData);
-            return userId;
+            return sDatabaseClient.postUserData(rawUserData);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }
@@ -242,30 +242,11 @@ public final class DataManager {
      * Login for the user with the server.
      * TODO(simon) restructure iss105
      */
-    public void loginUser() throws DataManagerException {
+    public void loginUser(LoginRequest loginRequest) throws DataManagerException {
         try {
-            sDatabaseClient.loginUser();
+            sDatabaseClient.loginUser(loginRequest);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
-        }
-    }
-
-    /**
-     * Look up the id for a user using mail address. Typically used directly after signing in via
-     * Google to obtain the id assigned to that account.
-     *
-     * @param mailAddress - user's email address, google address.
-     * @return userId - user Id stored in database, throws exception if not found.
-     */
-    public Long getUserId(String mailAddress) throws DataManagerException {
-        // use database client to query database for user data
-        try {
-            sDatabaseClient.loginUser();
-            RawUserData rawUserData = sDatabaseClient.fetchUserData(mailAddress);
-            return rawUserData.getUserId();
-        } catch (DatabaseClientException e) {
-            return null; // TODO Remove this when server returns a value when not finding id.
-            //throw new DataManagerException(e.getMessage());
         }
     }
 

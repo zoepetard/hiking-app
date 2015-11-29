@@ -23,8 +23,9 @@ import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 
 /**
@@ -37,12 +38,13 @@ import ch.epfl.sweng.team7.hikingapp.SignedInUser;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    public static final String SERVER_URL = "http://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
-    DatabaseClient mDatabaseClient;
+    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    private DatabaseClient mDatabaseClient;
 
     @Before
     public void setUp() throws Exception {
         mDatabaseClient = createDatabaseClient();
+        mDatabaseClient.loginUser(new LoginRequest("bort@googlemail.com", "Bort", ""));
     }
 
     /**
@@ -52,7 +54,7 @@ public class BackendTest extends TestCase {
     public void testCanOpenNetwork() throws IOException {
 
         // Create a URL
-        URL url = new URL("http://www.epfl.ch");
+        URL url = new URL("https://www.epfl.ch");
 
         // Get a DefaultNetworkProvider connection
         DefaultNetworkProvider networkProvider = new DefaultNetworkProvider();
@@ -170,7 +172,6 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow() throws Exception {
-        waitForServerSync();
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
         List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
 
@@ -227,17 +228,18 @@ public class BackendTest extends TestCase {
     public void testPostUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
+        assertTrue("Server should set positive user ID", userId > 0);
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);
+        waitForServerSync();
     }
 
     @Test
     public void testGetUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
+        assertTrue("Server should set positive user ID", userId > 0);
 
         waitForServerSync();
         RawUserData serverRawUserData = mDatabaseClient.fetchUserData(userId);
@@ -245,9 +247,6 @@ public class BackendTest extends TestCase {
         assertEquals(userId, serverRawUserData.getUserId());
         assertEquals(rawUserData.getMailAddress(), serverRawUserData.getMailAddress());
         assertEquals(rawUserData.getUserName(), serverRawUserData.getUserName());
-
-        waitForServerSync();
-        mDatabaseClient.deleteUser(userId);
     }
 
     @Test
@@ -270,10 +269,8 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikeIdsOfUser() throws Exception {
-        RawUserData rawUserData = createUserData();
-        long userId = mDatabaseClient.postUserData(rawUserData);
+        Long userId = SignedInUser.getInstance().getId();
 
-        waitForServerSync();
         RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints());
         final long hikeId = mDatabaseClient.postHike(hikeData);
 
@@ -284,24 +281,13 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testLoginUser() throws Exception {
-
-        RawUserData rawUserData = createUserData();
-        long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
-
         SignedInUser signedInUser = SignedInUser.getInstance();
-        signedInUser.init(-1, "Name Unset", rawUserData.getMailAddress());
+        assertTrue("User not logged in", signedInUser.getLoggedIn());
+        assertTrue("User ID not set", signedInUser.getId() > 0);
+        RawUserData rawUserData = mDatabaseClient.fetchUserData(signedInUser.getId());
 
-        waitForServerSync();
-
-        mDatabaseClient.loginUser();
-
-        waitForServerSync();
-        mDatabaseClient.deleteUser(userId);
-
-        assertEquals(userId, signedInUser.getId());
+        assertEquals(rawUserData.getUserId(), signedInUser.getId());
         assertEquals(rawUserData.getMailAddress(), signedInUser.getMailAddress());
-        assertEquals(rawUserData.getUserName(), signedInUser.getUserName());
     }
 
     /**
@@ -374,6 +360,51 @@ public class BackendTest extends TestCase {
         }
     }
 
+    /**
+     * Test the {@link NetworkDatabaseClient} post_comment function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testPostComment() throws Exception {
+        RawHikeData hikeData = createHikeData();
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+        assertTrue(hikeId > 0);
+
+        waitForServerSync();
+        //TODO(runjie) iss107 create new comment
+        mDatabaseClient.postComment(hikeId);
+
+        waitForServerSync();
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+        mDatabaseClient.deleteHike(hikeId);
+
+        //TODO(runjie) iss107 check if the comment was returned correctly.
+    }
+
+    /**
+     * Test the {@link NetworkDatabaseClient} post_comment function
+     * This test assumes that the server is online and returns good results.
+     */
+    @Test
+    public void testDeleteComment() throws Exception {
+        RawHikeData hikeData = createHikeData();
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+        assertTrue(hikeId > 0);
+
+        waitForServerSync();
+        //TODO(runjie) iss107 create new comment
+        long commentId = mDatabaseClient.postComment(hikeId);
+
+        waitForServerSync();
+        mDatabaseClient.deleteComment(commentId);
+
+        waitForServerSync();
+        RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
+        mDatabaseClient.deleteHike(hikeId);
+
+        //TODO(runjie) iss107 check that comment with commentId is not in serverHikeData anymore
+    }
+
     // TODO(simon) test backend reaction to malformed input
 
 
@@ -389,15 +420,15 @@ public class BackendTest extends TestCase {
      * Create a valid RawUserData object
      * @return a RawUserData object
      */
-    private static RawUserData createUserData() throws HikeParseException {
-        return new RawUserData(-1, "Bort", "bort@googlemail.com");
+    private static RawUserData createUserData() {
+        return new RawUserData(SignedInUser.getInstance().getId(), "Bort", "bort@googlemail.com");
     }
 
     /**
      * Create a valid DatabaseClient object
      * @return a DatabaseClient object
      */
-    private static DatabaseClient createDatabaseClient() throws DatabaseClientException {
+    private static DatabaseClient createDatabaseClient() {
         return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 

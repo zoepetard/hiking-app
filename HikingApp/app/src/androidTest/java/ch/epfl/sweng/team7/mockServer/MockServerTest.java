@@ -20,11 +20,11 @@ import ch.epfl.sweng.team7.network.RawUserData;
  */
 @RunWith(AndroidJUnit4.class)
 public class MockServerTest extends TestCase {
-    public MockServer mMockServer;
-    public List<Long> mHikeIds;
-    public List<RawHikeData> listRawHikes;
-    public RawHikeData mRawHikeData1, mRawHikeData2;
-    public long mUserBortId;
+    private MockServer mMockServer;
+    private List<Long> mHikeIds;
+    private List<RawHikeData> listRawHikes;
+    private RawHikeData mRawHikeData1, mRawHikeData2;
+    private long mUserBortId;
 
     private static final String PROPER_JSON_ONEHIKE = "{\n"
             + "  \"hike_id\": 1,\n"
@@ -82,14 +82,6 @@ public class MockServerTest extends TestCase {
         assertEquals(mRawHikeData1.getHikeId(), hikeId);
         assertTrue(mMockServer.hasHike(mRawHikeData1.getHikeId()));
         assertEquals(mMockServer.getHike(hikeId).getHikeId(), mRawHikeData1.getHikeId());
-    }
-
-    @Test
-    public void testFetchUserByMail() throws Exception {
-        String mail = "bort@googlemail.com";
-        RawUserData rawUserData = mMockServer.fetchUserData(mail);
-        assertEquals("ID mismatch", rawUserData.getUserId(), mUserBortId);
-        assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
     }
 
     @Test

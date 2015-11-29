@@ -223,6 +223,12 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
+
+            // Fixes bug #114: On error, doInBackground will abort with null
+            if(postExecuteParams == null) {
+                return;
+            }
+
             List<HikeData> hikesFound = postExecuteParams.mHikesFound;
             LatLngBounds oldBounds = postExecuteParams.mOldBounds;
             boolean firstHike = postExecuteParams.mFirstHike;

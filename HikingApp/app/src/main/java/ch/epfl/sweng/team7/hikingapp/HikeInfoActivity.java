@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 
 public final class HikeInfoActivity extends FragmentActivity {

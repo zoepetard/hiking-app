@@ -61,9 +61,6 @@ public class RawHikeData {
         if (date == null) {
             throw new IllegalArgumentException("Date not specified");
         }
-        if (date.compareTo(new Date()) > 0) {
-            throw new IllegalArgumentException("Date is in the future");
-        }
         if (hikePoints == null) {
             throw new IllegalArgumentException("HikePoints not specified");
         }
@@ -208,7 +205,6 @@ public class RawHikeData {
                         String timeString = trackPoint.getElementsByTagName("time").item(0).getTextContent();
                         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
                         Date date = format.parse(timeString);
-
                         hikePoints.add(new RawHikePoint(new LatLng(lat, lng), date, ele));
                     }
                 } catch(Exception e) {

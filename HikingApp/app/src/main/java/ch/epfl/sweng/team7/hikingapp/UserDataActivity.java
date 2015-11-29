@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
+
 public class UserDataActivity extends Activity {
     private final static int SELECT_PICTURE = 1;
 

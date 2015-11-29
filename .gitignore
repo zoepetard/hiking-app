@@ -42,7 +42,5 @@ gen-external-apklibs
 
 # Python/Backend ignores
 *.pyc
-run_server.sh
-set_path.sh
-upload_server.sh
+*.sh
 .DS_Store

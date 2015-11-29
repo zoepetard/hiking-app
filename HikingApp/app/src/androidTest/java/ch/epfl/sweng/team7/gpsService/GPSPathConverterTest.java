@@ -29,8 +29,8 @@ public class GPSPathConverterTest {
     private LatLng startLocation;
     private long hikeId;
     private long ownerId = 0;
-    private Date date1 = new Date(100);
-    private double epsilon = 0.001;
+    private final Date date1 = new Date(100);
+    private final double epsilon = 0.001;
 
     @Before
     public void setUp() throws Exception {
