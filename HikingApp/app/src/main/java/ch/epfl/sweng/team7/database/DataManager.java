@@ -250,6 +250,14 @@ public final class DataManager {
         }
     }
 
+    public void postVote(long hikeId, float rating) throws DataManagerException {
+        try {
+            sDatabaseClient.postVote(hikeId, rating);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
 
     /**
      * Creates the LocalCache and DatabaseClient

@@ -413,7 +413,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @param hikeId the hike the vote is about
      * @param value the vote value
      */
-    public void postVote(long hikeId, int value) throws DatabaseClientException {
+    public void postVote(long hikeId, float value) throws DatabaseClientException {
         try {
             HttpURLConnection conn = getConnection("post_vote", "POST");
             JSONObject jsonObject = new JSONObject();

@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 
 public final class HikeInfoActivity extends Activity {
@@ -82,6 +84,11 @@ public final class HikeInfoActivity extends Activity {
                     */
 
                 ratingBar.setRating(rating);
+                try {
+                    DataManager.getInstance().postVote(hikeId, rating);
+                } catch (DataManagerException e) {
+                    // todo(simon) display message
+                }
 
             }
         });
