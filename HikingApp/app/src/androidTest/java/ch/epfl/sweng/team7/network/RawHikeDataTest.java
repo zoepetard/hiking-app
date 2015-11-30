@@ -51,9 +51,9 @@ public class RawHikeDataTest extends TestCase {
         List<RawHikePoint> rawHikePoints = new ArrayList<>();
         rawHikePoints.add(new RawHikePoint(new LatLng(1, 2), new Date(3), 4));
         rawHikePoints.add(new RawHikePoint(new LatLng(11, 12), new Date(13), 14));
-
         List<RawHikeComment> newHikeComments = new ArrayList<>();
         RawHikeData rawHikeData = new RawHikeData(21, 22, new Date(23), rawHikePoints, newHikeComments, "");
+
 
         assertEquals(21, rawHikeData.getHikeId());
         assertEquals(22, rawHikeData.getOwnerId());

@@ -405,19 +405,14 @@ public final class GPSManager {
     }
     */
     public void createAnnotation(String text) {
-        LatLng position = mLastFootPrint.getGeoCoords().toLatLng();
-        Double elevation = mLastFootPrint.getGeoCoords().getAltitude();
-        Date date = new Date(mLastFootPrint.getTimeStamp());
-        Annotation annotation = new Annotation(new RawHikePoint(position, date, elevation),
-                                               text, null);
+        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
+        Annotation annotation = new Annotation(rawHikePoint, text, null);
         listAnnotations.add(annotation);
+        Log.d(LOG_FLAG, "Text annotation added to the list");
     }
 
     public void createPicture(Drawable drawable) {
-        LatLng position = mLastFootPrint.getGeoCoords().toLatLng();
-        Double elevation = mLastFootPrint.getGeoCoords().getAltitude();
-        Date date = new Date(mLastFootPrint.getTimeStamp());
-        RawHikePoint rawHikePoint = new RawHikePoint(position, date, elevation);
+        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
         if(listAnnotations.size() > 0) {
             if (listAnnotations.get(listAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 listAnnotations.get(listAnnotations.size() - 1).setPicture(drawable);
@@ -426,6 +421,7 @@ public final class GPSManager {
             Annotation annotation = new Annotation(rawHikePoint, null, drawable);
             listAnnotations.add(annotation);
         }
+        Log.d(LOG_FLAG, "Picture annotation added to the list");
     }
 
 
