@@ -23,6 +23,7 @@ public class DummyHikeBuilder {
             + "  ],\n"
             + "  \"title\": \"test hike title\"\n"
             + "  ]\n"
+
             + "  \"annotations\": [\n"
             + "    {\"point\":[0.0, 0.0, 123201, 1.0], \"text_annotation\": \"blablablabla\", \"picture_id\": 13},\n"
             + "    {\"point\":[0.1, 0.1, 123202, 2.0], \"text_annotation\": \"bleblebleble\", \"picture_id\": 14},\n"

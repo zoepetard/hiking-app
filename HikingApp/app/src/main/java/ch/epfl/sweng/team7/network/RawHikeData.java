@@ -253,7 +253,7 @@ public class RawHikeData {
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
             List<Annotation> annotations = new ArrayList<>();
             for(int i = 0; i < jsonAnnotations.length(); i++){
-                annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
+                annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONObject(i)));
             }
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
             List<Annotation> annotations = new ArrayList<>();

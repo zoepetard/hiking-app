@@ -466,4 +466,7 @@ public final class GPSManager {
 
     }
 
+    public long getRawHikeDataId(){
+        return rawHikeData.getHikeId();
+    }
 }

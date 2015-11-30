@@ -85,7 +85,9 @@ public class DataManagerTest extends InstrumentationTestCase {
         List<HikeData> hikeDataList = dataManager.searchHike("Hike2");
 
         assertEquals("Hike not found", hikeDataList.get(0).getTitle(), "Hike2");
+
     }
+
 
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {
