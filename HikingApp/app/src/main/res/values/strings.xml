@@ -50,6 +50,11 @@
 
     <string name="button_create_annotation">Add Annotation</string>>
     <string name="button_add_picture">Add Picture</string>>
+<<<<<<< HEAD
+=======
+
+>>>>>>> Creation of button to add annotation and picture, and edit text to introduce annotation
+>>>>>>> Added asyntask to store pictures
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
 

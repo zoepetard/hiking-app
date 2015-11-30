@@ -385,6 +385,7 @@ public final class DataManager {
                 date = format.format(hikePoint.getTime());
                 pointTime.appendChild(doc.createTextNode(date));
 
+
                 trackPoint.appendChild(pointTime);
                 trackSegment.appendChild(trackPoint);
 
@@ -431,6 +432,14 @@ public final class DataManager {
         } catch (DatabaseClientException e) {
             return null; // TODO Remove this when server returns a value when not finding id.
             //throw new DataManagerException(e.getMessage());
+        }
+    }
+
+    public long postPicture(Drawable picture) throws DataManagerException {
+        try {
+            return sDatabaseClient.postImage(picture);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
         }
     }
 

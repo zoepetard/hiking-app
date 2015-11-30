@@ -399,7 +399,6 @@ public final class GPSManager {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
         }
 
-
     private void storePictures(List<Annotation> annotations) {
         if (annotations != null || annotations.size() > 1) {
             for (int i = 0; i < annotations.size(); i++) {
@@ -457,8 +456,6 @@ public final class GPSManager {
     /**
      * Asynchronous task to make the post request to the server.
      */
-
-
     private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
         protected Long doInBackground(Annotation... pictures) {
             long pictureId;

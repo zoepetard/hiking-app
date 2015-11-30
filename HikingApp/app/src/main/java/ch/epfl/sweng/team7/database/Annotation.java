@@ -42,6 +42,8 @@ public class Annotation {
         mPicture = picture;
     }
 
+    public Drawable getPicture () { return mPicture; }
+
     /**
      * Parse a RawHikePoint from an appropriate JSON object
      *
