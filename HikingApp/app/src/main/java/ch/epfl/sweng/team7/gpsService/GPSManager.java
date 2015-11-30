@@ -290,12 +290,6 @@ public final class GPSManager {
         mIsPaused = false;
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
-        try {
-            rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
-        } catch (Exception e) {
-
-        }
-
         displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
