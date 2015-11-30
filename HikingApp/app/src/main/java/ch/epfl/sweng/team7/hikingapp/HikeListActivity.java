@@ -120,7 +120,8 @@ public class HikeListActivity extends Activity {
         //name row
         GridLayout.LayoutParams nameRow = new GridLayout.LayoutParams(row1, col2);
         TextView nameText = new TextView(this);
-        nameText.setText("Hike #" + Integer.toString(i + 1));
+        String name = "Hike #" + Double.toString(hikeData.getHikeId());
+        nameText.setText(name);
         nameText.setLayoutParams(nameRow);
         nameText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
