@@ -153,7 +153,16 @@ public interface DatabaseClient {
      * @return the database key of that image
      * @throws DatabaseClientException
      */
+    long postImage(Drawable drawable, long id) throws DatabaseClientException;
+
+    /**
+     * Post an image to the database
+     * @param drawable an image, here as drawable
+     * @return the database key of that image
+     * @throws DatabaseClientException
+     */
     long postImage(Drawable drawable) throws DatabaseClientException;
+
 
     /**
      * Delete an image from the database
