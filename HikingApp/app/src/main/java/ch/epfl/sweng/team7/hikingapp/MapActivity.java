@@ -544,6 +544,7 @@ public class MapActivity extends FragmentActivity {
             ((ViewGroup)annotationText.getParent()).removeView(annotationText);
             layout.addView(annotationText, lp);
         }
+
         annotationText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
