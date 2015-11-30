@@ -8,8 +8,6 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
-<<<<<<< HEAD
-
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
