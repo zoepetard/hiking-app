@@ -556,6 +556,14 @@ public class MapActivity extends FragmentActivity {
             imageView = new ImageView(this);
             imageView.setImageBitmap(photo);
             mGps.createPicture(imageView.getDrawable());
+            /*
+            RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
+            imageView.setLayoutParams(lp);
+            layout.addView(imageView,lp);
+            */
         }
     }
 

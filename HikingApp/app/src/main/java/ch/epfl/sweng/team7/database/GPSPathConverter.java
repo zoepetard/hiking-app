@@ -74,7 +74,5 @@ public class GPSPathConverter {
         }else{
             throw new NullPointerException("No footprint to add to the picture");
         }
-
-
     }
 }
