@@ -69,7 +69,7 @@ public class HikeListTest extends ActivityInstrumentationTestCase2<HikeListActiv
         String distanceActual = ((TextView) gridLayout.getChildAt(2)).getText().toString();
         assertEquals(distanceExpected, distanceActual);
 
-        String ratingExpected = resources.getString(R.string.hikeRatingText,  hikeData.getRating().getDisplayRating());
+        String ratingExpected = resources.getString(R.string.hikeRatingText,  (long) hikeData.getRating().getDisplayRating());
         String ratingActual = ((TextView) gridLayout.getChildAt(3)).getText().toString();
         assertEquals(ratingExpected, ratingActual);
     }
