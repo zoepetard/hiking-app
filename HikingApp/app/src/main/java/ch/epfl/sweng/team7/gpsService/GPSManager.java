@@ -288,12 +288,6 @@ public final class GPSManager {
         mIsPaused = false;
         mNotification.hide();
         Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
-        try {
-            rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
-        } catch (Exception e) {
-
-        }
-
         displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
@@ -393,7 +387,7 @@ public final class GPSManager {
             Log.d(LOG_FLAG, "GPS PATH CONVERTED");
             new StoreHikeTask().execute(rawHikeData);
         } catch (Exception e) {
-            Log.d(LOG_FLAG, "CANNOT CONVERT GPS PATH");
+            displayToastMessage("Gps path cannot be converted to RawHikeData");
         }
     }
 
