@@ -85,22 +85,7 @@ public class DataManagerTest extends InstrumentationTestCase {
         List<HikeData> hikeDataList = dataManager.searchHike("Hike2");
 
         assertEquals("Hike not found", hikeDataList.get(0).getTitle(), "Hike2");
-
-
-    @Test
-    public void testHikeIsCorrectlyPosted() throws Throwable {
-        gpsManager.toggleTracking();
-        sleep(1000);
-        runTestOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                gpsManager.toggleTracking();
-            }
-        });
-        HikeData hikeData = DataManager.getInstance().getHike(gpsManager.getRawHikeDataId());
-        assertEquals(hikeData.getHikeId(),gpsManager.getRawHikeDataId());
     }
-
 
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {
