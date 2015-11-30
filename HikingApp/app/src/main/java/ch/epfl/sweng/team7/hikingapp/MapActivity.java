@@ -122,6 +122,7 @@ public class MapActivity extends FragmentActivity {
         createAddPictureButton();
 
         //Create Annotation EditText
+
         createAnnotationEditText();
 
         //Initializes the BottomInfoView
@@ -317,7 +318,6 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-
     private void displayMarkers(final HikeData hike) {
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
@@ -326,18 +326,19 @@ public class MapActivity extends FragmentActivity {
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
-        //Display de textAnnotations
+        //Display de Annotations
         List<MarkerOptions> annotations = new ArrayList<>();
-        for(int i = 0; i < hike.getAnnotations().size(); i++){
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
-                    .title("Annotation")
-                    .snippet(hike.getAnnotations().get(i).getAnnotation())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-            annotations.add(markerOptions);
-            Marker textAnnotation = mMap.addMarker(markerOptions);
+        if(hike.getHikePoints() != null || hike.getHikePoints().size() > 1) {
+            for (int i = 0; i < hike.getAnnotations().size(); i++) {
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
+                        .title("Annotation")
+                        .snippet(hike.getAnnotations().get(i).getAnnotation())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                annotations.add(markerOptions);
+                Marker textAnnotation = mMap.addMarker(markerOptions);
+            }
         }
-
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
@@ -489,7 +490,9 @@ public class MapActivity extends FragmentActivity {
         annotationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (mGps.tracking()) {
+                    //annotationText = (EditText) findViewById(R.id.editText);
                     annotationText.setVisibility(View.VISIBLE);
+                    Log.d(LOG_FLAG, "Set EDIT TEXT VISIBLE");
                 }
             }
         });
@@ -498,6 +501,7 @@ public class MapActivity extends FragmentActivity {
     private void createAnnotationEditText() {
         annotationText = (EditText) findViewById(R.id.editText);
         annotationText.setId(R.id.annotation_text);
+        annotationText.setVisibility(View.GONE);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

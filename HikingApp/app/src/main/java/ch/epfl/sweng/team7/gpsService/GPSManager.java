@@ -360,15 +360,12 @@ public final class GPSManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO call storeHike() after issue #86 is fixed
+                //TODO storePictures()
             }
         });
         builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
         builder.show();
     }
-
-
-
-
 
     /**
      * Method used to turn on/off the location
