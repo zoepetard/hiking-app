@@ -93,5 +93,7 @@
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
     <string name="selete_pic">Select Picture</string>
+    <string name="search_no_results">No results</string>
+    <string name="search_error">An error occurred</string>
 
 </resources>

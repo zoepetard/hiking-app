@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
-    private final static int DEFAULT_ZOOM = 15;
+    private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
@@ -84,6 +85,8 @@ public class MapActivity extends FragmentActivity {
     private List<Address> mLocationAddressList = new ArrayList<>();
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
+    private static int MAX_SEARCH_SUGGESTIONS = 10;
+    private static int MIN_QUERY_LENGTH_FOR_SUGGESTIONS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +253,7 @@ public class MapActivity extends FragmentActivity {
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
 
             // Fixes bug #114: On error, doInBackground will abort with null
-            if(postExecuteParams == null) {
+            if (postExecuteParams == null) {
                 return;
             }
 
@@ -488,7 +491,7 @@ public class MapActivity extends FragmentActivity {
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
                     CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
-                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
                     mMap.moveCamera(center);
                     mMap.animateCamera(zoom);
 
@@ -531,26 +534,48 @@ public class MapActivity extends FragmentActivity {
             String query = params[0].mQuery;
             boolean isDoneTyping = params[0].mIsDoneTyping;
 
-            if (query.length() <= 3 && !isDoneTyping) {
+            if (query.length() <= MIN_QUERY_LENGTH_FOR_SUGGESTIONS && !isDoneTyping) {
                 return false;
             }
 
             List<Address> suggestions = new ArrayList<>();
             try {
-                mLocationAddressList = mGeocoder.getFromLocationName(query, 10);
+                mLocationAddressList = mGeocoder.getFromLocationName(query, MAX_SEARCH_SUGGESTIONS);
                 for (int i = 0; i < mLocationAddressList.size(); i++) {
                     suggestions.add(mLocationAddressList.get(i));
                 }
                 if (isDoneTyping && suggestions.size() == 0) {
                     Address address = new Address(Locale.ENGLISH);
-                    address.setFeatureName("No results");
+                    address.setFeatureName(getResources().getString(R.string.search_no_results));
                     suggestions.add(address);
                 }
             } catch (IOException e) {
                 Address address = new Address(Locale.ENGLISH);
-                address.setFeatureName("An error occurred");
+                address.setFeatureName(getResources().getString(R.string.search_error));
                 suggestions.add(address);
             }
+
+            /*TODO make hike contain name before this can be implemented.
+            List<HikeData> hikeDataList = new ArrayList<>();
+            try {
+                // TODO this method needs to be implemented in backend, currently returning empty list
+                hikeDataList = mDataManager.searchHike(query);
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, e.getMessage());
+            }
+            // check if local results and add to suggestions
+            if(!hikeDataList.isEmpty()){
+                for(int i = 0; i < hikeDataList.size(); i++){
+                    Address address = new Address(Locale.ENGLISH);
+                    address.setFeatureName(hikeDataList.get(i).getName());
+                    LatLng latLng = hikeDataList.get(i).getLocation();
+                    address.setLatitude(latLng.latitude);
+                    address.setLongitude(latLng.longitude);
+                    suggestions.add(address,0);
+                }
+            }
+            */
+
             mSuggestionList.clear();
             mSuggestionList.addAll(suggestions);
             return true;
