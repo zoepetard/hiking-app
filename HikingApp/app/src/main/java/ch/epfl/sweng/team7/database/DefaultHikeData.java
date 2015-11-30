@@ -22,7 +22,7 @@ public class DefaultHikeData implements HikeData {
 
     private final static String LOG_FLAG = "DB_DefaultHikeData";
 
-    private String mHikeName = "Hajken"; // TODO remove when this is fetched from server
+    private String mHikeName = "";
     private final long mHikeId;    // Database hike ID of this hike
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp

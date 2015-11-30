@@ -545,12 +545,12 @@ public class MapActivity extends FragmentActivity {
                     suggestions.add(mLocationAddressList.get(i));
                 }
                 if (isDoneTyping && suggestions.size() == 0) {
-                    Address address = new Address(Locale.ENGLISH);
+                    Address address = new Address(Locale.ROOT);
                     address.setFeatureName(getResources().getString(R.string.search_no_results));
                     suggestions.add(address);
                 }
             } catch (IOException e) {
-                Address address = new Address(Locale.ENGLISH);
+                Address address = new Address(Locale.ROOT);
                 address.setFeatureName(getResources().getString(R.string.search_error));
                 suggestions.add(address);
             }
@@ -564,7 +564,7 @@ public class MapActivity extends FragmentActivity {
             // check if local results and add to suggestions
             if (!hikeDataList.isEmpty()) {
                 for (int i = 0; i < hikeDataList.size(); i++) {
-                    Address address = new Address(Locale.ENGLISH);
+                    Address address = new Address(Locale.ROOT);
                     address.setFeatureName(hikeDataList.get(i).getName());
                     LatLng latLng = hikeDataList.get(i).getHikeLocation();
                     address.setLatitude(latLng.latitude);
