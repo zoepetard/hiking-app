@@ -345,7 +345,6 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-
     private void displayMarkers(final HikeData hike) {
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
@@ -353,8 +352,6 @@ public class MapActivity extends FragmentActivity {
         MarkerOptions finishMarkerOptions = new MarkerOptions()
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
-
-
 
         //Display de Annotations
         List<MarkerOptions> annotations = new ArrayList<>();
@@ -371,6 +368,7 @@ public class MapActivity extends FragmentActivity {
             }
 
         }
+
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
@@ -525,6 +523,7 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     displayAddAnnotationPrompt();
                     annotationText.setVisibility(View.VISIBLE);
+                    Log.d(LOG_FLAG, "Set EDIT TEXT VISIBLE");
                 }
             }
         });
@@ -533,6 +532,7 @@ public class MapActivity extends FragmentActivity {
     private void createAnnotationEditText() {
         annotationText = (EditText) findViewById(R.id.editText);
         annotationText.setId(R.id.annotation_text);
+        annotationText.setVisibility(View.GONE);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

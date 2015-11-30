@@ -363,15 +363,12 @@ public final class GPSManager {
                 //TODO storePictures()
                 storeHike();
                 storePictures(listAnnotations);
+
             }
         });
         builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
         builder.show();
     }
-
-
-
-
 
     /**
      * Method used to turn on/off the location
@@ -398,6 +395,7 @@ public final class GPSManager {
         } catch (Exception e) {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
         }
+    }
 
     private void storePictures(List<Annotation> annotations) {
         if (annotations != null || annotations.size() > 1) {
