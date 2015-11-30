@@ -145,7 +145,7 @@ public class RawHikeData {
         if (mAnnotations.size() < 1){
             return null;
         }else{
-            return new ArrayList<Annotation>(mAnnotations);
+            return new List<Annotation>(mAnnotations);
         }
     }
 
@@ -164,8 +164,6 @@ public class RawHikeData {
         }
         mHikeId = hikeId;
     }
-
-
 
     public void setRating(Rating rating) {
         mRating = rating;
