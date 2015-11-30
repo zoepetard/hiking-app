@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Address;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
@@ -55,17 +57,24 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
+    private final static int DEFAULT_ZOOM = 15;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
+    private static LatLng mUserLocation;
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+
+    private boolean mFollowingUser = false;
+
+    private Polyline mPolyRef;
+    private PolylineOptions mCurHike;
 
     private SearchView mSearchView;
     private ListView mSuggestionListView;
@@ -97,10 +106,16 @@ public class MapActivity extends FragmentActivity {
         //creates a start/stop tracking button
         createTrackingToggleButton();
 
+        //creates a pause/resume tracking button
+        createPauseTrackingButton();
+
         //Initializes the BottomInfoView
         createBottomInfoView();
 
         setGoToHikesButtonListener();
+
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         setUpSearchView();
 
@@ -166,8 +181,8 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        LatLng userLatLng = getUserPosition();
-        LatLngBounds initialBounds = guessNewLatLng(userLatLng, userLatLng, 0.5);
+        mUserLocation = getUserPosition();
+        LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
 
         List<HikeData> hikesFound = new ArrayList<>();
         boolean firstHike = true;
@@ -185,6 +200,22 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 onCameraChangeHelper();
+                mFollowingUser = false;
+            }
+        });
+
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                if (mFollowingUser) {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    focusOnLatLng(latLng);
+                    if (mGps.tracking() && !mGps.paused()) {
+                        List<LatLng> points = mPolyRef.getPoints();
+                        points.add(latLng);
+                        mPolyRef.setPoints(points);
+                    }
+                }
             }
         });
     }
@@ -217,9 +248,11 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
-            if (postExecuteParams == null) {
+
+            // Fixes bug #114: On error, doInBackground will abort with null
+            if(postExecuteParams == null) {
                 return;
-            } // TODO remove this when done
+            }
 
             List<HikeData> hikesFound = postExecuteParams.mHikesFound;
             LatLngBounds oldBounds = postExecuteParams.mOldBounds;
@@ -255,8 +288,7 @@ public class MapActivity extends FragmentActivity {
         int screenHeight = size.y;
 
         if (firstHike) {
-            LatLng userLatLng = getUserPosition();
-            boundingBoxBuilder.include(userLatLng);
+            boundingBoxBuilder.include(mUserLocation);
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
         }
     }
@@ -305,27 +337,28 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void onMapClickHelper(LatLng point) {
-        for (int i = 0; i < mHikesInWindow.size(); i++) {
-            HikeData hike = mHikesInWindow.get(i);
-            double shortestDistance = 100;
-            List<HikePoint> hikePoints = hike.getHikePoints();
+        if (mHikesInWindow != null) {
+            for (int i = 0; i < mHikesInWindow.size(); i++) {
+                HikeData hike = mHikesInWindow.get(i);
+                double shortestDistance = 100;
+                List<HikePoint> hikePoints = hike.getHikePoints();
 
+                for (HikePoint hikePoint : hikePoints) {
 
-            for (HikePoint hikePoint : hikePoints) {
+                    float[] distanceBetween = new float[1];
+                    //Computes the approximate distance (in meters) between polyLinePoint and point.
+                    //Returns the result as the first element of the float array distanceBetween
+                    distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
+                            point.latitude, point.longitude, distanceBetween);
+                    double distance = distanceBetween[0];
 
-                float[] distanceBetween = new float[1];
-                //Computes the approximate distance (in meters) between polyLinePoint and point.
-                //Returns the result as the first element of the float array distanceBetween
-                distanceBetween(hikePoint.getPosition().latitude, hikePoint.getPosition().longitude,
-                        point.latitude, point.longitude, distanceBetween);
-                double distance = distanceBetween[0];
-
-                if (distance < shortestDistance) {
-                    displayHikeInfo(hike);
-                    return;
+                    if (distance < shortestDistance) {
+                        displayHikeInfo(hike);
+                        return;
+                    }
                 }
+                BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
             }
-            BottomInfoView.getInstance().hide(BOTTOM_TABLE_ACCESS_ID);
         }
     }
 
@@ -347,7 +380,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setText("Start");
+        toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
@@ -362,9 +395,42 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 mGps.toggleTracking();
                 Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                if (mGps.tracking()) {
+                    toggleButton.setText(R.string.button_stop_tracking);
+                    pauseButton.setVisibility(View.VISIBLE);
+                    pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                    startHikeDisplay();
+                } else {
+                    toggleButton.setText(R.string.button_start_tracking);
+                    pauseButton.setVisibility(View.INVISIBLE);
+                    stopHikeDisplay();
+                }
             }
         });
+    }
+
+    private void createPauseTrackingButton() {
+        Button pauseButton = new Button(this);
+        pauseButton.setText(R.string.button_pause_tracking);
+        pauseButton.setId(R.id.button_tracking_pause);
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
+
+        pauseButton.setLayoutParams(lp);
+        layout.addView(pauseButton, lp);
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mGps.togglePause();
+                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+            }
+        });
+        pauseButton.setVisibility(View.INVISIBLE);
     }
 
     private void createBottomInfoView() {
@@ -502,14 +568,34 @@ public class MapActivity extends FragmentActivity {
     }
 
     private LatLng getUserPosition() {
-        double switzerlandLatitude = 46.4;
-        double switzerlandLongitude = 6.4;
         if (mGps.enabled()) {
             GeoCoords userGeoCoords = mGps.getCurrentCoords();
             return userGeoCoords.toLatLng();
         } else {
+            double switzerlandLatitude = 46.4;
+            double switzerlandLongitude = 6.4;
             return new LatLng(switzerlandLatitude, switzerlandLongitude);
         }
+    }
+
+    public void focusOnLatLng(LatLng latLng) {
+        if (latLng != null) {
+            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
+            mMap.animateCamera(target);
+        }
+    }
+
+    public void startFollowingUser() {
+        mFollowingUser = true;
+    }
+
+    private void startHikeDisplay() {
+        mCurHike = new PolylineOptions();
+        mPolyRef = mMap.addPolyline(mCurHike);
+    }
+
+    private void stopHikeDisplay() {
+        //TODO do something when we stop hiking..?
     }
 
 
@@ -550,6 +636,3 @@ public class MapActivity extends FragmentActivity {
     }
 
 }
-
-
-

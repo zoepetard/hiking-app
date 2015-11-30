@@ -30,4 +30,6 @@ interface LocalCache {
     void setUserData(UserData userData);
 
     UserData getUserData(long userId);
+
+    void removeHike(long hikeId);
 }

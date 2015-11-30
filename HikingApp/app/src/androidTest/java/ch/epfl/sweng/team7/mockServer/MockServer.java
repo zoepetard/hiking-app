@@ -13,10 +13,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
+import ch.epfl.sweng.team7.network.RatingVote;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
@@ -194,34 +196,21 @@ public class MockServer implements DatabaseClient {
         throw new DatabaseClientException("User to delete not found in MockServer.");
     }
 
-    /***
-     * @param mailAddress - used to query server
-     * @return RawUserData - corresponding to user's mail address
-     */
-    @Override
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-        for (RawUserData rawUserData : mUsers) {
-            if (rawUserData.getMailAddress().equals(mailAddress)) {
-                return rawUserData;
-            }
-        }
-        throw new DatabaseClientException("User to fetch not found in MockServer.");
-    }
-
     /**
-     * Login the user.
+     * Log user into the server, i.e. get user profile information
+     * @param loginRequest
      * @throws DatabaseClientException
      */
-    public void loginUser() throws DatabaseClientException {
+    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
         for (RawUserData rawUserData : mUsers) {
-            if (rawUserData.getMailAddress().equals(signedInUser.getMailAddress())) {
-                try {
-                    signedInUser.loginFromJSON(rawUserData.toJSON());
-                } catch(JSONException e) {
-                    throw new DatabaseClientException(e);
+            try {
+                if (rawUserData.getMailAddress().equals(loginRequest.toJSON().getString("mail_address"))) {
+                        signedInUser.loginFromJSON(rawUserData.toJSON());
+                    return;
                 }
-                return;
+            } catch(JSONException e) {
+                throw new DatabaseClientException(e);
             }
         }
         throw new DatabaseClientException("User to fetch not found in MockServer.");
@@ -264,6 +253,33 @@ public class MockServer implements DatabaseClient {
      * @throws DatabaseClientException
      */
     public void deleteImage(long imageId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post a comment to the database
+     * @param comment the comment to be posted
+     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
+     * @return the database key of that comment
+     * @throws DatabaseClientException
+     */
+    public long postComment(long hikeId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Delete a comment from the database
+     * @param commentId the database key of the comment
+     * @throws DatabaseClientException
+     */
+    public void deleteComment(long commentId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Post a vote about a hike.
+     */
+    public void postVote(RatingVote vote) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented.");
     }
 

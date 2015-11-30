@@ -40,6 +40,7 @@ public class RawHikeData {
     private long mOwnerId;   // Database user ID of owner
     private Date mDate;      // A UTC time stamp
     private List<RawHikePoint> mHikePoints;   // Points of the hike, in chronological order
+    private Rating mRating;
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
@@ -61,9 +62,6 @@ public class RawHikeData {
         if (date == null) {
             throw new IllegalArgumentException("Date not specified");
         }
-        if (date.compareTo(new Date()) > 0) {
-            throw new IllegalArgumentException("Date is in the future");
-        }
         if (hikePoints == null) {
             throw new IllegalArgumentException("HikePoints not specified");
         }
@@ -75,6 +73,7 @@ public class RawHikeData {
         mOwnerId = ownerId;
         mDate = date;
         mHikePoints = hikePoints;
+        mRating = new Rating();
     }
     
     /**
@@ -105,6 +104,10 @@ public class RawHikeData {
         return new ArrayList<RawHikePoint>(mHikePoints);
     }
 
+    public Rating getRating() {
+        return mRating;
+    }
+
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
@@ -116,6 +119,10 @@ public class RawHikeData {
             throw new IllegalArgumentException("Hike ID must be positive");
         }
         mHikeId = hikeId;
+    }
+
+    public void setRating(Rating rating) {
+        mRating = rating;
     }
     /**
      * @return a JSON object representing this hike
@@ -159,11 +166,15 @@ public class RawHikeData {
             }
 
             Date date = new Date(jsonObject.getLong("date"));
-            return new RawHikeData(
+            RawHikeData rawHikeData = new RawHikeData(
                     jsonObject.getLong("hike_id"),
                     jsonObject.getLong("owner_id"),
                     date,
                     hikePoints);
+            if(jsonObject.has("rating")) {
+                rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
+            }
+            return rawHikeData;
         } catch (JSONException e) {
             throw new HikeParseException(e);
         } catch (IllegalArgumentException e) {
@@ -208,7 +219,6 @@ public class RawHikeData {
                         String timeString = trackPoint.getElementsByTagName("time").item(0).getTextContent();
                         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
                         Date date = format.parse(timeString);
-
                         hikePoints.add(new RawHikePoint(new LatLng(lat, lng), date, ele));
                     }
                 } catch(Exception e) {

@@ -20,7 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Created by simon on 11/13/15.
  */
-public class PopulateDatabase {
+class PopulateDatabase {
 
     public static void run(DatabaseClient dbClient) {
         List<File> allFiles = findAllFiles();

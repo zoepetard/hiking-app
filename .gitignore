@@ -34,13 +34,13 @@ proguard/
 # Misc
 misc.xml
 
+# Encodings
+encodings.xml
 
 ### Android Patch ###
 gen-external-apklibs
 
 # Python/Backend ignores
 *.pyc
-run_server.sh
-set_path.sh
-upload_server.sh
+*.sh
 .DS_Store

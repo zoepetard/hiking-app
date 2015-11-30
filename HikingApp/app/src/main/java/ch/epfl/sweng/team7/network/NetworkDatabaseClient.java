@@ -27,9 +27,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import ch.epfl.sweng.team7.hikingapp.SignedInUser;
+import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 
 /**
@@ -102,28 +104,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
 
-        String boundingBoxJSON = String.format(
-                "{\"lat_min\":%f,\"lng_min\":%f,\"lat_max\":%f,\"lng_max\":%f}",
-                bounds.southwest.latitude, bounds.southwest.longitude,
-                bounds.northeast.latitude, bounds.northeast.longitude);
-        List<Long> hikeList = new ArrayList<>();
-
         try {
+
+            JSONObject boundingBoxJSON = new JSONObject();
+            boundingBoxJSON.put("lat_min", bounds.southwest.latitude);
+            boundingBoxJSON.put("lng_min", bounds.southwest.longitude);
+            boundingBoxJSON.put("lat_max", bounds.northeast.latitude);
+            boundingBoxJSON.put("lng_max", bounds.northeast.longitude);
+
             HttpURLConnection conn = getConnection("get_hikes_in_window", "GET");
-            conn.setRequestProperty("bounding_box", boundingBoxJSON);
+            conn.setRequestProperty("bounding_box", boundingBoxJSON.toString());
             conn.connect();
             String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
 
             // Parse response
             JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
             JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            List<Long> hikeList = new ArrayList<>();
             for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
                 hikeList.add(jsonHikeIdArray.getLong(i));
             }
+            return hikeList;
         } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
-        return hikeList;
     }
 
 
@@ -243,44 +247,19 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * TODO DEPRECATED - remove from code
-     *
-     * @param mailAddress - used to query server
-     * @return RawUserData - corresponding to user's mail address
+     * Log user into the server, i.e. get user profile information
+     * @param loginRequest
+     * @throws DatabaseClientException
      */
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-
-        try {
-            HttpURLConnection conn = getConnection("get_user", "GET");
-            // TODO change 2nd parameter to mailAddress when servers accepts new users
-            conn.setRequestProperty("user_mail_address", mailAddress);
-            conn.connect();
-            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            return RawUserData.parseFromJSON(jsonObject);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e.getMessage());
-        } catch (JSONException e) {
-            throw new DatabaseClientException("JSONException: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Logs in the SignedInUser
-     */
-    public void loginUser() throws DatabaseClientException {
-        SignedInUser signedInUser = SignedInUser.getInstance();
+    public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
 
         try {
             HttpURLConnection conn = getConnection("login_user", "GET");
-            conn.setRequestProperty("user_mail_address", signedInUser.getMailAddress());
+            conn.setRequestProperty("login_request", loginRequest.toJSON().toString());
             conn.connect();
-            String stringUserId = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            JSONObject jsonObject = new JSONObject(stringUserId);
-            signedInUser.loginFromJSON(jsonObject);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+            String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            SignedInUser.getInstance().loginFromJSON(new JSONObject(stringResponse));
+        } catch (IOException|JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -326,7 +305,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             return Drawable.createFromStream(bis, "");
-        } catch (IOException e) {
+        } catch (IOException|JSONException e) {
             throw new DatabaseClientException("ImageManager Error: " + e);
         }
     }
@@ -389,6 +368,69 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
+     * Post a comment to the database
+     * @param comment the comment to be posted
+     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
+     * @return the database key of that comment
+     * @throws DatabaseClientException
+     */
+    public long postComment(long hikeId) throws DatabaseClientException {
+        try {
+            HttpURLConnection conn = getConnection("post_comment", "POST");
+            //byte[] outputInBytes = comment.toJSON().toString().getBytes("UTF-8"); TODO(runjie) uncomment and remove next line
+            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":"+Long.toString(hikeId)
+                    + ",\"user_id\":"+SignedInUser.getInstance().getId()
+                    + ",\"comment_text\":\"blablabla\",\"date\":" + (new Date()).getTime() + "}").getBytes();
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+            return new JSONObject(stringResponse).getLong("comment_id");
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
+     * Delete a comment from the database
+     * @param commentId the database key of the comment
+     * @throws DatabaseClientException
+     */
+    public void deleteComment(long commentId) throws DatabaseClientException {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("comment_id", commentId);
+
+            HttpURLConnection conn = getConnection("delete_comment", "POST");
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_OK);
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
+     * Post a vote about a hike.
+     */
+    public void postVote(RatingVote vote) throws DatabaseClientException {
+        try {
+            HttpURLConnection conn = getConnection("post_vote", "POST");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("owner_id", SignedInUser.getInstance().getId());
+            jsonObject.put("hike_id", vote.getHikeId());
+            jsonObject.put("value", vote.getRating());
+            byte[] outputInBytes = jsonObject.toString().getBytes("UTF-8");
+            conn.connect();
+            conn.getOutputStream().write(outputInBytes);
+            fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
+        } catch (IOException|JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+        return;
+    }
+
+    /**
      * Method to set the properties of the connection to the server
      *
      * @param function    the server function, without /
@@ -396,7 +438,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
      * @return a valid HttpConnection
      * @throws IOException
      */
-    private HttpURLConnection getConnection(String function, String method) throws IOException {
+    private HttpURLConnection getConnection(String function, String method) throws IOException, JSONException {
         URL url = new URL(mServerUrl + "/" + function + "/");
         HttpURLConnection conn = mNetworkProvider.getConnection(url);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
@@ -407,7 +449,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
         // Authentication
         SignedInUser signedInUser = SignedInUser.getInstance();
-        conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
+        //conn.setRequestProperty("auth_user_id", Long.toString(signedInUser.getId()));
+        conn.setRequestProperty("auth_header", signedInUser.buildAuthHeader().toString());
         return conn;
     }
 

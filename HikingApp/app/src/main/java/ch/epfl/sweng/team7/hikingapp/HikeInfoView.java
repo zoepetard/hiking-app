@@ -5,24 +5,27 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Polyline;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.database.HikePoint;
 
 
 /** Class which controls and updates the visual part of the view, not the interaction */
@@ -42,13 +45,13 @@ public class HikeInfoView {
     private ArrayList<ImageView> galleryImageViews; // make ImageViews accessible in controller.
     private Button backButton;
     private ImageView fullScreenImage;
-    private ImageView mapPreview;
+    private GoogleMap mapPreview;
     private GraphView hikeGraph;
     private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
 
-    public HikeInfoView (View view, Context context, long id) {  // add model as argument when creating that
+    public HikeInfoView (View view, Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
         hikeId = id;
 
         // initializing UI element in the layout for the HikeInfoView.
@@ -69,7 +72,7 @@ public class HikeInfoView {
 
         fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
 
-        mapPreview = (ImageView) view.findViewById(R.id.map_preview_imageview);
+        mapPreview = mapHikeInfo;
 
         hikeGraph = (GraphView) view.findViewById(R.id.hike_graph);
 
@@ -116,21 +119,43 @@ public class HikeInfoView {
             hikeName.setText(name);
         }
 
-        private void displayHike(HikeData result) {
+        private void displayHike(HikeData hikeData) {
+            final int ELEVATION_POINT_COUNT = 100;
             String name = "The Super Hike";
-            double distance = result.getDistance() / 1000;  // in km
-            float rating = (float) result.getRating();
-            double elevationMin = result.getMinElevation();
-            double elevationMax = result.getMaxElevation();
 
-            /* didn't find elevation change in database so still use fake data*/
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
-                    new DataPoint(0, 1500),
-                    new DataPoint(1, 1800),
-                    new DataPoint(2, 1900),
-                    new DataPoint(3, 2100),
-                    new DataPoint(4, 2000)
-            });
+            List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
+            List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
+            MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
+            MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
+            MapDisplay.setCamera(hikesToDisplay, mapPreview);
+
+
+            double distance = hikeData.getDistance() / 1000;  // in km
+            float rating = (float) hikeData.getRating().getDisplayRating();
+            double elevationMin = hikeData.getMinElevation();
+            double elevationMax = hikeData.getMaxElevation();
+
+            List<HikePoint> hikePoints = hikeData.getHikePoints();
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
+            double lastElapsedTimeInHours = 0;
+            for(int i = 0; i < ELEVATION_POINT_COUNT; ++i) {
+                HikePoint hikePoint = hikePoints.get((i*hikePoints.size()) / ELEVATION_POINT_COUNT);
+
+                final double elapsedTimeInMilliseconds = (hikePoint.getTime().getTime()
+                        - hikePoints.get(0).getTime().getTime());
+                final double elapsedTimeInHours = elapsedTimeInMilliseconds / (1000*60*60);
+
+                // Check that data is in ascending order
+                if(i > 0 && elapsedTimeInHours <= lastElapsedTimeInHours) {
+                    continue;
+                }
+                lastElapsedTimeInHours = elapsedTimeInHours;
+
+                series.appendData(
+                        new DataPoint(elapsedTimeInHours, hikePoint.getElevation()),
+                        false, // scrollToEnd
+                        hikePoints.size());
+            }
 
             hikeGraph.removeAllSeries(); // remove placeholder series
             hikeGraph.setTitle("Elevation");
@@ -196,7 +221,7 @@ public class HikeInfoView {
         return galleryImageViews;
     }
 
-    public ImageView getMapPreview() {
+    public GoogleMap getMapPreview() {
         return mapPreview;
     }
 

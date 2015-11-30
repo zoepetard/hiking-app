@@ -1,6 +1,8 @@
 from google.appengine.ext import ndb
 import json
 import logging
+from time import time
+import hashlib
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -9,11 +11,11 @@ logger = logging.getLogger(__name__)
             
 class User(ndb.Model):
     '''Models an individual User.'''
-    # TODO add indexed=False to properties that should not be indexed
     
     # user_id is key
-    name = ndb.StringProperty()
+    name = ndb.StringProperty(indexed=False)
     mail_address = ndb.StringProperty()
+    db_token = ndb.StringProperty(indexed=False)
 
     # Parse JSON string to data. Throw exception on malformed input
     def from_json(self, json_string):
@@ -34,6 +36,16 @@ class User(ndb.Model):
             'mail_address': self.mail_address,
         }
         return json.dumps(hike_data)
+    
+    
+    # Parse this into JSON string
+    def to_login_json(self):
+        hike_data = {
+            'user_id': self.key.id(),
+            'mail_address': self.mail_address,
+            'token': self.db_token
+        }
+        return json.dumps(hike_data)
 
 # Factory to turn a json-string into a valid hike object
 def build_user_from_json(json_string):
@@ -41,3 +53,10 @@ def build_user_from_json(json_string):
     if(user.from_json(json_string)):
         return user
     return None
+
+def build_user_from_name_and_address(name, mail_address, token):
+    user = User()
+    user.name = name
+    user.mail_address = mail_address
+    user.db_token = hashlib.sha224((name + mail_address + repr(time()) + token).encode('utf-8')).hexdigest()
+    return user

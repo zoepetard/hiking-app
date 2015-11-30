@@ -15,12 +15,19 @@ public final class GPSPath {
     private final static String LOG_FLAG = "GPS_Path";
 
     private List<GPSFootPrint> path;
+    private long mTotalTime;
 
     public GPSPath() {
         this.path = new ArrayList<>();
+        this.mTotalTime = 0;
     }
 
     public void addFootPrint(GPSFootPrint newFootPrint) {
+        addFootPrint(newFootPrint, false);
+    }
+
+    public void addFootPrint(GPSFootPrint newFootPrint, boolean resumeFootPrint) {
+        if (path.size() >= 1 && !resumeFootPrint) mTotalTime += newFootPrint.getTimeStamp() - path.get(path.size() - 1).getTimeStamp();
         if (newFootPrint != null) path.add(newFootPrint);
     }
 
@@ -45,11 +52,7 @@ public final class GPSPath {
     }
 
     public long timeElapsedInSeconds() {
-        if (path.size() >= 2) {
-            return (path.get(path.size()-1).getTimeStamp() - path.get(0).getTimeStamp())/1000;
-        } else {
-            return 0;
-        }
+        return mTotalTime/1000;
     }
 
     public float distanceToStart() {

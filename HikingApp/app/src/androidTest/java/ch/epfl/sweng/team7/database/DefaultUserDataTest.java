@@ -13,9 +13,9 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultUserDataTest {
 
-    private int mUserId = 1;
-    private String mUserName = "Bert";
-    private String mMailAddress = "bert@gmail.com";
+    private final int mUserId = 1;
+    private final String mUserName = "Bert";
+    private final String mMailAddress = "bert@gmail.com";
     private DefaultUserData mDefaultUserData;
 
     @Before
