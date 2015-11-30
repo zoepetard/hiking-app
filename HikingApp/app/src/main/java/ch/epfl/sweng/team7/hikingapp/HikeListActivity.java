@@ -120,7 +120,7 @@ public class HikeListActivity extends Activity {
         //name row
         GridLayout.LayoutParams nameRow = new GridLayout.LayoutParams(row1, col2);
         TextView nameText = new TextView(this);
-        String name = "Hike #" + Double.toString(hikeData.getHikeId());
+        String name = getResources().getString(R.string.hikeNumberText, hikeData.getHikeId());
         nameText.setText(name);
         nameText.setLayoutParams(nameRow);
         nameText.setOnClickListener(new View.OnClickListener() {
@@ -132,18 +132,17 @@ public class HikeListActivity extends Activity {
         gridLayout.addView(nameText, nameRow);
 
         //distance row
-        double distance = hikeData.getDistance();
         GridLayout.LayoutParams distanceRow = new GridLayout.LayoutParams(row2, col2);
         TextView distanceText = new TextView(this);
-        distanceText.setText("Distance: " + Double.toString(distance / 1000) + "km");
+        distanceText.setText(getResources().getString(R.string.hikeDistanceText, (long) hikeData.getDistance() / 1000));
         distanceText.setLayoutParams(distanceRow);
         gridLayout.addView(distanceText, distanceRow);
 
         //rating row
-        double rating = hikeData.getRating().getDisplayRating();
         GridLayout.LayoutParams ratingRow = new GridLayout.LayoutParams(row3, col2);
         TextView ratingText = new TextView(this);
-        ratingText.setText("Rating: " + Double.toString(rating));
+        ratingText.setText(getResources().getString(R.string.hikeRatingText,  hikeData.getRating().getDisplayRating()));
+
         ratingText.setLayoutParams(ratingRow);
         gridLayout.addView(ratingText, ratingRow);
 

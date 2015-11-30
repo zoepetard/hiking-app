@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.res.Resources;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.GridLayout;
@@ -18,10 +19,6 @@ import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.mockServer.MockServer;
 
 public class HikeListTest extends ActivityInstrumentationTestCase2<HikeListActivity> {
-    // Commented out because not currently needed. Might be used in issue 60.
-    //Rule
-    /*public ActivityTestRule<HikeListActivity> mActivityRule = new ActivityTestRule<>(
-            HikeListActivity.class);*/
 
     private HikeListActivity hikeListActivity;
     private List<HikeData> hikeDatas;
@@ -63,16 +60,16 @@ public class HikeListTest extends ActivityInstrumentationTestCase2<HikeListActiv
    }
 
     public void testHikeRowContent() throws Exception {
-        String nameExpected = "Hike #" + Double.toString(hikeData.getHikeId());
+        Resources resources = hikeListActivity.getResources();
+        String nameExpected = resources.getString(R.string.hikeNumberText, hikeData.getHikeId());
         String nameActual = ((TextView) gridLayout.getChildAt(1)).getText().toString();
         assertEquals(nameExpected, nameActual);
 
-        double distance = hikeData.getDistance();
-        String distanceExpected = "Distance: " + Double.toString(distance / 1000) + "km";
+        String distanceExpected = resources.getString(R.string.hikeDistanceText, (long) hikeData.getDistance() / 1000);
         String distanceActual = ((TextView) gridLayout.getChildAt(2)).getText().toString();
         assertEquals(distanceExpected, distanceActual);
 
-        String ratingExpected = "Rating: " + Double.toString(hikeData.getRating().getDisplayRating());
+        String ratingExpected = resources.getString(R.string.hikeRatingText,  hikeData.getRating().getDisplayRating());
         String ratingActual = ((TextView) gridLayout.getChildAt(3)).getText().toString();
         assertEquals(ratingExpected, ratingActual);
     }
