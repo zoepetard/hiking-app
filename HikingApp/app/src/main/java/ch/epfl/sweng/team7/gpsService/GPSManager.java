@@ -397,13 +397,15 @@ public final class GPSManager {
             Log.d(LOG_FLAG, "CANNOT CONVERT GPS PATH");
         }
     }
-    /*
+
     private void storePictures(List<Annotation> annotations) {
-        for (int i = 0; i < annotations.size(); i++){
-            new StorePictureTask().execute(annotations.get(i).);
+        if(annotations != null || annotations.size() > 1){
+            for (int i = 0; i < annotations.size(); i++){
+                new StorePictureTask().execute(annotations.get(i));
+            }
         }
     }
-    */
+
     public void createAnnotation(String text) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
         Annotation annotation = new Annotation(rawHikePoint, text, null);
@@ -453,14 +455,14 @@ public final class GPSManager {
     /**
      * Asynchronous task to make the post request to the server.
      */
-    /*
-    private class StorePictureTask extends AsyncTask<PictureAnnotation, Long, Long> {
+
+    private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
         @Override
-        protected Long doInBackground(PictureAnnotation... pictures) {
+        protected Long doInBackground(Annotation... pictures) {
             long hikeId;
             DataManager dataManager = DataManager.getInstance();
             try {
-                hikeId = dataManager.postPicture(pictures[0]);
+                hikeId = dataManager.postPicture(pictures[0].getPicture());
                 Log.d(LOG_FLAG, "Picture post correctly");
                 return hikeId;
             } catch (DataManagerException e) {
@@ -472,5 +474,5 @@ public final class GPSManager {
         }
 
     }
-    */
+
 }
