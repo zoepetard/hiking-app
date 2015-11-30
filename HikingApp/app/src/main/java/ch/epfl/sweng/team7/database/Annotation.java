@@ -1,11 +1,13 @@
 package ch.epfl.sweng.team7.database;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -15,6 +17,7 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
  * Created by pablo on 23/11/15.
  */
 public class Annotation {
+    private final static String LOG_FLAG = "GPS_Manager";
     private RawHikePoint mRawHikePoint;
     private String mText;
     private Drawable mPicture;
@@ -42,21 +45,20 @@ public class Annotation {
         mPicture = picture;
     }
 
-    public Drawable getPicture () { return mPicture; }
+    public  Drawable getPicture () { return mPicture; }
 
     /**
-     * Parse a RawHikePoint from an appropriate JSON object
-     *
-     * @param jsonArray [String comment, double lat, double lng, long date, double elevation]
-     * @return a valid RawHikePoint object
+     * Method to convert JsonObject into annotation
+     * @param jsonObject [Point[lat, long, date, elevation], text, pictureID]
+     * @return
      * @throws JSONException
      */
-    public static Annotation parseFromJSON(JSONArray jsonArray) throws JSONException {
-        LatLng latLng = new LatLng(jsonArray.getDouble(0), jsonArray.getDouble(1));
-        Date date = new Date(jsonArray.getLong(2));
-        double elevation = jsonArray.getDouble(3);
-        String text = new String(jsonArray.getString(4));
-        long pictureId = jsonArray.getLong(5);
+    public static Annotation parseFromJSON(JSONObject jsonObject) throws JSONException {
+        LatLng latLng = new LatLng(jsonObject.getJSONArray("point").getDouble(0), jsonObject.getJSONArray("point").getDouble(1));
+        Date date = new Date(jsonObject.getJSONArray("point").getLong(2));
+        double elevation = jsonObject.getJSONArray("point").getDouble(3);
+        String text = new String(jsonObject.getString("text_annotation"));
+        long pictureId = jsonObject.getLong("picture_id");
         Annotation annotation = new Annotation(new RawHikePoint(latLng, date, elevation), text, null);
         annotation.setPicturedId(pictureId);
         return annotation;

@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.database;
 
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
@@ -8,6 +9,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -15,15 +17,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.mockServer.MockServer;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.fail;
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -34,6 +36,11 @@ public class DataManagerTest extends InstrumentationTestCase {
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
     private static final LatLng DEBUG_LOC_SAOTOME = new LatLng(0.362365, 6.558835);
     private long mNewHikeId, mNewHikeId2;
+    private GPSManager gpsManager;
+
+    @Rule
+    public ActivityTestRule<MapActivity> mActivityRule = new ActivityTestRule<>(
+            MapActivity.class);
 
     @Before
     public void setUp() throws Exception {
@@ -80,7 +87,20 @@ public class DataManagerTest extends InstrumentationTestCase {
         assertEquals("Hike not found", hikeDataList.get(0).getTitle(), "Hike2");
 
 
+    @Test
+    public void testHikeIsCorrectlyPosted() throws Throwable {
+        gpsManager.toggleTracking();
+        sleep(1000);
+        runTestOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                gpsManager.toggleTracking();
+            }
+        });
+        HikeData hikeData = DataManager.getInstance().getHike(gpsManager.getRawHikeDataId());
+        assertEquals(hikeData.getHikeId(),gpsManager.getRawHikeDataId());
     }
+
 
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {

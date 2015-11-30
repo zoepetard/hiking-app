@@ -452,12 +452,13 @@ public final class GPSManager {
     private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
         @Override
         protected Long doInBackground(Annotation... pictures) {
-            long hikeId;
+            long pictureId;
             DataManager dataManager = DataManager.getInstance();
             try {
-                hikeId = dataManager.postPicture(pictures[0].getPicture());
+                pictureId = dataManager.postPicture(pictures[0].getPicture());
+                annotation.setPicturedId(pictureId);
                 Log.d(LOG_FLAG, "Picture post correctly");
-                return hikeId;
+                return pictureId;
             } catch (DataManagerException e) {
                 Log.d(LOG_FLAG, "Error while posting hike");
             }
@@ -468,4 +469,7 @@ public final class GPSManager {
 
     }
 
+    public long getRawHikeDataId(){
+        return rawHikeData.getHikeId();
+    }
 }
