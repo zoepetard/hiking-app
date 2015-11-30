@@ -5,6 +5,8 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.io.IOException;
@@ -134,9 +136,13 @@ public final class DataManager {
      */
     public List<HikeData> searchHike(String query) throws DataManagerException {
 
-        // list to store search results
-        List<HikeData> hikeDataList = new ArrayList<>();
+        List<HikeData> hikeDataList = sLocalCache.searchHike(query);
 
+        try{
+            sDatabaseClient.searchHike(query);
+        }catch(DatabaseClientException e){
+            Log.d(LOG_FLAG,e.getMessage());
+        }
 
         return hikeDataList;
     }

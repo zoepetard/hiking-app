@@ -75,14 +75,12 @@ class DefaultLocalCache implements LocalCache {
 
         List<HikeData> hikeDataList = new ArrayList<>();
 
-        /* TODO implement when hike names are stored in objects
-        for(Map.Entry<Long,HikeData> entry : mHikesCache.entrySet()){
+        for (Map.Entry<Long, HikeData> entry : mHikesCache.entrySet()) {
             HikeData tempHike = entry.getValue();
-            if(tempHike.getName().contains(query){
-
-             }
+            if (tempHike.getName().contains(query)) {
+                hikeDataList.add(tempHike);
+            }
         }
-        */
         return hikeDataList;
     }
 }

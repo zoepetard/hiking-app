@@ -22,6 +22,7 @@ public class DefaultHikeData implements HikeData {
 
     private final static String LOG_FLAG = "DB_DefaultHikeData";
 
+    private String mHikeName = "Hajken"; // TODO remove when this is fetched from server
     private final long mHikeId;    // Database hike ID of this hike
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
@@ -45,10 +46,11 @@ public class DefaultHikeData implements HikeData {
 
         List<RawHikePoint> rawHikePoints = rawHikeData.getHikePoints();
         mHikePoints = new ArrayList<>();
-        for (RawHikePoint rawHikePoint : rawHikePoints){
+        for (RawHikePoint rawHikePoint : rawHikePoints) {
             mHikePoints.add(new DefaultHikePoint(rawHikePoint));
         }
 
+        mHikeName = rawHikeData.getName();
         mDistance = calculateDistance(rawHikePoints);
         mBoundingBox = calculateBoundingBox(rawHikePoints);
         mHikeLocation = getBoundingBox().getCenter();
@@ -57,12 +59,29 @@ public class DefaultHikeData implements HikeData {
         mElevationBounds = calculateElevationBounds(rawHikePoints);
 
         // Hike rating is optional in RawHikeData, but this class is guaranteed to have it.
-        if(rawHikeData.getRating() != null) {
+        if (rawHikeData.getRating() != null) {
             mRating = rawHikeData.getRating();
         } else {
             mRating = new Rating();
         }
     }
+
+    /**
+     * @return name of the hike
+     */
+    @Override
+    public String getName() {
+        return mHikeName;
+    }
+
+    /**
+     * @param newName
+     */
+    @Override
+    public void setName(String newName) {
+        mHikeName = newName;
+    }
+
     /**
      * @return the hike ID.
      */
@@ -161,7 +180,7 @@ public class DefaultHikeData implements HikeData {
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;
-        for (int i = 0; i < rawHikePoints.size() - 1; i++){
+        for (int i = 0; i < rawHikePoints.size() - 1; i++) {
             LatLng currentLoc = rawHikePoints.get(i).getPosition();
             LatLng nextLoc = rawHikePoints.get(i + 1).getPosition();
             float[] distanceBetween = new float[1];
@@ -175,8 +194,8 @@ public class DefaultHikeData implements HikeData {
     }
 
     private LatLngBounds calculateBoundingBox(List<RawHikePoint> rawHikePoints) {
-        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
-        for (RawHikePoint rawHikePoint : rawHikePoints){
+        LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
+        for (RawHikePoint rawHikePoint : rawHikePoints) {
             LatLng pos = rawHikePoint.getPosition();
             boundingBoxBuilder.include(pos);
         }
@@ -193,22 +212,22 @@ public class DefaultHikeData implements HikeData {
         elevationBounds.mMinElevation = lastElevation;
 
         // Traverse hike points in order
-        for(int i = 1; i < rawHikePoints.size(); ++i) {
+        for (int i = 1; i < rawHikePoints.size(); ++i) {
             final double thisElevation = rawHikePoints.get(i).getElevation();
-            final double deltaElevation  = thisElevation - lastElevation;
+            final double deltaElevation = thisElevation - lastElevation;
 
-            if(deltaElevation > 0) {
+            if (deltaElevation > 0) {
                 elevationBounds.mElevationGain += deltaElevation;
             } else {
                 // ElevationLoss is always positive, but deltaElevation is negative here
                 elevationBounds.mElevationLoss += (-deltaElevation);
             }
 
-            if(thisElevation > elevationBounds.mMaxElevation) {
+            if (thisElevation > elevationBounds.mMaxElevation) {
                 elevationBounds.mMaxElevation = thisElevation;
             }
 
-            if(thisElevation < elevationBounds.mMinElevation) {
+            if (thisElevation < elevationBounds.mMinElevation) {
                 elevationBounds.mMinElevation = thisElevation;
             }
 

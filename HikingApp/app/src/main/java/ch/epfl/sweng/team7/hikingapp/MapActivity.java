@@ -147,11 +147,11 @@ public class MapActivity extends FragmentActivity {
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
      * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
+     * <p>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
      * install/update the Google Play services APK on their device.
-     * <p/>
+     * <p>
      * A user can return to this FragmentActivity after following the prompt and correctly
      * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
      * have been completely destroyed during this process (it is likely that it would only be
@@ -179,7 +179,7 @@ public class MapActivity extends FragmentActivity {
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      * just add a marker near Africa.
-     * <p/>
+     * <p>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
@@ -523,7 +523,7 @@ public class MapActivity extends FragmentActivity {
 
         /**
          * Searches for a locations from a query
-         * TODO query the server for hikes when backend is in place
+         * TODO implement server side handling of search requests
          *
          * @param params - Query & boolean indicating whether the user is done typing
          * @return boolean informing postexecute to either hide or show the suggestions
@@ -555,26 +555,23 @@ public class MapActivity extends FragmentActivity {
                 suggestions.add(address);
             }
 
-            /*TODO make hike contain name before this can be implemented.
             List<HikeData> hikeDataList = new ArrayList<>();
             try {
-                // TODO this method needs to be implemented in backend, currently returning empty list
-                hikeDataList = mDataManager.searchHike(query);
+                hikeDataList = mDataManager.searchHike(query); // TODO implement server side
             } catch (DataManagerException e) {
                 Log.d(LOG_FLAG, e.getMessage());
             }
             // check if local results and add to suggestions
-            if(!hikeDataList.isEmpty()){
-                for(int i = 0; i < hikeDataList.size(); i++){
+            if (!hikeDataList.isEmpty()) {
+                for (int i = 0; i < hikeDataList.size(); i++) {
                     Address address = new Address(Locale.ENGLISH);
                     address.setFeatureName(hikeDataList.get(i).getName());
-                    LatLng latLng = hikeDataList.get(i).getLocation();
+                    LatLng latLng = hikeDataList.get(i).getHikeLocation();
                     address.setLatitude(latLng.latitude);
                     address.setLongitude(latLng.longitude);
-                    suggestions.add(address,0);
+                    suggestions.add(0, address);
                 }
             }
-            */
 
             mSuggestionList.clear();
             mSuggestionList.addAll(suggestions);

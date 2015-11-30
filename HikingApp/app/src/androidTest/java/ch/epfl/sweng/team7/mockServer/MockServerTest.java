@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
@@ -50,6 +51,8 @@ public class MockServerTest extends TestCase {
         mHikeIds.add(id2);
         mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        mRawHikeData1.setName("Hike1");
+        mRawHikeData2.setName("Hike2");
 
         mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com"));
     }
@@ -90,6 +93,15 @@ public class MockServerTest extends TestCase {
         RawUserData rawUserData = mMockServer.fetchUserData(mUserBortId);
         assertEquals("Wrong mail address", rawUserData.getMailAddress(), "bort@googlemail.com");
         assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
+    }
+
+    @Test
+    public void testSearchHike() throws Exception {
+        mMockServer.postHike(mRawHikeData1);
+        mMockServer.postHike(mRawHikeData2);
+
+        List<HikeData> hikeDataList = mMockServer.searchHike("Hike2");
+        assertEquals("Hike not found", hikeDataList.get(0).getName(),"Hike2");
     }
 
 }

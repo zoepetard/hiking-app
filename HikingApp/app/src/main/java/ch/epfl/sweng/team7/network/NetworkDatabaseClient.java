@@ -11,6 +11,7 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -32,6 +33,9 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.DefaultHikeData;
+import ch.epfl.sweng.team7.database.DefaultUserData;
+import ch.epfl.sweng.team7.database.HikeData;
 
 
 /**
@@ -93,6 +97,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
         return rawHikeDatas;
     }
+
 
     /**
      * Get all hikes in a rectangular window on the map
@@ -248,6 +253,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Log user into the server, i.e. get user profile information
+     *
      * @param loginRequest
      * @throws DatabaseClientException
      */
@@ -259,7 +265,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             SignedInUser.getInstance().loginFromJSON(new JSONObject(stringResponse));
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -289,6 +295,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Get an image from the database
+     *
      * @param imageId the database key of the image
      * @return the image
      * @throws DatabaseClientException
@@ -305,15 +312,16 @@ public class NetworkDatabaseClient implements DatabaseClient {
             BufferedInputStream bis = new BufferedInputStream(is);
 
             return Drawable.createFromStream(bis, "");
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException("ImageManager Error: " + e);
         }
     }
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
-     * @param imageId the ID of the image if it should be changed
+     * @param imageId  the ID of the image if it should be changed
      * @return the database key of that image
      * @throws DatabaseClientException
      */
@@ -339,6 +347,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
@@ -349,6 +358,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
 
     /**
      * Delete an image from the database
+     *
      * @param imageId the database key of the image
      * @throws DatabaseClientException
      */
@@ -362,15 +372,16 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_OK);
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
 
     /**
      * Post a comment to the database
+     *
      * @param hikeId the comment to be posted
-     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
+     *               TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
@@ -378,20 +389,21 @@ public class NetworkDatabaseClient implements DatabaseClient {
         try {
             HttpURLConnection conn = getConnection("post_comment", "POST");
             //byte[] outputInBytes = comment.toJSON().toString().getBytes("UTF-8"); TODO(runjie) uncomment and remove next line
-            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":"+Long.toString(hikeId)
-                    + ",\"user_id\":"+SignedInUser.getInstance().getId()
+            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":" + Long.toString(hikeId)
+                    + ",\"user_id\":" + SignedInUser.getInstance().getId()
                     + ",\"comment_text\":\"blablabla\",\"date\":" + (new Date()).getTime() + "}").getBytes();
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(stringResponse).getLong("comment_id");
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
 
     /**
      * Delete a comment from the database
+     *
      * @param commentId the database key of the comment
      * @throws DatabaseClientException
      */
@@ -405,7 +417,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_OK);
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -424,17 +436,45 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
-        } catch (IOException|JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
         return;
     }
 
     /**
+     * Search for hikes
+     *
+     * @param query , search string
+     * @return list of hikedata
+     */
+    @Override
+    public List<HikeData> searchHike(String query) throws DatabaseClientException {
+        try {
+            HttpURLConnection conn = getConnection("search_hikes", "GET");
+            conn.setRequestProperty("query", query);
+            conn.connect();
+            List<HikeData> hikeList = new ArrayList<>();
+            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+            // Parse response
+            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
+            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
+                RawHikeData hikeData = fetchSingleHike(jsonHikeIdArray.getLong(i));
+                DefaultHikeData defaultHikeData = new DefaultHikeData(hikeData);
+                hikeList.add(defaultHikeData);
+            }
+            return hikeList;
+        } catch (IOException | JSONException e) {
+            throw new DatabaseClientException(e);
+        }
+    }
+
+    /**
      * Method to set the properties of the connection to the server
      *
-     * @param function    the server function, without /
-     * @param method "GET" or "POST"
+     * @param function the server function, without /
+     * @param method   "GET" or "POST"
      * @return a valid HttpConnection
      * @throws IOException
      */
@@ -495,5 +535,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
 
     }
+
 
 }

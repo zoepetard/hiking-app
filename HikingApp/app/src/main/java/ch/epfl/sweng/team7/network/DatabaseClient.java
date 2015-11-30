@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.database.HikeData;
 
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
@@ -157,4 +158,12 @@ public interface DatabaseClient {
      * Post a vote about a hike.
      */
     void postVote(RatingVote vote) throws DatabaseClientException;
+
+    /**
+     * Search for hikes
+     * @param query , search string
+     * @return list of hikedata
+     * */
+    List<HikeData> searchHike(String query) throws DatabaseClientException;
+
 }
