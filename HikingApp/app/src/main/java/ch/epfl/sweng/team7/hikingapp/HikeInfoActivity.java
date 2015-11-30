@@ -83,7 +83,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         GoogleMap mapHikeInfo = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapHikeInfo))
                 .getMap();
 
-        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mUser.getId(), mapHikeInfo);
+        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {

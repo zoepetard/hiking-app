@@ -13,17 +13,23 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.HikeComment;
 
 public class CommentListAdapter extends ArrayAdapter<HikeComment> {
-    public CommentListAdapter() {}
+    private Context mContext;
+    private int mLayoutResourceId;
+    private List<HikeComment> mComments = null;
 
-    public CommentListAdapter(Context context, List<HikeComment> hikeComments) {
-        super(context, 0, hikeComments);
+    public CommentListAdapter(Context context, int layoutResourceId, List<HikeComment> hikeComments) {
+        super(context, layoutResourceId, hikeComments);
+
+        this.mContext = context;
+        this.mLayoutResourceId = layoutResourceId;
+        this.mComments = hikeComments;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).
-                    inflate(R.layout.activity_comment_list_adapter, parent, false);
+                    inflate(mLayoutResourceId, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.userId = (TextView) convertView.findViewById(R.id.comment_userid);
             holder.comment = (TextView) convertView.findViewById(R.id.comment_display_text);

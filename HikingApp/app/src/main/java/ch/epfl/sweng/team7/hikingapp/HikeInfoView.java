@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeComment;
@@ -62,15 +63,13 @@ public class HikeInfoView {
     private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
-    private ListView commentsListView;
     private List<HikeComment> commentsArrayList;
     private CommentListAdapter commentListAdapter;
-    private Button commentButton;
 
-    public HikeInfoView (final View view, final Context context, long id, final long commentUserId, GoogleMap mapHikeInfo) {  // add model as argument when creating that
+    public HikeInfoView (final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
         hikeId = id;
-        userId = commentUserId;
+        userId = SignedInUser.getInstance().getId();
 
         // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
@@ -107,13 +106,13 @@ public class HikeInfoView {
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
 
-        commentsListView = (ListView) view.findViewById(R.id.commnets_listview);
+        ListView commentsListView = (ListView) view.findViewById(R.id.comments_list);
         commentsArrayList = new ArrayList<HikeComment>();
         commentsListView.setTranscriptMode(1);
-        commentListAdapter = new CommentListAdapter(context, commentsArrayList);
+        commentListAdapter = new CommentListAdapter(context, R.id.comment_item, commentsArrayList);
         commentsListView.setAdapter(commentListAdapter);
 
-        commentButton = (Button) view.findViewById(R.id.done_edit_comment);
+        Button commentButton = (Button) view.findViewById(R.id.done_edit_comment);
         commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -270,7 +270,7 @@ public class MockServer implements DatabaseClient {
     public long postComment(RawHikeComment comment) throws DatabaseClientException {
         long commentId = comment.getCommentId();
         if (commentId > 0) {
-            if (!hasCommmet(commentId)) {
+            if (!hasComment(commentId)) {
                 throw new DatabaseClientException("Setting Comment that's not there.");
             }
         } else {
@@ -311,7 +311,7 @@ public class MockServer implements DatabaseClient {
     }
 
     // Internal database management functions
-    public boolean hasCommmet(long commentId) {
+    public boolean hasComment(long commentId) {
         return mHikeCommentDataBase.containsKey(commentId);
     }
 

@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ch.epfl.sweng.team7.database.HikeComment;
+
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
  * Additional annotations will be added here rather than in the RawHikePoint class, to simplify
@@ -75,7 +77,11 @@ public class RawHikeData {
         mOwnerId = ownerId;
         mDate = date;
         mHikePoints = hikePoints;
-        mComments = comments;
+        if (comments == null) {
+            mComments = new ArrayList<>();
+        } else {
+            mComments = comments;
+        }
         mRating = new Rating();
     }
     

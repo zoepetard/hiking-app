@@ -231,7 +231,7 @@
             android:layout_marginBottom="20dp"/>
 
         <ListView
-            android:id="@+id/commnets_listview"
+            android:id="@+id/comments_list"
             android:transcriptMode="alwaysScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
