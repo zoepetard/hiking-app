@@ -88,7 +88,6 @@ public class DataManagerTest extends InstrumentationTestCase {
 
     }
 
-
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {
         try {
