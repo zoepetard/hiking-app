@@ -10,7 +10,7 @@
         android:id="@+id/comment_userid"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3">
+        android:layout_weight="1">
     </TextView>
 
     <TextView
@@ -18,7 +18,7 @@
         android:id="@+id/comment_display_text"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="3">
     </TextView>
 
 </LinearLayout>

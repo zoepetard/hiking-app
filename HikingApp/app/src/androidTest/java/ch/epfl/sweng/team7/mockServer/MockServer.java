@@ -39,7 +39,7 @@ public class MockServer implements DatabaseClient {
             + "    [0.2, 0.0, 123203, 0.7],\n"
             + "    [0.3,89.9, 123204, 0.8],\n"
             + "    [0.4, 0.0, 123205, 0.9]\n"
-            + "  ]\n"
+            + "  ],\n"
             + "  \"comments\": [\n"
             + "  ]\n"
             + "}\n";

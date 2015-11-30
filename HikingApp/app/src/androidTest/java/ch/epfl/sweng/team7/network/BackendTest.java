@@ -374,7 +374,7 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
         //TODO(runjie) iss107 create new comment
-        mDatabaseClient.postComment(hikeId);
+//        mDatabaseClient.postComment(hikeId);
 
         waitForServerSync();
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
@@ -395,10 +395,10 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
         //TODO(runjie) iss107 create new comment
-        long commentId = mDatabaseClient.postComment(hikeId);
+//        long commentId = mDatabaseClient.postComment(hikeId);
 
         waitForServerSync();
-        mDatabaseClient.deleteComment(commentId);
+//        mDatabaseClient.deleteComment(commentId);
 
         waitForServerSync();
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);

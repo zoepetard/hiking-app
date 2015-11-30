@@ -1,9 +1,14 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -27,7 +33,6 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-import ch.epfl.sweng.team7.database.DefaultHikeComment;
 import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
@@ -62,7 +67,7 @@ public class HikeInfoView {
     private CommentListAdapter commentListAdapter;
     private Button commentButton;
 
-    public HikeInfoView (final View view, Context context, long id, final long commentUserId, GoogleMap mapHikeInfo) {  // add model as argument when creating that
+    public HikeInfoView (final View view, final Context context, long id, final long commentUserId, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
         hikeId = id;
         userId = commentUserId;
@@ -102,7 +107,7 @@ public class HikeInfoView {
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
 
-        commentsListView = (ListView) view.findViewById(R.id.commnetsListView);
+        commentsListView = (ListView) view.findViewById(R.id.commnets_listview);
         commentsArrayList = new ArrayList<HikeComment>();
         commentsListView.setTranscriptMode(1);
         commentListAdapter = new CommentListAdapter(context, commentsArrayList);
@@ -118,15 +123,8 @@ public class HikeInfoView {
                     RawHikeComment rawHikeComment = new RawHikeComment(
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
-                    DefaultHikeComment hikeComment = new DefaultHikeComment(rawHikeComment);
-                    try {
-                        dataManager.postComment(rawHikeComment);
-                    } catch (DataManagerException e) {
-                        e.printStackTrace();
-                    }
+                    new PostCommentAsync().execute(rawHikeComment);
                     commentEditText.setText("");
-                    commentsArrayList.add(hikeComment);
-                    new GetOneHikeAsync().execute(hikeId);
                 } else {
                     new AlertDialog.Builder(v.getContext())
                             .setMessage(R.string.type_comment);
@@ -220,8 +218,8 @@ public class HikeInfoView {
             hikeElevation.setText(elevationString);
 
             List<HikeComment> comments = hikeData.getAllComments();
-            commentListAdapter.clear();
-            if (comments != null) commentListAdapter.addAll(comments);
+            commentsArrayList.clear();
+            if (comments != null) commentsArrayList.addAll(comments);
             commentListAdapter.notifyDataSetChanged();
 
             loadImageScrollView();
@@ -255,6 +253,25 @@ public class HikeInfoView {
 
             return imageView;
 
+        }
+    }
+
+    private class PostCommentAsync extends AsyncTask<RawHikeComment, Void, Long> {
+
+        @Override
+        protected Long doInBackground(RawHikeComment... rawHikeComments) {
+            try {
+                return dataManager.postComment(rawHikeComments[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return (long) -1;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Long id) {
+            if (id == -1) Log.d("failure", "post comment unsuccessful");
+            new GetOneHikeAsync().execute(hikeId);
         }
     }
 

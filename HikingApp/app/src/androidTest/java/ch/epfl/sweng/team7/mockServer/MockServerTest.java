@@ -36,6 +36,8 @@ public class MockServerTest extends TestCase {
             + "    [0.2, 0.0, 123203, 3.0],\n"
             + "    [0.3,89.9, 123204, 4.0],\n"
             + "    [0.4, 0.0, 123205, 5.0]\n"
+            + "  ],\n"
+            + "  \"comments\": [\n"
             + "  ]\n"
             + "}\n";
 
