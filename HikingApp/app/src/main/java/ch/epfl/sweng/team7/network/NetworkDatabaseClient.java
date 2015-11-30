@@ -370,17 +370,13 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Post a comment to the database
      * @param comment the comment to be posted
-     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
-    public long postComment(long hikeId) throws DatabaseClientException {
+    public long postComment(RawHikeComment comment) throws DatabaseClientException {
         try {
             HttpURLConnection conn = getConnection("post_comment", "POST");
-            //byte[] outputInBytes = comment.toJSON().toString().getBytes("UTF-8"); TODO(runjie) uncomment and remove next line
-            byte[] outputInBytes = ("{\"comment_id\":-1,\"hike_id\":"+Long.toString(hikeId)
-                    + ",\"user_id\":"+SignedInUser.getInstance().getId()
-                    + ",\"comment_text\":\"blablabla\",\"date\":" + (new Date()).getTime() + "}").getBytes();
+            byte[] outputInBytes = comment.toJSON().toString().getBytes("UTF-8");
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             String stringResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);

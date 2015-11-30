@@ -19,6 +19,7 @@ import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RatingVote;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
@@ -39,11 +40,15 @@ public class MockServer implements DatabaseClient {
             + "    [0.3,89.9, 123204, 0.8],\n"
             + "    [0.4, 0.0, 123205, 0.9]\n"
             + "  ]\n"
+            + "  \"comments\": [\n"
+            + "  ]\n"
             + "}\n";
     //Same as DefaultLocalCache
     private final int HIKES_CACHE_MAX_SIZE = 100;
     private final HashMap<Long, RawHikeData> mHikeDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedHikeID = 10;
+    private final HashMap<Long, RawHikeComment> mHikeCommentDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
+    private int mAssignedCommentID = 10;
 
     private List<RawUserData> mUsers;
 
@@ -259,12 +264,22 @@ public class MockServer implements DatabaseClient {
     /**
      * Post a comment to the database
      * @param comment the comment to be posted
-     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
-    public long postComment(long hikeId) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented.");
+    public long postComment(RawHikeComment comment) throws DatabaseClientException {
+        long commentId = comment.getCommentId();
+        if (commentId > 0) {
+            if (!hasCommmet(commentId)) {
+                throw new DatabaseClientException("Setting Comment that's not there.");
+            }
+        } else {
+            commentId = mAssignedCommentID;
+            mAssignedCommentID++;
+            comment.setCommentId(commentId);
+        }
+        putComment(comment);
+        return commentId;
     }
 
     /**
@@ -273,7 +288,13 @@ public class MockServer implements DatabaseClient {
      * @throws DatabaseClientException
      */
     public void deleteComment(long commentId) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented.");
+        mHikeCommentDataBase.remove(commentId);
+    }
+
+    private void putComment(RawHikeComment rawHikeComment) throws DatabaseClientException {
+        if (rawHikeComment != null) {
+            mHikeCommentDataBase.put(rawHikeComment.getCommentId(), rawHikeComment);
+        }
     }
 
     /**
@@ -287,6 +308,11 @@ public class MockServer implements DatabaseClient {
     // Internal database management functions
     public boolean hasHike(long hikeId) {
         return mHikeDataBase.containsKey(hikeId);
+    }
+
+    // Internal database management functions
+    public boolean hasCommmet(long commentId) {
+        return mHikeCommentDataBase.containsKey(commentId);
     }
 
     public RawHikeData getHike(long hikeId) {

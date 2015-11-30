@@ -140,11 +140,10 @@ public interface DatabaseClient {
     /**
      * Post a comment to the database
      * @param comment the comment to be posted
-     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
-    long postComment(long hikeId) throws DatabaseClientException;
+    long postComment(RawHikeComment comment) throws DatabaseClientException;
 
     /**
      * Delete a comment from the database
