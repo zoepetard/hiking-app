@@ -31,7 +31,7 @@ public class GPSPathConverter {
             List<RawHikePoint> rawHikePoints = getHikePointsFromGPS(gpsPath);
             //Waiting for #iss56, by now is 0 by default
             long ownerId = 0;
-            return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints);
+            return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, null);
         } else {
             throw new ArrayIndexOutOfBoundsException("GPS path is empty");
         }

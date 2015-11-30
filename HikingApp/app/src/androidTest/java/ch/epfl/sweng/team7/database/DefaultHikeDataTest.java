@@ -36,7 +36,7 @@ public class DefaultHikeDataTest {
         rawHikePoints.add(new RawHikePoint(startLocation, new Date(1000101), 1.0));
         rawHikePoints.add(new RawHikePoint(new LatLng(10, 10), new Date(1000102), 3.0));
         rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000103), 2.0));
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints);
+        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints, null);
         mDefaultHikeData = new DefaultHikeData(rawHikeData);
     }
 

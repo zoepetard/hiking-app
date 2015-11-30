@@ -42,7 +42,7 @@ public class GPSPathConverterTest {
         mGPSPath.addFootPrint(new GPSFootPrint(new GeoCoords(1,1,1), 200));
         rawHikePoints = new ArrayList<>();
         rawHikePoints.add(new RawHikePoint(startLocation, new Date(100), 0));
-        mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints);
+        mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints, null);
         mRawHikeDataConverted = GPSPathConverter.toRawHikeData(mGPSPath);
     }
     @Test

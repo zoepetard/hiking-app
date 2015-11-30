@@ -109,6 +109,7 @@ public class RawHikeData {
 
     public List<RawHikeComment> getAllComments() {
         return mComments;
+    }
 
     public Rating getRating() {
         return mRating;

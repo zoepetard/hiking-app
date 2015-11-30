@@ -104,28 +104,30 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
 
-        String boundingBoxJSON = String.format(
-                "{\"lat_min\":%f,\"lng_min\":%f,\"lat_max\":%f,\"lng_max\":%f}",
-                bounds.southwest.latitude, bounds.southwest.longitude,
-                bounds.northeast.latitude, bounds.northeast.longitude);
-        List<Long> hikeList = new ArrayList<>();
-
         try {
+
+            JSONObject boundingBoxJSON = new JSONObject();
+            boundingBoxJSON.put("lat_min", bounds.southwest.latitude);
+            boundingBoxJSON.put("lng_min", bounds.southwest.longitude);
+            boundingBoxJSON.put("lat_max", bounds.northeast.latitude);
+            boundingBoxJSON.put("lng_max", bounds.northeast.longitude);
+
             HttpURLConnection conn = getConnection("get_hikes_in_window", "GET");
-            conn.setRequestProperty("bounding_box", boundingBoxJSON);
+            conn.setRequestProperty("bounding_box", boundingBoxJSON.toString());
             conn.connect();
             String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
 
             // Parse response
             JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
             JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            List<Long> hikeList = new ArrayList<>();
             for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
                 hikeList.add(jsonHikeIdArray.getLong(i));
             }
+            return hikeList;
         } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
-        return hikeList;
     }
 
 

@@ -1,14 +1,11 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.app.AlertDialog;
-import android.app.LauncherActivity;
-import android.content.Context;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,24 +13,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-import ch.epfl.sweng.team7.database.DefaultHikeComment;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
-import ch.epfl.sweng.team7.database.HikeComment;
-import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
-import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RatingVote;
 
-public final class HikeInfoActivity extends Activity {
+public final class HikeInfoActivity extends FragmentActivity {
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
@@ -59,7 +49,7 @@ public final class HikeInfoActivity extends Activity {
     }
 
     private void displayEditableHike(Intent intent) {
-        EditText hikeName  = (EditText) findViewById(R.id.hikeinfo_name);
+        EditText hikeName = (EditText) findViewById(R.id.hikeinfo_name);
         //TODO set it to editable
 
         Button saveButton = new Button(this);
@@ -88,7 +78,11 @@ public final class HikeInfoActivity extends Activity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mUser.getId());
+        GoogleMap mapHikeInfo = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapHikeInfo))
+                .getMap();
+
+        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mUser.getId(), mapHikeInfo);
+
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -108,7 +102,9 @@ public final class HikeInfoActivity extends Activity {
 
         hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
-        hikeInfoView.getMapPreview().setOnClickListener(new MapPreviewClickListener());
+        if (mapHikeInfo != null) {
+            mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
+        }
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -154,9 +150,9 @@ public final class HikeInfoActivity extends Activity {
         }
     }
 
-    private class MapPreviewClickListener implements View.OnClickListener {
+    private class MapPreviewClickListener implements GoogleMap.OnMapClickListener {
         @Override
-        public void onClick(View v) {
+        public void onMapClick(LatLng point) {
             // segue to map activity!
 
         }
