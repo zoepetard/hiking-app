@@ -400,7 +400,7 @@ public final class GPSManager {
 
     public void createAnnotation(String text) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
-        Annotation annotation = new Annotation(rawHikePoint, text, null);
+        annotation = new Annotation(rawHikePoint, text, null);
         listAnnotations.add(annotation);
         Log.d(LOG_FLAG, "Text annotation added to the list" + text);
     }
@@ -412,7 +412,7 @@ public final class GPSManager {
                 listAnnotations.get(listAnnotations.size() - 1).setPicture(drawable);
             }
         }else{
-            Annotation annotation = new Annotation(rawHikePoint, null, drawable);
+            annotation = new Annotation(rawHikePoint, null, drawable);
             listAnnotations.add(annotation);
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
