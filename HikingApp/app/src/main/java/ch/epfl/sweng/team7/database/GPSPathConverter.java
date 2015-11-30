@@ -66,10 +66,15 @@ public class GPSPathConverter {
      * @return
      */
     public static RawHikePoint getHikePointsFromGeoCoords(GPSFootPrint gpsFootPrint){
-        LatLng position = gpsFootPrint.getGeoCoords().toLatLng();
-        Double elevation = gpsFootPrint.getGeoCoords().getAltitude();
-        Date date = new Date(gpsFootPrint.getTimeStamp());
-        return new RawHikePoint(position, date, elevation);
+        if(gpsFootPrint != null){
+            LatLng position = gpsFootPrint.getGeoCoords().toLatLng();
+            Double elevation = gpsFootPrint.getGeoCoords().getAltitude();
+            Date date = new Date(gpsFootPrint.getTimeStamp());
+            return new RawHikePoint(position, date, elevation);
+        }else{
+            throw new NullPointerException("No footprint to add to the picture");
+        }
+
 
     }
 }

@@ -361,6 +361,8 @@ public final class GPSManager {
             public void onClick(DialogInterface dialog, int which) {
                 //TODO call storeHike() after issue #86 is fixed
                 //TODO storePictures()
+                storeHike();
+                storePictures(listAnnotations);
             }
         });
         builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
@@ -407,7 +409,7 @@ public final class GPSManager {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
         Annotation annotation = new Annotation(rawHikePoint, text, null);
         listAnnotations.add(annotation);
-        Log.d(LOG_FLAG, "Text annotation added to the list");
+        Log.d(LOG_FLAG, "Text annotation added to the list" + text);
     }
 
     public void createPicture(Drawable drawable) {
@@ -420,7 +422,7 @@ public final class GPSManager {
             Annotation annotation = new Annotation(rawHikePoint, null, drawable);
             listAnnotations.add(annotation);
         }
-        Log.d(LOG_FLAG, "Picture annotation added to the list");
+        Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
     }
 
 
