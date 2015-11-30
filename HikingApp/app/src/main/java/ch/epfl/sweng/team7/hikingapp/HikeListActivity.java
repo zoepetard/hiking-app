@@ -141,7 +141,7 @@ public class HikeListActivity extends Activity {
         //rating row
         GridLayout.LayoutParams ratingRow = new GridLayout.LayoutParams(row3, col2);
         TextView ratingText = new TextView(this);
-        ratingText.setText(getResources().getString(R.string.hikeRatingText,  hikeData.getRating().getDisplayRating()));
+        ratingText.setText(getResources().getString(R.string.hikeRatingText, (long) hikeData.getRating().getDisplayRating()));
 
         ratingText.setLayoutParams(ratingRow);
         gridLayout.addView(ratingText, ratingRow);
