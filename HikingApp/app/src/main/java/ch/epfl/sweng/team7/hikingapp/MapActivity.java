@@ -271,10 +271,10 @@ public class MapActivity extends FragmentActivity {
     private void displayMarkers(final HikeData hike) {
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
         MarkerOptions finishMarkerOptions = new MarkerOptions()
                 .position(hike.getFinishLocation())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
