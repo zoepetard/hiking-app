@@ -13,6 +13,8 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.HikeComment;
 
 public class CommentListAdapter extends ArrayAdapter<HikeComment> {
+    public CommentListAdapter() {}
+
     public CommentListAdapter(Context context, List<HikeComment> hikeComments) {
         super(context, 0, hikeComments);
     }
