@@ -450,6 +450,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
      */
     @Override
     public List<HikeData> searchHike(String query) throws DatabaseClientException {
+        return new ArrayList<HikeData>();
+        /* TODO replace return statement above with code below when server handles searches
         try {
             HttpURLConnection conn = getConnection("search_hikes", "GET");
             conn.setRequestProperty("query", query);
@@ -467,7 +469,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             return hikeList;
         } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
-        }
+        }*/
     }
 
     /**

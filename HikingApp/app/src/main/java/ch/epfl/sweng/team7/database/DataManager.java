@@ -138,10 +138,19 @@ public final class DataManager {
 
         List<HikeData> hikeDataList = sLocalCache.searchHike(query);
 
-        try{
-            sDatabaseClient.searchHike(query);
-        }catch(DatabaseClientException e){
-            Log.d(LOG_FLAG,e.getMessage());
+        try {
+            List<HikeData> serverHikeResults = sDatabaseClient.searchHike(query);
+            if (!serverHikeResults.isEmpty()) {
+                // removing duplicates
+                for (int i = 0; i < serverHikeResults.size(); i++) {
+                    if (!hikeDataList.contains(serverHikeResults.get(i))) {
+                        hikeDataList.add(serverHikeResults.get(i));
+                    }
+                }
+            }
+        } catch (DatabaseClientException e) {
+            Log.d(LOG_FLAG, e.getMessage());
+            throw new DataManagerException(e);
         }
 
         return hikeDataList;
