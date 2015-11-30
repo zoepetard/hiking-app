@@ -127,7 +127,7 @@ public class HikeInfoView {
             List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
             MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
             MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
-            MapDisplay.setCamera(hikesToDisplay, mapPreview);
+            MapDisplay.setCamera(hikesToDisplay, mapPreview, context);
 
 
             double distance = hikeData.getDistance() / 1000;  // in km
