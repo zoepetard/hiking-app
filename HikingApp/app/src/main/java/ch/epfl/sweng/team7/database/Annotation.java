@@ -17,7 +17,7 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
  * Created by pablo on 23/11/15.
  */
 public class Annotation {
-    private final static String LOG_FLAG = "GPS_Manager";
+    private final static String LOG_FLAG = "Annotation";
     private RawHikePoint mRawHikePoint;
     private String mText;
     private Drawable mPicture;
