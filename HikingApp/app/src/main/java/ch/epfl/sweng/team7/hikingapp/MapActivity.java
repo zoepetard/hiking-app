@@ -306,7 +306,9 @@ public class MapActivity extends FragmentActivity {
         PolylineOptions polylineOptions = new PolylineOptions();
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
-            polylineOptions.add(hikePoint.getPosition());
+            polylineOptions.add(hikePoint.getPosition())
+                            .width(5)
+                            .color(0xff000066);
         }
         mMap.addPolyline(polylineOptions);
     }

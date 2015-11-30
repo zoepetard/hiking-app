@@ -28,7 +28,9 @@ public class MapDisplay {
             PolylineOptions polylineOptions = new PolylineOptions();
             List<HikePoint> databaseHikePoints = hike.getHikePoints();
             for (HikePoint hikePoint : databaseHikePoints) {
-                polylineOptions.add(hikePoint.getPosition());
+                polylineOptions.add(hikePoint.getPosition())
+                                .width(5)
+                                .color(0xff000066);
             }
             Polyline polyline = map.addPolyline(polylineOptions);
             displayedHikes.add(polyline);
