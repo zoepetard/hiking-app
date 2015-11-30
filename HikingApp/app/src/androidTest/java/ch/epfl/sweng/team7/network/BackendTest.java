@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -137,7 +138,8 @@ public class BackendTest extends TestCase {
         // Prepare a modified Hike
         List<RawHikePoint> newHikePoints = hikeData.getHikePoints();
         newHikePoints.remove(2);
-        RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints, null);
+        List<RawHikeComment> newHikeComments = new ArrayList<>();
+        RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints, newHikeComments);
 
         waitForServerSync();
 
@@ -270,8 +272,8 @@ public class BackendTest extends TestCase {
     @Test
     public void testGetHikeIdsOfUser() throws Exception {
         Long userId = SignedInUser.getInstance().getId();
-
-        RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints(), null);
+        List<RawHikeComment> newHikeComments = new ArrayList<>();
+        RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints(), newHikeComments);
         final long hikeId = mDatabaseClient.postHike(hikeData);
 
         waitForServerSync();

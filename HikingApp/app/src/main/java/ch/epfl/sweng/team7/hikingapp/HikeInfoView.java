@@ -119,12 +119,11 @@ public class HikeInfoView {
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
                     DefaultHikeComment hikeComment = new DefaultHikeComment(rawHikeComment);
-                    // TODO: wait until DataManager side implementation
-//                    try {
-//                        dataManager.postComment(rawHikeComment);
-//                    } catch (DataManagerException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        dataManager.postComment(rawHikeComment);
+                    } catch (DataManagerException e) {
+                        e.printStackTrace();
+                    }
                     commentEditText.setText("");
                     commentsArrayList.add(hikeComment);
                     new GetOneHikeAsync().execute(hikeId);
