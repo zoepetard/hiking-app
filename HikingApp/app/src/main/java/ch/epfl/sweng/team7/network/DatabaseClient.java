@@ -138,7 +138,6 @@ public interface DatabaseClient {
 
 
     /**
->>>>>>> Rebase to master
      * Get an image from the database
      * @param imageId the database key of the image
      * @return the image
