@@ -25,9 +25,8 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.HikeComment;
+import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 
 
 /**
@@ -40,7 +39,7 @@ import ch.epfl.sweng.team7.database.HikeComment;
 public class BackendTest extends TestCase {
 
     private static final double EPS_DOUBLE = 1e-10;
-    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    private static final String SERVER_URL = "http://10.0.3.2:8080";//"https://footpath-1104.appspot.com";//
     private DatabaseClient mDatabaseClient;
 
     @Before
