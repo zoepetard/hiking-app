@@ -81,7 +81,7 @@
     <string name="sign_in_error_connecting_to_server">Error while connecting to the server</string>
 
     <string name="back">BACK</string>
-    <string name="go_hikes">See All the Hikes in This Region</string>
+    <string name="go_hikes">Hikes</string>
     <string name="logout">Are you sure you want to logout?</string>
     <string name="new_profile">Choose a new profile picture</string>
     <string name="yes">YES</string>
@@ -94,10 +94,14 @@
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
     <string name="selete_pic">Select Picture</string>
+
     <string name="comments">Comments</string>
     <string name="button_comment">Comment</string>
     <string name="make_comment">What do you think about the hike?</string>
     <string name="type_comment">Type in your comment!</string>
     <string name="test_comment">Awesome hike!</string>
+
+    <string name="search_no_results">No results</string>
+    <string name="search_error">An error occurred</string>
 
 </resources>

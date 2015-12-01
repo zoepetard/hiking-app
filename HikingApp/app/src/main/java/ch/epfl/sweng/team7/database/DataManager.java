@@ -5,8 +5,11 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +125,35 @@ public final class DataManager {
                 hikeDataList.add(processAndCache(rawHikeData));
             }
         }
+        return hikeDataList;
+    }
+
+    /**
+     * Query the server and local cache for hikes corresponding to a given search query
+     * TODO implement this when hike names are stored and search is implemented on backend
+     *
+     * @param query - search string
+     * @return list of hikes containing the query string.
+     */
+    public List<HikeData> searchHike(String query) throws DataManagerException {
+
+        List<HikeData> hikeDataList = sLocalCache.searchHike(query);
+
+        try {
+            List<HikeData> serverHikeResults = sDatabaseClient.searchHike(query);
+            if (!serverHikeResults.isEmpty()) {
+                // removing duplicates
+                for (int i = 0; i < serverHikeResults.size(); i++) {
+                    if (!hikeDataList.contains(serverHikeResults.get(i))) {
+                        hikeDataList.add(serverHikeResults.get(i));
+                    }
+                }
+            }
+        } catch (DatabaseClientException e) {
+            Log.d(LOG_FLAG, e.getMessage());
+            throw new DataManagerException(e);
+        }
+
         return hikeDataList;
     }
 

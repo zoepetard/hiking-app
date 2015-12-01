@@ -45,6 +45,7 @@ public class DataManagerTest {
         RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
+        newHike2.setName("Hike2");
         mNewHikeId2 = DataManager.getInstance().postHike(newHike2);
     }
 
@@ -77,6 +78,16 @@ public class DataManagerTest {
         List<RawHikeComment> newHikeComments = new ArrayList<>();
         RawHikeData hike = new RawHikeData(11, 15, new Date(), newHikePoints, newHikeComments, "");
         assertEquals(DataManager.getInstance().getHike(mNewHikeId2).getHikeId(), hike.getHikeId());
+
+    }
+
+    @Test
+    public void testSearchHikes() throws DataManagerException {
+        DataManager dataManager = DataManager.getInstance();
+        List<HikeData> hikeDataList = dataManager.searchHike("Hike2");
+
+        assertEquals("Hike not found", hikeDataList.get(0).getName(), "Hike2");
+
 
     }
 
