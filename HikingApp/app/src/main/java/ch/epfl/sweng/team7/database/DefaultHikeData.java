@@ -35,6 +35,7 @@ public class DefaultHikeData implements HikeData {
     private final LatLng mFinishLocation;
     private final ElevationBounds mElevationBounds;
     private final Rating mRating;
+    private final String mTitle;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -70,6 +71,8 @@ public class DefaultHikeData implements HikeData {
         } else {
             mRating = new Rating();
         }
+
+        mTitle = rawHikeData.getTitle();
     }
     /**
      * @return the hike ID.
@@ -169,6 +172,10 @@ public class DefaultHikeData implements HikeData {
 
     public LatLng getFinishLocation() {
         return mFinishLocation;
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {

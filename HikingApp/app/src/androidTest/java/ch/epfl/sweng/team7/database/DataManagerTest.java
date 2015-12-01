@@ -41,8 +41,8 @@ public class DataManagerTest {
         newHikePoints.add(new RawHikePoint(new LatLng(2., 10.), new Date(), 0.0));
         newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData newHike = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments);
-        RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments);
+        RawHikeData newHike = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
+        RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
         mNewHikeId2 = DataManager.getInstance().postHike(newHike2);
@@ -75,7 +75,7 @@ public class DataManagerTest {
         newHikePoints.add(new RawHikePoint(new LatLng(3., 12.), new Date(), 0.0));
         newHikePoints.add(new RawHikePoint(new LatLng(4., 13.), new Date(), 0.0));
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData hike = new RawHikeData(11, 15, new Date(), newHikePoints, newHikeComments);
+        RawHikeData hike = new RawHikeData(11, 15, new Date(), newHikePoints, newHikeComments, "");
         assertEquals(DataManager.getInstance().getHike(mNewHikeId2).getHikeId(), hike.getHikeId());
 
     }

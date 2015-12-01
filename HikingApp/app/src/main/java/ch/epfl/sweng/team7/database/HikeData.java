@@ -73,6 +73,8 @@ public interface HikeData {
      */
     LatLngBounds getBoundingBox();
 
+    String getTitle();
+
     /**
      * @return a representative point for this hike, where the pin will be placed on the map
      */

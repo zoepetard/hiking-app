@@ -168,7 +168,6 @@ public class HikeInfoView {
 
         private void displayHike(HikeData hikeData) {
             final int ELEVATION_POINT_COUNT = 100;
-            String name = "The Super Hike";
 
             List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
             List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
@@ -210,8 +209,7 @@ public class HikeInfoView {
 
             hikeGraph.addSeries(series);
 
-            // Updating the UI with data
-            hikeName.setText(name);
+            hikeName.setText(hikeData.getTitle());
 
             String distanceString = distance + " km";
             hikeDistance.setText(distanceString);

@@ -21,7 +21,8 @@ public class DummyHikeBuilder {
             + "    [0.4, 0.0, 123205, 2.0]\n"
             + "  ],\n"
             + "  \"comments\": [\n"
-            + "  ]\n"
+            + "  ],\n"
+            + "  \"title\": \"test\"\n"
             + "}\n";
 
     public static RawHikeData buildRawHikeData(long hikeId) throws HikeParseException {

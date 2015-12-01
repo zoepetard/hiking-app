@@ -38,7 +38,8 @@ public class MockServerTest extends TestCase {
             + "    [0.4, 0.0, 123205, 5.0]\n"
             + "  ],\n"
             + "  \"comments\": [\n"
-            + "  ]\n"
+            + "  ],\n"
+            + "  \"title\": \"test\"\n"
             + "}\n";
 
     @Before

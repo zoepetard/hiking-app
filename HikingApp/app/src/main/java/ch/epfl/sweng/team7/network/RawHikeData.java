@@ -44,6 +44,7 @@ public class RawHikeData {
     private List<RawHikePoint> mHikePoints;   // Points of the hike, in chronological order
     private List<RawHikeComment> mComments;
     private Rating mRating;
+    private String mTitle;
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
@@ -54,7 +55,7 @@ public class RawHikeData {
      * @throws IllegalArgumentException
      */
     public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
-                       List<RawHikeComment> comments) {
+                       List<RawHikeComment> comments, String title) {
 
         // Argument checks
         if (hikeId < 0 && hikeId != HIKE_ID_UNKNOWN) {
@@ -83,6 +84,7 @@ public class RawHikeData {
             mComments = comments;
         }
         mRating = new Rating();
+        mTitle = title;
     }
     
     /**
@@ -121,6 +123,10 @@ public class RawHikeData {
         return mRating;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
@@ -148,6 +154,7 @@ public class RawHikeData {
         jsonObject.put("date", mDate.getTime());
         jsonObject.put("hike_data", parseHikePointsList(mHikePoints));
         jsonObject.put("comments", parseCommentsList(mComments));
+        jsonObject.put("title", mTitle);
         return jsonObject;
     }
 
@@ -199,7 +206,8 @@ public class RawHikeData {
                     jsonObject.getLong("owner_id"),
                     date,
                     hikePoints,
-                    comments);
+                    comments,
+                    jsonObject.getString("title"));
             if(jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
             }
@@ -262,7 +270,7 @@ public class RawHikeData {
             throw new HikeParseException(e);
         }
 
-        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments);
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments, "");
     }
 
 }

@@ -139,7 +139,7 @@ public class BackendTest extends TestCase {
         List<RawHikePoint> newHikePoints = hikeData.getHikePoints();
         newHikePoints.remove(2);
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints, newHikeComments);
+        RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints, newHikeComments, "");
 
         waitForServerSync();
 
@@ -273,7 +273,7 @@ public class BackendTest extends TestCase {
     public void testGetHikeIdsOfUser() throws Exception {
         Long userId = SignedInUser.getInstance().getId();
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints(), newHikeComments);
+        RawHikeData hikeData = new RawHikeData(-1, userId, new Date(), createHikeData().getHikePoints(), newHikeComments, "");
         final long hikeId = mDatabaseClient.postHike(hikeData);
 
         waitForServerSync();

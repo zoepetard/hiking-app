@@ -41,7 +41,8 @@ public class MockServer implements DatabaseClient {
             + "    [0.4, 0.0, 123205, 0.9]\n"
             + "  ],\n"
             + "  \"comments\": [\n"
-            + "  ]\n"
+            + "  ],\n"
+            + "  \"title\": \"test\"\n"
             + "}\n";
     //Same as DefaultLocalCache
     private final int HIKES_CACHE_MAX_SIZE = 100;

@@ -29,7 +29,8 @@ public class ProperJSONParsingTest {
             + "    [0.4, 0.0, 123205, 2.0]\n"
             + "  ],\n"
             + "  \"comments\": [\n"
-            + "  ]\n"
+            + "  ],\n"
+            + "  \"title\": \"test\"\n"
             + "}\n";
 
     private static final long EXPECTED_HIKE_ID = 268L;
