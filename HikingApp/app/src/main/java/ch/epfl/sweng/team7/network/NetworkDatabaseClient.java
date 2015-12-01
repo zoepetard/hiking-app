@@ -11,7 +11,6 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -28,13 +27,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
-import ch.epfl.sweng.team7.database.DefaultUserData;
 import ch.epfl.sweng.team7.database.HikeData;
 
 
@@ -136,9 +132,15 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
 
+    /**
+     * Get all hikes of a user
+     *
+     * @param userId A valid user ID
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
     public List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException {
-
-        List<Long> hikeList = new ArrayList<>();
 
         try {
             HttpURLConnection conn = getConnection("get_hikes_of_user", "GET");
@@ -149,13 +151,44 @@ public class NetworkDatabaseClient implements DatabaseClient {
             // Parse response
             JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
             JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            List<Long> hikeList = new ArrayList<>();
             for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
                 hikeList.add(jsonHikeIdArray.getLong(i));
             }
+            return hikeList;
         } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
-        return hikeList;
+    }
+
+
+    /**
+     * Get all hikes with given keywords
+     *
+     * @param keywords A string of keywords, separated by spaces. Special characters will be ignored.
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    public List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException {
+
+        try {
+            HttpURLConnection conn = getConnection("get_hikes_of_user", "GET");
+            conn.setRequestProperty("keywords", keywords);
+            conn.connect();
+            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
+
+            // Parse response
+            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
+            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
+            List<Long> hikeList = new ArrayList<>();
+            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
+                hikeList.add(jsonHikeIdArray.getLong(i));
+            }
+            return hikeList;
+        } catch (IOException | JSONException e) {
+            throw new DatabaseClientException(e);
+        }
     }
 
     /**

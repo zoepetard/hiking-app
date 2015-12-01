@@ -114,6 +114,30 @@ public class MockServer implements DatabaseClient {
     }
 
     /**
+     * Get all hikes of a user
+     *
+     * @param userId A valid user ID
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    public List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Get all hikes with given keywords
+     *
+     * @param keywords A string of keywords, separated by spaces. Special characters will be ignored.
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    public List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException {
+        throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
      * Method to post a hike in the database. The database assigns a hike ID and returns that.
      *
      * @param hike to post. ID is ignored, because hike will be assigned a new ID.
