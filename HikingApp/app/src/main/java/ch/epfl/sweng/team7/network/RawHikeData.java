@@ -228,6 +228,7 @@ public class RawHikeData {
 
         List<RawHikePoint> hikePoints = new ArrayList<>();
         List<RawHikeComment> comments = new ArrayList<>();
+        String title = "";
 
         try {
             // Normalization
@@ -240,6 +241,7 @@ public class RawHikeData {
 
             // Parse track (trk node with trkseg subnodes)
             Element trk = (Element) doc.getElementsByTagName("trk").item(0);
+            title = trk.getElementsByTagName("name").item(0).getTextContent();
             Element trkseg = (Element) trk.getElementsByTagName("trkseg").item(0);
             NodeList trkptList = trkseg.getElementsByTagName("trkpt");
 
@@ -270,7 +272,7 @@ public class RawHikeData {
             throw new HikeParseException(e);
         }
 
-        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments, "");
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments, title);
     }
 
 }

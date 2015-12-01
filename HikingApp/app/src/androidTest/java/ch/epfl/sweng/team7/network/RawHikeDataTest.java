@@ -76,7 +76,7 @@ public class RawHikeDataTest extends TestCase {
 
         assertEquals(RawHikeData.HIKE_ID_UNKNOWN, rawHikeData.getHikeId());
         assertEquals(0, rawHikeData.getOwnerId());
-        //assertEquals("Rochers de Naye", rawHikeData.getTitle()); TODO uncomment when title is implemented
+        assertEquals("Rochers de Naye", rawHikeData.getTitle());
         assertEquals(2, rawHikeData.getHikePoints().size());
         cal.setTime(rawHikeData.getHikePoints().get(0).getTime());
         assertEquals(46.451290, rawHikeData.getHikePoints().get(0).getPosition().latitude, EPS_DOUBLE);

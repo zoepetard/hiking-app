@@ -27,6 +27,7 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.HikeComment;
 
 
 /**
@@ -373,14 +374,21 @@ public class BackendTest extends TestCase {
         assertTrue(hikeId > 0);
 
         waitForServerSync();
-        //TODO(runjie) iss107 create new comment
-//        mDatabaseClient.postComment(hikeId);
+
+        RawHikeComment hikeComment = new RawHikeComment(RawHikeComment.COMMENT_ID_UNKNOWN,
+                hikeId, SignedInUser.getInstance().getId(), "test comment");
+        final long commentId = mDatabaseClient.postComment(hikeComment);
+        assertTrue(commentId > 0);
 
         waitForServerSync();
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
         mDatabaseClient.deleteHike(hikeId);
 
-        //TODO(runjie) iss107 check if the comment was returned correctly.
+        waitForServerSync();
+        List<RawHikeComment> comments = serverHikeData.getAllComments();
+        assertEquals(comments.size(), 1);
+        assertEquals("test comment", comments.get(0).getCommentText());
+        mDatabaseClient.deleteComment(commentId);
     }
 
     /**
@@ -394,17 +402,21 @@ public class BackendTest extends TestCase {
         assertTrue(hikeId > 0);
 
         waitForServerSync();
-        //TODO(runjie) iss107 create new comment
-//        long commentId = mDatabaseClient.postComment(hikeId);
+        RawHikeComment hikeComment = new RawHikeComment(RawHikeComment.COMMENT_ID_UNKNOWN,
+                hikeId, SignedInUser.getInstance().getId(), "test comment");
+        final long commentId = mDatabaseClient.postComment(hikeComment);
+        assertTrue(commentId > 0);
 
         waitForServerSync();
-//        mDatabaseClient.deleteComment(commentId);
+        mDatabaseClient.deleteComment(commentId);
 
         waitForServerSync();
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
-        mDatabaseClient.deleteHike(hikeId);
 
-        //TODO(runjie) iss107 check that comment with commentId is not in serverHikeData anymore
+        waitForServerSync();
+        List<RawHikeComment> comments = serverHikeData.getAllComments();
+        assertEquals(comments.size(), 0);
+        mDatabaseClient.deleteHike(hikeId);
     }
 
     // TODO(simon) test backend reaction to malformed input
