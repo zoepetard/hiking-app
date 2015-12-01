@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,6 +55,7 @@ public class HikeInfoView {
 
     private long hikeId;
     private long userId;
+    private long hikeOwnerId;
     private TextView hikeName;
     private TextView hikeDistance;
     private RatingBar hikeRatingBar;
@@ -219,6 +221,8 @@ public class HikeInfoView {
             String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
             hikeElevation.setText(elevationString);
 
+            hikeOwnerId = hikeData.getOwnerId();
+
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
             for (HikeComment comment : comments) {
@@ -304,6 +308,7 @@ public class HikeInfoView {
         View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
         TextView commentId = (TextView) commentRow
                 .findViewById(R.id.comment_userid);
+        if (userId == hikeOwnerId) commentId.setTextColor(Color.RED);
         commentId.setText(String.valueOf(comment.getCommentOwnerId()));
         TextView commentText = (TextView) commentRow
                 .findViewById(R.id.comment_display_text);
