@@ -52,6 +52,7 @@ public class MockServer implements DatabaseClient {
     private int mAssignedHikeID = 10;
     private final HashMap<Long, RawHikeComment> mHikeCommentDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedCommentID = 10;
+    private int mAssignedUserId = 10;
 
     private List<RawUserData> mUsers;
 
@@ -195,16 +196,17 @@ public class MockServer implements DatabaseClient {
     @Override
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         // Positive user ID means the user is in the database
-        if (rawUserData.getUserId() >= 0) {
+        if (rawUserData.getUserId() > 0) {
             for (int i = 0; i < mUsers.size(); ++i) {
                 if (mUsers.get(i).getUserId() == rawUserData.getUserId()) {
                     mUsers.set(i, rawUserData);
-                    return i;
+                    return rawUserData.getUserId();
                 }
             }
             throw new DatabaseClientException("User to update not found in MockServer.");
         } else {
-            long newUserId = mUsers.size();
+            long newUserId = mAssignedUserId;
+            mAssignedUserId++;
             rawUserData.setUserId(newUserId);
             mUsers.add(rawUserData);
             return newUserId;
@@ -253,12 +255,16 @@ public class MockServer implements DatabaseClient {
     public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
         try {
-            long userId = 1482787832;
+            long userId = 0;
             for (RawUserData rawUserData : mUsers) {
                 if (rawUserData.getMailAddress().equals(loginRequest.toJSON().getString("mail_address"))) {
                     userId = rawUserData.getUserId();
                     break;
                 }
+            }
+            if(userId <= 0) {
+                userId = postUserData(new RawUserData(-1, loginRequest.toJSON().getString("user_name_hint"),
+                        loginRequest.toJSON().getString("mail_address")));
             }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user_id", userId);

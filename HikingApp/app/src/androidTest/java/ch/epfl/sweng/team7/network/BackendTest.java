@@ -231,7 +231,7 @@ public class BackendTest extends TestCase {
     public void testPostUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId > 0);
+        assertTrue("Server should set positive user ID, is "+userId, userId > 0);
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);
@@ -242,7 +242,7 @@ public class BackendTest extends TestCase {
     public void testGetUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId > 0);
+        assertTrue("Server should set positive user ID, is "+userId, userId > 0);
 
         waitForServerSync();
         RawUserData serverRawUserData = mDatabaseClient.fetchUserData(userId);
@@ -256,7 +256,7 @@ public class BackendTest extends TestCase {
     public void testDeleteUser() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
+        assertTrue("Server should set positive user ID, is "+userId, userId > 0);
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);
@@ -278,7 +278,7 @@ public class BackendTest extends TestCase {
         final long hikeId = mDatabaseClient.postHike(hikeData);
 
         waitForServerSync();
-        List<Long> hikeList = ((NetworkDatabaseClient) mDatabaseClient).getHikeIdsOfUser(userId);
+        List<Long> hikeList = mDatabaseClient.getHikeIdsOfUser(userId);
         assertEquals(hikeList.get(0), Long.valueOf(hikeId));
     }
 
@@ -386,7 +386,7 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
         List<RawHikeComment> comments = serverHikeData.getAllComments();
-        assertEquals(comments.size(), 1);
+        assertEquals(1, comments.size());
         assertEquals("test comment", comments.get(0).getCommentText());
         mDatabaseClient.deleteComment(commentId);
     }
