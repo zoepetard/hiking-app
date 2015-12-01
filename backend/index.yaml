@@ -19,3 +19,8 @@ indexes:
   properties:
   - name: lat10
   - name: longitude
+
+- kind: Hike
+  properties:
+  - name: lat100
+  - name: longitude

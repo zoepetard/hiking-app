@@ -486,8 +486,15 @@ public class MapActivity extends FragmentActivity {
                     Address clickedLocation = mSuggestionList.get(position);
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
-                    focusOnLatLng(latLng);
-
+                    // get bounding box
+                    Object bounds = clickedLocation.getExtras().get(EXTRA_BOUNDS);
+                    if(bounds != null && bounds instanceof LatLngBounds) {
+                        LatLngBounds boundingBox = (LatLngBounds) bounds;
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, 60));
+                    } else {
+                        focusOnLatLng(latLng);
+                    }
+                    
                     // load hikes at new location
                     onCameraChangeHelper();
                 }
@@ -540,14 +547,20 @@ public class MapActivity extends FragmentActivity {
             }
             // check if local results and add to suggestions
             for(HikeData hikeData : hikeDataList) {
+
                 Address address = new Address(Locale.ROOT);
+
                 address.setFeatureName(hikeData.getTitle());
                 LatLng latLng = hikeData.getHikeLocation();
                 address.setLatitude(latLng.latitude);
                 address.setLongitude(latLng.longitude);
+
+                Bundle boundingBox = new Bundle();
+                boundingBox.putParcelable(EXTRA_BOUNDS, hikeData.getBoundingBox());
+                address.setExtras(boundingBox);
+
                 suggestions.add(address);
             }
-
 
             try {
                 List<Address> locationAddressList = mGeocoder.getFromLocationName(query, MAX_SEARCH_SUGGESTIONS);
