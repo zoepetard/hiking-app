@@ -38,6 +38,8 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.DefaultHikeComment;
+import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
@@ -119,8 +121,10 @@ public class HikeInfoView {
                     RawHikeComment rawHikeComment = new RawHikeComment(
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
+                    DefaultHikeComment comment = new DefaultHikeComment(rawHikeComment);
                     new PostCommentAsync().execute(rawHikeComment);
                     commentEditText.setText("");
+                    showNewComment(comment);
                 } else {
                     new AlertDialog.Builder(v.getContext())
                             .setMessage(R.string.type_comment);
@@ -218,16 +222,7 @@ public class HikeInfoView {
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
             for (HikeComment comment : comments) {
-                LayoutInflater inflater = (LayoutInflater) context
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
-                TextView commentId = (TextView) commentRow
-                        .findViewById(R.id.comment_userid);
-                commentId.setText(String.valueOf(comment.getCommentOwnerId()));
-                TextView commentText = (TextView) commentRow
-                        .findViewById(R.id.comment_display_text);
-                commentText.setText(comment.getCommentText());
-                commentList.addView(commentRow);
+                showNewComment(comment);
             }
 
             loadImageScrollView();
@@ -279,7 +274,6 @@ public class HikeInfoView {
         @Override
         protected void onPostExecute(Long id) {
             if (id == -1) Log.d("failure", "post comment unsuccessful");
-            new GetOneHikeAsync().execute(hikeId);
         }
     }
 
@@ -302,6 +296,19 @@ public class HikeInfoView {
 
     public ListView getNavDrawerList() {
         return navDrawerList;
+    }
+
+    private void showNewComment(HikeComment comment) {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
+        TextView commentId = (TextView) commentRow
+                .findViewById(R.id.comment_userid);
+        commentId.setText(String.valueOf(comment.getCommentOwnerId()));
+        TextView commentText = (TextView) commentRow
+                .findViewById(R.id.comment_display_text);
+        commentText.setText(comment.getCommentText());
+        commentList.addView(commentRow);
     }
 
 }
