@@ -50,7 +50,8 @@ public class RawHikeDataTest extends TestCase {
         rawHikePoints.add(new RawHikePoint(new LatLng(1, 2), new Date(3), 4));
         rawHikePoints.add(new RawHikePoint(new LatLng(11, 12), new Date(13), 14));
 
-        RawHikeData rawHikeData = new RawHikeData(21, 22, new Date(23), rawHikePoints);
+        List<RawHikeComment> newHikeComments = new ArrayList<>();
+        RawHikeData rawHikeData = new RawHikeData(21, 22, new Date(23), rawHikePoints, newHikeComments, "");
 
         assertEquals(21, rawHikeData.getHikeId());
         assertEquals(22, rawHikeData.getOwnerId());
@@ -75,7 +76,7 @@ public class RawHikeDataTest extends TestCase {
 
         assertEquals(RawHikeData.HIKE_ID_UNKNOWN, rawHikeData.getHikeId());
         assertEquals(0, rawHikeData.getOwnerId());
-        //assertEquals("Rochers de Naye", rawHikeData.getTitle()); TODO uncomment when title is implemented
+        assertEquals("Rochers de Naye", rawHikeData.getTitle());
         assertEquals(2, rawHikeData.getHikePoints().size());
         cal.setTime(rawHikeData.getHikePoints().get(0).getTime());
         assertEquals(46.451290, rawHikeData.getHikePoints().get(0).getPosition().latitude, EPS_DOUBLE);

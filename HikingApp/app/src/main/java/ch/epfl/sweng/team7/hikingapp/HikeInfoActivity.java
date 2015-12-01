@@ -1,6 +1,5 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -8,10 +7,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -41,7 +42,6 @@ public final class HikeInfoActivity extends FragmentActivity {
         } else {
             loadStaticHike(intent, savedInstanceState);
         }
-
     }
 
     @Override
@@ -84,6 +84,7 @@ public final class HikeInfoActivity extends FragmentActivity {
                 .getMap();
 
         HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
+
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -112,6 +113,17 @@ public final class HikeInfoActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        EditText commentEditText = (EditText) findViewById(R.id.comment_text);
+        commentEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
             }
         });
     }

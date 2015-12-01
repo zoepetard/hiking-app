@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ch.epfl.sweng.team7.database.HikeComment;
+
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
  * Additional annotations will be added here rather than in the RawHikePoint class, to simplify
@@ -40,8 +42,9 @@ public class RawHikeData {
     private long mOwnerId;   // Database user ID of owner
     private Date mDate;      // A UTC time stamp
     private List<RawHikePoint> mHikePoints;   // Points of the hike, in chronological order
+    private List<RawHikeComment> mComments;
     private Rating mRating;
-    private String mName = "";
+    private String mTitle;
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
@@ -52,7 +55,8 @@ public class RawHikeData {
      * @param hikePoints the list of points on this hike, must be >= 1 point
      * @throws IllegalArgumentException
      */
-    public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints) {
+    public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
+                       List<RawHikeComment> comments, String title) {
 
         // Argument checks
         if (hikeId < 0 && hikeId != HIKE_ID_UNKNOWN) {
@@ -75,7 +79,13 @@ public class RawHikeData {
         mOwnerId = ownerId;
         mDate = date;
         mHikePoints = hikePoints;
+        if (comments == null) {
+            mComments = new ArrayList<>();
+        } else {
+            mComments = comments;
+        }
         mRating = new Rating();
+        mTitle = title;
     }
 
     /**
@@ -106,8 +116,16 @@ public class RawHikeData {
         return new ArrayList<RawHikePoint>(mHikePoints);
     }
 
+    public List<RawHikeComment> getAllComments() {
+        return mComments;
+    }
+
     public Rating getRating() {
         return mRating;
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 
     /**
@@ -138,6 +156,8 @@ public class RawHikeData {
         jsonObject.put("owner_id", mOwnerId);
         jsonObject.put("date", mDate.getTime());
         jsonObject.put("hike_data", parseHikePointsList(mHikePoints));
+        jsonObject.put("comments", parseCommentsList(mComments));
+        jsonObject.put("title", mTitle);
         return jsonObject;
     }
 
@@ -149,6 +169,14 @@ public class RawHikeData {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < hikePoints.size(); ++i) {
             jsonArray.put(hikePoints.get(i).toJSON());
+        }
+        return jsonArray;
+    }
+
+    private JSONArray parseCommentsList(List<RawHikeComment> comments) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for(int i = 0; i < comments.size(); ++i) {
+            jsonArray.put(comments.get(i).toJSON());
         }
         return jsonArray;
     }
@@ -170,13 +198,21 @@ public class RawHikeData {
                 hikePoints.add(RawHikePoint.parseFromJSON(jsonHikePoints.getJSONArray(i)));
             }
 
+            JSONArray jsonComments = jsonObject.getJSONArray("comments");
+            List<RawHikeComment> comments = new ArrayList<>();
+            for (int i = 0; i < jsonComments.length(); ++i) {
+                comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
+            }
+
             Date date = new Date(jsonObject.getLong("date"));
             RawHikeData rawHikeData = new RawHikeData(
                     jsonObject.getLong("hike_id"),
                     jsonObject.getLong("owner_id"),
                     date,
-                    hikePoints);
-            if (jsonObject.has("rating")) {
+                    hikePoints,
+                    comments,
+                    jsonObject.getString("title"));
+            if(jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
             }
             return rawHikeData;
@@ -195,6 +231,8 @@ public class RawHikeData {
     public static RawHikeData parseFromGPXDocument(Document doc) throws HikeParseException {
 
         List<RawHikePoint> hikePoints = new ArrayList<>();
+        List<RawHikeComment> comments = new ArrayList<>();
+        String title = "";
 
         try {
             // Normalization
@@ -207,6 +245,7 @@ public class RawHikeData {
 
             // Parse track (trk node with trkseg subnodes)
             Element trk = (Element) doc.getElementsByTagName("trk").item(0);
+            title = trk.getElementsByTagName("name").item(0).getTextContent();
             Element trkseg = (Element) trk.getElementsByTagName("trkseg").item(0);
             NodeList trkptList = trkseg.getElementsByTagName("trkpt");
 
@@ -237,15 +276,11 @@ public class RawHikeData {
             throw new HikeParseException(e);
         }
 
-        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints);
+        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments, title);
     }
 
-    public String getName() {
-        return mName;
-    }
-
-    public void setName(String newName){
-        mName = newName;
+    public void setTitle(String newTitle){
+        mTitle = newTitle;
     }
 
 }

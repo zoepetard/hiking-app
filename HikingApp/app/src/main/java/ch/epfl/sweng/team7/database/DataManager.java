@@ -19,6 +19,7 @@ import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 import ch.epfl.sweng.team7.network.RatingVote;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
@@ -185,6 +186,14 @@ public final class DataManager {
     public long postHike(RawHikeData rawHikeData) throws DataManagerException {
         try {
             return sDatabaseClient.postHike(rawHikeData);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    public long postComment(RawHikeComment rawHikeComment) throws DataManagerException {
+        try {
+            return sDatabaseClient.postComment(rawHikeComment);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }

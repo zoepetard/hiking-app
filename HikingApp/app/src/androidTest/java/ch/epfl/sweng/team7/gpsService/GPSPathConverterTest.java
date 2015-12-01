@@ -13,6 +13,7 @@ import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -42,7 +43,8 @@ public class GPSPathConverterTest {
         mGPSPath.addFootPrint(new GPSFootPrint(new GeoCoords(1,1,1), 200));
         rawHikePoints = new ArrayList<>();
         rawHikePoints.add(new RawHikePoint(startLocation, new Date(100), 0));
-        mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints);
+        List<RawHikeComment> newHikeComments = new ArrayList<>();
+        mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints, newHikeComments, "");
         mRawHikeDataConverted = GPSPathConverter.toRawHikeData(mGPSPath);
     }
     @Test

@@ -53,7 +53,7 @@
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
     <string name="title_activity_change_nickname">ChangeNicknameActivity</string>
 
-    <string name="edit_nickname">Change</string>
+    <string name="edit_nickname">Change nickname</string>
     <string name="title_activity_hike_info">HikeInfoActivity</string>
     <string name="title_activity_user_data">UserDataActivity</string>
 
@@ -94,6 +94,13 @@
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
     <string name="selete_pic">Select Picture</string>
+
+    <string name="comments">Comments</string>
+    <string name="button_comment">Comment</string>
+    <string name="make_comment">What do you think about the hike?</string>
+    <string name="type_comment">Type in your comment!</string>
+    <string name="test_comment">Awesome hike!</string>
+
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
 

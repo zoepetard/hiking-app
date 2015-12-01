@@ -562,7 +562,7 @@ public class MapActivity extends FragmentActivity {
             if (!hikeDataList.isEmpty()) {
                 for (int i = 0; i < hikeDataList.size(); i++) {
                     Address address = new Address(Locale.ROOT);
-                    address.setFeatureName(hikeDataList.get(i).getName());
+                    address.setFeatureName(hikeDataList.get(i).getTitle());
                     LatLng latLng = hikeDataList.get(i).getHikeLocation();
                     address.setLatitude(latLng.latitude);
                     address.setLongitude(latLng.longitude);

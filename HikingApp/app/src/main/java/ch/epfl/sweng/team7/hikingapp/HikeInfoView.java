@@ -1,15 +1,27 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -18,14 +30,21 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.DefaultHikeComment;
+import ch.epfl.sweng.team7.database.DefaultHikeData;
+import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 
 
 /** Class which controls and updates the visual part of the view, not the interaction */
@@ -35,6 +54,8 @@ public class HikeInfoView {
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 
     private long hikeId;
+    private long userId;
+    private long hikeOwnerId;
     private TextView hikeName;
     private TextView hikeDistance;
     private RatingBar hikeRatingBar;
@@ -50,9 +71,12 @@ public class HikeInfoView {
     private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
+    private LinearLayout commentList;
 
-    public HikeInfoView (View view, Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
+    public HikeInfoView (final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
+
         hikeId = id;
+        userId = SignedInUser.getInstance().getId();
 
         // initializing UI element in the layout for the HikeInfoView.
         this.context = context;
@@ -89,6 +113,29 @@ public class HikeInfoView {
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
 
+        Button commentButton = (Button) view.findViewById(R.id.done_edit_comment);
+        commentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText commentEditText = (EditText) view.findViewById(R.id.comment_text);
+                String commentText = commentEditText.getText().toString();
+                if (!commentText.isEmpty()) {
+                    RawHikeComment rawHikeComment = new RawHikeComment(
+                            RawHikeComment.COMMENT_ID_UNKNOWN,
+                            hikeId, userId, commentText);
+                    DefaultHikeComment comment = new DefaultHikeComment(rawHikeComment);
+                    new PostCommentAsync().execute(rawHikeComment);
+                    commentEditText.setText("");
+                    showNewComment(comment);
+                } else {
+                    new AlertDialog.Builder(v.getContext())
+                            .setMessage(R.string.type_comment);
+                }
+            }
+        });
+
+        commentList = (LinearLayout) view.findViewById(R.id.comments_list);
+
         new GetOneHikeAsync().execute(hikeId);
 
     }
@@ -121,7 +168,6 @@ public class HikeInfoView {
 
         private void displayHike(HikeData hikeData) {
             final int ELEVATION_POINT_COUNT = 100;
-            String name = "The Super Hike";
 
             List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
             List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
@@ -163,8 +209,7 @@ public class HikeInfoView {
 
             hikeGraph.addSeries(series);
 
-            // Updating the UI with data
-            hikeName.setText(name);
+            hikeName.setText(hikeData.getTitle());
 
             String distanceString = distance + " km";
             hikeDistance.setText(distanceString);
@@ -173,6 +218,14 @@ public class HikeInfoView {
 
             String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
             hikeElevation.setText(elevationString);
+
+            hikeOwnerId = hikeData.getOwnerId();
+
+            List<HikeComment> comments = hikeData.getAllComments();
+            commentList.removeAllViews();
+            for (HikeComment comment : comments) {
+                showNewComment(comment);
+            }
 
             loadImageScrollView();
         }
@@ -208,6 +261,24 @@ public class HikeInfoView {
         }
     }
 
+    private class PostCommentAsync extends AsyncTask<RawHikeComment, Void, Long> {
+
+        @Override
+        protected Long doInBackground(RawHikeComment... rawHikeComments) {
+            try {
+                return dataManager.postComment(rawHikeComments[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return (long) -1;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Long id) {
+            if (id == -1) Log.d("failure", "post comment unsuccessful");
+        }
+    }
+
     public Button getBackButton() {
         return backButton;
     }
@@ -227,6 +298,22 @@ public class HikeInfoView {
 
     public ListView getNavDrawerList() {
         return navDrawerList;
+    }
+
+    private void showNewComment(HikeComment comment) {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
+        TextView commentId = (TextView) commentRow
+                .findViewById(R.id.comment_userid);
+        Log.d("userId", String.valueOf(userId));
+        Log.d("ownerId", String.valueOf(hikeOwnerId));
+        if (userId == hikeOwnerId) commentId.setTextColor(Color.RED);
+        commentId.setText(String.valueOf(comment.getCommentOwnerId()));
+        TextView commentText = (TextView) commentRow
+                .findViewById(R.id.comment_display_text);
+        commentText.setText(comment.getCommentText());
+        commentList.addView(commentRow);
     }
 
 }

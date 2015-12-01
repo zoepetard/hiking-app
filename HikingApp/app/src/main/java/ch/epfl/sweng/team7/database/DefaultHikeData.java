@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.network.Rating;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -22,11 +23,11 @@ public class DefaultHikeData implements HikeData {
 
     private final static String LOG_FLAG = "DB_DefaultHikeData";
 
-    private String mHikeName = "";
     private final long mHikeId;    // Database hike ID of this hike
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
     private final List<HikePoint> mHikePoints;
+    private final List<HikeComment> mComments;
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -34,6 +35,7 @@ public class DefaultHikeData implements HikeData {
     private final LatLng mFinishLocation;
     private final ElevationBounds mElevationBounds;
     private final Rating mRating;
+    private String mTitle;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -50,7 +52,12 @@ public class DefaultHikeData implements HikeData {
             mHikePoints.add(new DefaultHikePoint(rawHikePoint));
         }
 
-        mHikeName = rawHikeData.getName();
+        List<RawHikeComment> rawHikeComments = rawHikeData.getAllComments();
+        mComments = new ArrayList<>();
+        for (RawHikeComment rawHikeComment : rawHikeComments){
+            mComments.add(new DefaultHikeComment(rawHikeComment));
+        }
+
         mDistance = calculateDistance(rawHikePoints);
         mBoundingBox = calculateBoundingBox(rawHikePoints);
         mHikeLocation = getBoundingBox().getCenter();
@@ -64,22 +71,16 @@ public class DefaultHikeData implements HikeData {
         } else {
             mRating = new Rating();
         }
+
+        mTitle = rawHikeData.getTitle();
     }
 
     /**
-     * @return name of the hike
+     * @param newTitle
      */
     @Override
-    public String getName() {
-        return mHikeName;
-    }
-
-    /**
-     * @param newName
-     */
-    @Override
-    public void setName(String newName) {
-        mHikeName = newName;
+    public void setTitle(String newTitle) {
+        mTitle = newTitle;
     }
 
     /**
@@ -116,6 +117,10 @@ public class DefaultHikeData implements HikeData {
      */
     public List<HikePoint> getHikePoints() {
         return mHikePoints;
+    }
+
+    public List<HikeComment> getAllComments() {
+        return mComments;
     }
 
     /**
@@ -176,6 +181,10 @@ public class DefaultHikeData implements HikeData {
 
     public LatLng getFinishLocation() {
         return mFinishLocation;
+    }
+
+    public String getTitle() {
+        return mTitle;
     }
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
