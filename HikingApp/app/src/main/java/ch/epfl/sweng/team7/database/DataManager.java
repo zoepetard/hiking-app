@@ -138,7 +138,8 @@ public final class DataManager {
         try {
             hikeIdList = sDatabaseClient.getHikeIdsWithKeywords(query);
         } catch (DatabaseClientException e) {
-            throw new DataManagerException(e);
+            // Perform local search on network problems
+            hikeIdList = sLocalCache.searchHike(query);
         }
 
         return getMultipleHikes(hikeIdList);
