@@ -494,7 +494,7 @@ public class MapActivity extends FragmentActivity {
                     } else {
                         focusOnLatLng(latLng);
                     }
-                    
+
                     // load hikes at new location
                     onCameraChangeHelper();
                 }

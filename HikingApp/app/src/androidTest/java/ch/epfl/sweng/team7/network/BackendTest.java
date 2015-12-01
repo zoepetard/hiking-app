@@ -404,13 +404,11 @@ public class BackendTest extends TestCase {
         final long commentId = mDatabaseClient.postComment(hikeComment);
         assertTrue(commentId > 0);
 
-        waitForServerSync();
         mDatabaseClient.deleteComment(commentId);
 
         waitForServerSync();
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
 
-        waitForServerSync();
         List<RawHikeComment> comments = serverHikeData.getAllComments();
         assertEquals(comments.size(), 0);
         mDatabaseClient.deleteHike(hikeId);
