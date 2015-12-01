@@ -28,6 +28,7 @@
     <string name="hikeNumberText">Hike #%1$d</string>
     <string name="hikeOwnerText">Owner: %1$d</string>
     <string name="hikeDistanceText">Distance: %1$d km</string>
+    <string name="hikeRatingText">Rating: %1$d</string>
     <string name="hikeTimeText">Time: %1$d</string>
     <string name="defaultNotificationTitle">Tracking a hike</string>
     <string name="defaultNotificationContent">Click here to check on your progress</string>

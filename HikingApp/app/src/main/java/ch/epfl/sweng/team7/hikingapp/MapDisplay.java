@@ -67,6 +67,6 @@ public class MapDisplay {
         int screenWidth = metrics.widthPixels;
         int screenHeight = metrics.heightPixels;
         LatLngBounds boundingBox = hikesToDisplay.get(0).getBoundingBox();
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, screenWidth, screenHeight/3, 60));
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, screenWidth, screenHeight / 3, 60));
     }
 }
