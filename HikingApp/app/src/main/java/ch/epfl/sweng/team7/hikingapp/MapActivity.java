@@ -490,10 +490,7 @@ public class MapActivity extends FragmentActivity {
                     Address clickedLocation = mLocationAddressList.get(position);
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
-                    CameraUpdate center = CameraUpdateFactory.newLatLng(latLng);
-                    CameraUpdate zoom = CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
-                    mMap.moveCamera(center);
-                    mMap.animateCamera(zoom);
+                    focusOnLatLng(latLng);
 
                     // load hikes at new location
                     onCameraChangeHelper();
