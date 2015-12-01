@@ -15,6 +15,8 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.DefaultHikeData;
+import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
@@ -198,6 +200,7 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Log user into the server, i.e. get user profile information
+     *
      * @param loginRequest
      * @throws DatabaseClientException
      */
@@ -206,10 +209,10 @@ public class MockServer implements DatabaseClient {
         for (RawUserData rawUserData : mUsers) {
             try {
                 if (rawUserData.getMailAddress().equals(loginRequest.toJSON().getString("mail_address"))) {
-                        signedInUser.loginFromJSON(rawUserData.toJSON());
+                    signedInUser.loginFromJSON(rawUserData.toJSON());
                     return;
                 }
-            } catch(JSONException e) {
+            } catch (JSONException e) {
                 throw new DatabaseClientException(e);
             }
         }
@@ -218,6 +221,7 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Get an image from the database
+     *
      * @param imageId the database key of the image
      * @return the image
      * @throws DatabaseClientException
@@ -228,8 +232,9 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
-     * @param imageId the ID of the image if it should be changed
+     * @param imageId  the ID of the image if it should be changed
      * @return the database key of that image
      * @throws DatabaseClientException
      */
@@ -239,6 +244,7 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
@@ -249,6 +255,7 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Delete an image from the database
+     *
      * @param imageId the database key of the image
      * @throws DatabaseClientException
      */
@@ -258,8 +265,9 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Post a comment to the database
-     * @param comment the comment to be posted
-     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
+     *
+     * @param hikeId the comment to be posted
+     *               TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
@@ -269,6 +277,7 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Delete a comment from the database
+     *
      * @param commentId the database key of the comment
      * @throws DatabaseClientException
      */
@@ -281,6 +290,27 @@ public class MockServer implements DatabaseClient {
      */
     public void postVote(RatingVote vote) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented.");
+    }
+
+    /**
+     * Search for hikes
+     *
+     * @param query , search string
+     * @return list of hikedata
+     */
+    @Override
+    public List<HikeData> searchHike(String query) throws DatabaseClientException {
+
+        List<HikeData> hikeDataList = new ArrayList<>();
+
+        for (Map.Entry<Long, RawHikeData> entry : mHikeDataBase.entrySet()) {
+            RawHikeData tempHike = entry.getValue();
+            if (tempHike.getName().contains(query)) {
+                hikeDataList.add(new DefaultHikeData(tempHike));
+            }
+        }
+
+        return hikeDataList;
     }
 
 

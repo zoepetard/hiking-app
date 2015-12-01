@@ -41,12 +41,14 @@ public class RawHikeData {
     private Date mDate;      // A UTC time stamp
     private List<RawHikePoint> mHikePoints;   // Points of the hike, in chronological order
     private Rating mRating;
+    private String mName = "";
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
-     * @param hikeId the database ID (user id) of the hike, HIKE_ID_UNKNOWN if unknown
-     * @param ownerId the owner ID (user id) of the hike
-     * @param date the time/date when this hike was done
+     *
+     * @param hikeId     the database ID (user id) of the hike, HIKE_ID_UNKNOWN if unknown
+     * @param ownerId    the owner ID (user id) of the hike
+     * @param date       the time/date when this hike was done
      * @param hikePoints the list of points on this hike, must be >= 1 point
      * @throws IllegalArgumentException
      */
@@ -75,28 +77,28 @@ public class RawHikeData {
         mHikePoints = hikePoints;
         mRating = new Rating();
     }
-    
+
     /**
      * Returns the hike ID.
      */
     public long getHikeId() {
         return mHikeId;
     }
-    
+
     /**
      * Returns the owner ID.
      */
     public long getOwnerId() {
         return mOwnerId;
     }
-    
+
     /**
      * Returns the date.
      */
     public Date getDate() {
         return (Date) mDate.clone();
     }
-    
+
     /**
      * Returns a list of the hike points.
      */
@@ -111,6 +113,7 @@ public class RawHikeData {
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
+     *
      * @param hikeId The new hike ID
      * @throws IllegalArgumentException on negative inputs
      */
@@ -124,6 +127,7 @@ public class RawHikeData {
     public void setRating(Rating rating) {
         mRating = rating;
     }
+
     /**
      * @return a JSON object representing this hike
      * @throws JSONException
@@ -143,7 +147,7 @@ public class RawHikeData {
      */
     private JSONArray parseHikePointsList(List<RawHikePoint> hikePoints) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i < hikePoints.size(); ++i) {
+        for (int i = 0; i < hikePoints.size(); ++i) {
             jsonArray.put(hikePoints.get(i).toJSON());
         }
         return jsonArray;
@@ -152,6 +156,7 @@ public class RawHikeData {
     /**
      * Creates a new RawHikeData object by parsing a JSON object in the format
      * returned by the server.
+     *
      * @param jsonObject a {@link JSONObject} encoding.
      * @return a new RawHikeData object.
      * @throws JSONException in case of malformed JSON.
@@ -171,14 +176,14 @@ public class RawHikeData {
                     jsonObject.getLong("owner_id"),
                     date,
                     hikePoints);
-            if(jsonObject.has("rating")) {
+            if (jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
             }
             return rawHikeData;
         } catch (JSONException e) {
             throw new HikeParseException(e);
         } catch (IllegalArgumentException e) {
-            throw new HikeParseException("Invalid hike structure: "+e.getMessage());
+            throw new HikeParseException("Invalid hike structure: " + e.getMessage());
         } catch (NullPointerException e) {
             throw new HikeParseException("Invalid hike structure");
         }
@@ -221,18 +226,26 @@ public class RawHikeData {
                         Date date = format.parse(timeString);
                         hikePoints.add(new RawHikePoint(new LatLng(lat, lng), date, ele));
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     // pass
-                    Log.e(LOG_FLAG, "parseFromGPXDocument failed: "+e.getMessage());
+                    Log.e(LOG_FLAG, "parseFromGPXDocument failed: " + e.getMessage());
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             // Parsing should be very forgiving and ignore any exception.
             Log.e(LOG_FLAG, e.getMessage());
             throw new HikeParseException(e);
         }
 
         return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints);
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String newName){
+        mName = newName;
     }
 
 }

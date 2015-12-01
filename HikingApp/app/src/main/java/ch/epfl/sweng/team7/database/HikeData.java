@@ -21,6 +21,16 @@ import ch.epfl.sweng.team7.network.Rating;
 public interface HikeData {
 
     /**
+     * @return name of the hike
+     */
+    String getName();
+
+    /**
+     * @param newName
+     */
+    void setName(String newName);
+
+    /**
      * @return the hike ID.
      */
     long getHikeId();
@@ -63,6 +73,7 @@ public interface HikeData {
     double getElevationLoss();
 
     double getMaxElevation();
+
     double getMinElevation();
 
     /**
@@ -75,6 +86,8 @@ public interface HikeData {
      * @return a representative point for this hike, where the pin will be placed on the map
      */
     LatLng getHikeLocation();
+
     LatLng getStartLocation();
+
     LatLng getFinishLocation();
 }

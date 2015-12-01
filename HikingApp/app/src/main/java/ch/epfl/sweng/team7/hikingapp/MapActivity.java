@@ -1,16 +1,29 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.location.Address;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
+import android.location.Geocoder;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,9 +38,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import ch.epfl.sweng.team7.database.DataManager;
@@ -43,7 +58,7 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
-    private final static int DEFAULT_ZOOM = 15;
+    private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
@@ -62,8 +77,16 @@ public class MapActivity extends FragmentActivity {
     private Polyline mPolyRef;
     private PolylineOptions mCurHike;
 
+    private SearchView mSearchView;
+    private ListView mSuggestionListView;
+    private List<Address> mSuggestionList = new ArrayList<>();
+    private SuggestionAdapter mSuggestionAdapter;
+    private Geocoder mGeocoder;
+    private List<Address> mLocationAddressList = new ArrayList<>();
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
+    private static int MAX_SEARCH_SUGGESTIONS = 10;
+    private static int MIN_QUERY_LENGTH_FOR_SUGGESTIONS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +119,10 @@ public class MapActivity extends FragmentActivity {
 
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        setUpSearchView();
+
+        mGeocoder = new Geocoder(this);
     }
 
     @Override
@@ -120,11 +147,11 @@ public class MapActivity extends FragmentActivity {
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
      * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
+     * <p>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
      * install/update the Google Play services APK on their device.
-     * <p/>
+     * <p>
      * A user can return to this FragmentActivity after following the prompt and correctly
      * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
      * have been completely destroyed during this process (it is likely that it would only be
@@ -152,7 +179,7 @@ public class MapActivity extends FragmentActivity {
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      * just add a marker near Africa.
-     * <p/>
+     * <p>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
@@ -167,6 +194,7 @@ public class MapActivity extends FragmentActivity {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng point) {
+                mSearchView.onActionViewCollapsed(); // remove focus from searchview
                 onMapClickHelper(point);
             }
         });
@@ -225,7 +253,7 @@ public class MapActivity extends FragmentActivity {
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
 
             // Fixes bug #114: On error, doInBackground will abort with null
-            if(postExecuteParams == null) {
+            if (postExecuteParams == null) {
                 return;
             }
 
@@ -446,6 +474,118 @@ public class MapActivity extends FragmentActivity {
         });
     }
 
+    private void setUpSearchView() {
+
+        mSearchView = (SearchView) findViewById(R.id.search_map_view);
+        mSuggestionListView = (ListView) findViewById(R.id.search_suggestions_list);
+        mSuggestionListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                mSearchView.onActionViewCollapsed();
+                mSuggestionListView.setVisibility(View.GONE);
+
+                // move the camera to the location corresponding to clicked item
+                if (mLocationAddressList.size() != 0) {
+                    Address clickedLocation = mLocationAddressList.get(position);
+                    LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
+
+                    focusOnLatLng(latLng);
+
+                    // load hikes at new location
+                    onCameraChangeHelper();
+                }
+            }
+        });
+
+        mSuggestionAdapter = new SuggestionAdapter(this, mSuggestionList);
+        mSuggestionListView.setAdapter(mSuggestionAdapter);
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                new HikeSearcher().execute(new SearchHikeParams(query, true));
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                new HikeSearcher().execute(new SearchHikeParams(newText, false));
+                return false;
+            }
+        });
+    }
+
+    private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
+
+        /**
+         * Searches for a locations from a query
+         * TODO implement server side handling of search requests
+         *
+         * @param params - Query & boolean indicating whether the user is done typing
+         * @return boolean informing postexecute to either hide or show the suggestions
+         */
+        @Override
+        protected Boolean doInBackground(SearchHikeParams... params) {
+
+            String query = params[0].mQuery;
+            boolean isDoneTyping = params[0].mIsDoneTyping;
+
+            if (query.length() <= MIN_QUERY_LENGTH_FOR_SUGGESTIONS && !isDoneTyping) {
+                return false;
+            }
+
+            List<Address> suggestions = new ArrayList<>();
+            try {
+                mLocationAddressList = mGeocoder.getFromLocationName(query, MAX_SEARCH_SUGGESTIONS);
+                for (int i = 0; i < mLocationAddressList.size(); i++) {
+                    suggestions.add(mLocationAddressList.get(i));
+                }
+                if (isDoneTyping && suggestions.size() == 0) {
+                    Address address = new Address(Locale.ROOT);
+                    address.setFeatureName(getResources().getString(R.string.search_no_results));
+                    suggestions.add(address);
+                }
+            } catch (IOException e) {
+                Address address = new Address(Locale.ROOT);
+                address.setFeatureName(getResources().getString(R.string.search_error));
+                suggestions.add(address);
+            }
+
+            List<HikeData> hikeDataList = new ArrayList<>();
+            try {
+                hikeDataList = mDataManager.searchHike(query); // TODO implement server side
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, e.getMessage());
+            }
+            // check if local results and add to suggestions
+            if (!hikeDataList.isEmpty()) {
+                for (int i = 0; i < hikeDataList.size(); i++) {
+                    Address address = new Address(Locale.ROOT);
+                    address.setFeatureName(hikeDataList.get(i).getName());
+                    LatLng latLng = hikeDataList.get(i).getHikeLocation();
+                    address.setLatitude(latLng.latitude);
+                    address.setLongitude(latLng.longitude);
+                    suggestions.add(0, address);
+                }
+            }
+
+            mSuggestionList.clear();
+            mSuggestionList.addAll(suggestions);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean listIsVisible) {
+            if (listIsVisible) {
+                mSuggestionListView.setVisibility(View.VISIBLE);
+            } else {
+                mSuggestionListView.setVisibility(View.GONE);
+            }
+            mSuggestionAdapter.notifyDataSetChanged();
+        }
+    }
+
     private LatLng getUserPosition() {
         if (mGps.enabled()) {
             GeoCoords userGeoCoords = mGps.getCurrentCoords();
@@ -476,4 +616,42 @@ public class MapActivity extends FragmentActivity {
     private void stopHikeDisplay() {
         //TODO do something when we stop hiking..?
     }
+
+
+    private class SuggestionAdapter extends ArrayAdapter<Address> {
+
+        private List<Address> mAddressList;
+
+        public SuggestionAdapter(Context context, List<Address> addressList) {
+            super(context, android.R.layout.simple_list_item_2, android.R.id.text1, addressList);
+            mAddressList = addressList;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            TextView upperText = (TextView) view.findViewById(android.R.id.text1);
+            TextView lowerText = (TextView) view.findViewById(android.R.id.text2);
+
+            upperText.setText(mAddressList.get(position).getFeatureName());
+            if (mAddressList.get(position).getCountryName() != null) {
+                lowerText.setText(mAddressList.get(position).getCountryName());
+            } else {
+                lowerText.setText("");
+            }
+            return view;
+        }
+    }
+
+    private class SearchHikeParams {
+
+        String mQuery;
+        boolean mIsDoneTyping;
+
+        SearchHikeParams(String query, boolean isDoneTyping) {
+            mQuery = query;
+            mIsDoneTyping = isDoneTyping;
+        }
+    }
+
 }

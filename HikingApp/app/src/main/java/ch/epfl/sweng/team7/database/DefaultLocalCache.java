@@ -5,8 +5,10 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -67,5 +69,18 @@ class DefaultLocalCache implements LocalCache {
         protected boolean removeEldestEntry(Map.Entry eldest) {
             return size() > MAX_ENTRIES;
         }
+    }
+
+    public List<HikeData> searchHike(String query) {
+
+        List<HikeData> hikeDataList = new ArrayList<>();
+
+        for (Map.Entry<Long, HikeData> entry : mHikesCache.entrySet()) {
+            HikeData tempHike = entry.getValue();
+            if (tempHike.getName().contains(query)) {
+                hikeDataList.add(tempHike);
+            }
+        }
+        return hikeDataList;
     }
 }
