@@ -30,8 +30,16 @@ class Hike(ndb.Model):
     # Management (set by backend)
     author = ndb.UserProperty()
     last_changed = ndb.DateTimeProperty(auto_now_add=True)
+    
+    # Location
+    latitude = ndb.FloatProperty()
+    longitude = ndb.FloatProperty()
     bb_southwest = ndb.GeoPtProperty()
     bb_northeast = ndb.GeoPtProperty()
+    
+    lat1 = ndb.IntegerProperty()
+    lat10 = ndb.IntegerProperty()
+    lat100 = ndb.IntegerProperty()
     
     # Header
     hike_id = ndb.IntegerProperty()
@@ -69,15 +77,21 @@ class Hike(ndb.Model):
         bb = get_bounding_box(self.hike_data)
         self.bb_southwest = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
         self.bb_northeast = ndb.GeoPt(bb['lat_max'], bb['lng_max'])
+        self.set_latlng(0.5*(bb['lat_min']+bb['lat_max']), 0.5*(bb['lng_min']+bb['lng_max']))
         logger.info('lat in bounds %s:%s, lng in bounds %s:%s', bb['lat_min'], bb['lat_max'], bb['lng_min'], bb['lng_max'])
         return True
-            
+    
+    def set_latlng(self, lat, lng):
+        self.latitude = float(lat)
+        self.longitude = float(lng)
+        self.lat1 = int(lat)
+        self.lat10 = int(lat*10)
+        self.lat100 = int(lat*100)
             
     # Parse this into JSON string
     # comments is a list of JSON objects
     def to_json(self, visitor_id):
-        # TODO(simon): remove extra code after migration (24Nov15)
-        title = "Untitled Hike"
+        title = "Hike"
         if self.title:
             title = self.title
                 

@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from google.appengine.api import users
-from google.appengine.api import search
 
 from footpath.hike import *
 from footpath.user import *
@@ -10,6 +9,7 @@ from footpath.image import *
 from footpath.auth import *
 from footpath.comment import *
 import re
+from math import floor, ceil
 
 import logging
 import json
@@ -44,7 +44,8 @@ def get_hikes(request):
     
     all_hikes = ""
     for hike in hikes:
-        hike_string = hike.to_json(visitor_id)
+        logger.info("BB=["+repr(hike.bb_southwest)+":"+repr(hike.bb_northeast)+"]")
+        hike_string = hike.to_json(0)
         key_string = str(hike.key.id()).strip('L')
         all_hikes += hike_string + ' with key=' + key_string + '\n'
     
@@ -69,10 +70,27 @@ def get_hikes_in_window(request):
     lng_max = float(bb['lng_max'])
     window_southwest = ndb.GeoPt(lat=lat_min, lon=lng_min)
     window_northeast = ndb.GeoPt(lat=lat_max, lon=lng_max)
-    
+
     # query database
+    lat1 = range(int(floor(lat_min)),int(ceil(lat_max))+1)
+    if(len(lat1)>2):
+        hikes = Hike.query(ndb.AND(Hike.longitude > lng_min, Hike.longitude < lng_max, Hike.lat1.IN(lat1))).fetch(100)
+        lat = lat1
+    else:
+        lat10 = range(int(floor(lat_min*10)),int(ceil(lat_max*10))+1)
+        if(len(lat10)>2):
+            hikes = Hike.query(ndb.AND(Hike.longitude > lng_min, Hike.longitude < lng_max, Hike.lat10.IN(lat10))).fetch(100)
+            lat = lat10
+        else:
+            lat100 = range(int(floor(lat_min*100)),int(ceil(lat_max*100))+1)
+            hikes = Hike.query(ndb.AND(Hike.longitude > lng_min, Hike.longitude < lng_max, Hike.lat100.IN(lat100))).fetch(100)
+            lat = lat100
+
+
     # since queries by two different keys are not possible, we query by one key and sort afterwards
-    hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch()
+    #hikes = Hike.query(Hike.bb_northeast > window_southwest).fetch(100)
+    logger.info('query lat: '+repr(lat))
+    #hikes = Hike.query(ndb.AND(Hike.longitude > lng_min, Hike.longitude < lng_max, Hike.lat1.IN(lat1))).fetch(100)
     
     # check results of query and assemble output string
     hike_ids = []

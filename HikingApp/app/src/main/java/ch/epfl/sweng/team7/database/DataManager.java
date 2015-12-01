@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ import ch.epfl.sweng.team7.network.RawUserData;
 public final class DataManager {
 
     private final static String LOG_FLAG = "DB_DataManager";
-    private static final String SERVER_URL = "https://footpath-1104.appspot.com";//"http://10.0.3.2:8080";//
+    private static final String SERVER_URL = "http://10.0.3.2:8080";//"https://footpath-1104.appspot.com";//
     private static LocalCache sLocalCache;
     private static DatabaseClient sDatabaseClient;
 
@@ -130,7 +129,6 @@ public final class DataManager {
 
     /**
      * Query the server and local cache for hikes corresponding to a given search query
-     * TODO implement this when hike names are stored and search is implemented on backend
      *
      * @param query - search string
      * @return list of hikes containing the query string.

@@ -3,7 +3,6 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.drawable.Drawable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -174,24 +173,23 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow() throws Exception {
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+        waitForServerSync();
+
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();//new LatLng(-90,-179), new LatLng(90,179));
+        for(RawHikePoint p : hikeData.getHikePoints()) {
+            boundsBuilder.include(p.getPosition());
+        }
+        LatLngBounds bounds = boundsBuilder.build();
+
         List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
+        mDatabaseClient.deleteHike(hikeId);
 
         assertTrue("No hikes found on server", hikeList.size() > 0);
-        RawHikeData rawHikeData = mDatabaseClient.fetchSingleHike(hikeList.get(0));
-        boolean onePointInBox = false;
-        for(RawHikePoint p : rawHikeData.getHikePoints()) {
-            if(bounds.contains(p.getPosition())) {
-                onePointInBox = true;
-                break;
-            }
-        }
-        assertTrue("Returned hike has no point in window", onePointInBox);
-
-        Log.d("BackendTestLog", "Found " + hikeList.size() + " Hikes");
-        for(Long l : hikeList) {
-            Log.d("BackendTestLog", "Found Hike "+l);
-        }
+        assertTrue(new ArrayList<>(hikeList).contains(hikeId));
     }
 
     @Test
