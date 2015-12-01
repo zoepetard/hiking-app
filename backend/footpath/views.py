@@ -8,6 +8,7 @@ from footpath.user import *
 from footpath.image import *
 from footpath.auth import *
 from footpath.comment import *
+import re
 
 import logging
 import json
@@ -97,6 +98,19 @@ def get_hikes_of_user(request):
     hikes = Hike.query(Hike.owner_id == request_user_id).fetch()
 
     return response_hike_locations(hikes)
+
+
+# Gets all hikes containing a certain keyword
+def get_hikes_with_keyword(request):
+    
+    visitor_id = authenticate(request)
+    if not has_query_permission(visitor_id):
+        return response_forbidden()
+    
+    # Get window from input
+    request_keywords = request.META.get('HTTP_KEYWORDS', -1)
+    keywords = re.findall("[a-zA-Z0-9]+", request_keywords)
+    logger.info("Keywords are: "+repr(keywords))
 
 
 # Format a brief summary of the hike, i.e. it's ID,
