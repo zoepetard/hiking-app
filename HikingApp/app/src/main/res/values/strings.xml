@@ -98,5 +98,6 @@
     <string name="button_comment">Comment</string>
     <string name="make_comment">What do you think about the hike?</string>
     <string name="type_comment">Type in your comment!</string>
+    <string name="test_comment">Awesome hike!</string>
 
 </resources>
