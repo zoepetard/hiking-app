@@ -470,6 +470,7 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testSearchHikes() throws Exception {
+        // Creates a hike with title "test"
         RawHikeData hikeData = createHikeData();
 
         // post a hike
@@ -477,13 +478,12 @@ public class BackendTest extends TestCase {
 
 
         waitForServerSync();
-        List<Long> hikeIdsWithTest = mDatabaseClient.getHikeIdsWithKeywords("test");
+        List<Long> hikeIdsWithTest = mDatabaseClient.getHikeIdsWithKeywords("test plop");
         List<Long> hikeIdsWithoutTest = mDatabaseClient.getHikeIdsWithKeywords("quetzacuatl blobby");
 
-        assertTrue(new ArrayList<>(hikeIdsWithTest).contains(Long.valueOf(hikeId)));
-        assertFalse(new ArrayList<>(hikeIdsWithoutTest).contains(Long.valueOf(hikeId)));
+        assertTrue(new ArrayList<>(hikeIdsWithTest).contains(hikeId));
+        assertFalse(new ArrayList<>(hikeIdsWithoutTest).contains(hikeId));
 
-        waitForServerSync();
         mDatabaseClient.deleteHike(hikeId);
     }
 

@@ -2,6 +2,7 @@ from google.appengine.ext import ndb
 import json
 import logging
 from footpath.comment import *
+import re
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ class Hike(ndb.Model):
     start_point = ndb.GeoPtProperty()
     finish_point = ndb.GeoPtProperty()
     title = ndb.StringProperty()
+    tags = ndb.StringProperty(repeated=True)
     
     # Data
     hike_data = ndb.JsonProperty(repeated=True,indexed=False)
@@ -55,8 +57,10 @@ class Hike(ndb.Model):
         # TODO(simon): remove extra code after migration (24Nov15)
         if 'title' in json_object:
             self.title = json_object['title']
+            self.tags = re.findall("[a-z0-9]+", self.title.lower())
         else:
             self.title = "Untitled Hike"
+            self.tags = ""
         
         if 'annotations' in json_object:
             self.annotations = json_object['annotations']

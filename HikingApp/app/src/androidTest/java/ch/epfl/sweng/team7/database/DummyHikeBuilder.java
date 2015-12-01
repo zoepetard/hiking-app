@@ -22,7 +22,7 @@ public class DummyHikeBuilder {
             + "  ],\n"
             + "  \"comments\": [\n"
             + "  ],\n"
-            + "  \"title\": \"test\"\n"
+            + "  \"title\": \"test hike title\"\n"
             + "}\n";
 
     public static RawHikeData buildRawHikeData(long hikeId) throws HikeParseException {

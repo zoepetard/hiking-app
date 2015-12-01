@@ -111,11 +111,10 @@ def get_hikes_with_keywords(request):
     # Get window from input
     request_keywords = request.META.get('HTTP_KEYWORDS', -1)
     keywords = re.findall("[a-z0-9]+", request_keywords.lower())
-    #keywords = " AND ".join(keywords)
-    logger.info("Keywords are: "+repr(keywords))
+    logger.info("get_hikes_with_keywords "+repr(keywords))
 
     hikes = Hike.query()
-    hikes = hikes.filter(Hike.title.IN(keywords))
+    hikes = hikes.filter(Hike.tags.IN(keywords))
     hikes = hikes.fetch()
 
     return response_hike_locations(hikes)
