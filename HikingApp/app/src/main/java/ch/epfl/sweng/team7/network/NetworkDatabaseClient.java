@@ -27,7 +27,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -104,31 +106,20 @@ public class NetworkDatabaseClient implements DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException {
+        Map<String, String> requestProperties = new HashMap<>();
 
         try {
-
             JSONObject boundingBoxJSON = new JSONObject();
             boundingBoxJSON.put("lat_min", bounds.southwest.latitude);
             boundingBoxJSON.put("lng_min", bounds.southwest.longitude);
             boundingBoxJSON.put("lat_max", bounds.northeast.latitude);
             boundingBoxJSON.put("lng_max", bounds.northeast.longitude);
-
-            HttpURLConnection conn = getConnection("get_hikes_in_window", "GET");
-            conn.setRequestProperty("bounding_box", boundingBoxJSON.toString());
-            conn.connect();
-            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-
-            // Parse response
-            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
-            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
-            List<Long> hikeList = new ArrayList<>();
-            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
-                hikeList.add(jsonHikeIdArray.getLong(i));
-            }
-            return hikeList;
-        } catch (IOException | JSONException e) {
+            requestProperties.put("bounding_box", boundingBoxJSON.toString());
+        } catch (JSONException e) {
             throw new DatabaseClientException(e);
         }
+
+        return getHikeIds("get_hikes_in_window", requestProperties);
     }
 
 
@@ -141,24 +132,9 @@ public class NetworkDatabaseClient implements DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException {
-
-        try {
-            HttpURLConnection conn = getConnection("get_hikes_of_user", "GET");
-            conn.setRequestProperty("user_id", Long.toString(userId));
-            conn.connect();
-            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-
-            // Parse response
-            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
-            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
-            List<Long> hikeList = new ArrayList<>();
-            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
-                hikeList.add(jsonHikeIdArray.getLong(i));
-            }
-            return hikeList;
-        } catch (IOException | JSONException e) {
-            throw new DatabaseClientException(e);
-        }
+        Map<String, String> requestProperties = new HashMap<>();
+        requestProperties.put("user_id", Long.toString(userId));
+        return getHikeIds("get_hikes_of_user", requestProperties);
     }
 
 
@@ -171,10 +147,26 @@ public class NetworkDatabaseClient implements DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException {
+        Map<String, String> requestProperties = new HashMap<>();
+        requestProperties.put("keywords", keywords);
+        return getHikeIds("get_hikes_of_user", requestProperties);
+    }
+
+
+    /**
+     * Get a list of hike IDs from the server, for any server function "get_hikes_..."
+     * @param functionName the name of the server function
+     * @param requestProperties the request properties, as name-value-pairs
+     * @return a list of hike IDs
+     * @throws DatabaseClientException
+     */
+    private List<Long> getHikeIds(String functionName, Map<String, String> requestProperties) throws DatabaseClientException {
 
         try {
-            HttpURLConnection conn = getConnection("get_hikes_of_user", "GET");
-            conn.setRequestProperty("keywords", keywords);
+            HttpURLConnection conn = getConnection(functionName, "GET");
+            for(Map.Entry<String, String> property : requestProperties.entrySet()) {
+                conn.setRequestProperty(property.getKey(), property.getValue());
+            }
             conn.connect();
             String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
 
@@ -190,6 +182,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             throw new DatabaseClientException(e);
         }
     }
+
 
     /**
      * Post a hike to the database. Returns the database ID
