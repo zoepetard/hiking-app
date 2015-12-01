@@ -77,7 +77,7 @@ class DefaultLocalCache implements LocalCache {
 
         for (Map.Entry<Long, HikeData> entry : mHikesCache.entrySet()) {
             HikeData tempHike = entry.getValue();
-            if (tempHike.getName().contains(query)) {
+            if (tempHike.getTitle().contains(query)) {
                 hikeDataList.add(tempHike);
             }
         }

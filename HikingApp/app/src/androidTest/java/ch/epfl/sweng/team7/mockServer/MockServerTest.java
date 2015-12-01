@@ -54,8 +54,8 @@ public class MockServerTest extends TestCase {
         mHikeIds.add(id2);
         mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
-        mRawHikeData1.setName("Hike1");
-        mRawHikeData2.setName("Hike2");
+        mRawHikeData1.setTitle("Hike1");
+        mRawHikeData2.setTitle("Hike2");
 
         mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com"));
     }
@@ -104,7 +104,7 @@ public class MockServerTest extends TestCase {
         mMockServer.postHike(mRawHikeData2);
 
         List<HikeData> hikeDataList = mMockServer.searchHike("Hike2");
-        assertEquals("Hike not found", hikeDataList.get(0).getName(),"Hike2");
+        assertEquals("Hike not found", hikeDataList.get(0).getTitle(),"Hike2");
     }
 
 }

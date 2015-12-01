@@ -306,6 +306,8 @@ public class HikeInfoView {
         View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
         TextView commentId = (TextView) commentRow
                 .findViewById(R.id.comment_userid);
+        Log.d("userId", String.valueOf(userId));
+        Log.d("ownerId", String.valueOf(hikeOwnerId));
         if (userId == hikeOwnerId) commentId.setTextColor(Color.RED);
         commentId.setText(String.valueOf(comment.getCommentOwnerId()));
         TextView commentText = (TextView) commentRow
