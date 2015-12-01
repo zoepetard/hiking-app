@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.core import serializers
 
 from google.appengine.api import users
+from google.appengine.api import search
 
 from footpath.hike import *
 from footpath.user import *
@@ -101,7 +102,7 @@ def get_hikes_of_user(request):
 
 
 # Gets all hikes containing a certain keyword
-def get_hikes_with_keyword(request):
+def get_hikes_with_keywords(request):
     
     visitor_id = authenticate(request)
     if not has_query_permission(visitor_id):
@@ -109,8 +110,15 @@ def get_hikes_with_keyword(request):
     
     # Get window from input
     request_keywords = request.META.get('HTTP_KEYWORDS', -1)
-    keywords = re.findall("[a-zA-Z0-9]+", request_keywords)
+    keywords = re.findall("[a-z0-9]+", request_keywords.lower())
+    #keywords = " AND ".join(keywords)
     logger.info("Keywords are: "+repr(keywords))
+
+    hikes = Hike.query()
+    hikes = hikes.filter(Hike.title.IN(keywords))
+    hikes = hikes.fetch()
+
+    return response_hike_locations(hikes)
 
 
 # Format a brief summary of the hike, i.e. it's ID,

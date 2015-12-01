@@ -19,5 +19,5 @@ urlpatterns = patterns('',
     (r'^post_comment/$', post_comment),
     (r'^delete_comment/$', delete_comment),
     (r'^post_vote/$', post_vote),
-    (r'^get_hikes_with_keyword/', get_hikes_with_keyword),
+    (r'^get_hikes_with_keywords/', get_hikes_with_keywords),
 )

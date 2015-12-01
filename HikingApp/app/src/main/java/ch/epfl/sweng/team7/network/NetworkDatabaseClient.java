@@ -149,7 +149,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
     public List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException {
         Map<String, String> requestProperties = new HashMap<>();
         requestProperties.put("keywords", keywords);
-        return getHikeIds("get_hikes_of_user", requestProperties);
+        return getHikeIds("get_hikes_with_keywords", requestProperties);
     }
 
 

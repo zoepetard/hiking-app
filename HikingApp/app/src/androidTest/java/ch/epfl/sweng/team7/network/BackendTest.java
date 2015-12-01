@@ -27,7 +27,6 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
-import ch.epfl.sweng.team7.mockServer.MockServer;
 
 
 /**
@@ -509,8 +508,7 @@ public class BackendTest extends TestCase {
      * @return a DatabaseClient object
      */
     private static DatabaseClient createDatabaseClient() throws Exception {
-        return new MockServer();
-        //return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
+        return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 
     /**
