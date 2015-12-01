@@ -122,7 +122,13 @@ public class MockServer implements DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented.");
+        List<Long> hikeIdsInWindow = new ArrayList<>();
+        for (RawHikeData rawHikeData : mHikeDataBase.values()) {
+            if(rawHikeData.getOwnerId() == userId) {
+                hikeIdsInWindow.add(rawHikeData.getHikeId());
+            }
+        }
+        return hikeIdsInWindow;
     }
 
     /**
@@ -134,7 +140,16 @@ public class MockServer implements DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     public List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException {
-        throw new DatabaseClientException("Not implemented.");
+        String[] tokens = keywords.split("\\s+");
+        List<Long> hikeIds = new ArrayList<>();
+        for (RawHikeData rawHikeData : mHikeDataBase.values()) {
+            for(String token : tokens) {
+                if (rawHikeData.getTitle().contains(token)) {
+                    hikeIds.add(rawHikeData.getHikeId());
+                }
+            }
+        }
+        return hikeIds;
     }
 
     /**
