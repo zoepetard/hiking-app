@@ -198,6 +198,55 @@
                     </LinearLayout>
                 </HorizontalScrollView>
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginTop="20dp">
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="@string/comments"
+                            android:layout_marginBottom="10dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/comments_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <EditText
+                                android:id="@+id/comment_text"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="vertical"
+                                android:gravity="top"
+                                android:layout_weight="1"
+                                android:hint="@string/make_comment"/>
+
+                            <Button android:id="@+id/done_edit_comment"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/button_comment" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
@@ -214,46 +263,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/comment_area"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/comments"
-            android:layout_marginBottom="20dp"/>
-
-        <ListView
-            android:id="@+id/comments_list"
-            android:transcriptMode="alwaysScroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </ListView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <EditText
-                android:id="@+id/comment_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:scrollbars="vertical"
-                android:gravity="top"
-                android:layout_weight="1"
-                android:hint="@string/make_comment"/>
-
-            <Button android:id="@+id/done_edit_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_comment" />
-        </LinearLayout>
-    </LinearLayout>
 </LinearLayout>

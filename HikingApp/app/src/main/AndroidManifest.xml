@@ -69,8 +69,6 @@
             android:label="@string/title_activity_user_data"
             android:launchMode="singleTop" >
         </activity>
-        <activity android:name=".CommentListAdapter" >
-        </activity>
     </application>
 
 </manifest>

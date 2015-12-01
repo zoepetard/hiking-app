@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +28,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,8 +67,7 @@ public class HikeInfoView {
     private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
-    private List<HikeComment> commentsArrayList;
-    private CommentListAdapter commentListAdapter;
+    private LinearLayout commentList;
 
     public HikeInfoView (final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
@@ -106,12 +109,6 @@ public class HikeInfoView {
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
 
-        ListView commentsListView = (ListView) view.findViewById(R.id.comments_list);
-        commentsArrayList = new ArrayList<HikeComment>();
-        commentsListView.setTranscriptMode(1);
-        commentListAdapter = new CommentListAdapter(context, R.id.comment_item, commentsArrayList);
-        commentsListView.setAdapter(commentListAdapter);
-
         Button commentButton = (Button) view.findViewById(R.id.done_edit_comment);
         commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +127,8 @@ public class HikeInfoView {
                 }
             }
         });
+
+        commentList = (LinearLayout) view.findViewById(R.id.comments_list);
 
         new GetOneHikeAsync().execute(hikeId);
 
@@ -217,9 +216,19 @@ public class HikeInfoView {
             hikeElevation.setText(elevationString);
 
             List<HikeComment> comments = hikeData.getAllComments();
-            commentsArrayList.clear();
-            if (comments != null) commentsArrayList.addAll(comments);
-            commentListAdapter.notifyDataSetChanged();
+            commentList.removeAllViews();
+            for (HikeComment comment : comments) {
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
+                TextView commentId = (TextView) commentRow
+                        .findViewById(R.id.comment_userid);
+                commentId.setText(String.valueOf(comment.getCommentOwnerId()));
+                TextView commentText = (TextView) commentRow
+                        .findViewById(R.id.comment_display_text);
+                commentText.setText(comment.getCommentText());
+                commentList.addView(commentRow);
+            }
 
             loadImageScrollView();
         }
