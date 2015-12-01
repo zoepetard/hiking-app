@@ -27,6 +27,7 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DummyHikeBuilder;
+import ch.epfl.sweng.team7.mockServer.MockServer;
 
 
 /**
@@ -468,6 +469,25 @@ public class BackendTest extends TestCase {
         mDatabaseClient.deleteHike(hikeId);
     }
 
+    @Test
+    public void testSearchHikes() throws Exception {
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+
+
+        waitForServerSync();
+        List<Long> hikeIdsWithTest = mDatabaseClient.getHikeIdsWithKeywords("test");
+        List<Long> hikeIdsWithoutTest = mDatabaseClient.getHikeIdsWithKeywords("quetzacuatl blobby");
+
+        assertTrue(new ArrayList<>(hikeIdsWithTest).contains(Long.valueOf(hikeId)));
+        assertFalse(new ArrayList<>(hikeIdsWithoutTest).contains(Long.valueOf(hikeId)));
+
+        waitForServerSync();
+        mDatabaseClient.deleteHike(hikeId);
+    }
+
     /**
      * Create a valid HikeData object
      * @return a HikeData object
@@ -488,8 +508,9 @@ public class BackendTest extends TestCase {
      * Create a valid DatabaseClient object
      * @return a DatabaseClient object
      */
-    private static DatabaseClient createDatabaseClient() {
-        return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
+    private static DatabaseClient createDatabaseClient() throws Exception {
+        return new MockServer();
+        //return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 
     /**

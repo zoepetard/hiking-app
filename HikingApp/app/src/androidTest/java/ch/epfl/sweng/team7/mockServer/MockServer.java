@@ -59,6 +59,7 @@ public class MockServer implements DatabaseClient {
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
         mUsers = new ArrayList<>();
+        mUsers.add(new RawUserData(12345, "Bort", "bort@googlemail.com"));
     }
 
     /**
@@ -251,17 +252,22 @@ public class MockServer implements DatabaseClient {
      */
     public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
-        for (RawUserData rawUserData : mUsers) {
-            try {
+        try {
+            long userId = 1482787832;
+            for (RawUserData rawUserData : mUsers) {
                 if (rawUserData.getMailAddress().equals(loginRequest.toJSON().getString("mail_address"))) {
-                    signedInUser.loginFromJSON(rawUserData.toJSON());
-                    return;
+                    userId = rawUserData.getUserId();
+                    break;
                 }
-            } catch (JSONException e) {
-                throw new DatabaseClientException(e);
             }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_id", userId);
+            jsonObject.put("mail_address", loginRequest.toJSON().getString("mail_address"));
+            jsonObject.put("token", "mockserver default token");
+            signedInUser.loginFromJSON(jsonObject);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
         }
-        throw new DatabaseClientException("User to fetch not found in MockServer.");
     }
 
     /**
