@@ -5,8 +5,6 @@
  */
 package ch.epfl.sweng.team7.database;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -135,24 +133,15 @@ public final class DataManager {
      */
     public List<HikeData> searchHike(String query) throws DataManagerException {
 
-        List<HikeData> hikeDataList = sLocalCache.searchHike(query);
-
+        // Ask the server for the hike Ids
+        List<Long> hikeIdList;
         try {
-            List<HikeData> serverHikeResults = sDatabaseClient.searchHike(query);
-            if (!serverHikeResults.isEmpty()) {
-                // removing duplicates
-                for (int i = 0; i < serverHikeResults.size(); i++) {
-                    if (!hikeDataList.contains(serverHikeResults.get(i))) {
-                        hikeDataList.add(serverHikeResults.get(i));
-                    }
-                }
-            }
+            hikeIdList = sDatabaseClient.getHikeIdsWithKeywords(query);
         } catch (DatabaseClientException e) {
-            Log.d(LOG_FLAG, e.getMessage());
             throw new DataManagerException(e);
         }
 
-        return hikeDataList;
+        return getMultipleHikes(hikeIdList);
     }
 
     /**

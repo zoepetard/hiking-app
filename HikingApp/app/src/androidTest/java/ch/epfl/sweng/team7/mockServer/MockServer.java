@@ -15,8 +15,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
-import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
@@ -362,27 +360,6 @@ public class MockServer implements DatabaseClient {
      */
     public void postVote(RatingVote vote) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented.");
-    }
-
-    /**
-     * Search for hikes
-     *
-     * @param query , search string
-     * @return list of hikedata
-     */
-    @Override
-    public List<HikeData> searchHike(String query) throws DatabaseClientException {
-
-        List<HikeData> hikeDataList = new ArrayList<>();
-
-        for (Map.Entry<Long, RawHikeData> entry : mHikeDataBase.entrySet()) {
-            RawHikeData tempHike = entry.getValue();
-            if (tempHike.getTitle().contains(query)) {
-                hikeDataList.add(new DefaultHikeData(tempHike));
-            }
-        }
-
-        return hikeDataList;
     }
 
 

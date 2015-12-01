@@ -4,25 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
-import android.location.Geocoder;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -536,6 +532,7 @@ public class MapActivity extends FragmentActivity {
             }
 
             List<Address> suggestions = new ArrayList<>();
+
             try {
                 mLocationAddressList = mGeocoder.getFromLocationName(query, MAX_SEARCH_SUGGESTIONS);
                 for (int i = 0; i < mLocationAddressList.size(); i++) {
@@ -554,7 +551,8 @@ public class MapActivity extends FragmentActivity {
 
             List<HikeData> hikeDataList = new ArrayList<>();
             try {
-                hikeDataList = mDataManager.searchHike(query); // TODO implement server side
+                hikeDataList = mDataManager.searchHike(query);
+                Log.d(LOG_FLAG, "Found "+ Integer.toString(hikeDataList.size())+"hikes");
             } catch (DataManagerException e) {
                 Log.d(LOG_FLAG, e.getMessage());
             }

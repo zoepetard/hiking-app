@@ -464,36 +464,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
     }
 
     /**
-     * Search for hikes
-     *
-     * @param query , search string
-     * @return list of hikedata
-     */
-    @Override
-    public List<HikeData> searchHike(String query) throws DatabaseClientException {
-        return new ArrayList<HikeData>();
-        /* TODO replace return statement above with code below when server handles searches
-        try {
-            HttpURLConnection conn = getConnection("search_hikes", "GET");
-            conn.setRequestProperty("query", query);
-            conn.connect();
-            List<HikeData> hikeList = new ArrayList<>();
-            String stringHikeIds = fetchResponse(conn, HttpURLConnection.HTTP_OK);
-            // Parse response
-            JSONObject jsonHikeIds = new JSONObject(stringHikeIds);
-            JSONArray jsonHikeIdArray = jsonHikeIds.getJSONArray("hike_ids");
-            for (int i = 0; i < jsonHikeIdArray.length(); ++i) {
-                RawHikeData hikeData = fetchSingleHike(jsonHikeIdArray.getLong(i));
-                DefaultHikeData defaultHikeData = new DefaultHikeData(hikeData);
-                hikeList.add(defaultHikeData);
-            }
-            return hikeList;
-        } catch (IOException | JSONException e) {
-            throw new DatabaseClientException(e);
-        }*/
-    }
-
-    /**
      * Method to set the properties of the connection to the server
      *
      * @param function the server function, without /
