@@ -25,6 +25,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
+
 /**
  * Tests whether communication with the backend
  * server works. These tests may fail if the
@@ -75,7 +77,7 @@ public class RawHikeDataTest extends TestCase {
         RawHikeData rawHikeData = RawHikeData.parseFromGPXDocument(doc);
 
         assertEquals(RawHikeData.HIKE_ID_UNKNOWN, rawHikeData.getHikeId());
-        assertEquals(0, rawHikeData.getOwnerId());
+        assertEquals(SignedInUser.getInstance().getId(), rawHikeData.getOwnerId());
         assertEquals("Rochers de Naye", rawHikeData.getTitle());
         assertEquals(2, rawHikeData.getHikePoints().size());
         cal.setTime(rawHikeData.getHikePoints().get(0).getTime());
