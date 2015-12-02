@@ -353,6 +353,7 @@ public class MapActivity extends FragmentActivity {
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
+
         //Display de Annotations
         List<MarkerOptions> annotations = new ArrayList<>();
         if(hike.getHikePoints() != null || hike.getHikePoints().size() > 1) {
