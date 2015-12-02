@@ -125,6 +125,18 @@ public final class DataManager {
         return hikeDataList;
     }
 
+    public List<HikeData> getUserHikes(Long userId) throws DataManagerException {
+        List<Long> hikeIds = new ArrayList<>();
+        List<HikeData> hikeDataList = new ArrayList<>();
+        try {
+            hikeIds = sDatabaseClient.getHikeIdsOfUser(userId);
+            hikeDataList = getMultipleHikes(hikeIds);
+        } catch (DatabaseClientException|DataManagerException e) {
+            throw new DataManagerException(e);
+        }
+        return hikeDataList;
+    }
+
     /**
      * Query the server and local cache for hikes corresponding to a given search query
      *

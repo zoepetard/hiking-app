@@ -1,25 +1,40 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.network.DatabaseClient;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 
 public class UserDataActivity extends Activity {
     private final static int SELECT_PICTURE = 1;
+    private final static String EXTRA_HIKE_ID = "userHikeId";
 
-    private int mUserId;
-    private ImageView profilePic;
+    private ImageView mProfilePic;
+    private DataManager mDataManager = DataManager.getInstance();
+    private LinearLayout mHikeList;
 
     SignedInUser mUser = SignedInUser.getInstance();
 
@@ -39,7 +54,6 @@ public class UserDataActivity extends Activity {
         NavigationDrawerListFactory navDrawerListFactory =
                 new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
 
-        // TODO: add more field when we decide to store more user information
         TextView userName = (TextView) findViewById(R.id.user_name);
         TextView userEmail = (TextView) findViewById(R.id.user_email);
         String nname = getIntent().getStringExtra(ChangeNicknameActivity.EXTRA_MESSAGE);
@@ -54,8 +68,8 @@ public class UserDataActivity extends Activity {
             }
         });
 
-        profilePic = (ImageView) findViewById(R.id.profile_pic);
-        profilePic.setOnClickListener(new View.OnClickListener() {
+        mProfilePic = (ImageView) findViewById(R.id.profile_pic);
+        mProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(v.getContext())
@@ -78,6 +92,8 @@ public class UserDataActivity extends Activity {
             }
         });
 
+        mHikeList = (LinearLayout) findViewById(R.id.user_hike_list);
+
         // TODO: use real data stored in local cache after issue #56 is in master
         // for user with this user_id
         userName.setText("Team 7");
@@ -96,16 +112,58 @@ public class UserDataActivity extends Activity {
                 finish();
             }
         });
+
+        new GetUserHikes().execute(mUser.getId());
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                profilePic.setImageURI(selectedImageUri);
+                mProfilePic.setImageURI(selectedImageUri);
                 ImageView sidePanelPic = (ImageView)findViewById(R.id.profile_pic_side_panel);
                 sidePanelPic.setImageURI(selectedImageUri);
             }
+        }
+    }
+
+    private class GetUserHikes extends AsyncTask<Long, Void, List<HikeData>> {
+
+        @Override
+        protected List<HikeData> doInBackground(Long... userIds) {
+            try {
+                return mDataManager.getUserHikes(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<HikeData> hikes) {
+            for (HikeData hike : hikes) {
+                displayHike(hike);
+            }
+        }
+
+        private void displayHike(final HikeData hike) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View hikeRow = inflater.inflate(R.layout.user_hike_listitem, null);
+            TextView hikeDate = (TextView) hikeRow
+                    .findViewById(R.id.user_hike_date);
+            hikeDate.setText(hike.getDate().toString());
+            TextView hikeName = (TextView) hikeRow
+                    .findViewById(R.id.user_hike_name);
+            hikeName.setText(hike.getTitle());
+            hikeRow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
+                    i.putExtra(EXTRA_HIKE_ID, hike.getHikeId());
+                    startActivity(i);
+                }
+            });
+            mHikeList.addView(hikeRow);
         }
     }
 }

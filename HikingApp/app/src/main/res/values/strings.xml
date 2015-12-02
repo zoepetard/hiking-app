@@ -103,5 +103,6 @@
 
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
+    <string name="user_hikes">Hikes:</string>
 
 </resources>
