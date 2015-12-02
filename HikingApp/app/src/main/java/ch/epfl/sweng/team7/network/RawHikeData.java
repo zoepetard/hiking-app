@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import ch.epfl.sweng.team7.database.HikeComment;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
@@ -276,7 +276,7 @@ public class RawHikeData {
             throw new HikeParseException(e);
         }
 
-        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, comments, title);
+        return new RawHikeData(HIKE_ID_UNKNOWN, SignedInUser.getInstance().getId(), hikePoints.get(0).getTime(), hikePoints, comments, title);
     }
 
     public void setTitle(String newTitle){

@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.database.HikeData;
 
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
@@ -53,6 +52,26 @@ public interface DatabaseClient {
      *                                 retrieved for any reason external to the application (network failure, etc.)
      */
     List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException;
+
+    /**
+     * Get all hikes of a user
+     *
+     * @param userId A valid user ID
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException;
+
+    /**
+     * Get all hikes with given keywords
+     *
+     * @param keywords A string of keywords, separated by spaces. Special characters will be ignored.
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException;
 
     /**
      * Post a hike to the database. Returns the database ID
@@ -157,12 +176,5 @@ public interface DatabaseClient {
      * Post a vote about a hike.
      */
     void postVote(RatingVote vote) throws DatabaseClientException;
-
-    /**
-     * Search for hikes
-     * @param query , search string
-     * @return list of hikedata
-     * */
-    List<HikeData> searchHike(String query) throws DatabaseClientException;
 
 }

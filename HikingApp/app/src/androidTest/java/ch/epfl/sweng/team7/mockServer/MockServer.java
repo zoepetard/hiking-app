@@ -15,8 +15,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
-import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.HikeParseException;
@@ -52,6 +50,7 @@ public class MockServer implements DatabaseClient {
     private int mAssignedHikeID = 10;
     private final HashMap<Long, RawHikeComment> mHikeCommentDataBase = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private int mAssignedCommentID = 10;
+    private int mAssignedUserId = 10;
 
     private List<RawUserData> mUsers;
 
@@ -59,6 +58,7 @@ public class MockServer implements DatabaseClient {
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
         mUsers = new ArrayList<>();
+        mUsers.add(new RawUserData(12345, "Bort", "bort@googlemail.com"));
     }
 
     /**
@@ -114,6 +114,45 @@ public class MockServer implements DatabaseClient {
     }
 
     /**
+     * Get all hikes of a user
+     *
+     * @param userId A valid user ID
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    public List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException {
+        List<Long> hikeIdsInWindow = new ArrayList<>();
+        for (RawHikeData rawHikeData : mHikeDataBase.values()) {
+            if(rawHikeData.getOwnerId() == userId) {
+                hikeIdsInWindow.add(rawHikeData.getHikeId());
+            }
+        }
+        return hikeIdsInWindow;
+    }
+
+    /**
+     * Get all hikes with given keywords
+     *
+     * @param keywords A string of keywords, separated by spaces. Special characters will be ignored.
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    public List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException {
+        String[] tokens = keywords.split("\\s+");
+        List<Long> hikeIds = new ArrayList<>();
+        for (RawHikeData rawHikeData : mHikeDataBase.values()) {
+            for(String token : tokens) {
+                if (rawHikeData.getTitle().contains(token)) {
+                    hikeIds.add(rawHikeData.getHikeId());
+                }
+            }
+        }
+        return hikeIds;
+    }
+
+    /**
      * Method to post a hike in the database. The database assigns a hike ID and returns that.
      *
      * @param hike to post. ID is ignored, because hike will be assigned a new ID.
@@ -155,16 +194,17 @@ public class MockServer implements DatabaseClient {
     @Override
     public long postUserData(RawUserData rawUserData) throws DatabaseClientException {
         // Positive user ID means the user is in the database
-        if (rawUserData.getUserId() >= 0) {
+        if (rawUserData.getUserId() > 0) {
             for (int i = 0; i < mUsers.size(); ++i) {
                 if (mUsers.get(i).getUserId() == rawUserData.getUserId()) {
                     mUsers.set(i, rawUserData);
-                    return i;
+                    return rawUserData.getUserId();
                 }
             }
             throw new DatabaseClientException("User to update not found in MockServer.");
         } else {
-            long newUserId = mUsers.size();
+            long newUserId = mAssignedUserId;
+            mAssignedUserId++;
             rawUserData.setUserId(newUserId);
             mUsers.add(rawUserData);
             return newUserId;
@@ -212,17 +252,26 @@ public class MockServer implements DatabaseClient {
      */
     public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
         SignedInUser signedInUser = SignedInUser.getInstance();
-        for (RawUserData rawUserData : mUsers) {
-            try {
+        try {
+            long userId = 0;
+            for (RawUserData rawUserData : mUsers) {
                 if (rawUserData.getMailAddress().equals(loginRequest.toJSON().getString("mail_address"))) {
-                    signedInUser.loginFromJSON(rawUserData.toJSON());
-                    return;
+                    userId = rawUserData.getUserId();
+                    break;
                 }
-            } catch (JSONException e) {
-                throw new DatabaseClientException(e);
             }
+            if(userId <= 0) {
+                userId = postUserData(new RawUserData(-1, loginRequest.toJSON().getString("user_name_hint"),
+                        loginRequest.toJSON().getString("mail_address")));
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_id", userId);
+            jsonObject.put("mail_address", loginRequest.toJSON().getString("mail_address"));
+            jsonObject.put("token", "mockserver default token");
+            signedInUser.loginFromJSON(jsonObject);
+        } catch (JSONException e) {
+            throw new DatabaseClientException(e);
         }
-        throw new DatabaseClientException("User to fetch not found in MockServer.");
     }
 
     /**
@@ -311,27 +360,6 @@ public class MockServer implements DatabaseClient {
      */
     public void postVote(RatingVote vote) throws DatabaseClientException {
         throw new DatabaseClientException("Not implemented.");
-    }
-
-    /**
-     * Search for hikes
-     *
-     * @param query , search string
-     * @return list of hikedata
-     */
-    @Override
-    public List<HikeData> searchHike(String query) throws DatabaseClientException {
-
-        List<HikeData> hikeDataList = new ArrayList<>();
-
-        for (Map.Entry<Long, RawHikeData> entry : mHikeDataBase.entrySet()) {
-            RawHikeData tempHike = entry.getValue();
-            if (tempHike.getTitle().contains(query)) {
-                hikeDataList.add(new DefaultHikeData(tempHike));
-            }
-        }
-
-        return hikeDataList;
     }
 
 

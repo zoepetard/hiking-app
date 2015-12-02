@@ -71,16 +71,18 @@ class DefaultLocalCache implements LocalCache {
         }
     }
 
-    public List<HikeData> searchHike(String query) {
+    public List<Long> searchHike(String query) {
 
-        List<HikeData> hikeDataList = new ArrayList<>();
-
+        String[] tokens = query.split("\\s+");
+        List<Long> hikeIds = new ArrayList<>();
         for (Map.Entry<Long, HikeData> entry : mHikesCache.entrySet()) {
-            HikeData tempHike = entry.getValue();
-            if (tempHike.getTitle().contains(query)) {
-                hikeDataList.add(tempHike);
+            for(String token : tokens) {
+                if (entry.getValue().getTitle().contains(token)) {
+                    hikeIds.add(entry.getValue().getHikeId());
+                }
             }
         }
-        return hikeDataList;
+
+        return hikeIds;
     }
 }

@@ -3,7 +3,6 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.drawable.Drawable;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -25,9 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.HikeComment;
+import ch.epfl.sweng.team7.database.DummyHikeBuilder;
 
 
 /**
@@ -175,24 +173,23 @@ public class BackendTest extends TestCase {
 
     @Test
     public void testGetHikesInWindow() throws Exception {
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-90,-179), new LatLng(90,179));
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+        waitForServerSync();
+
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();//new LatLng(-90,-179), new LatLng(90,179));
+        for(RawHikePoint p : hikeData.getHikePoints()) {
+            boundsBuilder.include(p.getPosition());
+        }
+        LatLngBounds bounds = boundsBuilder.build();
+
         List<Long> hikeList = mDatabaseClient.getHikeIdsInWindow(bounds);
+        mDatabaseClient.deleteHike(hikeId);
 
         assertTrue("No hikes found on server", hikeList.size() > 0);
-        RawHikeData rawHikeData = mDatabaseClient.fetchSingleHike(hikeList.get(0));
-        boolean onePointInBox = false;
-        for(RawHikePoint p : rawHikeData.getHikePoints()) {
-            if(bounds.contains(p.getPosition())) {
-                onePointInBox = true;
-                break;
-            }
-        }
-        assertTrue("Returned hike has no point in window", onePointInBox);
-
-        Log.d("BackendTestLog", "Found " + hikeList.size() + " Hikes");
-        for(Long l : hikeList) {
-            Log.d("BackendTestLog", "Found Hike "+l);
-        }
+        assertTrue(new ArrayList<>(hikeList).contains(hikeId));
     }
 
     @Test
@@ -231,7 +228,7 @@ public class BackendTest extends TestCase {
     public void testPostUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId > 0);
+        assertTrue("Server should set positive user ID, is "+userId, userId > 0);
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);
@@ -242,7 +239,7 @@ public class BackendTest extends TestCase {
     public void testGetUserData() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId > 0);
+        assertTrue("Server should set positive user ID, is "+userId, userId > 0);
 
         waitForServerSync();
         RawUserData serverRawUserData = mDatabaseClient.fetchUserData(userId);
@@ -256,7 +253,7 @@ public class BackendTest extends TestCase {
     public void testDeleteUser() throws Exception {
         RawUserData rawUserData = createUserData();
         long userId = mDatabaseClient.postUserData(rawUserData);
-        assertTrue("Server should set positive user ID", userId >= 0);
+        assertTrue("Server should set positive user ID, is "+userId, userId > 0);
 
         waitForServerSync();
         mDatabaseClient.deleteUser(userId);
@@ -278,7 +275,7 @@ public class BackendTest extends TestCase {
         final long hikeId = mDatabaseClient.postHike(hikeData);
 
         waitForServerSync();
-        List<Long> hikeList = ((NetworkDatabaseClient) mDatabaseClient).getHikeIdsOfUser(userId);
+        List<Long> hikeList = mDatabaseClient.getHikeIdsOfUser(userId);
         assertEquals(hikeList.get(0), Long.valueOf(hikeId));
     }
 
@@ -386,7 +383,7 @@ public class BackendTest extends TestCase {
 
         waitForServerSync();
         List<RawHikeComment> comments = serverHikeData.getAllComments();
-        assertEquals(comments.size(), 1);
+        assertEquals(1, comments.size());
         assertEquals("test comment", comments.get(0).getCommentText());
         mDatabaseClient.deleteComment(commentId);
     }
@@ -407,13 +404,11 @@ public class BackendTest extends TestCase {
         final long commentId = mDatabaseClient.postComment(hikeComment);
         assertTrue(commentId > 0);
 
-        waitForServerSync();
         mDatabaseClient.deleteComment(commentId);
 
         waitForServerSync();
         RawHikeData serverHikeData = mDatabaseClient.fetchSingleHike(hikeId);
 
-        waitForServerSync();
         List<RawHikeComment> comments = serverHikeData.getAllComments();
         assertEquals(comments.size(), 0);
         mDatabaseClient.deleteHike(hikeId);
@@ -469,6 +464,25 @@ public class BackendTest extends TestCase {
         mDatabaseClient.deleteHike(hikeId);
     }
 
+    @Test
+    public void testSearchHikes() throws Exception {
+        // Creates a hike with title "test"
+        RawHikeData hikeData = createHikeData();
+
+        // post a hike
+        final long hikeId = mDatabaseClient.postHike(hikeData);
+
+
+        waitForServerSync();
+        List<Long> hikeIdsWithTest = mDatabaseClient.getHikeIdsWithKeywords("test plop");
+        List<Long> hikeIdsWithoutTest = mDatabaseClient.getHikeIdsWithKeywords("quetzacuatl blobby");
+
+        assertTrue(new ArrayList<>(hikeIdsWithTest).contains(hikeId));
+        assertFalse(new ArrayList<>(hikeIdsWithoutTest).contains(hikeId));
+
+        mDatabaseClient.deleteHike(hikeId);
+    }
+
     /**
      * Create a valid HikeData object
      * @return a HikeData object
@@ -489,7 +503,7 @@ public class BackendTest extends TestCase {
      * Create a valid DatabaseClient object
      * @return a DatabaseClient object
      */
-    private static DatabaseClient createDatabaseClient() {
+    private static DatabaseClient createDatabaseClient() throws Exception {
         return new NetworkDatabaseClient(SERVER_URL, new DefaultNetworkProvider());
     }
 

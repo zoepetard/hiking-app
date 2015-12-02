@@ -4,25 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
-import android.location.Geocoder;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -82,7 +78,6 @@ public class MapActivity extends FragmentActivity {
     private List<Address> mSuggestionList = new ArrayList<>();
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
-    private List<Address> mLocationAddressList = new ArrayList<>();
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -266,7 +261,8 @@ public class MapActivity extends FragmentActivity {
                     displayMap(hikesFound, oldBounds, firstHike);
                 } else {
                     LatLngBounds newBounds = guessNewLatLng(oldBounds.southwest, oldBounds.northeast, 0.5);
-                    new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, newBounds, firstHike));
+                    //new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, newBounds, firstHike));
+                    // TODO(zoe) implement alternative to infinte recursion
                 }
             }
         }
@@ -486,11 +482,18 @@ public class MapActivity extends FragmentActivity {
                 mSuggestionListView.setVisibility(View.GONE);
 
                 // move the camera to the location corresponding to clicked item
-                if (mLocationAddressList.size() != 0) {
-                    Address clickedLocation = mLocationAddressList.get(position);
+                if (mSuggestionList.size() != 0) {
+                    Address clickedLocation = mSuggestionList.get(position);
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
-                    focusOnLatLng(latLng);
+                    // get bounding box
+                    Object bounds = clickedLocation.getExtras().get(EXTRA_BOUNDS);
+                    if(bounds != null && bounds instanceof LatLngBounds) {
+                        LatLngBounds boundingBox = (LatLngBounds) bounds;
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, 60));
+                    } else {
+                        focusOnLatLng(latLng);
+                    }
 
                     // load hikes at new location
                     onCameraChangeHelper();
@@ -520,7 +523,6 @@ public class MapActivity extends FragmentActivity {
 
         /**
          * Searches for a locations from a query
-         * TODO implement server side handling of search requests
          *
          * @param params - Query & boolean indicating whether the user is done typing
          * @return boolean informing postexecute to either hide or show the suggestions
@@ -536,10 +538,34 @@ public class MapActivity extends FragmentActivity {
             }
 
             List<Address> suggestions = new ArrayList<>();
+
+            List<HikeData> hikeDataList = new ArrayList<>();
             try {
-                mLocationAddressList = mGeocoder.getFromLocationName(query, MAX_SEARCH_SUGGESTIONS);
-                for (int i = 0; i < mLocationAddressList.size(); i++) {
-                    suggestions.add(mLocationAddressList.get(i));
+                hikeDataList = mDataManager.searchHike(query);
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, e.getMessage());
+            }
+            // check if local results and add to suggestions
+            for(HikeData hikeData : hikeDataList) {
+
+                Address address = new Address(Locale.ROOT);
+
+                address.setFeatureName(hikeData.getTitle());
+                LatLng latLng = hikeData.getHikeLocation();
+                address.setLatitude(latLng.latitude);
+                address.setLongitude(latLng.longitude);
+
+                Bundle boundingBox = new Bundle();
+                boundingBox.putParcelable(EXTRA_BOUNDS, hikeData.getBoundingBox());
+                address.setExtras(boundingBox);
+
+                suggestions.add(address);
+            }
+
+            try {
+                List<Address> locationAddressList = mGeocoder.getFromLocationName(query, MAX_SEARCH_SUGGESTIONS);
+                for (Address address : locationAddressList) {
+                    suggestions.add(address);
                 }
                 if (isDoneTyping && suggestions.size() == 0) {
                     Address address = new Address(Locale.ROOT);
@@ -550,24 +576,6 @@ public class MapActivity extends FragmentActivity {
                 Address address = new Address(Locale.ROOT);
                 address.setFeatureName(getResources().getString(R.string.search_error));
                 suggestions.add(address);
-            }
-
-            List<HikeData> hikeDataList = new ArrayList<>();
-            try {
-                hikeDataList = mDataManager.searchHike(query); // TODO implement server side
-            } catch (DataManagerException e) {
-                Log.d(LOG_FLAG, e.getMessage());
-            }
-            // check if local results and add to suggestions
-            if (!hikeDataList.isEmpty()) {
-                for (int i = 0; i < hikeDataList.size(); i++) {
-                    Address address = new Address(Locale.ROOT);
-                    address.setFeatureName(hikeDataList.get(i).getTitle());
-                    LatLng latLng = hikeDataList.get(i).getHikeLocation();
-                    address.setLatitude(latLng.latitude);
-                    address.setLongitude(latLng.longitude);
-                    suggestions.add(0, address);
-                }
             }
 
             mSuggestionList.clear();

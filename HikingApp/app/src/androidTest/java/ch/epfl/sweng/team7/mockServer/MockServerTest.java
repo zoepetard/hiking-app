@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
@@ -103,8 +102,8 @@ public class MockServerTest extends TestCase {
         mMockServer.postHike(mRawHikeData1);
         mMockServer.postHike(mRawHikeData2);
 
-        List<HikeData> hikeDataList = mMockServer.searchHike("Hike2");
-        assertEquals("Hike not found", hikeDataList.get(0).getTitle(),"Hike2");
+        List<Long> hikeDataList = mMockServer.getHikeIdsWithKeywords("Hike2");
+        assertEquals("Hike not found", mMockServer.getHike(hikeDataList.get(0)).getTitle(),"Hike2");
     }
 
 }

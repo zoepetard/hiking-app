@@ -35,5 +35,5 @@ interface LocalCache {
 
     void removeHike(long hikeId);
 
-    List<HikeData> searchHike(String query);
+    List<Long> searchHike(String query);
 }
