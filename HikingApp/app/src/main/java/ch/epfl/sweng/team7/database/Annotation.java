@@ -31,6 +31,7 @@ public class Annotation {
 
     }
 
+
     public RawHikePoint getRawHikePoint() { return mRawHikePoint; }
 
     public String getAnnotation() { return mText; }

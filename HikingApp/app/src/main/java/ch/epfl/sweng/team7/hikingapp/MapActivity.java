@@ -98,6 +98,7 @@ public class MapActivity extends FragmentActivity {
         setContentView(R.layout.navigation_drawer);
         mGps.startService(this);
 
+
         // nav drawer setup
         View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
@@ -136,6 +137,18 @@ public class MapActivity extends FragmentActivity {
         setUpSearchView();
 
         mGeocoder = new Geocoder(this);
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                return null;
+            }
+        });
     }
 
 
@@ -326,6 +339,7 @@ public class MapActivity extends FragmentActivity {
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
+
         //Display de Annotations
         List<MarkerOptions> annotations = new ArrayList<>();
         if(hike.getHikePoints() != null || hike.getHikePoints().size() > 1) {
@@ -337,6 +351,7 @@ public class MapActivity extends FragmentActivity {
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 annotations.add(markerOptions);
                 Marker textAnnotation = mMap.addMarker(markerOptions);
+                textAnnotation.showInfoWindow();
             }
         }
 
