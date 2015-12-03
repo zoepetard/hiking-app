@@ -138,9 +138,7 @@ public class BackendTest extends TestCase {
         List<RawHikePoint> newHikePoints = hikeData.getHikePoints();
         newHikePoints.remove(2);
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-
         RawHikeData newHikeData = new RawHikeData(hikeId, hikeData.getOwnerId(), new Date(), newHikePoints, newHikeComments, "", null);
-
         waitForServerSync();
 
         // post a modified hike with the same ID

@@ -41,7 +41,6 @@ public class GPSPathConverter {
             List<RawHikeComment> newHikeComments = new ArrayList<>();
             List<Annotation> mAnnotations = null;
             return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, newHikeComments, "", mAnnotations);
-
         } else {
             throw new ArrayIndexOutOfBoundsException("GPS path is empty");
         }
