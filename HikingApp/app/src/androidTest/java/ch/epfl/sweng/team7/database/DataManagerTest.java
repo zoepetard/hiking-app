@@ -49,8 +49,8 @@ public class DataManagerTest extends InstrumentationTestCase {
         newHikePoints.add(new RawHikePoint(new LatLng(2., 10.), new Date(), 0.0));
         newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData newHike = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
-        RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
+        RawHikeData newHike = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "", null);
+        RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "", null);
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
         newHike2.setTitle("Hike2");

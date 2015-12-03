@@ -137,15 +137,16 @@ public class RawHikeData {
 
     public String getTitle() {
         return mTitle;
+    }
 
     /**
      * Returns the list of annotations
      */
-    public List<Annotation> getAnnotations() {
+    public ArrayList<Annotation> getAnnotations() {
         if (mAnnotations.size() < 1){
             return null;
         }else{
-            return new List<Annotation>(mAnnotations);
+            return new ArrayList<>(mAnnotations);
         }
     }
 
