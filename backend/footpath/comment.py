@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 import json
 import logging
+from user import User
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -25,12 +26,14 @@ class Comment(ndb.Model):
 
     # Parse this into JSON string
     def to_json(self):
+        user_name = get_user_name(self.owner_id)
         comment_data = {
             'comment_id': self.key.id(),
             'hike_id': self.hike_id,
             'user_id': self.owner_id,
             'date': self.date,
             'comment_text': self.comment_text,
+            'user_name' : user_name
         }
         return json.dumps(comment_data)
 
@@ -41,3 +44,10 @@ def build_comment_from_json(json_string):
     if(c.from_json(json_string)):
         return c
     return None
+
+def get_user_name(user_id):
+    hike = ndb.Key(User, user_id).get()
+    if not hike:
+        return ""
+    return user.name
+
