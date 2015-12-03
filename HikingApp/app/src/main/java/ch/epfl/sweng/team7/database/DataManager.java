@@ -7,10 +7,24 @@ package ch.epfl.sweng.team7.database;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
@@ -288,6 +302,83 @@ public final class DataManager {
         }
     }
 
+    /**
+     * Method to export the hike as a gpx file to the phone's internal storage
+     */
+    public void saveGPX(HikeData hikeData) {
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document doc = documentBuilder.newDocument();
+
+            Element rootElement = doc.createElement("gpx");
+            doc.appendChild(rootElement);
+
+            // adds attributes to gpx element
+            rootElement.setAttribute("version", "1.0");
+            rootElement.setAttribute("creator", SignedInUser.getInstance().getMailAddress());
+            rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
+            rootElement.setAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/0/gpx.xsd");
+
+            // set time
+            Element timeElement = doc.createElement("time");
+            timeElement.appendChild(doc.createTextNode("2005-11-07T14:00:09Z")); // TODO use real data
+            rootElement.appendChild(timeElement);
+
+            // adding track
+            Element trackElement = doc.createElement("trk");
+            Element trackName = doc.createElement("name");
+            trackName.appendChild(doc.createTextNode(hikeData.getTitle()));
+            trackElement.appendChild(trackName);
+            rootElement.appendChild(trackElement);
+
+            // track segment
+            Element trackSegment = doc.createElement("trkseg");
+            trackElement.appendChild(trackSegment);
+
+            // for every hike point add a track point
+            for (int i = 0; i < hikeData.getHikePoints().size(); i++) {
+
+                HikePoint hikePoint = hikeData.getHikePoints().get(i);
+
+                Element trackPoint = doc.createElement("trkpt");
+                trackPoint.setAttribute("lat", String.valueOf(hikePoint.getPosition().latitude));
+                trackPoint.setAttribute("lon", String.valueOf(hikePoint.getPosition().longitude));
+
+                Element elevation = doc.createElement("ele");
+                elevation.appendChild(doc.createTextNode(String.valueOf(hikePoint.getElevation())));
+                trackPoint.appendChild(elevation);
+
+                Element pointTime = doc.createElement("time");
+                pointTime.appendChild(doc.createTextNode(String.valueOf(hikePoint.getTime()))); // TODO Format properly
+
+                trackPoint.appendChild(pointTime);
+                trackSegment.appendChild(trackPoint);
+
+            }
+            // transform content into xml and print it out
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(System.out);
+
+            // Indent and output to console for testing
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+            transformer.transform(source, result);
+
+
+        } catch (ParserConfigurationException e) {
+
+
+        } catch (TransformerException te) {
+
+
+        }
+    }
 
     /**
      * Creates the LocalCache and DatabaseClient

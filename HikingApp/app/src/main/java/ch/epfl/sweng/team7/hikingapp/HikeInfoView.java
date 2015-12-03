@@ -47,7 +47,9 @@ import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 
-/** Class which controls and updates the visual part of the view, not the interaction */
+/**
+ * Class which controls and updates the visual part of the view, not the interaction
+ */
 public class HikeInfoView {
     private DataManager dataManager = DataManager.getInstance();
 
@@ -72,8 +74,10 @@ public class HikeInfoView {
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
+    private Button exportButton;
+    private HikeData displayedHike;
 
-    public HikeInfoView (final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
+    public HikeInfoView(final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
         hikeId = id;
         userId = SignedInUser.getInstance().getId();
@@ -184,15 +188,15 @@ public class HikeInfoView {
             List<HikePoint> hikePoints = hikeData.getHikePoints();
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
             double lastElapsedTimeInHours = 0;
-            for(int i = 0; i < ELEVATION_POINT_COUNT; ++i) {
-                HikePoint hikePoint = hikePoints.get((i*hikePoints.size()) / ELEVATION_POINT_COUNT);
+            for (int i = 0; i < ELEVATION_POINT_COUNT; ++i) {
+                HikePoint hikePoint = hikePoints.get((i * hikePoints.size()) / ELEVATION_POINT_COUNT);
 
                 final double elapsedTimeInMilliseconds = (hikePoint.getTime().getTime()
                         - hikePoints.get(0).getTime().getTime());
-                final double elapsedTimeInHours = elapsedTimeInMilliseconds / (1000*60*60);
+                final double elapsedTimeInHours = elapsedTimeInMilliseconds / (1000 * 60 * 60);
 
                 // Check that data is in ascending order
-                if(i > 0 && elapsedTimeInHours <= lastElapsedTimeInHours) {
+                if (i > 0 && elapsedTimeInHours <= lastElapsedTimeInHours) {
                     continue;
                 }
                 lastElapsedTimeInHours = elapsedTimeInHours;
@@ -227,17 +231,18 @@ public class HikeInfoView {
                 showNewComment(comment);
             }
 
+            exportButton.setVisibility(View.VISIBLE);
             loadImageScrollView();
         }
 
         // create imageviews and add them to the scrollview
-        private void loadImageScrollView(){
+        private void loadImageScrollView() {
 
             // TEMPORARY
             Integer img1 = R.drawable.login_background;
 
             // add imageviews with images to the scrollview
-            for(int i = 0; i<4; i++){
+            for (int i = 0; i < 4; i++) {
 
                 imgLayout.addView(createImageView(img1));
 
@@ -283,6 +288,10 @@ public class HikeInfoView {
         return backButton;
     }
 
+    public Button getExportButton() {
+        return exportButton;
+    }
+
     public RatingBar getHikeRatingBar() {
 
         return hikeRatingBar;
@@ -314,6 +323,10 @@ public class HikeInfoView {
                 .findViewById(R.id.comment_display_text);
         commentText.setText(comment.getCommentText());
         commentList.addView(commentRow);
+    }
+
+    public HikeData getDisplayedHike() {
+        return displayedHike;
     }
 
 }

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -83,7 +84,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         GoogleMap mapHikeInfo = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapHikeInfo))
                 .getMap();
 
-        HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
+        final HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -113,6 +114,16 @@ public final class HikeInfoActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        Button exportButton = (Button) findViewById(R.id.button_export_hike);
+        exportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(hikeInfoView.getDisplayedHike() != null){
+                    DataManager.getInstance().saveGPX(hikeInfoView.getDisplayedHike());
+                }
             }
         });
 
