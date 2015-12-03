@@ -17,6 +17,7 @@ public class DefaultUserData implements UserData {
     private long mUserId;
     private String mUserName;
     private String mMailAddress;
+    private long mUserProfilePic;
     private List<Long> mHikeList; // id's for user's hike
 
     public DefaultUserData(RawUserData rawUserData) {
@@ -24,6 +25,7 @@ public class DefaultUserData implements UserData {
         mUserId = rawUserData.getUserId();
         mUserName = rawUserData.getUserName();
         mMailAddress = rawUserData.getMailAddress();
+        mUserProfilePic = rawUserData.getUserProfilePic();
         mHikeList = new ArrayList<Long>();
 
     }
@@ -50,6 +52,11 @@ public class DefaultUserData implements UserData {
     @Override
     public String getMailAddress() {
         return mMailAddress;
+    }
+
+    @Override
+    public long getUserProfilePic() {
+        return mUserProfilePic;
     }
 
     /**

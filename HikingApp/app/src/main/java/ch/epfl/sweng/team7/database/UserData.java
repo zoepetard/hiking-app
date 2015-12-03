@@ -24,6 +24,8 @@ public interface UserData {
      */
     String getMailAddress();
 
+    long getUserProfilePic();
+
     /**
      * @return list of hikes
      */
