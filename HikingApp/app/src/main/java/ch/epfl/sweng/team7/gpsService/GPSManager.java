@@ -65,9 +65,8 @@ public final class GPSManager {
     private ServiceConnection mServiceConnection;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
-    private List<Annotation> listAnnotations;
+    private List<Annotation> listAnnotations = new ArrayList<>();
     private RawHikeData rawHikeData;
-
 
 
     private NotificationHandler mNotification;
@@ -113,6 +112,7 @@ public final class GPSManager {
 
     /**
      * Method called to check on gps status
+     *
      * @return true if it is enabled, false otherwise
      */
     public boolean enabled() {
@@ -201,9 +201,10 @@ public final class GPSManager {
 
     /**
      * Method to add annotations
+     *
      * @param annotation
      */
-    public void addAnnotation(Annotation annotation){
+    public void addAnnotation(Annotation annotation) {
         listAnnotations.add(annotation);
     }
 
@@ -221,6 +222,7 @@ public final class GPSManager {
 
     /**
      * Called by the GPSService to access the Context of the app.
+     *
      * @return Context
      */
     protected Context getContext() {
@@ -303,7 +305,6 @@ public final class GPSManager {
         intent.putExtra(GPSManager.NEW_HIKE, true);
         mContext.startActivity(intent);
     }
-    
 
 
     /**
@@ -390,8 +391,8 @@ public final class GPSManager {
     }
 
     private void storePictures(List<Annotation> annotations) {
-        if(annotations != null || annotations.size() > 1){
-            for (int i = 0; i < annotations.size(); i++){
+        if (annotations != null || annotations.size() > 1) {
+            for (int i = 0; i < annotations.size(); i++) {
                 new StorePictureTask().execute(annotations.get(i));
             }
         }
@@ -442,13 +443,15 @@ public final class GPSManager {
             }
             return null;
         }
+
         protected void onPostExecute(Long... hikeId) {
         }
 
     }
 
-    public void setAnnotations(ArrayList<Annotation> listAnnotations){
-        rawHikeData.setAnnotations(listAnnotations);
-
+    public void setAnnotations(ArrayList<Annotation> listAnnotations) {
+        if (rawHikeData != null) {
+            rawHikeData.setAnnotations(listAnnotations);
+        }
     }
 }

@@ -95,7 +95,7 @@ public class MapActivity extends FragmentActivity {
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
     private ImageView mImageView;
-    private ArrayList<Annotation> mListAnnotations;
+    private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
 
     
     public final static String EXTRA_BOUNDS =
@@ -519,8 +519,6 @@ public class MapActivity extends FragmentActivity {
         });
     }
 
-
-
     private void createAddPictureButton() {
         Button pictureButton = new Button(this);
         pictureButton.setText(R.string.button_add_picture);
@@ -616,7 +614,7 @@ public class MapActivity extends FragmentActivity {
 =======
     private void addPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
-        if(mListAnnotations.size() > 0) {
+        if(mListAnnotations.size() > 0 ) {
             if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 mListAnnotations.get(mListAnnotations.size() - 1).setPicture(drawable);
             }
