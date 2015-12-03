@@ -304,15 +304,29 @@ public class HikeInfoView {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
-        TextView commentId = (TextView) commentRow
-                .findViewById(R.id.comment_userid);
-        Log.d("userId", String.valueOf(userId));
-        Log.d("ownerId", String.valueOf(hikeOwnerId));
-        if (userId == hikeOwnerId) commentId.setTextColor(Color.RED);
-        commentId.setText(String.valueOf(comment.getCommentOwnerId()));
+
+        TextView commentDate = (TextView) commentRow
+                .findViewById(R.id.comment_date);
+        commentDate.setText(comment.getCommentDate().toString());
+
+        TextView commentName = (TextView) commentRow
+                .findViewById(R.id.comment_username);
+        final Long commentOwnerId = comment.getCommentOwnerId();
+        if (commentOwnerId == hikeOwnerId) commentName.setTextColor(Color.RED);
+        commentName.setText(comment.getCommentOwnerName());
+        commentName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), UserDataActivity.class);
+                i.putExtra(UserDataActivity.EXTRA_USER_ID, commentOwnerId);
+                v.getContext().startActivity(i);
+            }
+        });
+
         TextView commentText = (TextView) commentRow
                 .findViewById(R.id.comment_display_text);
         commentText.setText(comment.getCommentText());
+
         commentList.addView(commentRow);
     }
 
