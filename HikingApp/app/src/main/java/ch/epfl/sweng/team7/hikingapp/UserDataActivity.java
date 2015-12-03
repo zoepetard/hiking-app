@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -193,6 +194,26 @@ public class UserDataActivity extends Activity {
             } else {
                 nickname.setText(getString(R.string.nickname_fmt, nname));
             }
+
+            new GetUserPic().execute(userData.getUserProfilePic());
+        }
+    }
+
+    private class GetUserPic extends AsyncTask<Long, Void, Drawable> {
+
+        @Override
+        protected Drawable doInBackground(Long... picIds) {
+            try {
+                return mDataManager.getImage(picIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Drawable pic) {
+            mProfilePic.setImageDrawable(pic);
         }
     }
 }

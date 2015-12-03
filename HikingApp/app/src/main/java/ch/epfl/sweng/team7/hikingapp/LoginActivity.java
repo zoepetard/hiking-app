@@ -22,6 +22,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +43,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -82,6 +89,8 @@ public class LoginActivity extends Activity implements
     private boolean mShouldResolve = false;
     // [END resolution_variables]
 
+    private String mMailAddress;
+
     DataManager mDataManager = DataManager.getInstance();
 
     @Override
@@ -120,17 +129,6 @@ public class LoginActivity extends Activity implements
         if (isSignedIn) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
             if (currentPerson != null) {
-                // Show signed-in user's name
-                String name = currentPerson.getDisplayName();
-
-                // Show users' email address (which requires GET_ACCOUNTS permission)
-                if (checkAccountsPermission()) {
-                    String currentAccount = Plus.AccountApi.getAccountName(sGoogleApiClient);
-                }
-
-                String photoUrl = currentPerson.getImage().getUrl();
-                // TODO: save name, email and photoUrl to server
-
                 Intent i = new Intent(this, MapActivity.class);
                 startActivity(i);
             } else {
@@ -259,33 +257,36 @@ public class LoginActivity extends Activity implements
         if (currentPerson != null) {
             if (checkAccountsPermission()) {
                 mailAddress = Plus.AccountApi.getAccountName(sGoogleApiClient);
-            }
-        }
 
-        new UserAuthenticator().execute(mailAddress);
+            }
+            String photoUrl = currentPerson.getImage().getUrl();
+            new LoadProfileImage().execute(photoUrl);
+        }
+        mMailAddress = mailAddress;
     }
     // [END on_connected]
 
-    private class UserAuthenticator extends AsyncTask<String, Void, Void> {
+    private class UserAuthenticator extends AsyncTask<List<String>, Void, Void> {
         /**
          * Looks up user data in the database given a mail address. Sets the signed-in user object's
          * variables.
          *
-         * @param mailAddress - mail address of user trying to sign in.
+         * @param mailAddressandProfilePic - mail address of user trying to sign in.
          * @return userInfo - index: 0 = user name, 1 = user mail address , 2 = user id
          * @see #onPostExecute - initializes signed in users variables with userinfo
          */
         @Override
-        protected Void doInBackground(String... mailAddress) {
+        protected Void doInBackground(List<String>... mailAddressandProfilePic) {
 
             try {
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
-                String userName = mailAddress[0];
+                String userName = mailAddressandProfilePic[0].get(0);
                 if (currentPerson != null) {
                     userName = currentPerson.getDisplayName();
                 }
 
-                LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName, "");
+                LoginRequest loginRequest = new LoginRequest(mailAddressandProfilePic[0].get(0),
+                        userName, "", Long.valueOf(mailAddressandProfilePic[0].get(1)));
                 mDataManager.loginUser(loginRequest);
 
             } catch (DataManagerException e) {
@@ -405,4 +406,43 @@ public class LoginActivity extends Activity implements
         }
     }
     // [END on_sign_out_clicked]
+
+
+    private class LoadProfileImage extends AsyncTask<String, Void, BitmapDrawable> {
+        @Override
+        protected BitmapDrawable doInBackground(String... urls) {
+            try {
+                InputStream in = new java.net.URL(urls[0]).openStream();
+                return new BitmapDrawable(getResources(), BitmapFactory.decodeStream(in));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(BitmapDrawable profilePic) {
+            new StoreProfileImage().execute(profilePic);
+        }
+    }
+
+    private class StoreProfileImage extends AsyncTask<Drawable, Void, Long> {
+        @Override
+        protected Long doInBackground(Drawable... photos) {
+            try {
+                return mDataManager.storeImage(photos[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Long profilePicId) {
+            List<String> mailAndProfileId = new ArrayList<>(2);
+            mailAndProfileId.add(mMailAddress);
+            mailAndProfileId.add(profilePicId.toString());
+            new UserAuthenticator().execute(mailAndProfileId);
+        }
+    }
 }

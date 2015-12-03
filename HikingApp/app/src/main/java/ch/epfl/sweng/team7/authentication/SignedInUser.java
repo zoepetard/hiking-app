@@ -14,6 +14,7 @@ public class SignedInUser {
     private String mMailAddress;
     private boolean mLoggedIn;
     private String mAuthToken;
+    private long mProfilePicId;
 
     private SignedInUser() {
         mLoggedIn = false;
@@ -44,6 +45,10 @@ public class SignedInUser {
         return mLoggedIn;
     }
 
+    public long getProfilePicId() {
+        return mProfilePicId;
+    }
+
     /**
      * Build the authentication header that is sent with every database request
      */
@@ -52,6 +57,7 @@ public class SignedInUser {
         jsonObject.put("mail_address", mMailAddress);
         jsonObject.put("user_id", mId);
         jsonObject.put("token", mAuthToken);
+        jsonObject.put("profile_image_id", mProfilePicId);
         return jsonObject;
     }
 
@@ -65,6 +71,7 @@ public class SignedInUser {
         mMailAddress = jsonObject.getString("mail_address");
         mId = jsonObject.getLong("user_id");
         mAuthToken = jsonObject.getString("token");
+        mProfilePicId = jsonObject.getLong("profile_image_id");
         mLoggedIn = true;
     }
 }
