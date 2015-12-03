@@ -238,7 +238,6 @@ public class RawHikeData {
      * @throws JSONException in case of malformed JSON.
      */
     public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException, JSONException {
-
         try {
             JSONArray jsonHikePoints = jsonObject.getJSONArray("hike_data");
             List<RawHikePoint> hikePoints = new ArrayList<>();
@@ -250,6 +249,7 @@ public class RawHikeData {
             List<RawHikeComment> comments = new ArrayList<>();
             for (int i = 0; i < jsonComments.length(); ++i) {
                 comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
+            }
 
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
             List<Annotation> annotations = new ArrayList<>();
@@ -331,6 +331,7 @@ public class RawHikeData {
                     Log.e(LOG_FLAG, "parseFromGPXDocument failed: " + e.getMessage());
                 }
             }
+
         } catch(Exception e) {
             // Parsing should be very forgiving and ignore any exception.
             Log.e(LOG_FLAG, e.getMessage());
@@ -342,7 +343,6 @@ public class RawHikeData {
 
     public void setTitle(String newTitle){
         mTitle = newTitle;
-        return new RawHikeData(HIKE_ID_UNKNOWN, 0, hikePoints.get(0).getTime(), hikePoints, null);
     }
 
 
