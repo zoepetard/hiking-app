@@ -296,17 +296,25 @@ public class DefaultHikeData implements HikeData {
             trackElement.appendChild(trackSegment);
 
             // for every hike point add a track point
-            Element trackPoint = doc.createElement("trkpt");
-            trackPoint.setAttribute("lat","52.56");
-            trackPoint.setAttribute("lon","-1.82");
-            Element elevation = doc.createElement("ele"); // TODO use real data
-            elevation.appendChild(doc.createTextNode("115.5")); // TODO use real data
-            trackPoint.appendChild(elevation);
-            Element pointTime = doc.createElement("time");
-            pointTime.appendChild(doc.createTextNode("2005-11-07T14:00:09Z")); // TODO use real data
-            trackPoint.appendChild(pointTime);
+            for (int i = 0; i<mHikePoints.size(); i++) {
 
-            trackSegment.appendChild(trackPoint);
+                HikePoint hikePoint = mHikePoints.get(i);
+
+                Element trackPoint = doc.createElement("trkpt");
+                trackPoint.setAttribute("lat", String.valueOf(hikePoint.getPosition().latitude));
+                trackPoint.setAttribute("lon", String.valueOf(hikePoint.getPosition().longitude));
+
+                Element elevation = doc.createElement("ele");
+                elevation.appendChild(doc.createTextNode(String.valueOf(hikePoint.getElevation())));
+                trackPoint.appendChild(elevation);
+
+                Element pointTime = doc.createElement("time");
+                pointTime.appendChild(doc.createTextNode(String.valueOf(hikePoint.getTime()))); // TODO Format properly
+
+                trackPoint.appendChild(pointTime);
+                trackSegment.appendChild(trackPoint);
+
+            }
 
             // transform content into xml and print it out
             TransformerFactory transformerFactory = TransformerFactory.newInstance();

@@ -7,13 +7,27 @@
     android:clickable="true"
     android:focusableInTouchMode="true">
 
-    <Button
-        android:layout_width="55dp"
-        android:layout_height="50dp"
-        android:text="@string/back"
-        android:id="@+id/back_button"
-        android:layout_marginLeft="20dp"
-        android:textSize="12sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="50dp"
+            android:text="@string/back"
+            android:id="@+id/back_button"
+            android:layout_marginLeft="20dp"
+            android:textSize="12sp"
+            android:layout_alignParentLeft="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_export_hike"
+            android:id="@+id/button_export_hike"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp" />
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"

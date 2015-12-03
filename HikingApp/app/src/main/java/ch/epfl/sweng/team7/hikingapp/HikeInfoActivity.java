@@ -197,4 +197,5 @@ public final class HikeInfoActivity extends FragmentActivity {
             containerView.setBackgroundColor(Color.WHITE);
         }
     }
+
 }
