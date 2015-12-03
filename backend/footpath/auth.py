@@ -29,11 +29,7 @@ def authenticate(request):
     return user_id
 
 def has_query_permission(visitor_id):
-    # Temporary: Backwards compatibility TODO(simon) remove
-    #return True
     return visitor_id >= 0
 
 def has_write_permission(visitor_id, owner_id):
-    # Temporary: Backwards compatibility TODO(simon) remove
-    #return True
     return visitor_id == owner_id and visitor_id > 0
