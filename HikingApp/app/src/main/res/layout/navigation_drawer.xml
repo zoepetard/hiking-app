@@ -33,7 +33,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:src="@drawable/login_background"
                 android:layout_marginLeft="20dp"/>
 
             <LinearLayout
@@ -47,13 +46,11 @@
                     android:id="@+id/profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Team 7"
                     android:textSize="24sp"/>
                 <TextView
                     android:id="@+id/profile_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="team7@epfl.ch"
                     android:textSize="12sp"/>
             </LinearLayout>
         </LinearLayout>

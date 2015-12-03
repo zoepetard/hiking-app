@@ -47,7 +47,7 @@ public class HikeListActivity extends Activity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, this);
 
         Bundle bound = getIntent().getParcelableExtra(MapActivity.EXTRA_BOUNDS);
         if (bound != null) {

@@ -65,7 +65,7 @@ public class UserDataActivity extends Activity {
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory =
-                new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
+                new NavigationDrawerListFactory(navDrawerList, this);
 
         mUserId = getIntent().getLongExtra(EXTRA_USER_ID, -1);
         userName = (TextView) findViewById(R.id.user_name);

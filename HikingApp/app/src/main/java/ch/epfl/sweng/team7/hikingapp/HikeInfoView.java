@@ -73,7 +73,7 @@ public class HikeInfoView {
     private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
 
-    public HikeInfoView (final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
+    public HikeInfoView (final View view, final Activity activity, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
         hikeId = id;
         userId = SignedInUser.getInstance().getId();
@@ -104,7 +104,8 @@ public class HikeInfoView {
 
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
         // Add adapter and onclickmethods to the nav drawer listview
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
+                navDrawerList, activity);
 
         galleryImageViews = new ArrayList<>(4);
         /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
