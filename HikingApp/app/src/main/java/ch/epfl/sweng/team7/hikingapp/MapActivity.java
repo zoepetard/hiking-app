@@ -56,10 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
-
 import ch.epfl.sweng.team7.database.Annotation;
-
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
@@ -100,11 +97,9 @@ public class MapActivity extends FragmentActivity {
     private Geocoder mGeocoder;
     private ImageView mImageView;
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
-
     private ImageView imageView;
-
-
     private final EditText annotationText = new EditText(this);
+
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -525,40 +520,13 @@ public class MapActivity extends FragmentActivity {
                     displayAddAnnotationPrompt();
                     annotationText.setVisibility(View.VISIBLE);
                     Log.d(LOG_FLAG, "Set EDIT TEXT VISIBLE");
+
                 }
             }
         });
     }
 
-    private void createAnnotationEditText() {
-        annotationText = (EditText) findViewById(R.id.editText);
-        annotationText.setId(R.id.annotation_text);
-        annotationText.setVisibility(View.GONE);
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.annotation_text);
-
-        annotationText.setLayoutParams(lp);
-        if(annotationText.getParent() != null){
-            ((ViewGroup)annotationText.getParent()).removeView(annotationText);
-            layout.addView(annotationText, lp);
-        }
-
-        annotationText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    String annotation = annotationText.getText().toString();
-                    mGps.createAnnotation(annotation);
-                    handled = true;
-                }
-                return handled;
-            }
-        });
-    }
 
     private void createAddPictureButton() {
         Button pictureButton = new Button(this);
@@ -618,6 +586,7 @@ public class MapActivity extends FragmentActivity {
         builder.show();
     }
 
+<<<<<<< HEAD
     private void addAnnotation(String annotation) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
         if(mListAnnotations.size() > 0) {
@@ -631,6 +600,7 @@ public class MapActivity extends FragmentActivity {
         Log.d(LOG_FLAG, "Text annotation added to the list" + annotation);
 
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0  && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
