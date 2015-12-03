@@ -1,8 +1,11 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,6 +13,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -48,6 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
@@ -85,7 +91,8 @@ public class MapActivity extends FragmentActivity {
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
     private ImageView imageView;
-    private EditText annotationText;
+    private List<Annotation> mListAnnotations;
+
     
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -121,10 +128,6 @@ public class MapActivity extends FragmentActivity {
         createAnnotationButton();
         //creates a Add Picture button
         createAddPictureButton();
-
-        //Create Annotation EditText
-
-        createAnnotationEditText();
 
         //Initializes the BottomInfoView
         createBottomInfoView();
@@ -505,43 +508,13 @@ public class MapActivity extends FragmentActivity {
         annotationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (mGps.tracking()) {
-                    //annotationText = (EditText) findViewById(R.id.editText);
-                    annotationText.setVisibility(View.VISIBLE);
-                    Log.d(LOG_FLAG, "Set EDIT TEXT VISIBLE");
+                    displayAddAnnotationPrompt();
                 }
             }
         });
     }
 
-    private void createAnnotationEditText() {
-        annotationText = (EditText) findViewById(R.id.editText);
-        annotationText.setId(R.id.annotation_text);
-        annotationText.setVisibility(View.GONE);
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.annotation_text);
-
-        annotationText.setLayoutParams(lp);
-        if(annotationText.getParent() != null){
-            ((ViewGroup)annotationText.getParent()).removeView(annotationText);
-            layout.addView(annotationText, lp);
-        }
-
-        annotationText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    String annotation = annotationText.getText().toString();
-                    mGps.createAnnotation(annotation);
-                    handled = true;
-                }
-                return handled;
-            }
-        });
-    }
 
     private void createAddPictureButton() {
         Button pictureButton = new Button(this);
@@ -564,7 +537,42 @@ public class MapActivity extends FragmentActivity {
             }
         });
     }
-    
+
+
+    private void displayAddAnnotationPrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(this.getResources().getString(R.string.prompt_add_tile));
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        //setup the horizontal separator
+        View lnSeparator = new View(this);
+        lnSeparator.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 5));
+        lnSeparator.setBackgroundColor(Color.parseColor("#B3B3B3"));
+        layout.addView(lnSeparator);
+
+
+        //setup the hike comment input field
+        final EditText annotation = new EditText(this);
+        annotation.setHint(this.getResources().getString(R.string.prompt_annotation_hint));
+        annotation.setInputType(InputType.TYPE_CLASS_TEXT);
+        annotation.setSingleLine(false);
+        layout.addView(annotation);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(this.getResources().getString(R.string.add_annotation), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                annotation.getText().toString();
+            }
+        });
+        builder.setNegativeButton(this.getResources().getString(R.string.button_cancel_save), null);
+        builder.show();
+    }
+
+>>>>>>> Add prompt to add annotation to the hike
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0  && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
