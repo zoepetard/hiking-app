@@ -34,7 +34,8 @@ class Comment(ndb.Model):
             'user_id': self.owner_id,
             'date': self.date,
             'comment_text': self.comment_text,
-            'user_name' : user_name,        }
+            'user_name' : user_name
+        }
         return json.dumps(comment_data)
 
 
