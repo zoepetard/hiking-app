@@ -3,6 +3,12 @@ package ch.epfl.sweng.team7.network;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class RawHikeComment {
     private final static String LOG_FLAG = "Network_RawHikeComment";
     public static final long COMMENT_ID_UNKNOWN = -1;
@@ -10,7 +16,9 @@ public class RawHikeComment {
     private long mCommentId;
     private long mCommentHikeId;
     private long mCommentOwnerId;
+    private String mCommentOwnerName;
     private String mCommentText;
+    private Date mCommentDate;
 
     public RawHikeComment(long commentId, long commentHikeId, long commentOwnerId,
                           String commentText) {
@@ -18,6 +26,16 @@ public class RawHikeComment {
         mCommentHikeId = commentHikeId;
         mCommentOwnerId = commentOwnerId;
         mCommentText = commentText;
+    }
+
+    public RawHikeComment(long commentId, long commentHikeId, long commentOwnerId,
+                          String commentOwnerName, String commentText, Date commentDate) {
+        mCommentId = commentId;
+        mCommentHikeId = commentHikeId;
+        mCommentOwnerId = commentOwnerId;
+        mCommentOwnerName = commentOwnerName;
+        mCommentText = commentText;
+        mCommentDate = commentDate;
     }
 
     public long getCommentId() {
@@ -32,8 +50,16 @@ public class RawHikeComment {
         return mCommentOwnerId;
     }
 
+    public String getCommentOwnerName() {
+        return mCommentOwnerName;
+    }
+
     public String getCommentText() {
         return mCommentText;
+    }
+
+    public Date getCommentDate() {
+        return mCommentDate;
     }
 
     public void setCommentId(long id) {
@@ -52,12 +78,17 @@ public class RawHikeComment {
         return jsonObject;
     }
 
-    public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException {
+    public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException, ParseException {
+        String dateString = jsonObject.getString("date");
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        Date date = format.parse(dateString);
         return new RawHikeComment(
                 jsonObject.getLong("comment_id"),
                 jsonObject.getLong("hike_id"),
                 jsonObject.getLong("user_id"),
-                jsonObject.getString("comment_text"));
+                jsonObject.getString("user_name"),
+                jsonObject.getString("comment_text"),
+                date);
     }
 }
 
