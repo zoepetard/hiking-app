@@ -5,6 +5,8 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -208,6 +210,22 @@ public final class DataManager {
         return hikeData;
     }
 
+    public long storeImage(Drawable image) throws DataManagerException {
+        try {
+            return sDatabaseClient.postImage(image);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    public Drawable getImage(long imageId) throws DataManagerException {
+        try {
+            return sDatabaseClient.getImage(imageId);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
     /**
      * Store user data in database and update local cache
      *
@@ -250,7 +268,7 @@ public final class DataManager {
 
         // get current user data then update the database
         UserData userData = getUserData(userId);
-        RawUserData rawUserData = new RawUserData(userData.getUserId(), newName, userData.getMailAddress());
+        RawUserData rawUserData = new RawUserData(userData.getUserId(), newName, userData.getMailAddress(), userData.getUserProfilePic());
         setUserData(rawUserData);
 
     }
