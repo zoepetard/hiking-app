@@ -26,6 +26,7 @@ class Comment(ndb.Model):
 
     # Parse this into JSON string
     def to_json(self):
+        
         user_name = get_user_name(self.owner_id)
         comment_data = {
             'comment_id': self.key.id(),
@@ -33,8 +34,7 @@ class Comment(ndb.Model):
             'user_id': self.owner_id,
             'date': self.date,
             'comment_text': self.comment_text,
-            'user_name' : user_name
-        }
+            'user_name' : user_name,        }
         return json.dumps(comment_data)
 
 
@@ -46,8 +46,8 @@ def build_comment_from_json(json_string):
     return None
 
 def get_user_name(user_id):
-    hike = ndb.Key(User, user_id).get()
-    if not hike:
+    user = ndb.Key(User, user_id).get()
+    if not user:
         return ""
     return user.name
 
