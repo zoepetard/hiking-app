@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -45,6 +49,7 @@ public class UserDataActivity extends Activity {
     private TextView userEmail;
     private TextView nickname;
     private TextView numHikes;
+    private UserData mUserData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +129,7 @@ public class UserDataActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                mProfilePic.setImageURI(selectedImageUri);
-                ImageView sidePanelPic = (ImageView)findViewById(R.id.profile_pic_side_panel);
-                sidePanelPic.setImageURI(selectedImageUri);
+                new LoadNewImage().execute(selectedImageUri.toString());
             }
         }
     }
@@ -186,6 +189,7 @@ public class UserDataActivity extends Activity {
 
         @Override
         protected void onPostExecute(UserData userData) {
+            mUserData = userData;
             userName.setText(userData.getUserName());
             userEmail.setText(userData.getMailAddress());
             String nname = getIntent().getStringExtra(ChangeNicknameActivity.EXTRA_MESSAGE);
@@ -214,6 +218,42 @@ public class UserDataActivity extends Activity {
         @Override
         protected void onPostExecute(Drawable pic) {
             mProfilePic.setImageDrawable(pic);
+        }
+    }
+
+    private class LoadNewImage extends AsyncTask<String, Void, BitmapDrawable> {
+        @Override
+        protected BitmapDrawable doInBackground(String... urls) {
+            try {
+                InputStream in = new java.net.URL(urls[0]).openStream();
+                return new BitmapDrawable(getResources(), BitmapFactory.decodeStream(in));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(BitmapDrawable profilePic) {
+            mProfilePic.setImageDrawable(profilePic);
+            new StoreProfileImage().execute(profilePic);
+        }
+    }
+
+    private class StoreProfileImage extends AsyncTask<Drawable, Void, Long> {
+        @Override
+        protected Long doInBackground(Drawable... photos) {
+            try {
+                return mDataManager.storeImage(photos[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Long profilePicId) {
+            mUserData.setUserProfilePic(profilePicId);
         }
     }
 }

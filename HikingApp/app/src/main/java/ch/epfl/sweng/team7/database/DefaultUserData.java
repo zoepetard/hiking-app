@@ -59,6 +59,11 @@ public class DefaultUserData implements UserData {
         return mUserProfilePic;
     }
 
+    @Override
+    public void setUserProfilePic(long picId) {
+        mUserProfilePic = picId;
+    }
+
     /**
      * @return list of hikes
      */

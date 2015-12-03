@@ -26,6 +26,8 @@ public interface UserData {
 
     long getUserProfilePic();
 
+    void setUserProfilePic(long picId);
+
     /**
      * @return list of hikes
      */

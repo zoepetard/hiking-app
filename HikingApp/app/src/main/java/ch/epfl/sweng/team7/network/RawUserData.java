@@ -71,6 +71,10 @@ public class RawUserData {
         mUserName = userName;
     }
 
+    public void setUserProfilePic(long picId) {
+        mUserProfilePic = picId;
+    }
+
 
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
