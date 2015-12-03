@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -47,6 +48,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +95,7 @@ public class MapActivity extends FragmentActivity {
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
     private ImageView mImageView;
-    private List<Annotation> mListAnnotations;
+    private ArrayList<Annotation> mListAnnotations;
 
     
     public final static String EXTRA_BOUNDS =
@@ -466,6 +468,7 @@ public class MapActivity extends FragmentActivity {
                 } else {
                     toggleButton.setText(R.string.button_start_tracking);
                     pauseButton.setVisibility(View.INVISIBLE);
+                    mGps.setAnnotations(mListAnnotations);
                     stopHikeDisplay();
                 }
             }
@@ -568,6 +571,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String annotation = annotationEditText.getText().toString();
+                addAnnotation(annotation);
                 RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
                 mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
                 Log.d(LOG_FLAG, "Text annotation added to the list" + annotation);
@@ -577,13 +581,26 @@ public class MapActivity extends FragmentActivity {
         builder.show();
     }
 
->>>>>>> Add prompt to add annotation to the hike
+
+    private void addAnnotation(String annotation) {
+        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
+        if(mListAnnotations.size() > 0) {
+            if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
+                mListAnnotations.get(mListAnnotations.size() - 1).setText(annotation);
+            }
+        }else{
+            mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
+        }
+        mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
+        Log.d(LOG_FLAG, "Text annotation added to the list" + annotation);
+
+    }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0  && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(photo);
-            mGps.createPicture(mImageView.getDrawable());
+            addPicture(mImageView.getDrawable());
             /*
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -595,6 +612,20 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
+<<<<<<< HEAD
+=======
+    private void addPicture(Drawable drawable) {
+        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
+        if(mListAnnotations.size() > 0) {
+            if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
+                mListAnnotations.get(mListAnnotations.size() - 1).setPicture(drawable);
+            }
+        }else{
+            mListAnnotations.add(new Annotation(rawHikePoint, null, drawable));
+        }
+        Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
+    }
+>>>>>>> Moved method add picture from gps manager to map activity
 
     private void createBottomInfoView() {
         mBottomTable.initialize(this);

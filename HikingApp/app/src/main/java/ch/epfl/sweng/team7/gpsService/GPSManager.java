@@ -65,9 +65,7 @@ public final class GPSManager {
     private ServiceConnection mServiceConnection;
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
-
-    private Annotation annotation;
-    private List<Annotation> listAnnotations = new ArrayList<>();
+    private List<Annotation> listAnnotations;
     private RawHikeData rawHikeData;
 
 
@@ -400,20 +398,6 @@ public final class GPSManager {
     }
 
 
-    public void createPicture(Drawable drawable) {
-        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
-        if(listAnnotations.size() > 0) {
-            if (listAnnotations.get(listAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
-                listAnnotations.get(listAnnotations.size() - 1).setPicture(drawable);
-            }
-        }else{
-            annotation = new Annotation(rawHikePoint, null, drawable);
-            listAnnotations.add(annotation);
-        }
-        Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
-    }
-
-
     /**
      * Asynchronous task to make the post request to the server.
      */
@@ -450,7 +434,7 @@ public final class GPSManager {
             DataManager dataManager = DataManager.getInstance();
             try {
                 pictureId = dataManager.postPicture(pictures[0].getPicture());
-                annotation.setPicturedId(pictureId);
+                pictures[0].setPicturedId(pictureId);
                 Log.d(LOG_FLAG, "Picture post correctly");
                 return pictureId;
             } catch (DataManagerException e) {
@@ -463,7 +447,8 @@ public final class GPSManager {
 
     }
 
-    public long getRawHikeDataId(){
-        return rawHikeData.getHikeId();
+    public void setAnnotations(ArrayList<Annotation> listAnnotations){
+        rawHikeData.setAnnotations(listAnnotations);
+
     }
 }

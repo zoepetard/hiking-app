@@ -1,7 +1,6 @@
 package ch.epfl.sweng.team7.database;
 
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -24,7 +23,7 @@ public class Annotation {
     private long mPictureId;
 
 
-    public Annotation (RawHikePoint rawHikePoint, String text, Drawable picture){
+    public Annotation(RawHikePoint rawHikePoint, String text, Drawable picture) {
         mRawHikePoint = rawHikePoint;
         mText = text;
         mPicture = picture;
@@ -32,24 +31,38 @@ public class Annotation {
     }
 
 
-    public RawHikePoint getRawHikePoint() { return mRawHikePoint; }
+    public RawHikePoint getRawHikePoint() {
+        return mRawHikePoint;
+    }
 
-    public String getAnnotation() { return mText; }
+    public String getAnnotation() {
+        return mText;
+    }
 
-    public long getPictureId() { return mPictureId; }
+    public Drawable getPicture() {
+        return mPicture;
+    }
 
-    public void setPicturedId (long pictureId) {
+    public long getPictureId() {
+        return mPictureId;
+    }
+
+    public void setPicturedId(long pictureId) {
         mPictureId = pictureId;
     }
 
-    public void setPicture (Drawable picture) {
+    public void setPicture(Drawable picture) {
         mPicture = picture;
     }
 
-    public  Drawable getPicture () { return mPicture; }
+    public void setText(String text) {
+        mText = text;
+    }
+
 
     /**
      * Method to convert JsonObject into annotation
+     *
      * @param jsonObject [Point[lat, long, date, elevation], text, pictureID]
      * @return
      * @throws JSONException
