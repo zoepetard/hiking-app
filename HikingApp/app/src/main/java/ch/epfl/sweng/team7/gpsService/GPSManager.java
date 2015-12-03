@@ -398,12 +398,6 @@ public final class GPSManager {
         }
     }
 
-    public void createAnnotation(String text) {
-        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
-        annotation = new Annotation(rawHikePoint, text, null);
-        listAnnotations.add(annotation);
-        Log.d(LOG_FLAG, "Text annotation added to the list" + text);
-    }
 
     public void createPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);

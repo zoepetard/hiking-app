@@ -99,7 +99,6 @@ public class MapActivity extends FragmentActivity {
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
     private ImageView imageView;
     private final EditText annotationText = new EditText(this);
-
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -604,7 +603,6 @@ public class MapActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0  && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(photo);
             addPicture(mImageView.getDrawable());
