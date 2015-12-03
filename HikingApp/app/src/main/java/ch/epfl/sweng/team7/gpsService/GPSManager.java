@@ -67,6 +67,7 @@ public final class GPSManager {
     private ServiceConnection serviceConnection;
     private Annotation annotation;
     private List<Annotation> listAnnotations = new ArrayList<>();
+
     private RawHikeData rawHikeData;
 
 
@@ -398,7 +399,7 @@ public final class GPSManager {
         }
     }
 
-
+    
     public void createPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
         if(listAnnotations.size() > 0) {
@@ -411,7 +412,6 @@ public final class GPSManager {
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
     }
-
 
 
     /**
@@ -460,7 +460,8 @@ public final class GPSManager {
 
     }
 
-    public long getRawHikeDataId(){
-        return rawHikeData.getHikeId();
+    public void setAnnotations(ArrayList<Annotation> listAnnotations){
+        rawHikeData.setAnnotations(listAnnotations);
+
     }
 }

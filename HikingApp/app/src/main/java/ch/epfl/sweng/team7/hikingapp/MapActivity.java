@@ -96,9 +96,15 @@ public class MapActivity extends FragmentActivity {
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
     private ImageView mImageView;
+<<<<<<< HEAD
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
     private ImageView imageView;
     private final EditText annotationText = new EditText(this);
+=======
+    private ArrayList<Annotation> mListAnnotations;
+
+    
+>>>>>>> Moved method add picture from gps manager to map activity
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -586,6 +592,9 @@ public class MapActivity extends FragmentActivity {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Moved method add picture from gps manager to map activity
     private void addAnnotation(String annotation) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
         if(mListAnnotations.size() > 0) {
@@ -606,12 +615,27 @@ public class MapActivity extends FragmentActivity {
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(photo);
             addPicture(mImageView.getDrawable());
+<<<<<<< HEAD
+=======
+            /*
+            RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
+            imageView.setLayoutParams(lp);
+            layout.addView(imageView,lp);
+            */
+>>>>>>> Moved method add picture from gps manager to map activity
         }
     }
 
     private void addPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
+<<<<<<< HEAD
         if(mListAnnotations.size() > 0 ) {
+=======
+        if(mListAnnotations.size() > 0) {
+>>>>>>> Moved method add picture from gps manager to map activity
             if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 mListAnnotations.get(mListAnnotations.size() - 1).setPicture(drawable);
             }
@@ -620,7 +644,11 @@ public class MapActivity extends FragmentActivity {
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> Moved method add picture from gps manager to map activity
     private void createBottomInfoView() {
         mBottomTable.initialize(this);
 
