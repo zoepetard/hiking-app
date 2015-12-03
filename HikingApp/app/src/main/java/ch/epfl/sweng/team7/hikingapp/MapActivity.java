@@ -56,11 +56,13 @@ import java.util.Map;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
+import ch.epfl.sweng.team7.network.RawHikePoint;
 
 import static android.location.Location.distanceBetween;
 
@@ -90,7 +92,7 @@ public class MapActivity extends FragmentActivity {
     private List<Address> mSuggestionList = new ArrayList<>();
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
-    private ImageView imageView;
+    private ImageView mImageView;
     private List<Annotation> mListAnnotations;
 
     
@@ -554,18 +556,21 @@ public class MapActivity extends FragmentActivity {
 
 
         //setup the hike comment input field
-        final EditText annotation = new EditText(this);
-        annotation.setHint(this.getResources().getString(R.string.prompt_annotation_hint));
-        annotation.setInputType(InputType.TYPE_CLASS_TEXT);
-        annotation.setSingleLine(false);
-        layout.addView(annotation);
+        final EditText annotationEditText = new EditText(this);
+        annotationEditText.setHint(this.getResources().getString(R.string.prompt_annotation_hint));
+        annotationEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        annotationEditText.setSingleLine(false);
+        layout.addView(annotationEditText);
 
         builder.setView(layout);
 
         builder.setPositiveButton(this.getResources().getString(R.string.add_annotation), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                annotation.getText().toString();
+                String annotation = annotationEditText.getText().toString();
+                RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
+                mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
+                Log.d(LOG_FLAG, "Text annotation added to the list" + annotation);
             }
         });
         builder.setNegativeButton(this.getResources().getString(R.string.button_cancel_save), null);
@@ -576,9 +581,9 @@ public class MapActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0  && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imageView = new ImageView(this);
-            imageView.setImageBitmap(photo);
-            mGps.createPicture(imageView.getDrawable());
+            mImageView = new ImageView(this);
+            mImageView.setImageBitmap(photo);
+            mGps.createPicture(mImageView.getDrawable());
             /*
             RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
