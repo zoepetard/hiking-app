@@ -46,6 +46,10 @@ class User(ndb.Model):
     
     # Parse this into JSON string
     def to_login_json(self):
+        
+        if not self.db_token:
+            self.db_token = ""
+        
         hike_data = {
             'user_id': self.key.id(),
             'mail_address': self.mail_address,

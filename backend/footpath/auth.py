@@ -11,7 +11,7 @@ def authenticate(request):
         return AUTH_FORBIDDEN
 
     auth_header = json.loads(auth_header)
-    if not auth_header['logged_in']:
+    if 'logged_in' in auth_header and not auth_header['logged_in']:
         return AUTH_ANONYMOUS
 
     user_id = auth_header['user_id']
