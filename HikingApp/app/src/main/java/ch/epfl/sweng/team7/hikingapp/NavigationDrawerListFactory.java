@@ -23,6 +23,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.UserData;
+
 import static android.support.v4.app.ActivityCompat.startActivity;
 
 /** Class that creates a listview for the navigation drawer */
@@ -49,6 +52,7 @@ public class NavigationDrawerListFactory {
                 switch (itemText) {
                     case LIST_ITEM_ACCOUNT:
                         intent = new Intent(view.getContext(), UserDataActivity.class);
+                        intent.putExtra(UserDataActivity.EXTRA_USER_ID, SignedInUser.getInstance().getId());
                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         view.getContext().startActivity(intent);
                         break;

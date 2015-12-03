@@ -25,18 +25,25 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 public class UserDataActivity extends Activity {
     private final static int SELECT_PICTURE = 1;
     private final static String EXTRA_HIKE_ID = "userHikeId";
+    public final static String EXTRA_USER_ID = "userProfileId";
 
-    private ImageView mProfilePic;
     private DataManager mDataManager = DataManager.getInstance();
-    private LinearLayout mHikeList;
+    SignedInUser mOwner = SignedInUser.getInstance();
 
-    SignedInUser mUser = SignedInUser.getInstance();
+    private Long mUserId; // not necessarily the one logged in, but the one whose profile is display
+    private ImageView mProfilePic;
+    private LinearLayout mHikeList;
+    private TextView userName;
+    private TextView userEmail;
+    private TextView nickname;
+    private TextView numHikes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +61,20 @@ public class UserDataActivity extends Activity {
         NavigationDrawerListFactory navDrawerListFactory =
                 new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
 
-        TextView userName = (TextView) findViewById(R.id.user_name);
-        TextView userEmail = (TextView) findViewById(R.id.user_email);
-        String nname = getIntent().getStringExtra(ChangeNicknameActivity.EXTRA_MESSAGE);
-        TextView nickname = (TextView) findViewById(R.id.nickname);
-        TextView numHikes = (TextView) findViewById(R.id.num_hikes);
+        mUserId = getIntent().getLongExtra(EXTRA_USER_ID, -1);
+        userName = (TextView) findViewById(R.id.user_name);
+        userEmail = (TextView) findViewById(R.id.user_email);
+        nickname = (TextView) findViewById(R.id.nickname);
+        numHikes = (TextView) findViewById(R.id.num_hikes);
+
         Button changeNickname = (Button) findViewById(R.id.change_nickname);
         changeNickname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), ChangeNicknameActivity.class);
-                startActivity(i);
+                if (mUserId == mOwner.getId()) {
+                    Intent i = new Intent(getApplicationContext(), ChangeNicknameActivity.class);
+                    startActivity(i);
+                }
             }
         });
 
@@ -72,38 +82,29 @@ public class UserDataActivity extends Activity {
         mProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(v.getContext())
-                        .setMessage(R.string.new_profile)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent,
-                                        getString(R.string.selete_pic)), SELECT_PICTURE);
-                            }
-                        })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+                if (mUserId == mOwner.getId()) {
+                    new AlertDialog.Builder(v.getContext())
+                            .setMessage(R.string.new_profile)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Intent intent = new Intent();
+                                    intent.setType("image/*");
+                                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                                    startActivityForResult(Intent.createChooser(intent,
+                                            getString(R.string.selete_pic)), SELECT_PICTURE);
+                                }
+                            })
+                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
             }
         });
 
         mHikeList = (LinearLayout) findViewById(R.id.user_hike_list);
-
-        // TODO: use real data stored in local cache after issue #56 is in master
-        // for user with this user_id
-        userName.setText("Team 7");
-        userEmail.setText("team7@epfl.ch");
-        if (nname == null) {
-            nickname.setText(getString(R.string.nickname_fmt, "team7"));
-        } else {
-            nickname.setText(getString(R.string.nickname_fmt, nname));
-        }
-        numHikes.setText(getString(R.string.num_hikes_fmt, 100));
 
         Button back_button = (Button) findViewById(R.id.back_button);
         back_button.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +114,9 @@ public class UserDataActivity extends Activity {
             }
         });
 
-        new GetUserHikes().execute(mUser.getId());
+        new GetUserData().execute(mUserId);
+
+        new GetUserHikes().execute(mUserId);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -144,6 +147,7 @@ public class UserDataActivity extends Activity {
             for (HikeData hike : hikes) {
                 displayHike(hike);
             }
+            numHikes.setText(getString(R.string.num_hikes_fmt, hikes.size()));
         }
 
         private void displayHike(final HikeData hike) {
@@ -164,6 +168,31 @@ public class UserDataActivity extends Activity {
                 }
             });
             mHikeList.addView(hikeRow);
+        }
+    }
+
+    private class GetUserData extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return mDataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            userName.setText(userData.getUserName());
+            userEmail.setText(userData.getMailAddress());
+            String nname = getIntent().getStringExtra(ChangeNicknameActivity.EXTRA_MESSAGE);
+            if (nname == null) {
+                nickname.setText(getString(R.string.nickname_fmt, userData.getUserName()));
+            } else {
+                nickname.setText(getString(R.string.nickname_fmt, nname));
+            }
         }
     }
 }
