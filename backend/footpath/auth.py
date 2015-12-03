@@ -1,17 +1,11 @@
 from google.appengine.ext import ndb
 from footpath.user import *
 
-# TODO(simon) debug remove
-import logging
-logger = logging.getLogger(__name__)
-
 AUTH_FORBIDDEN = -1
 AUTH_ANONYMOUS = 0
 
 def authenticate(request):
     auth_header = request.META.get('HTTP_AUTH_HEADER', '')
-    
-    logger.error('sent auth_header: ' + auth_header)
     
     if len(auth_header) == 0:
         return AUTH_FORBIDDEN
@@ -42,4 +36,4 @@ def has_query_permission(visitor_id):
 def has_write_permission(visitor_id, owner_id):
     # Temporary: Backwards compatibility TODO(simon) remove
     #return True
-    return visitor_id == owner_id
+    return visitor_id == owner_id and visitor_id > 0
