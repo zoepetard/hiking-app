@@ -68,8 +68,8 @@ public final class GPSManager {
     private Annotation annotation;
     private List<Annotation> listAnnotations = new ArrayList<>();
 
-    private RawHikeData rawHikeData;
 
+    private RawHikeData rawHikeData;
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -207,7 +207,6 @@ public final class GPSManager {
      * @param annotation
      */
     public void addAnnotation(Annotation annotation) {
-
         listAnnotations.add(annotation);
     }
 
@@ -308,7 +307,6 @@ public final class GPSManager {
         intent.putExtra(GPSManager.NEW_HIKE, true);
         mContext.startActivity(intent);
     }
-
     /**
      * Method called internally to give feedback to the user
      *
@@ -455,13 +453,15 @@ public final class GPSManager {
             }
             return null;
         }
+
         protected void onPostExecute(Long... hikeId) {
         }
 
     }
 
-    public void setAnnotations(ArrayList<Annotation> listAnnotations){
-        rawHikeData.setAnnotations(listAnnotations);
-
+    public void setAnnotations(ArrayList<Annotation> listAnnotations) {
+        if (rawHikeData != null) {
+            rawHikeData.setAnnotations(listAnnotations);
+        }
     }
 }
