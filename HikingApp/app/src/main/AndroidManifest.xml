@@ -52,11 +52,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChangeNicknameActivity"
-            android:label="@string/title_activity_change_nickname"
-            android:launchMode="singleTop" >
-        </activity>
-        <activity
             android:name=".HikeInfoActivity"
             android:label="@string/title_activity_hike_info"
             android:launchMode="singleTop" >

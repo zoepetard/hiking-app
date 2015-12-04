@@ -38,7 +38,7 @@
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
-    <string name="change_name">Change Nickname</string>
+    <string name="change_name">Choose A New Nickname</string>
     <string name="goto_map">Go To Map</string>
     <string name="button_done">Done</string>
     <string name="button_start_tracking">Start</string>
@@ -104,5 +104,6 @@
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
     <string name="user_hikes">Hikes:</string>
+    <string name="change">Change</string>
 
 </resources>

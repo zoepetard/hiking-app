@@ -1,21 +1,22 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +24,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -31,10 +31,8 @@ import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.UserData;
-import ch.epfl.sweng.team7.network.DatabaseClient;
-import ch.epfl.sweng.team7.network.RawHikeComment;
 
-public class UserDataActivity extends Activity {
+public class UserDataActivity extends FragmentActivity {
     private final static int SELECT_PICTURE = 1;
     private final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
@@ -73,13 +71,13 @@ public class UserDataActivity extends Activity {
         nickname = (TextView) findViewById(R.id.nickname);
         numHikes = (TextView) findViewById(R.id.num_hikes);
 
-        Button changeNickname = (Button) findViewById(R.id.change_nickname);
+        final Button changeNickname = (Button) findViewById(R.id.change_nickname);
         changeNickname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mUserId == mOwner.getId()) {
-                    Intent i = new Intent(getApplicationContext(), ChangeNicknameActivity.class);
-                    startActivity(i);
+                    DialogFragment changeNicknameDialog = new ChangeNicknameDialog();
+                    changeNicknameDialog.show(getSupportFragmentManager(), "change");
                 }
             }
         });
@@ -192,12 +190,12 @@ public class UserDataActivity extends Activity {
             mUserData = userData;
             userName.setText(userData.getUserName());
             userEmail.setText(userData.getMailAddress());
-            String nname = getIntent().getStringExtra(ChangeNicknameActivity.EXTRA_MESSAGE);
-            if (nname == null) {
-                nickname.setText(getString(R.string.nickname_fmt, userData.getUserName()));
-            } else {
-                nickname.setText(getString(R.string.nickname_fmt, nname));
-            }
+//            if (nname == null) {
+//                nickname.setText(getString(R.string.nickname_fmt, userData.getUserName()));
+//            } else {
+//                nickname.setText(getString(R.string.nickname_fmt, nname));
+//            }
+            // TODO: save nickname in server
 
             new GetUserPic().execute(userData.getUserProfilePic());
         }
