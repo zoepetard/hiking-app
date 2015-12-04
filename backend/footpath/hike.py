@@ -2,25 +2,10 @@ from google.appengine.ext import ndb
 import json
 import logging
 from footpath.comment import *
+import re
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
-
-# SET NO PARENT KEY, hikes should be in different entity groups.
-# We set a parent key on the 'Greetings' to ensure that they are all in the same
-# entity group. Queries across the single entity group will be consistent.
-# However, the write rate should be limited to ~1/second.
-
-# A proper response is
-# { 
-#   "hike_id": 268, 
-#   "owner_id": 153, 
-#   "date": 123201,
-#   "hike_data": [
-#      [0.0, 0.0, 123201], [0.1, 0.1, 123202], [0.2, 0.0, 123203],
-#      [0.3,89.9, 123204], [0.4, 0.0, 123205]
-#   ]
-# }
 
 
 class Hike(ndb.Model):
@@ -29,16 +14,24 @@ class Hike(ndb.Model):
     # Management (set by backend)
     author = ndb.UserProperty()
     last_changed = ndb.DateTimeProperty(auto_now_add=True)
+    
+    # Location
+    latitude = ndb.FloatProperty()
+    longitude = ndb.FloatProperty()
     bb_southwest = ndb.GeoPtProperty()
     bb_northeast = ndb.GeoPtProperty()
     
+    lat1 = ndb.IntegerProperty()
+    lat10 = ndb.IntegerProperty()
+    lat100 = ndb.IntegerProperty()
+    
     # Header
-    hike_id = ndb.IntegerProperty()
     owner_id = ndb.IntegerProperty()
     date = ndb.IntegerProperty()
-    start_point = ndb.GeoPtProperty()
-    finish_point = ndb.GeoPtProperty()
-    title = ndb.StringProperty()
+    start_point = ndb.GeoPtProperty(indexed=False)
+    finish_point = ndb.GeoPtProperty(indexed=False)
+    title = ndb.StringProperty(indexed=False)
+    tags = ndb.StringProperty(repeated=True)
     
     # Data
     hike_data = ndb.JsonProperty(repeated=True,indexed=False)
@@ -46,17 +39,18 @@ class Hike(ndb.Model):
 
 
     # Parse JSON string to data. Return false on malformed input
-    # TODO: check input
     def from_json(self, json_string):
         json_object = json.loads(json_string)
-        self.hike_id = json_object['hike_id'] # TODO this will be automatically set
+        self.request_hike_id = json_object['hike_id']
         self.owner_id = json_object['owner_id']
         self.date = json_object['date']
-        # TODO(simon): remove extra code after migration (24Nov15)
+        
         if 'title' in json_object:
             self.title = json_object['title']
+            self.tags = re.findall("[a-z0-9]{4,}", self.title.lower())
         else:
             self.title = "Untitled Hike"
+            self.tags = []
         
         if 'annotations' in json_object:
             self.annotations = json_object['annotations']
@@ -65,15 +59,21 @@ class Hike(ndb.Model):
         bb = get_bounding_box(self.hike_data)
         self.bb_southwest = ndb.GeoPt(bb['lat_min'], bb['lng_min'])
         self.bb_northeast = ndb.GeoPt(bb['lat_max'], bb['lng_max'])
+        self.set_latlng(0.5*(bb['lat_min']+bb['lat_max']), 0.5*(bb['lng_min']+bb['lng_max']))
         logger.info('lat in bounds %s:%s, lng in bounds %s:%s', bb['lat_min'], bb['lat_max'], bb['lng_min'], bb['lng_max'])
         return True
-            
+    
+    def set_latlng(self, lat, lng):
+        self.latitude = float(lat)
+        self.longitude = float(lng)
+        self.lat1 = int(lat)
+        self.lat10 = int(lat*10)
+        self.lat100 = int(lat*100)
             
     # Parse this into JSON string
     # comments is a list of JSON objects
     def to_json(self, visitor_id):
-        # TODO(simon): remove extra code after migration (24Nov15)
-        title = "Untitled Hike"
+        title = "Hike"
         if self.title:
             title = self.title
                 
@@ -106,7 +106,7 @@ def get_bounding_box(hike_data):
     latitudes = [point[0] for point in hike_data]
     longitudes = [point[1] for point in hike_data]   
     
-    # TODO Note that for a hike across the pacific
+    # Note that for a hike across the pacific
     # the bounding box is not calculated correctly
     lat_min = min(latitudes)
     lng_min = min(longitudes)

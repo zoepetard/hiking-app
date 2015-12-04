@@ -54,6 +54,26 @@ public interface DatabaseClient {
     List<Long> getHikeIdsInWindow(LatLngBounds bounds) throws DatabaseClientException;
 
     /**
+     * Get all hikes of a user
+     *
+     * @param userId A valid user ID
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    List<Long> getHikeIdsOfUser(long userId) throws DatabaseClientException;
+
+    /**
+     * Get all hikes with given keywords
+     *
+     * @param keywords A string of keywords, separated by spaces. Special characters will be ignored.
+     * @return A list of hike IDs
+     * @throws DatabaseClientException in case the data could not be
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     */
+    List<Long> getHikeIdsWithKeywords(String keywords) throws DatabaseClientException;
+
+    /**
      * Post a hike to the database. Returns the database ID
      * that this hike was assigned from the database.
      *
@@ -140,11 +160,10 @@ public interface DatabaseClient {
     /**
      * Post a comment to the database
      * @param comment the comment to be posted
-     * TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
-    long postComment(long hikeId) throws DatabaseClientException;
+    long postComment(RawHikeComment comment) throws DatabaseClientException;
 
     /**
      * Delete a comment from the database
@@ -157,4 +176,5 @@ public interface DatabaseClient {
      * Post a vote about a hike.
      */
     void postVote(RatingVote vote) throws DatabaseClientException;
+
 }

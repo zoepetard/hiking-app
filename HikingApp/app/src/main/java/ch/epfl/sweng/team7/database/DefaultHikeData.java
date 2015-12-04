@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.network.Rating;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -26,6 +27,7 @@ public class DefaultHikeData implements HikeData {
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
     private final List<HikePoint> mHikePoints;
+    private final List<HikeComment> mComments;
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -33,6 +35,7 @@ public class DefaultHikeData implements HikeData {
     private final LatLng mFinishLocation;
     private final ElevationBounds mElevationBounds;
     private final Rating mRating;
+    private String mTitle;
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -45,8 +48,14 @@ public class DefaultHikeData implements HikeData {
 
         List<RawHikePoint> rawHikePoints = rawHikeData.getHikePoints();
         mHikePoints = new ArrayList<>();
-        for (RawHikePoint rawHikePoint : rawHikePoints){
+        for (RawHikePoint rawHikePoint : rawHikePoints) {
             mHikePoints.add(new DefaultHikePoint(rawHikePoint));
+        }
+
+        List<RawHikeComment> rawHikeComments = rawHikeData.getAllComments();
+        mComments = new ArrayList<>();
+        for (RawHikeComment rawHikeComment : rawHikeComments){
+            mComments.add(new DefaultHikeComment(rawHikeComment));
         }
 
         mDistance = calculateDistance(rawHikePoints);
@@ -57,12 +66,23 @@ public class DefaultHikeData implements HikeData {
         mElevationBounds = calculateElevationBounds(rawHikePoints);
 
         // Hike rating is optional in RawHikeData, but this class is guaranteed to have it.
-        if(rawHikeData.getRating() != null) {
+        if (rawHikeData.getRating() != null) {
             mRating = rawHikeData.getRating();
         } else {
             mRating = new Rating();
         }
+
+        mTitle = rawHikeData.getTitle();
     }
+
+    /**
+     * @param newTitle
+     */
+    @Override
+    public void setTitle(String newTitle) {
+        mTitle = newTitle;
+    }
+
     /**
      * @return the hike ID.
      */
@@ -97,6 +117,10 @@ public class DefaultHikeData implements HikeData {
      */
     public List<HikePoint> getHikePoints() {
         return mHikePoints;
+    }
+
+    public List<HikeComment> getAllComments() {
+        return mComments;
     }
 
     /**
@@ -159,9 +183,13 @@ public class DefaultHikeData implements HikeData {
         return mFinishLocation;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;
-        for (int i = 0; i < rawHikePoints.size() - 1; i++){
+        for (int i = 0; i < rawHikePoints.size() - 1; i++) {
             LatLng currentLoc = rawHikePoints.get(i).getPosition();
             LatLng nextLoc = rawHikePoints.get(i + 1).getPosition();
             float[] distanceBetween = new float[1];
@@ -175,8 +203,8 @@ public class DefaultHikeData implements HikeData {
     }
 
     private LatLngBounds calculateBoundingBox(List<RawHikePoint> rawHikePoints) {
-        LatLngBounds.Builder boundingBoxBuilder =  new LatLngBounds.Builder();
-        for (RawHikePoint rawHikePoint : rawHikePoints){
+        LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
+        for (RawHikePoint rawHikePoint : rawHikePoints) {
             LatLng pos = rawHikePoint.getPosition();
             boundingBoxBuilder.include(pos);
         }
@@ -193,22 +221,22 @@ public class DefaultHikeData implements HikeData {
         elevationBounds.mMinElevation = lastElevation;
 
         // Traverse hike points in order
-        for(int i = 1; i < rawHikePoints.size(); ++i) {
+        for (int i = 1; i < rawHikePoints.size(); ++i) {
             final double thisElevation = rawHikePoints.get(i).getElevation();
-            final double deltaElevation  = thisElevation - lastElevation;
+            final double deltaElevation = thisElevation - lastElevation;
 
-            if(deltaElevation > 0) {
+            if (deltaElevation > 0) {
                 elevationBounds.mElevationGain += deltaElevation;
             } else {
                 // ElevationLoss is always positive, but deltaElevation is negative here
                 elevationBounds.mElevationLoss += (-deltaElevation);
             }
 
-            if(thisElevation > elevationBounds.mMaxElevation) {
+            if (thisElevation > elevationBounds.mMaxElevation) {
                 elevationBounds.mMaxElevation = thisElevation;
             }
 
-            if(thisElevation < elevationBounds.mMinElevation) {
+            if (thisElevation < elevationBounds.mMinElevation) {
                 elevationBounds.mMinElevation = thisElevation;
             }
 

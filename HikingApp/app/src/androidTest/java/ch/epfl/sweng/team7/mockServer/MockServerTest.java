@@ -36,7 +36,10 @@ public class MockServerTest extends TestCase {
             + "    [0.2, 0.0, 123203, 3.0],\n"
             + "    [0.3,89.9, 123204, 4.0],\n"
             + "    [0.4, 0.0, 123205, 5.0]\n"
-            + "  ]\n"
+            + "  ],\n"
+            + "  \"comments\": [\n"
+            + "  ],\n"
+            + "  \"title\": \"test\"\n"
             + "}\n";
 
     @Before
@@ -50,6 +53,8 @@ public class MockServerTest extends TestCase {
         mHikeIds.add(id2);
         mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
+        mRawHikeData1.setTitle("Hike1");
+        mRawHikeData2.setTitle("Hike2");
 
         mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com"));
     }
@@ -90,6 +95,15 @@ public class MockServerTest extends TestCase {
         RawUserData rawUserData = mMockServer.fetchUserData(mUserBortId);
         assertEquals("Wrong mail address", rawUserData.getMailAddress(), "bort@googlemail.com");
         assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
+    }
+
+    @Test
+    public void testSearchHike() throws Exception {
+        mMockServer.postHike(mRawHikeData1);
+        mMockServer.postHike(mRawHikeData2);
+
+        List<Long> hikeDataList = mMockServer.getHikeIdsWithKeywords("Hike2");
+        assertEquals("Hike not found", mMockServer.getHike(hikeDataList.get(0)).getTitle(),"Hike2");
     }
 
 }

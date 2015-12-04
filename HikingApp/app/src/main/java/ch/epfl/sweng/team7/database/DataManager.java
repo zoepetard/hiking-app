@@ -16,6 +16,7 @@ import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
 import ch.epfl.sweng.team7.network.NetworkDatabaseClient;
 import ch.epfl.sweng.team7.network.RatingVote;
+import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
@@ -125,6 +126,26 @@ public final class DataManager {
     }
 
     /**
+     * Query the server and local cache for hikes corresponding to a given search query
+     *
+     * @param query - search string
+     * @return list of hikes containing the query string.
+     */
+    public List<HikeData> searchHike(String query) throws DataManagerException {
+
+        // Ask the server for the hike Ids
+        List<Long> hikeIdList;
+        try {
+            hikeIdList = sDatabaseClient.getHikeIdsWithKeywords(query);
+        } catch (DatabaseClientException e) {
+            // Perform local search on network problems
+            hikeIdList = sLocalCache.searchHike(query);
+        }
+
+        return getMultipleHikes(hikeIdList);
+    }
+
+    /**
      * Retrieves a list of all hikes in given boundaries
      *
      * @param bounds the boundaries of a rectangle
@@ -153,6 +174,14 @@ public final class DataManager {
     public long postHike(RawHikeData rawHikeData) throws DataManagerException {
         try {
             return sDatabaseClient.postHike(rawHikeData);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    public long postComment(RawHikeComment rawHikeComment) throws DataManagerException {
+        try {
+            return sDatabaseClient.postComment(rawHikeComment);
         } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }

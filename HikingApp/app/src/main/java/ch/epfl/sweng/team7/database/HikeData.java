@@ -20,6 +20,8 @@ import ch.epfl.sweng.team7.network.Rating;
  */
 public interface HikeData {
 
+    void setTitle(String newTitle);
+
     /**
      * @return the hike ID.
      */
@@ -45,6 +47,8 @@ public interface HikeData {
      */
     List<HikePoint> getHikePoints();
 
+    List<HikeComment> getAllComments();
+
     /**
      * @return the total distance covered by the hike
      */
@@ -63,6 +67,7 @@ public interface HikeData {
     double getElevationLoss();
 
     double getMaxElevation();
+
     double getMinElevation();
 
     /**
@@ -71,10 +76,14 @@ public interface HikeData {
      */
     LatLngBounds getBoundingBox();
 
+    String getTitle();
+
     /**
      * @return a representative point for this hike, where the pin will be placed on the map
      */
     LatLng getHikeLocation();
+
     LatLng getStartLocation();
+
     LatLng getFinishLocation();
 }

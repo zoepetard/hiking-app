@@ -2,6 +2,7 @@ from google.appengine.ext import ndb
 from footpath.user import *
 
 AUTH_FORBIDDEN = -1
+AUTH_ANONYMOUS = 0
 
 def authenticate(request):
     auth_header = request.META.get('HTTP_AUTH_HEADER', '')
@@ -10,6 +11,9 @@ def authenticate(request):
         return AUTH_FORBIDDEN
 
     auth_header = json.loads(auth_header)
+    if 'logged_in' in auth_header and not auth_header['logged_in']:
+        return AUTH_ANONYMOUS
+
     user_id = auth_header['user_id']
     mail_address = auth_header['mail_address']
     token = auth_header['token']
@@ -25,11 +29,7 @@ def authenticate(request):
     return user_id
 
 def has_query_permission(visitor_id):
-    # Temporary: Backwards compatibility TODO(simon) remove
-    return True
-    return visitor_id > 0
+    return visitor_id >= 0
 
 def has_write_permission(visitor_id, owner_id):
-    # Temporary: Backwards compatibility TODO(simon) remove
-    return True
-    return visitor_id == owner_id
+    return visitor_id == owner_id and visitor_id > 0

@@ -8,13 +8,23 @@ import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.support.test.espresso.contrib.*;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.junit.Before;
+import org.w3c.dom.Text;
+
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 public class HikeInfoActivityTest
@@ -128,4 +138,18 @@ public class HikeInfoActivityTest
     }
 
 
+    public void testPostAndShowComments() {
+        final EditText commentEditText = (EditText) getActivity().findViewById(R.id.comment_text);
+        final Button commentButton = (Button) getActivity().findViewById(R.id.done_edit_comment);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            public void run() {
+                commentEditText.setText(R.string.test_comment);
+                commentButton.performClick();
+            }
+        });
+        TextView idText = (TextView) getActivity().findViewById(R.id.comment_userid);
+        assertEquals(idText.getText(), String.valueOf(SignedInUser.getInstance().getId()));
+        TextView commentText = (TextView) getActivity().findViewById(R.id.comment_display_text);
+        assertEquals(commentText.getText(), getActivity().getResources().getString(R.string.test_comment));
+    }
 }
