@@ -58,6 +58,12 @@ public class MapDisplay {
 
             markerByHike.put(startMarker, hike.getHikeId());
             markerByHike.put(finishMarker, hike.getHikeId());
+
+            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                public boolean onMarkerClick(Marker marker) {
+                    return true;
+                }
+            });
         }
         return markerByHike;
     }

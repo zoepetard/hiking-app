@@ -2,17 +2,18 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RatingBar;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -80,8 +81,14 @@ public final class HikeInfoActivity extends FragmentActivity {
         View hikeInfoLayout = getLayoutInflater().inflate(R.layout.activity_hike_info, null);
         mainContentFrame.addView(hikeInfoLayout);
 
-        GoogleMap mapHikeInfo = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapHikeInfo))
-                .getMap();
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int screenHeight = size.y;
+        SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapHikeInfo));
+        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+        params.height = screenHeight / 3;
+        mapFragment.getView().setLayoutParams(params);
+        GoogleMap mapHikeInfo = mapFragment.getMap();
 
         HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
