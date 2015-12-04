@@ -106,6 +106,8 @@ public class HikeInfoView {
 
         imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
+        exportButton = (Button) view.findViewById(R.id.button_export_hike);
+
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
         // Add adapter and onclickmethods to the nav drawer listview
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
@@ -116,6 +118,8 @@ public class HikeInfoView {
         EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
+
+        exportButton = (Button) view.findViewById(R.id.button_export_hike);
 
         Button commentButton = (Button) view.findViewById(R.id.done_edit_comment);
         commentButton.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +167,7 @@ public class HikeInfoView {
                 return;
             }
             displayHike(result);
+            displayedHike = result;
         }
 
         private void setErrorState() {

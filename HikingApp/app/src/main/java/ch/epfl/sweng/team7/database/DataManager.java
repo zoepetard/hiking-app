@@ -10,8 +10,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -312,19 +316,22 @@ public final class DataManager {
 
             Document doc = documentBuilder.newDocument();
 
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+            String date = format.format(hikeData.getDate());
+
             Element rootElement = doc.createElement("gpx");
             doc.appendChild(rootElement);
 
             // adds attributes to gpx element
             rootElement.setAttribute("version", "1.0");
-            rootElement.setAttribute("creator", SignedInUser.getInstance().getMailAddress());
+            rootElement.setAttribute("creator", String.valueOf(hikeData.getOwnerId())); // TODO email
             rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
             rootElement.setAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/0/gpx.xsd");
 
             // set time
             Element timeElement = doc.createElement("time");
-            timeElement.appendChild(doc.createTextNode("2005-11-07T14:00:09Z")); // TODO use real data
+            timeElement.appendChild(doc.createTextNode(date));
             rootElement.appendChild(timeElement);
 
             // adding track
@@ -352,7 +359,8 @@ public final class DataManager {
                 trackPoint.appendChild(elevation);
 
                 Element pointTime = doc.createElement("time");
-                pointTime.appendChild(doc.createTextNode(String.valueOf(hikePoint.getTime()))); // TODO Format properly
+                date = format.format(hikePoint.getTime());
+                pointTime.appendChild(doc.createTextNode(date));
 
                 trackPoint.appendChild(pointTime);
                 trackSegment.appendChild(trackPoint);
