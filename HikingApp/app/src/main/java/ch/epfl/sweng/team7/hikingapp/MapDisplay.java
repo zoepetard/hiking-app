@@ -25,13 +25,17 @@ import ch.epfl.sweng.team7.database.HikePoint;
  */
 public class MapDisplay {
 
+    private static final int HIKE_LINE_COLOR = 0xff000066;
+
     public static List<Polyline> displayHikes(List<HikeData> hikesToDisplay, GoogleMap map) {
         List<Polyline> displayedHikes = new ArrayList<>();
         for (HikeData hike: hikesToDisplay) {
             PolylineOptions polylineOptions = new PolylineOptions();
             List<HikePoint> databaseHikePoints = hike.getHikePoints();
             for (HikePoint hikePoint : databaseHikePoints) {
-                polylineOptions.add(hikePoint.getPosition());
+                polylineOptions.add(hikePoint.getPosition())
+                                .width(5)
+                                .color(HIKE_LINE_COLOR);
             }
             Polyline polyline = map.addPolyline(polylineOptions);
             displayedHikes.add(polyline);
@@ -44,10 +48,10 @@ public class MapDisplay {
         for (HikeData hike: hikesToDisplay) {
             MarkerOptions startMarkerOptions = new MarkerOptions()
                     .position(hike.getStartLocation())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
             MarkerOptions finishMarkerOptions = new MarkerOptions()
                     .position(hike.getFinishLocation())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
             Marker startMarker = map.addMarker(startMarkerOptions);
             Marker finishMarker = map.addMarker(finishMarkerOptions);
