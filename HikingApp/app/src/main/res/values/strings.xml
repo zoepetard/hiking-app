@@ -45,6 +45,7 @@
     <string name="button_stop_tracking">Stop</string>
     <string name="button_pause_tracking">Pause</string>
     <string name="button_resume_tracking">Resume</string>>
+    <string name="button_export_hike">Export Hike as GPX</string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
@@ -103,5 +104,8 @@
 
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
+
+    <string name="export_error">Failed to export hike</string>
+    <string name="export_success">Export successful!</string>
 
 </resources>
