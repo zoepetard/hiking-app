@@ -58,10 +58,12 @@ public class MapActivity extends FragmentActivity {
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
-
+    private static final int HIKE_LINE_COLOR = 0xff000066;
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
+    private  static int mScreenWidth;
+    private  static int mScreenHeight;
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
@@ -178,9 +180,14 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        mScreenWidth = size.x;
+        mScreenHeight = size.y;
 
         mUserLocation = getUserPosition();
         LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
 
         List<HikeData> hikesFound = new ArrayList<>();
         boolean firstHike = true;
@@ -281,24 +288,19 @@ public class MapActivity extends FragmentActivity {
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
 
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        int screenWidth = size.x;
-        int screenHeight = size.y;
-
         if (firstHike) {
             boundingBoxBuilder.include(mUserLocation);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), mScreenWidth, mScreenHeight, 30));
         }
     }
 
     private void displayMarkers(final HikeData hike) {
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
         MarkerOptions finishMarkerOptions = new MarkerOptions()
                 .position(hike.getFinishLocation())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
@@ -330,7 +332,9 @@ public class MapActivity extends FragmentActivity {
         PolylineOptions polylineOptions = new PolylineOptions();
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
-            polylineOptions.add(hikePoint.getPosition());
+            polylineOptions.add(hikePoint.getPosition())
+                            .width(5)
+                            .color(HIKE_LINE_COLOR);
         }
         mMap.addPolyline(polylineOptions);
     }
@@ -487,10 +491,13 @@ public class MapActivity extends FragmentActivity {
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
                     // get bounding box
-                    Object bounds = clickedLocation.getExtras().get(EXTRA_BOUNDS);
+                    Bundle clickedLocationExtras = clickedLocation.getExtras();
+                    Object bounds = null;
+                    if(clickedLocationExtras != null) {
+                        bounds = clickedLocationExtras.get(EXTRA_BOUNDS);
+                    }
                     if(bounds != null && bounds instanceof LatLngBounds) {
-                        LatLngBounds boundingBox = (LatLngBounds) bounds;
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, 60));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
                         focusOnLatLng(latLng);
                     }

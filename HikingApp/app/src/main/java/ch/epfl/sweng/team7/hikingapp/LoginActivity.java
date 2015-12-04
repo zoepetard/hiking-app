@@ -399,6 +399,7 @@ public class LoginActivity extends Activity implements
     public static void onSignOutClicked() {
         // Clear the default account so that GoogleApiClient will not automatically
         // connect in the future.
+        SignedInUser.getInstance().logout();
         if (sGoogleApiClient.isConnected()) {
             Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
             sGoogleApiClient.disconnect();
