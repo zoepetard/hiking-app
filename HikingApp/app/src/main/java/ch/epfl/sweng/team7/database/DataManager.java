@@ -5,11 +5,18 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -309,7 +316,7 @@ public final class DataManager {
     /**
      * Method to export the hike as a gpx file to the phone's internal storage
      */
-    public void saveGPX(HikeData hikeData) {
+    public void saveGPX(HikeData hikeData, Context context) {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -370,21 +377,24 @@ public final class DataManager {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(System.out);
 
-            // Indent and output to console for testing
+
+            String fileName = "Hike_" + String.valueOf(hikeData.getHikeId() + ".xml");
+            File file = new File(context.getExternalFilesDir(null), fileName);
+
+            Log.d(LOG_FLAG, file.getAbsolutePath());
+            StreamResult result = new StreamResult(file);
+
+            // format properly before writing content to file
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
             transformer.transform(source, result);
 
-
         } catch (ParserConfigurationException e) {
-
-
+            Log.d(LOG_FLAG, "Failed to build xml file");
         } catch (TransformerException te) {
-
-
+            Log.d(LOG_FLAG, "Failed to write content to file");
         }
     }
 

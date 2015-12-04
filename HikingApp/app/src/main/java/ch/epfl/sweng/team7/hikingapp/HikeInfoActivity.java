@@ -122,7 +122,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if(hikeInfoView.getDisplayedHike() != null){
-                    DataManager.getInstance().saveGPX(hikeInfoView.getDisplayedHike());
+                    DataManager.getInstance().saveGPX(hikeInfoView.getDisplayedHike(),getApplicationContext());
                 }
             }
         });
