@@ -105,4 +105,7 @@
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
 
+    <string name="export_error">Failed to export hike</string>
+    <string name="export_success">Export successful!</string>
+
 </resources>

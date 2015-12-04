@@ -319,7 +319,7 @@ public final class DataManager {
      * @param hikeData,context - the hike to be saved, the applications context
      * @return filepath as a string
      */
-    public String saveGPX(HikeData hikeData, Context context) throws DataManagerException{
+    public String saveGPX(HikeData hikeData, Context context) throws DataManagerException {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -333,7 +333,7 @@ public final class DataManager {
             Element rootElement = doc.createElement("gpx");
             doc.appendChild(rootElement);
             rootElement.setAttribute("version", "1.0");
-            rootElement.setAttribute("creator", String.valueOf(hikeData.getOwnerId())); // TODO email
+            rootElement.setAttribute("creator", String.valueOf(hikeData.getOwnerId()));
             rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
             rootElement.setAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/0/gpx.xsd");

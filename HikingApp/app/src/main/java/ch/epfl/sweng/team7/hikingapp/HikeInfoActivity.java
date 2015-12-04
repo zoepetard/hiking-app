@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -123,11 +124,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 if (hikeInfoView.getDisplayedHike() != null) {
-                    try {
-                        DataManager.getInstance().saveGPX(hikeInfoView.getDisplayedHike(), getApplicationContext());
-                    } catch (DataManagerException e) {
-                        Log.d(LOG_FLAG, e.getMessage()); // TODO give feedback to user. Popup?
-                    }
+                    new GPXExporter().execute(hikeInfoView);
                 }
             }
         });
@@ -191,6 +188,38 @@ public final class HikeInfoActivity extends FragmentActivity {
         @Override
         public void onClick(View v) {
             toggleFullScreen();
+        }
+    }
+
+    private class GPXExporter extends AsyncTask<HikeInfoView, Void, String> {
+
+        /**
+         * Exports a hike in GPX format to the device's internal storage
+         *
+         * @param params - HikeInfoView
+         * @return file path of created file
+         */
+        @Override
+        protected String doInBackground(HikeInfoView... params) {
+
+            String filePath = null;
+            try {
+                filePath = DataManager.getInstance().saveGPX(params[0].getDisplayedHike(), getApplicationContext());
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, e.getMessage());
+            }
+            return filePath;
+        }
+
+        @Override
+        protected void onPostExecute(String filePath) {
+            TextView exportStatusText = (TextView) findViewById(R.id.export_status_text);
+
+            if (filePath != null) {
+                exportStatusText.setText(getResources().getString(R.string.export_success));
+            } else {
+                exportStatusText.setText(getResources().getString(R.string.export_error));
+            }
         }
     }
 
