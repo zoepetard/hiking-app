@@ -1,27 +1,20 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -29,8 +22,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +31,6 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.DefaultHikeComment;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
@@ -169,11 +159,14 @@ public class HikeInfoView {
         private void displayHike(HikeData hikeData) {
             final int ELEVATION_POINT_COUNT = 100;
 
-            List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
-            List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
-            MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
-            MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
-            MapDisplay.setCamera(hikesToDisplay, mapPreview, context);
+            if (mapPreview != null) {
+                List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
+                List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
+                MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
+                MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
+                MapDisplay.setCamera(hikesToDisplay, mapPreview, context);
+            }
+
 
 
             double distance = hikeData.getDistance() / 1000;  // in km
