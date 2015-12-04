@@ -1,7 +1,5 @@
 package ch.epfl.sweng.team7.authentication;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,14 +42,24 @@ public class SignedInUser {
         return mLoggedIn;
     }
 
+    public void logout() {
+        mLoggedIn = false;
+        mId = 0;
+        mMailAddress = "";
+        mAuthToken = "";
+    }
+
     /**
      * Build the authentication header that is sent with every database request
      */
     public JSONObject buildAuthHeader() throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("mail_address", mMailAddress);
-        jsonObject.put("user_id", mId);
-        jsonObject.put("token", mAuthToken);
+        jsonObject.put("logged_in", mLoggedIn);
+        if(mLoggedIn) {
+            jsonObject.put("mail_address", mMailAddress);
+            jsonObject.put("user_id", mId);
+            jsonObject.put("token", mAuthToken);
+        }
         return jsonObject;
     }
 
@@ -61,7 +69,6 @@ public class SignedInUser {
      * @param jsonObject the return JSON of the server login_user request
      */
     public void loginFromJSON(JSONObject jsonObject) throws JSONException {
-        Log.e("SignedInUser", "Got JSON Response " + jsonObject.toString());
         mMailAddress = jsonObject.getString("mail_address");
         mId = jsonObject.getLong("user_id");
         mAuthToken = jsonObject.getString("token");

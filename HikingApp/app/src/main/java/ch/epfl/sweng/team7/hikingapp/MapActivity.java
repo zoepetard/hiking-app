@@ -487,10 +487,13 @@ public class MapActivity extends FragmentActivity {
                     LatLng latLng = new LatLng(clickedLocation.getLatitude(), clickedLocation.getLongitude());
 
                     // get bounding box
-                    Object bounds = clickedLocation.getExtras().get(EXTRA_BOUNDS);
+                    Bundle clickedLocationExtras = clickedLocation.getExtras();
+                    Object bounds = null;
+                    if(clickedLocationExtras != null) {
+                        bounds = clickedLocationExtras.get(EXTRA_BOUNDS);
+                    }
                     if(bounds != null && bounds instanceof LatLngBounds) {
-                        LatLngBounds boundingBox = (LatLngBounds) bounds;
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, 60));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
                         focusOnLatLng(latLng);
                     }
