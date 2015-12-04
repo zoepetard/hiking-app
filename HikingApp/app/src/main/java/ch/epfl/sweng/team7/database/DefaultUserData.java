@@ -46,6 +46,11 @@ public class DefaultUserData implements UserData {
         return mUserName;
     }
 
+    @Override
+    public void setUserName(String userName) {
+        mUserName = userName;
+    }
+
     /**
      * @return user mail address
      */

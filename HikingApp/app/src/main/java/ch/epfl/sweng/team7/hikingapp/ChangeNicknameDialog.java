@@ -26,9 +26,12 @@ public class ChangeNicknameDialog extends DialogFragment {
                         EditText nicknameET = (EditText) getActivity().
                                 findViewById(R.id.change_nickname);
                         String name = nicknameET.getText().toString();
-                        TextView nickname = (TextView) getActivity().findViewById(R.id.nickname);
-                        nickname.setText(name);
-                        ChangeNicknameDialog.this.getDialog().cancel();
+                        if (!name.equals("")) {
+                            TextView nickname = (TextView) getActivity().findViewById(R.id.user_name);
+                            nickname.setText(name);
+                            UserDataActivity.changeUserName(name);
+                            ChangeNicknameDialog.this.getDialog().cancel();
+                        }
                     }
                 })
                 .setNegativeButton(R.string.button_cancel_save, new DialogInterface.OnClickListener() {

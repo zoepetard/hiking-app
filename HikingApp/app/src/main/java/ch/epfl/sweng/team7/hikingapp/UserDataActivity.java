@@ -37,6 +37,8 @@ public class UserDataActivity extends FragmentActivity {
     private final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
 
+    private static UserData mUserData;
+
     private DataManager mDataManager = DataManager.getInstance();
     SignedInUser mOwner = SignedInUser.getInstance();
 
@@ -45,9 +47,7 @@ public class UserDataActivity extends FragmentActivity {
     private LinearLayout mHikeList;
     private TextView userName;
     private TextView userEmail;
-    private TextView nickname;
     private TextView numHikes;
-    private UserData mUserData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +68,9 @@ public class UserDataActivity extends FragmentActivity {
         mUserId = getIntent().getLongExtra(EXTRA_USER_ID, -1);
         userName = (TextView) findViewById(R.id.user_name);
         userEmail = (TextView) findViewById(R.id.user_email);
-        nickname = (TextView) findViewById(R.id.nickname);
         numHikes = (TextView) findViewById(R.id.num_hikes);
 
-        final Button changeNickname = (Button) findViewById(R.id.change_nickname);
-        changeNickname.setOnClickListener(new View.OnClickListener() {
+        userName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mUserId == mOwner.getId()) {
@@ -130,6 +128,10 @@ public class UserDataActivity extends FragmentActivity {
                 new LoadNewImage().execute(selectedImageUri.toString());
             }
         }
+    }
+
+    public static void changeUserName(String newUserName) {
+        mUserData.setUserName(newUserName);
     }
 
     private class GetUserHikes extends AsyncTask<Long, Void, List<HikeData>> {
@@ -190,12 +192,6 @@ public class UserDataActivity extends FragmentActivity {
             mUserData = userData;
             userName.setText(userData.getUserName());
             userEmail.setText(userData.getMailAddress());
-//            if (nname == null) {
-//                nickname.setText(getString(R.string.nickname_fmt, userData.getUserName()));
-//            } else {
-//                nickname.setText(getString(R.string.nickname_fmt, nname));
-//            }
-            // TODO: save nickname in server
 
             new GetUserPic().execute(userData.getUserProfilePic());
         }

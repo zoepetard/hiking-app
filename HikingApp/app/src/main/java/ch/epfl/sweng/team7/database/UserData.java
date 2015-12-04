@@ -19,6 +19,8 @@ public interface UserData {
      */
     String getUserName();
 
+    void setUserName(String userName);
+
     /**
      * @return user mail address
      */
