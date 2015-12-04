@@ -47,10 +47,11 @@ public class MapActivity extends FragmentActivity {
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
-
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
+    private  static int mScreenWidth;
+    private  static int mScreenHeight;
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
@@ -156,9 +157,14 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        mScreenWidth = size.x;
+        mScreenHeight = size.y;
 
         mUserLocation = getUserPosition();
         LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
 
         List<HikeData> hikesFound = new ArrayList<>();
         boolean firstHike = true;
@@ -257,14 +263,9 @@ public class MapActivity extends FragmentActivity {
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
 
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        int screenWidth = size.x;
-        int screenHeight = size.y;
-
         if (firstHike) {
             boundingBoxBuilder.include(mUserLocation);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), screenWidth, screenHeight, 30));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), mScreenWidth, mScreenHeight, 30));
         }
     }
 
