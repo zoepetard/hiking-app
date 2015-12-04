@@ -315,8 +315,11 @@ public final class DataManager {
 
     /**
      * Method to export the hike as a gpx file to the phone's internal storage
+     *
+     * @param hikeData,context - the hike to be saved, the applications context
+     * @return filepath as a string
      */
-    public void saveGPX(HikeData hikeData, Context context) {
+    public String saveGPX(HikeData hikeData, Context context) throws DataManagerException{
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -326,33 +329,29 @@ public final class DataManager {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
             String date = format.format(hikeData.getDate());
 
+            // Constructing the xml file by adding and linking elements
             Element rootElement = doc.createElement("gpx");
             doc.appendChild(rootElement);
-
-            // adds attributes to gpx element
             rootElement.setAttribute("version", "1.0");
             rootElement.setAttribute("creator", String.valueOf(hikeData.getOwnerId())); // TODO email
             rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
             rootElement.setAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/0/gpx.xsd");
 
-            // set time
             Element timeElement = doc.createElement("time");
             timeElement.appendChild(doc.createTextNode(date));
             rootElement.appendChild(timeElement);
 
-            // adding track
             Element trackElement = doc.createElement("trk");
             Element trackName = doc.createElement("name");
             trackName.appendChild(doc.createTextNode(hikeData.getTitle()));
             trackElement.appendChild(trackName);
             rootElement.appendChild(trackElement);
 
-            // track segment
             Element trackSegment = doc.createElement("trkseg");
             trackElement.appendChild(trackSegment);
 
-            // for every hike point add a track point
+            // add the track points to construct the segment
             for (int i = 0; i < hikeData.getHikePoints().size(); i++) {
 
                 HikePoint hikePoint = hikeData.getHikePoints().get(i);
@@ -373,28 +372,30 @@ public final class DataManager {
                 trackSegment.appendChild(trackPoint);
 
             }
-            // transform content into xml and print it out
+            // transform content into xml and save it to a file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
-
+            DOMSource domSource = new DOMSource(doc);
 
             String fileName = "Hike_" + String.valueOf(hikeData.getHikeId() + ".xml");
             File file = new File(context.getExternalFilesDir(null), fileName);
 
             Log.d(LOG_FLAG, file.getAbsolutePath());
-            StreamResult result = new StreamResult(file);
+            StreamResult hikeStreamResult = new StreamResult(file);
 
             // format properly before writing content to file
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.transform(domSource, hikeStreamResult);
 
-            transformer.transform(source, result);
+            return file.getAbsolutePath();
 
         } catch (ParserConfigurationException e) {
             Log.d(LOG_FLAG, "Failed to build xml file");
-        } catch (TransformerException te) {
+            throw new DataManagerException(e);
+        } catch (TransformerException e) {
             Log.d(LOG_FLAG, "Failed to write content to file");
+            throw new DataManagerException(e);
         }
     }
 

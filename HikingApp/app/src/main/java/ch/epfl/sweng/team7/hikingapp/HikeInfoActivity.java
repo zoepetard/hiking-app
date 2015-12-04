@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -90,7 +91,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if(fromUser) {
+                if (fromUser) {
                     new SubmitVoteTask().execute(new RatingVote(hikeId, rating));
                 }
             }
@@ -121,8 +122,12 @@ public final class HikeInfoActivity extends FragmentActivity {
         exportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hikeInfoView.getDisplayedHike() != null){
-                    DataManager.getInstance().saveGPX(hikeInfoView.getDisplayedHike(),getApplicationContext());
+                if (hikeInfoView.getDisplayedHike() != null) {
+                    try {
+                        DataManager.getInstance().saveGPX(hikeInfoView.getDisplayedHike(), getApplicationContext());
+                    } catch (DataManagerException e) {
+                        Log.d(LOG_FLAG, e.getMessage()); // TODO give feedback to user. Popup?
+                    }
                 }
             }
         });
@@ -132,7 +137,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }
@@ -153,7 +158,7 @@ public final class HikeInfoActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(Boolean success) {
-            if(!success) {
+            if (!success) {
                 // TODO(simon) display error?
             }
         }
