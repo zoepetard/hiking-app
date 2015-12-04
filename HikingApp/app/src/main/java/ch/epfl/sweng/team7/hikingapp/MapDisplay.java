@@ -25,6 +25,8 @@ import ch.epfl.sweng.team7.database.HikePoint;
  */
 public class MapDisplay {
 
+    private static final int HIKE_LINE_COLOR = 0xff000066;
+
     public static List<Polyline> displayHikes(List<HikeData> hikesToDisplay, GoogleMap map) {
         List<Polyline> displayedHikes = new ArrayList<>();
         for (HikeData hike: hikesToDisplay) {
@@ -33,7 +35,7 @@ public class MapDisplay {
             for (HikePoint hikePoint : databaseHikePoints) {
                 polylineOptions.add(hikePoint.getPosition())
                                 .width(5)
-                                .color(0xff000066);
+                                .color(HIKE_LINE_COLOR);
             }
             Polyline polyline = map.addPolyline(polylineOptions);
             displayedHikes.add(polyline);

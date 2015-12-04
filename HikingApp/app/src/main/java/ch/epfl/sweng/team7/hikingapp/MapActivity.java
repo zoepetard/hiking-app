@@ -58,6 +58,7 @@ public class MapActivity extends FragmentActivity {
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
+    private static final int HIKE_LINE_COLOR = 0xff000066;
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
@@ -333,7 +334,7 @@ public class MapActivity extends FragmentActivity {
         for (HikePoint hikePoint : databaseHikePoints) {
             polylineOptions.add(hikePoint.getPosition())
                             .width(5)
-                            .color(0xff000066);
+                            .color(HIKE_LINE_COLOR);
         }
         mMap.addPolyline(polylineOptions);
     }
