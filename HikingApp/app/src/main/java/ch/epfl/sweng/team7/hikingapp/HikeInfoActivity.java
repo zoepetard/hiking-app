@@ -112,7 +112,7 @@ public final class HikeInfoActivity extends FragmentActivity {
 
         // Setting a listener for each imageview.
         for (int i = 0; i < hikeInfoView.getGalleryImageViews().size(); i++) {
-
+            Log.d(LOG_FLAG,"imgview size: " + hikeInfoView.getGalleryImageViews().size());
             ImageView imgView = hikeInfoView.getGalleryImageViews().get(i);
             imgView.setOnClickListener(new ImageViewClickListener());
         }
@@ -177,7 +177,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     private class ImageViewClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-
+            Log.d(LOG_FLAG,"CLICKED IMAGE");
             // Update image in full screen view
             ImageView imgView = (ImageView) v;
             Drawable drawable = imgView.getDrawable();

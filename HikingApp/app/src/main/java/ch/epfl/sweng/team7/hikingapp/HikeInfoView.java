@@ -103,7 +103,7 @@ public class HikeInfoView {
         // Add adapter and onclickmethods to the nav drawer listview
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
 
-        galleryImageViews = new ArrayList<>(4);
+        galleryImageViews = new ArrayList<>();
         /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
         imageViews.size() IS IN HIKEINFOACTIVITY BUT WE IT'S ASYNC SO WE HAVE AN ERROR:
         EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
