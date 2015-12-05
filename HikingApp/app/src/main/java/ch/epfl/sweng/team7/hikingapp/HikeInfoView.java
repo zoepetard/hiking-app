@@ -23,6 +23,8 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -177,8 +179,9 @@ public class HikeInfoView {
             }
 
 
-
             double distance = hikeData.getDistance() / 1000;  // in km
+
+
             float rating = (float) hikeData.getRating().getDisplayRating();
             double elevationMin = hikeData.getMinElevation();
             double elevationMax = hikeData.getMaxElevation();
@@ -213,7 +216,9 @@ public class HikeInfoView {
 
             hikeName.setText(hikeData.getTitle());
 
-            String distanceString = distance + " km";
+            NumberFormat numberFormat = NumberFormat.getInstance();
+            numberFormat.setMaximumFractionDigits(1);
+            String distanceString = numberFormat.format(distance) + " km";
             hikeDistance.setText(distanceString);
 
             hikeRatingBar.setRating(rating);

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
+
 
         Intent intent = getIntent();
         if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
@@ -93,6 +95,9 @@ public final class HikeInfoActivity extends FragmentActivity {
         mapFragment.getView().setLayoutParams(params);
         GoogleMap mapHikeInfo = mapFragment.getMap();
 
+        View loadingScreen = getLayoutInflater().inflate(R.layout.loading_screen, null);
+        mainContentFrame.addView(loadingScreen);
+
         final HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
         // set listener methods for UI elements in HikeInfoView
@@ -146,6 +151,7 @@ public final class HikeInfoActivity extends FragmentActivity {
                 }
             }
         });
+        mainContentFrame.removeView(loadingScreen);
     }
 
     private class SubmitVoteTask extends AsyncTask<RatingVote, Void, Boolean> {

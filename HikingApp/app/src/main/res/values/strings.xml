@@ -108,4 +108,7 @@
     <string name="export_error">Failed to export hike</string>
     <string name="export_success">Export successful!</string>
 
+    <!-- Static TextView Strings -->
+    <string name="loading_string">Loading...</string>
+
 </resources>
