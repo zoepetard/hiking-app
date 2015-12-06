@@ -41,20 +41,22 @@ public class NavigationDrawerListFactory {
     private final static String LIST_ITEM_ACCOUNT = "Account";
     private final static String LIST_ITEM_LOGOUT = "Logout";
 
-    private Activity activity;
+    private Context mContext;
     private ImageView mProfilePic;
+    private TextView mProfileName;
+    private TextView mProfileEmailName;
+    private TextView mProfileEmailDomain;
     private DataManager mDataManager = DataManager.getInstance();
 
-    public NavigationDrawerListFactory(ListView navDrawerList, final Activity activity) {
-        this.activity = activity;
-        SignedInUser user = SignedInUser.getInstance();
+    public NavigationDrawerListFactory(ListView navDrawerList, final Context context,
+                                       final Activity activity) {
+        mContext = context;
 
         mProfilePic = (ImageView) activity.findViewById(R.id.profile_pic_side_panel);
-        TextView profileName = (TextView) activity.findViewById(R.id.profile_name);
-        TextView profileEmail = (TextView) activity.findViewById(R.id.profile_email);
-        profileName.setText(user.getUserName());
-        profileEmail.setText(user.getMailAddress());
-        new GetUserPic().execute(user.getProfilePicId());
+        mProfileName = (TextView) activity.findViewById(R.id.profile_name);
+        mProfileEmailName = (TextView) activity.findViewById(R.id.profile_email1);
+        mProfileEmailDomain = (TextView) activity.findViewById(R.id.profile_email2);
+        new GetUserData().execute(SignedInUser.getInstance().getId());
 
         // load items into the Navigation drawer and add listeners
         loadNavDrawerItems(navDrawerList);
@@ -74,15 +76,14 @@ public class NavigationDrawerListFactory {
                         view.getContext().startActivity(intent);
                         break;
                     case LIST_ITEM_LOGOUT:
-                        new AlertDialog.Builder(activity.getApplicationContext())
+                        new AlertDialog.Builder(mContext)
                                 .setMessage(R.string.logout)
                                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         LoginActivity.onSignOutClicked();
-                                        Intent i = new Intent(activity.getApplicationContext(),
-                                                LoginActivity.class);
+                                        Intent i = new Intent(mContext, LoginActivity.class);
                                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                        activity.getApplicationContext().startActivity(i);
+                                        mContext.startActivity(i);
                                     }
                                 })
                                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -101,8 +102,31 @@ public class NavigationDrawerListFactory {
     private void loadNavDrawerItems(ListView navDrawerList) {
         String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_LOGOUT};
         ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(
-                activity.getApplicationContext(), android.R.layout.simple_list_item_1, listViewItems);
+                mContext, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
+    }
+
+    private class GetUserData extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return mDataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            mProfileName.setText(userData.getUserName());
+            String mail = userData.getMailAddress();
+            Integer at = mail.indexOf("@");
+            mProfileEmailName.setText(mail.substring(0, at));
+            mProfileEmailDomain.setText(mail.substring(at));
+            new GetUserPic().execute(userData.getUserProfilePic());
+        }
     }
 
     private class GetUserPic extends AsyncTask<Long, Void, Drawable> {

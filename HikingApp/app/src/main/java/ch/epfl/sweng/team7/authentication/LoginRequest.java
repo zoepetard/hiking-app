@@ -21,13 +21,11 @@ public class LoginRequest {
     private final String mMailAddress;
     private final String mUserNameHint;
     private final String mIdToken;
-    private final long mProfilePicId;
 
-    public LoginRequest(String mailAddress, String userNameHint, String idToken, long profilePicId) {
+    public LoginRequest(String mailAddress, String userNameHint, String idToken) {
         mMailAddress = mailAddress;
         mUserNameHint = userNameHint;
         mIdToken = idToken;
-        mProfilePicId = profilePicId;
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -35,7 +33,6 @@ public class LoginRequest {
         jsonObject.put("user_name_hint", mUserNameHint);
         jsonObject.put("mail_address", mMailAddress);
         jsonObject.put("id_token", mIdToken);
-        jsonObject.put("profile_image_id", mProfilePicId);
         return jsonObject;
     }
 }

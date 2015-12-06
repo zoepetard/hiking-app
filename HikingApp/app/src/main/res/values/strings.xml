@@ -105,5 +105,8 @@
     <string name="search_error">An error occurred</string>
     <string name="user_hikes">Hikes:</string>
     <string name="change">Change</string>
+    <string name="valid_user_name">Please enter a valid user name</string>
+    <string name="owner">Owner</string>
+    <string name="sample_owner">John Doe</string>
 
 </resources>

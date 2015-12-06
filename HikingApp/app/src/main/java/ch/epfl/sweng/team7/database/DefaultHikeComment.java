@@ -13,7 +13,7 @@ public class DefaultHikeComment implements HikeComment {
     private final long mCommentOwnerId;
     private final String mCommentOwnerName;
     private final String mCommentText;
-    private final Date mCommentDate;
+    private final String mCommentDate;
 
     public DefaultHikeComment(RawHikeComment rawHikeComment) {
         mCommentId = rawHikeComment.getCommentId();
@@ -51,7 +51,7 @@ public class DefaultHikeComment implements HikeComment {
     }
 
     @Override
-    public Date getCommentDate() {
+    public String getCommentDate() {
         return mCommentDate;
     }
 }

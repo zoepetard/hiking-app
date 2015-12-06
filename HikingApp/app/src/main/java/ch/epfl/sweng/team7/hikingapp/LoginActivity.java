@@ -52,6 +52,7 @@ import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.UserData;
 
 // TODO: test login as part of the integration test
 
@@ -88,8 +89,6 @@ public class LoginActivity extends Activity implements
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
     // [END resolution_variables]
-
-    private String mMailAddress;
 
     DataManager mDataManager = DataManager.getInstance();
 
@@ -257,38 +256,34 @@ public class LoginActivity extends Activity implements
         if (currentPerson != null) {
             if (checkAccountsPermission()) {
                 mailAddress = Plus.AccountApi.getAccountName(sGoogleApiClient);
-
             }
-            String photoUrl = currentPerson.getImage().getUrl();
-            new LoadProfileImage().execute(photoUrl);
+
+            new UserAuthenticator().execute(mailAddress);
         }
-        mMailAddress = mailAddress;
     }
     // [END on_connected]
 
-    private class UserAuthenticator extends AsyncTask<List<String>, Void, Void> {
+    private class UserAuthenticator extends AsyncTask<String, Void, Void> {
         /**
          * Looks up user data in the database given a mail address. Sets the signed-in user object's
          * variables.
          *
-         * @param mailAddressandProfilePic - mail address of user trying to sign in.
+         * @param mailAddress - mail address of user trying to sign in.
          * @return userInfo - index: 0 = user name, 1 = user mail address , 2 = user id
          * @see #onPostExecute - initializes signed in users variables with userinfo
          */
         @Override
-        protected Void doInBackground(List<String>... mailAddressandProfilePic) {
+        protected Void doInBackground(String... mailAddress) {
 
             try {
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
-                String userName = mailAddressandProfilePic[0].get(0);
+                String userName = mailAddress[0];
                 if (currentPerson != null) {
                     userName = currentPerson.getDisplayName();
                 }
 
-                LoginRequest loginRequest = new LoginRequest(mailAddressandProfilePic[0].get(0),
-                        userName, "", Long.valueOf(mailAddressandProfilePic[0].get(1)));
+                LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName, "");
                 mDataManager.loginUser(loginRequest);
-
             } catch (DataManagerException e) {
                 Log.d(TAG, "Failed to add new user: " + e.getMessage());
             }
@@ -309,6 +304,8 @@ public class LoginActivity extends Activity implements
 
                 showSignedOutUI();
             }
+
+            new GetUserData().execute(SignedInUser.getInstance().getId());
         }
     }
 
@@ -408,7 +405,6 @@ public class LoginActivity extends Activity implements
     }
     // [END on_sign_out_clicked]
 
-
     private class LoadProfileImage extends AsyncTask<String, Void, BitmapDrawable> {
         @Override
         protected BitmapDrawable doInBackground(String... urls) {
@@ -440,10 +436,45 @@ public class LoginActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Long profilePicId) {
-            List<String> mailAndProfileId = new ArrayList<>(2);
-            mailAndProfileId.add(mMailAddress);
-            mailAndProfileId.add(profilePicId.toString());
-            new UserAuthenticator().execute(mailAndProfileId);
+            new StoreUserProfilePic().execute(profilePicId);
+        }
+    }
+
+    private class StoreUserProfilePic extends AsyncTask<Long, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Long... picIds) {
+            try {
+                mDataManager.setUserProfilePic(picIds[0], SignedInUser.getInstance().getId());
+                return 1;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Integer success) {
+        }
+    }
+
+    private class GetUserData extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return mDataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            if (userData.getUserProfilePic() == -1) {
+                String profilePic = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient).getImage().getUrl();
+                new LoadProfileImage().execute(profilePic);
+            }
         }
     }
 }

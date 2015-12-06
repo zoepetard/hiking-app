@@ -32,8 +32,11 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -44,6 +47,7 @@ import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
+import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 
@@ -56,6 +60,7 @@ public class HikeInfoView {
     private long hikeId;
     private long userId;
     private long hikeOwnerId;
+    private TextView hikeOwner;
     private TextView hikeName;
     private TextView hikeDistance;
     private RatingBar hikeRatingBar;
@@ -72,6 +77,7 @@ public class HikeInfoView {
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
+    private HikeComment newComment;
 
     public HikeInfoView (final View view, final Activity activity, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
@@ -79,7 +85,18 @@ public class HikeInfoView {
         userId = SignedInUser.getInstance().getId();
 
         // initializing UI element in the layout for the HikeInfoView.
-        this.context = context;
+        this.context = activity.getApplicationContext();
+
+        hikeOwner = (TextView) view.findViewById(R.id.hikeinfo_owner);
+        hikeOwner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, UserDataActivity.class);
+                i.putExtra(UserDataActivity.EXTRA_USER_ID, hikeOwnerId);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                v.getContext().startActivity(i);
+            }
+        });
 
         hikeName = (TextView) view.findViewById(R.id.hikeinfo_name);
 
@@ -105,7 +122,7 @@ public class HikeInfoView {
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
         // Add adapter and onclickmethods to the nav drawer listview
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
-                navDrawerList, activity);
+                navDrawerList, activity, activity);
 
         galleryImageViews = new ArrayList<>(4);
         /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
@@ -125,9 +142,10 @@ public class HikeInfoView {
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
                     DefaultHikeComment comment = new DefaultHikeComment(rawHikeComment);
+                    newComment = comment;
                     new PostCommentAsync().execute(rawHikeComment);
                     commentEditText.setText("");
-                    showNewComment(comment);
+                    new GetUserName().execute(userId);
                 } else {
                     new AlertDialog.Builder(v.getContext())
                             .setMessage(R.string.type_comment);
@@ -221,11 +239,12 @@ public class HikeInfoView {
             hikeElevation.setText(elevationString);
 
             hikeOwnerId = hikeData.getOwnerId();
+            new ShowOwnerName().execute(hikeOwnerId);
 
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
             for (HikeComment comment : comments) {
-                showNewComment(comment);
+                showNewComment(comment, "");
             }
 
             loadImageScrollView();
@@ -301,25 +320,38 @@ public class HikeInfoView {
         return navDrawerList;
     }
 
-    private void showNewComment(HikeComment comment) {
+    private void showNewComment(HikeComment comment, String name) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
 
         TextView commentDate = (TextView) commentRow
                 .findViewById(R.id.comment_date);
-        commentDate.setText(comment.getCommentDate().toString());
+        String date;
+        if (comment.getCommentDate() == null) { // new comment
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            Date dateNow = new Date();
+            date = dateFormat.format(dateNow);
+        } else {
+            date = comment.getCommentDate();
+        }
+        commentDate.setText(date);
 
         TextView commentName = (TextView) commentRow
                 .findViewById(R.id.comment_username);
         final Long commentOwnerId = comment.getCommentOwnerId();
         if (commentOwnerId == hikeOwnerId) commentName.setTextColor(Color.RED);
-        commentName.setText(comment.getCommentOwnerName());
+        if (comment.getCommentOwnerName() == null) { // new comment
+            commentName.setText(name);
+        } else {
+            commentName.setText(comment.getCommentOwnerName());
+        }
         commentName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), UserDataActivity.class);
                 i.putExtra(UserDataActivity.EXTRA_USER_ID, commentOwnerId);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 v.getContext().startActivity(i);
             }
         });
@@ -329,6 +361,43 @@ public class HikeInfoView {
         commentText.setText(comment.getCommentText());
 
         commentList.addView(commentRow);
+    }
+
+    private class ShowOwnerName extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                Log.d("userid", userIds[0].toString());
+                return dataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            hikeOwner.setText(userData.getUserName());
+        }
+    }
+
+    private class GetUserName extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return dataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            showNewComment(newComment, userData.getUserName());
+        }
     }
 
 }

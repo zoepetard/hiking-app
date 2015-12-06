@@ -23,5 +23,5 @@ public interface HikeComment {
 
     String getCommentText();
 
-    Date getCommentDate();
+    String getCommentDate();
 }

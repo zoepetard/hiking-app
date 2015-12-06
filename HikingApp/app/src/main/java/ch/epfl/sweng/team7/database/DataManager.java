@@ -273,6 +273,13 @@ public final class DataManager {
 
     }
 
+    public void setUserProfilePic(long newPicId, long userId) throws DataManagerException {
+        UserData userData = getUserData(userId);
+        RawUserData rawUserData = new RawUserData(userData.getUserId(), userData.getUserName(),
+                userData.getMailAddress(), newPicId);
+        setUserData(rawUserData);
+    }
+
     /**
      * Retrieve a user data object from cache or database
      * TODO server side needs to be implemented before this can work correctly

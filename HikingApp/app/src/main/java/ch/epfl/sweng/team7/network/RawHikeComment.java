@@ -1,11 +1,14 @@
 package ch.epfl.sweng.team7.network;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -18,7 +21,7 @@ public class RawHikeComment {
     private long mCommentOwnerId;
     private String mCommentOwnerName;
     private String mCommentText;
-    private Date mCommentDate;
+    private String mCommentDate;
 
     public RawHikeComment(long commentId, long commentHikeId, long commentOwnerId,
                           String commentText) {
@@ -29,7 +32,7 @@ public class RawHikeComment {
     }
 
     public RawHikeComment(long commentId, long commentHikeId, long commentOwnerId,
-                          String commentOwnerName, String commentText, Date commentDate) {
+                          String commentOwnerName, String commentText, String commentDate) {
         mCommentId = commentId;
         mCommentHikeId = commentHikeId;
         mCommentOwnerId = commentOwnerId;
@@ -58,7 +61,7 @@ public class RawHikeComment {
         return mCommentText;
     }
 
-    public Date getCommentDate() {
+    public String getCommentDate() {
         return mCommentDate;
     }
 
@@ -79,9 +82,13 @@ public class RawHikeComment {
     }
 
     public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException, ParseException {
-        String dateString = jsonObject.getString("date");
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date date = format.parse(dateString);
+//        Long dateLongForm = jsonObject.getLong("date");
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+//        Date dateDateForm = new Date(dateLongForm);
+//        String date = dateFormat.format(dateDateForm);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        Date dateNow = new Date();
+        String date = dateFormat.format(dateNow);
         return new RawHikeComment(
                 jsonObject.getLong("comment_id"),
                 jsonObject.getLong("hike_id"),

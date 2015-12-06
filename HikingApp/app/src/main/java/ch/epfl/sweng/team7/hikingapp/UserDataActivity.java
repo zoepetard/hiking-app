@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,7 +14,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.List;
@@ -37,17 +45,16 @@ public class UserDataActivity extends FragmentActivity {
     private final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
 
-    private static UserData mUserData;
-
     private DataManager mDataManager = DataManager.getInstance();
     SignedInUser mOwner = SignedInUser.getInstance();
 
+    private UserData mUserData;
     private Long mUserId; // not necessarily the one logged in, but the one whose profile is display
     private ImageView mProfilePic;
     private LinearLayout mHikeList;
-    private TextView userName;
-    private TextView userEmail;
-    private TextView numHikes;
+    private TextView mUserName;
+    private TextView mUserEmail;
+    private TextView mNumHikes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +70,48 @@ public class UserDataActivity extends FragmentActivity {
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
         NavigationDrawerListFactory navDrawerListFactory =
-                new NavigationDrawerListFactory(navDrawerList, this);
+                new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext(), this);
 
         mUserId = getIntent().getLongExtra(EXTRA_USER_ID, -1);
-        userName = (TextView) findViewById(R.id.user_name);
-        userEmail = (TextView) findViewById(R.id.user_email);
-        numHikes = (TextView) findViewById(R.id.num_hikes);
+        mUserName = (TextView) findViewById(R.id.user_name);
+        mUserEmail = (TextView) findViewById(R.id.user_email);
+        mNumHikes = (TextView) findViewById(R.id.num_hikes);
 
-        userName.setOnClickListener(new View.OnClickListener() {
+        mUserName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mUserId == mOwner.getId()) {
-                    DialogFragment changeNicknameDialog = new ChangeNicknameDialog();
-                    changeNicknameDialog.show(getSupportFragmentManager(), "change");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setTitle(R.string.change_name);
+                    final EditText nickname = new EditText(v.getContext());
+                    nickname.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(nickname);
+                    builder.setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String newName = nickname.getText().toString();
+                            if (!newName.equals("")) {
+                                mUserName.setText(newName);
+                                TextView nameSidePanel = (TextView) findViewById(R.id.profile_name);
+                                nameSidePanel.setText(newName);
+                                mUserData.setUserName(newName);
+                                new SaveUserName().execute(newName);
+                                dialog.cancel();
+                            } else {
+                                Toast.makeText(UserDataActivity.this,
+                                        R.string.valid_user_name, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    builder.setNegativeButton(R.string.button_cancel_save,
+                            new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
                 }
             }
         });
@@ -113,6 +149,7 @@ public class UserDataActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                finish();
             }
         });
 
@@ -121,17 +158,40 @@ public class UserDataActivity extends FragmentActivity {
         new GetUserHikes().execute(mUserId);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                new LoadNewImage().execute(selectedImageUri.toString());
+                new LoadNewImage().execute(selectedImageUri);
             }
         }
     }
 
-    public static void changeUserName(String newUserName) {
-        mUserData.setUserName(newUserName);
+    private int dpToPx(int dp) {
+        float density = getApplicationContext().getResources().getDisplayMetrics().density;
+        return Math.round((float)dp * density);
+    }
+
+    private BitmapDrawable scaleDrawable(BitmapDrawable original) {
+        Bitmap bitmap = original.getBitmap();
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int bounding = dpToPx(200);
+        float xScale = ((float) bounding) / width;
+        float yScale = ((float) bounding) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(xScale, yScale);
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+        return new BitmapDrawable(scaledBitmap);
     }
 
     private class GetUserHikes extends AsyncTask<Long, Void, List<HikeData>> {
@@ -151,7 +211,7 @@ public class UserDataActivity extends FragmentActivity {
             for (HikeData hike : hikes) {
                 displayHike(hike);
             }
-            numHikes.setText(getString(R.string.num_hikes_fmt, hikes.size()));
+            mNumHikes.setText(getString(R.string.num_hikes_fmt, hikes.size()));
         }
 
         private void displayHike(final HikeData hike) {
@@ -190,10 +250,27 @@ public class UserDataActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(UserData userData) {
             mUserData = userData;
-            userName.setText(userData.getUserName());
-            userEmail.setText(userData.getMailAddress());
-
+            mUserName.setText(userData.getUserName());
+            mUserEmail.setText(userData.getMailAddress());
             new GetUserPic().execute(userData.getUserProfilePic());
+        }
+    }
+
+    private class SaveUserName extends AsyncTask<String, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(String... userNames) {
+            try {
+                mDataManager.changeUserName(userNames[0], mOwner.getId());
+                return 1;
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Integer success) {
         }
     }
 
@@ -215,12 +292,12 @@ public class UserDataActivity extends FragmentActivity {
         }
     }
 
-    private class LoadNewImage extends AsyncTask<String, Void, BitmapDrawable> {
+    private class LoadNewImage extends AsyncTask<Uri, Void, Drawable> {
         @Override
-        protected BitmapDrawable doInBackground(String... urls) {
+        protected Drawable doInBackground(Uri... uris) {
             try {
-                InputStream in = new java.net.URL(urls[0]).openStream();
-                return new BitmapDrawable(getResources(), BitmapFactory.decodeStream(in));
+                InputStream inputStream = getContentResolver().openInputStream(uris[0]);
+                return Drawable.createFromStream(inputStream, uris[0].toString());
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -228,8 +305,11 @@ public class UserDataActivity extends FragmentActivity {
         }
 
         @Override
-        protected void onPostExecute(BitmapDrawable profilePic) {
-            mProfilePic.setImageDrawable(profilePic);
+        protected void onPostExecute(Drawable profilePic) {
+            Drawable scaledPic = scaleDrawable((BitmapDrawable) profilePic);
+            mProfilePic.setImageDrawable(scaledPic);
+            ImageView profileSidePanel = (ImageView) findViewById(R.id.profile_pic_side_panel);
+            profileSidePanel.setImageDrawable(profilePic);
             new StoreProfileImage().execute(profilePic);
         }
     }
@@ -248,6 +328,24 @@ public class UserDataActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(Long profilePicId) {
             mUserData.setUserProfilePic(profilePicId);
+            new StoreUserProfilePic().execute(profilePicId);
+        }
+    }
+
+    private class StoreUserProfilePic extends AsyncTask<Long, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Long... picIds) {
+            try {
+                mDataManager.setUserProfilePic(picIds[0], mOwner.getId());
+                return 1;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Integer success) {
         }
     }
 }

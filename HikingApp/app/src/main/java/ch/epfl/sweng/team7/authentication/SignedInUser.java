@@ -9,11 +9,9 @@ import org.json.JSONObject;
 public class SignedInUser {
 
     private long mId;
-    private String mName;
     private String mMailAddress;
     private boolean mLoggedIn;
     private String mAuthToken;
-    private long mProfilePicId;
 
     private SignedInUser() {
         mLoggedIn = false;
@@ -36,10 +34,6 @@ public class SignedInUser {
         return mId;
     }
 
-    public String getUserName() {
-        return mName;
-    }
-
     public String getMailAddress() {
         return mMailAddress;
     }
@@ -48,16 +42,11 @@ public class SignedInUser {
         return mLoggedIn;
     }
 
-    public long getProfilePicId() {
-        return mProfilePicId;
-    }
-
     public void logout() {
         mLoggedIn = false;
         mId = 0;
         mMailAddress = "";
         mAuthToken = "";
-        mProfilePicId = 0;
     }
 
     /**
@@ -69,9 +58,7 @@ public class SignedInUser {
         if(mLoggedIn) {
             jsonObject.put("mail_address", mMailAddress);
             jsonObject.put("user_id", mId);
-            jsonObject.put("user_name", mName);
             jsonObject.put("token", mAuthToken);
-            jsonObject.put("profile_image_id", mProfilePicId);
         }
         return jsonObject;
     }
@@ -84,9 +71,7 @@ public class SignedInUser {
     public void loginFromJSON(JSONObject jsonObject) throws JSONException {
         mMailAddress = jsonObject.getString("mail_address");
         mId = jsonObject.getLong("user_id");
-        mName = jsonObject.getString("user_name");
         mAuthToken = jsonObject.getString("token");
-        mProfilePicId = jsonObject.getLong("profile_image_id");
         mLoggedIn = true;
     }
 }
