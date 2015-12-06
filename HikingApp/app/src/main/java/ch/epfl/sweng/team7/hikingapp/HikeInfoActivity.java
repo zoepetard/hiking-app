@@ -35,6 +35,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
     private final static String HIKE_ID = "hikeID";
+    private HikeInfoView hikeInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +99,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         View loadingScreen = getLayoutInflater().inflate(R.layout.loading_screen, null);
         mainContentFrame.addView(loadingScreen);
 
-        final HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
+        hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -110,7 +111,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             }
         });
 
-        // Setting a listener for each imageview.
+        // Setting a listener for each imageview. TODO REMOVE THIS AND LISTENER
         for (int i = 0; i < hikeInfoView.getGalleryImageViews().size(); i++) {
             Log.d(LOG_FLAG,"imgview size: " + hikeInfoView.getGalleryImageViews().size());
             ImageView imgView = hikeInfoView.getGalleryImageViews().get(i);
@@ -185,7 +186,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             ImageView fullScreenView = (ImageView) findViewById(R.id.image_fullscreen);
             fullScreenView.setImageDrawable(drawable);
 
-            toggleFullScreen();
+            hikeInfoView.toggleFullScreen();
         }
     }
 
@@ -200,7 +201,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     private class BackButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            toggleFullScreen();
+            hikeInfoView.toggleFullScreen();
         }
     }
 
@@ -236,7 +237,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
     }
 
-    public void toggleFullScreen() {
+    /*public void toggleFullScreen() {
         View infoView = findViewById(R.id.info_overview_layout);
         View fullScreenView = findViewById(R.id.image_fullscreen_layout);
         View containerView = findViewById(R.id.info_scrollview);
@@ -254,6 +255,9 @@ public final class HikeInfoActivity extends FragmentActivity {
             fullScreenView.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.WHITE);
         }
-    }
+    }*/
 
+    public HikeInfoView getHikeInfoView() {
+        return hikeInfoView;
+    }
 }

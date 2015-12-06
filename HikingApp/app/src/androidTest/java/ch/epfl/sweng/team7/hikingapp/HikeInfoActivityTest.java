@@ -4,12 +4,14 @@ package ch.epfl.sweng.team7.hikingapp;
  * Created by fredrik-eliasson on 08/11/15.
  */
 
+import android.os.Bundle;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.support.test.espresso.contrib.*;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,7 +22,9 @@ import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -112,7 +116,9 @@ public class HikeInfoActivityTest
         hikeInfoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hikeInfoActivity.toggleFullScreen();
+                
+                hikeInfoActivity.getHikeInfoView().toggleFullScreen();
+
                 View infoView = getActivity().findViewById(R.id.info_overview_layout);
                 View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
 
@@ -124,7 +130,8 @@ public class HikeInfoActivityTest
                     fail("fullScreenView should be VISIBLE");
                 }
 
-                hikeInfoActivity.toggleFullScreen();
+                Button backButton = hikeInfoActivity.getHikeInfoView().getBackButton();
+                backButton.callOnClick();
 
                 if (infoView.getVisibility() != View.VISIBLE) {
                     fail("infoView should be VISIBLE");
@@ -143,7 +150,8 @@ public class HikeInfoActivityTest
         hikeInfoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hikeInfoActivity.toggleFullScreen();
+                HikeInfoView hikeInfoView = hikeInfoActivity.getHikeInfoView();
+                hikeInfoView.toggleFullScreen();
             }
         });
 

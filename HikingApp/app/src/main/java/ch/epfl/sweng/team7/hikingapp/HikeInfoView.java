@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -67,6 +69,7 @@ public class HikeInfoView {
     private LinearLayout commentList;
     private Button exportButton;
     private HikeData displayedHike;
+    private int scrollLevelYInfo = 0;
 
     public HikeInfoView(final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
@@ -86,6 +89,8 @@ public class HikeInfoView {
 
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
+
+        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
         backButton = (Button) view.findViewById(R.id.back_button_fullscreen_image);
 
@@ -109,6 +114,8 @@ public class HikeInfoView {
         EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
+
+        this.view = view;
 
         exportButton = (Button) view.findViewById(R.id.button_export_hike);
 
@@ -263,6 +270,8 @@ public class HikeInfoView {
             imageView.setImageResource(img);
             galleryImageViews.add(imageView);
 
+            imageView.setOnClickListener(new ImageViewClickListener());
+
             return imageView;
 
         }
@@ -329,6 +338,42 @@ public class HikeInfoView {
 
     public HikeData getDisplayedHike() {
         return displayedHike;
+    }
+
+
+    public void toggleFullScreen() {
+        View infoView = view.findViewById(R.id.info_overview_layout);
+        View fullScreenView = view.findViewById(R.id.image_fullscreen_layout);
+        final ScrollView containerView = (ScrollView) view.findViewById(R.id.info_scrollview);
+
+        // Check which view is currently visible and switch
+        if (infoView.getVisibility() == View.VISIBLE) {
+
+            infoView.setVisibility(View.GONE);
+            containerView.setBackgroundColor(Color.BLACK);
+            fullScreenView.setVisibility(View.VISIBLE);
+
+
+        } else {
+            infoView.setVisibility(View.VISIBLE);
+            fullScreenView.setVisibility(View.GONE);
+            containerView.setBackgroundColor(Color.WHITE);
+
+        }
+    }
+
+    private class ImageViewClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            // Update image in full screen view
+            ImageView imgView = (ImageView) v;
+            Drawable drawable = imgView.getDrawable();
+
+            ImageView fullScreenView = (ImageView) view.findViewById(R.id.image_fullscreen);
+            fullScreenView.setImageDrawable(drawable);
+
+            toggleFullScreen();
+        }
     }
 
 }
