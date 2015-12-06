@@ -342,22 +342,50 @@ public class HikeInfoView {
 
 
     public void toggleFullScreen() {
-        View infoView = view.findViewById(R.id.info_overview_layout);
+        final View infoView = view.findViewById(R.id.info_overview_layout);
         View fullScreenView = view.findViewById(R.id.image_fullscreen_layout);
         final ScrollView containerView = (ScrollView) view.findViewById(R.id.info_scrollview);
+        View topBar = view.findViewById(R.id.hike_info_top_bar);
+        View exportStatusText = view.findViewById(R.id.export_status_text);
 
         // Check which view is currently visible and switch
         if (infoView.getVisibility() == View.VISIBLE) {
 
+            Log.d(LOG_FLAG, "Scroll level: " + containerView.getScrollY());
+            Log.d(LOG_FLAG, "Scroll_level before: " + containerView.getMaxScrollAmount());
+            containerView.scrollTo(0, containerView.getScrollY());
+            scrollLevelYInfo = containerView.getScrollY();
             infoView.setVisibility(View.GONE);
+            topBar.setVisibility(View.GONE);
+            exportStatusText.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.BLACK);
             fullScreenView.setVisibility(View.VISIBLE);
 
 
         } else {
+            topBar.setVisibility(View.VISIBLE);
+            exportStatusText.setVisibility(View.VISIBLE);
             infoView.setVisibility(View.VISIBLE);
             fullScreenView.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.WHITE);
+            Log.d(LOG_FLAG, "scrollLevelYInfo = " + scrollLevelYInfo);
+            Log.d(LOG_FLAG, String.valueOf(containerView.getMaxScrollAmount()));
+            Log.d(LOG_FLAG, "child height: " + String.valueOf(containerView.getChildAt(0).getHeight()));
+
+            //containerView.setScrollY(containerView.getChildAt(0).getHeight());
+            infoView.post(new Runnable() {
+                @Override
+                public void run() {
+                    infoView.scrollTo(0,scrollLevelYInfo - containerView.getMaxScrollAmount());
+                }
+            });
+
+            containerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    containerView.scrollTo(0, scrollLevelYInfo);
+                }
+            });
 
         }
     }

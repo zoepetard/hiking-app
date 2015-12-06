@@ -216,7 +216,6 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
     }
 
-
     public HikeInfoView getHikeInfoView() {
         return hikeInfoView;
     }
