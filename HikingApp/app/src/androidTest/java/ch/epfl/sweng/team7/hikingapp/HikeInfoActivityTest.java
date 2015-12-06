@@ -116,7 +116,7 @@ public class HikeInfoActivityTest
         hikeInfoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                
+
                 hikeInfoActivity.getHikeInfoView().toggleFullScreen();
 
                 View infoView = getActivity().findViewById(R.id.info_overview_layout);
