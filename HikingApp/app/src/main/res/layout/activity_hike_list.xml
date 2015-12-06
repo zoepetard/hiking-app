@@ -15,16 +15,11 @@
         android:textSize="12sp"
         android:onClick="backToMap"/>
 
-    <ScrollView
+    <ListView
+        android:id="@+id/hike_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/hikeListScroll"
-        android:layout_below="@+id/back_button"
-        android:layout_alignParentStart="true" >
+        android:layout_height="wrap_content"
+        android:layout_below="@id/back_button">
+    </ListView>
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/hikeListTable"></TableLayout>
-    </ScrollView>
 </RelativeLayout>
