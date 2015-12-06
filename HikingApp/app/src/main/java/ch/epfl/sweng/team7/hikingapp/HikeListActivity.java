@@ -26,13 +26,11 @@ public class HikeListActivity extends Activity {
     public final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
-
+    //Displays a list of nearby hikes, with a map, the distance and the rating.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hike_list);
-
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
         // Inflate Navigation Drawer with main content
