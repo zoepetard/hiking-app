@@ -5,42 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.gms.maps.MapView android:id="@+id/mapHikeList"
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapHikeList"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:padding="5dp"/>
+        android:padding="5dp" />
 
-    <TextView
-        android:id="@+id/nameRow"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/mapHikeList"
-        android:gravity="center_vertical"
-        android:textSize="12sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_toEndOf="@id/mapHikeList"
+        android:layout_centerVertical="true">
 
-    <TextView
-        android:id="@+id/distanceRow"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/nameRow"
-        android:layout_toRightOf="@id/mapHikeList"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:textSize="10sp" />
+        <TextView
+            android:id="@+id/nameRow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/ratingRow"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/distanceRow"
-        android:layout_toRightOf="@id/mapHikeList"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:textSize="10sp" />
+        <TextView
+            android:id="@+id/distanceRow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/ratingRow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </RelativeLayout>

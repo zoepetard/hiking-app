@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,8 @@ import ch.epfl.sweng.team7.database.HikeData;
  */
 public class CustomListAdapter extends BaseAdapter {
 
+    public final static String EXTRA_HIKE_ID =
+            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     HikeListActivity context;
     List<HikeData> mHikes;
     int mapHeight = 0;
@@ -53,9 +56,8 @@ public class CustomListAdapter extends BaseAdapter {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        HikeData hikeData = mHikes.get(position);
-        View rowView;
-        rowView = inflater.inflate(R.layout.activity_hike_listview, null);
+        final HikeData hikeData = mHikes.get(position);
+        final View rowView = inflater.inflate(R.layout.activity_hike_listview, null);
         ViewHolder holder;
 
         DisplayMetrics display = context.getResources().getDisplayMetrics();
@@ -64,6 +66,7 @@ public class CustomListAdapter extends BaseAdapter {
         mapHeight = screenHeight / 5;
         mapWidth = screenWidth / 3;
 
+        //Display map.
         holder = new ViewHolder();
         holder.mapView = (MapView) rowView.findViewById(R.id.mapHikeList);
         holder.initializeMapView(hikeData);
@@ -72,6 +75,7 @@ public class CustomListAdapter extends BaseAdapter {
         mapParams.height = mapHeight;
         mapParams.width = mapWidth;
 
+        //Display hike details.
         TextView nameText = (TextView) rowView.findViewById(R.id.nameRow);
         nameText.setText(hikeData.getTitle());
 
@@ -80,6 +84,15 @@ public class CustomListAdapter extends BaseAdapter {
 
         TextView ratingText = (TextView) rowView.findViewById(R.id.ratingRow);
         ratingText.setText(context.getResources().getString(R.string.hikeRatingText, (long) hikeData.getRating().getDisplayRating()));
+
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
+                i.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
+                rowView.getContext().startActivity(i);
+            }
+        });
 
         return rowView;
     }
@@ -103,10 +116,8 @@ public class CustomListAdapter extends BaseAdapter {
         public void initializeMapView(HikeData hikeData) {
             if (mapView != null) {
                 mHikeData = hikeData;
-                // Initialise the MapView
                 mapView.onCreate(null);
                 mapView.onResume();
-                // Set the map ready callback to receive the GoogleMap object
                 mapView.getMapAsync(this);
             }
         }
