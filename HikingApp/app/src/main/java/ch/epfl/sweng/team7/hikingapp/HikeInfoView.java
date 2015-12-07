@@ -188,8 +188,11 @@ public class HikeInfoView {
 
 
             float rating = (float) hikeData.getRating().getDisplayRating();
-            double elevationMin = hikeData.getMinElevation();
-            double elevationMax = hikeData.getMaxElevation();
+            Double elevationMin = hikeData.getMinElevation();
+            Double elevationMax = hikeData.getMaxElevation();
+
+            Integer elevationMinInteger = elevationMin.intValue();
+            Integer elevationMaxInteger = elevationMax.intValue();
 
             List<HikePoint> hikePoints = hikeData.getHikePoints();
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
@@ -228,7 +231,7 @@ public class HikeInfoView {
 
             hikeRatingBar.setRating(rating);
 
-            String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
+            String elevationString = "Min: " + String.valueOf(elevationMinInteger) + " m  " + "Max: " + String.valueOf(elevationMaxInteger) + " m";
             hikeElevation.setText(elevationString);
 
             hikeOwnerId = hikeData.getOwnerId();
