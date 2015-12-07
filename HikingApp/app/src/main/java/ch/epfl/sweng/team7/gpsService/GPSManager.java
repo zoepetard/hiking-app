@@ -338,6 +338,7 @@ public final class GPSManager {
             }
         });
         builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
+        builder.setCancelable(false);
         builder.show();
     }
 
