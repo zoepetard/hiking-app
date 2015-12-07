@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HikingApp</string>
+    <string name="app_name">Footpath</string>
     <string name="title_activity_map">Map</string>
     <string name="title_activity_hike_list">HikeListActivity</string>
 
@@ -88,6 +88,7 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
 
+
     <string name="hike_name">Hike Name</string>
     <string name="distance">Distance</string>
     <string name="sample_distance">10 km</string>
@@ -112,5 +113,11 @@
 
     <string name="export_error">Failed to export hike</string>
     <string name="export_success">Export successful!</string>
+
+    <!-- Static TextView Strings -->
+    <string name="loading_string">Loading...</string>
+
+    <!-- Elevation -->
+    <string name="elevation_min_max">Min: %1$s m Max: %2$s m</string>
 
 </resources>
