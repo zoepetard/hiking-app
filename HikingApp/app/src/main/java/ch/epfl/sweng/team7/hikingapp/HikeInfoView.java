@@ -70,6 +70,7 @@ public class HikeInfoView {
     private LinearLayout commentList;
     private Button exportButton;
     private HikeData displayedHike;
+    private View overlayView;
     private LinearLayout root;
 
     public HikeInfoView(final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
@@ -92,8 +93,6 @@ public class HikeInfoView {
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
         imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
-
-        backButton = (Button) view.findViewById(R.id.back_button_fullscreen_image);
 
         fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
 
@@ -142,6 +141,18 @@ public class HikeInfoView {
         });
 
         commentList = (LinearLayout) view.findViewById(R.id.comments_list);
+
+        root = (LinearLayout) view.findViewById(R.id.hike_info_root_layout);
+
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        overlayView = layoutInflater.inflate(R.layout.hike_info_fullscreen, null);
+        backButton = (Button) overlayView.findViewById(R.id.back_button_fullscreen_image);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                root.removeView(overlayView);
+            }
+        });
 
         new GetOneHikeAsync().execute(hikeId);
 
@@ -234,9 +245,9 @@ public class HikeInfoView {
 
             hikeRatingBar.setRating(rating);
 
-            String elevationString = "Min: " + String.valueOf(elevationMinInteger) + " m  " + "Max: " + String.valueOf(elevationMaxInteger) + " m";
+            //String elevationString = "Min: " + String.valueOf(elevationMinInteger) + " m  " + "Max: " + String.valueOf(elevationMaxInteger) + " m";
+            String elevationString = String.format(context.getResources().getString(R.string.elevation_min_max), elevationMinInteger, elevationMaxInteger);
             hikeElevation.setText(elevationString);
-
             hikeOwnerId = hikeData.getOwnerId();
 
             List<HikeComment> comments = hikeData.getAllComments();
@@ -256,11 +267,9 @@ public class HikeInfoView {
             Integer img1 = R.drawable.login_background;
 
             // add imageviews with images to the scrollview
-            for (int i = 0; i < 1; i++) {
+            imgLayout.addView(createImageView(img1));
 
-                imgLayout.addView(createImageView(img1));
 
-            }
         }
 
         private View createImageView(Integer img) {
@@ -348,43 +357,21 @@ public class HikeInfoView {
 
     public void toggleFullScreen() {
         final View infoView = view.findViewById(R.id.info_overview_layout);
-        View fullScreenView = view.findViewById(R.id.image_fullscreen_layout);
-        final ScrollView containerView = (ScrollView) view.findViewById(R.id.info_scrollview);
-        View topBar = view.findViewById(R.id.hike_info_top_bar);
-        View exportStatusText = view.findViewById(R.id.export_status_text);
-
-        root = (LinearLayout) view.findViewById(R.id.hike_info_root_layout);
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View overlayView = layoutInflater.inflate(R.layout.hike_info_fullscreen, null);
-        backButton = (Button) overlayView.findViewById(R.id.back_button_fullscreen_image);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                root.removeView(overlayView);
-            }
-        });
 
         // Check which view is currently visible and switch
         if (infoView.getVisibility() == View.VISIBLE) {
-
-            /*infoView.setVisibility(View.GONE);
-            topBar.setVisibility(View.GONE);
-            exportStatusText.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.BLACK);
-            fullScreenView.setVisibility(View.VISIBLE);
-            */
             root.addView(overlayView, 0);
-
-
         } else {
-            /*topBar.setVisibility(View.VISIBLE);
-            exportStatusText.setVisibility(View.VISIBLE);
-            infoView.setVisibility(View.VISIBLE);
-            fullScreenView.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.WHITE);*/
             root.removeView(overlayView);
-
         }
+    }
+
+    public View getOverlayView() {
+        return overlayView;
+    }
+
+    public LinearLayout getRootLayout() {
+        return root;
     }
 
     private class ImageViewClickListener implements View.OnClickListener {

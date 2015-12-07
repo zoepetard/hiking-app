@@ -112,8 +112,6 @@ public final class HikeInfoActivity extends FragmentActivity {
         });
 
 
-        hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
-
         if (mapHikeInfo != null) {
             mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
         }

@@ -119,26 +119,16 @@ public class HikeInfoActivityTest
 
                 hikeInfoActivity.getHikeInfoView().toggleFullScreen();
 
-                View infoView = getActivity().findViewById(R.id.info_overview_layout);
-                View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
+                View overLay = hikeInfoActivity.getHikeInfoView().getOverlayView();
 
-                if (infoView.getVisibility() == View.VISIBLE) {
-                    fail("infoView should be GONE");
+                if (hikeInfoActivity.getHikeInfoView().getRootLayout().indexOfChild(overLay) != 0) {
+                    fail("fullscreen overlay should be on top of view hierarchy");
                 }
 
-                if (fullScreenView.getVisibility() != View.VISIBLE) {
-                    fail("fullScreenView should be VISIBLE");
-                }
+                hikeInfoActivity.getHikeInfoView().getBackButton().callOnClick();
 
-                Button backButton = hikeInfoActivity.getHikeInfoView().getBackButton();
-                backButton.callOnClick();
-
-                if (infoView.getVisibility() != View.VISIBLE) {
-                    fail("infoView should be VISIBLE");
-                }
-
-                if (fullScreenView.getVisibility() == View.VISIBLE) {
-                    fail("fullScreenView should be GONE");
+                if (hikeInfoActivity.getHikeInfoView().getRootLayout().indexOfChild(overLay) == 0) {
+                    fail("fullscreen overlay should not be on top of view hierarchy");
                 }
             }
         });
@@ -158,7 +148,7 @@ public class HikeInfoActivityTest
         View infoView = getActivity().findViewById(R.id.info_overview_layout);
         View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
 
-        onView(withId(R.id.back_button_fullscreen_image)).perform(click());
+        hikeInfoActivity.getHikeInfoView().getBackButton().callOnClick();
         if (infoView.getVisibility() != View.VISIBLE) {
             fail("infoView should be VISIBLE");
         }
