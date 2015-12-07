@@ -25,7 +25,7 @@ import ch.epfl.sweng.team7.database.HikeData;
  */
 public class CustomListAdapter extends BaseAdapter {
 
-    public final static String EXTRA_HIKE_ID =
+    public static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     HikeListActivity context;
     List<HikeData> mHikes;
