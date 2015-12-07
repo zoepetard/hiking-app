@@ -3,8 +3,6 @@ package ch.epfl.sweng.team7.authentication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.sweng.team7.database.DataManager;
-
 /**
  * Created by simon on 11/28/15.
  * A LoginRequest is sent from the frontend to the backend
@@ -17,7 +15,6 @@ import ch.epfl.sweng.team7.database.DataManager;
 
 
 public class LoginRequest {
-    private DataManager mDataManager = DataManager.getInstance();
     private final String mMailAddress;
     private final String mUserNameHint;
     private final String mIdToken;

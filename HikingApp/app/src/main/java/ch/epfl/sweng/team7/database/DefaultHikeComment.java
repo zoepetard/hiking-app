@@ -1,7 +1,5 @@
 package ch.epfl.sweng.team7.database;
 
-import java.util.Date;
-
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 public class DefaultHikeComment implements HikeComment {

@@ -91,7 +91,6 @@ public final class HikeInfoActivity extends FragmentActivity {
         } else if (userHikeIdStr != null) {
             hikeId = Long.valueOf(userHikeIdStr);
         }
-        Log.d("id", Long.toString(hikeId));
         View view = findViewById(android.R.id.content);
 
         // load main content into the navigations drawer's framelayout

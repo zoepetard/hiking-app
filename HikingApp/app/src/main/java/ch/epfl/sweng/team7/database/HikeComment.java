@@ -1,7 +1,5 @@
 package ch.epfl.sweng.team7.database;
 
-import java.util.Date;
-
 public interface HikeComment {
 
     /**
