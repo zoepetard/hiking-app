@@ -50,7 +50,6 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/image_caption_text"
             android:background="#000000"
-            android:text="Text about image"
             android:textColor="#FFFFFF"
             android:layout_below="@+id/image_fullscreen"
             android:layout_alignParentLeft="true"

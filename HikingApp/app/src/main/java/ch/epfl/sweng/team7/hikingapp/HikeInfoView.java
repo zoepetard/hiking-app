@@ -255,7 +255,7 @@ public class HikeInfoView {
             Integer img1 = R.drawable.login_background;
 
             // add imageviews with images to the scrollview
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 1; i++) {
 
                 imgLayout.addView(createImageView(img1));
 
