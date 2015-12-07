@@ -351,7 +351,7 @@ public final class GPSManager {
 
     private void displayCancelPrompt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("WARNING");
+        builder.setTitle(mContext.getResources().getString(R.string.warning_title));
 
         LinearLayout layout = new LinearLayout(mContext);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -364,20 +364,20 @@ public final class GPSManager {
 
         //setup the hike title input field
         TextView warning = new TextView(mContext);
-        warning.setText("\nIf you do this you will lose your hike forever. Do you wish to proceed?");
+        warning.setText(mContext.getResources().getString(R.string.warning_description));
         warning.setTypeface(null, Typeface.BOLD);
         warning.setGravity(View.TEXT_ALIGNMENT_GRAVITY);
         layout.addView(warning);
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(mContext.getResources().getString(R.string.button_proceed_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Keep tracking", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(mContext.getResources().getString(R.string.button_keep_tracking), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
