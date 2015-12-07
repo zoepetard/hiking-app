@@ -269,7 +269,7 @@ public final class DataManager {
 
     /**
      * Retrieve a user data object from cache or database
-     * TODO server side needs to be implemented before this can work correctly
+     *
      *
      * @param userId - id assigned to identify user
      * @return UserData object
@@ -416,7 +416,7 @@ public final class DataManager {
             throw new DataManagerException(e);
         }
     }
-
+    
     /**
      * Look up the id for a user using mail address. Typically used directly after signing in via
      * Google to obtain the id assigned to that account.
