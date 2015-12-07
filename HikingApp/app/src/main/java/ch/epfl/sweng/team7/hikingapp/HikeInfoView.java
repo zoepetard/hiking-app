@@ -8,20 +8,15 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -30,10 +25,9 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,7 +37,6 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.DefaultHikeComment;
-import ch.epfl.sweng.team7.database.DefaultHikeData;
 import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
@@ -51,7 +44,9 @@ import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 
-/** Class which controls and updates the visual part of the view, not the interaction */
+/**
+ * Class which controls and updates the visual part of the view, not the interaction
+ */
 public class HikeInfoView {
     private DataManager dataManager = DataManager.getInstance();
 
@@ -78,9 +73,10 @@ public class HikeInfoView {
     private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
     private HikeComment newComment;
+    private Button exportButton;
+    private HikeData displayedHike;
 
     public HikeInfoView (final View view, final Activity activity, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
-
         hikeId = id;
         userId = SignedInUser.getInstance().getId();
 
@@ -119,6 +115,8 @@ public class HikeInfoView {
 
         imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
+        exportButton = (Button) view.findViewById(R.id.button_export_hike);
+
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
         // Add adapter and onclickmethods to the nav drawer listview
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
@@ -130,6 +128,8 @@ public class HikeInfoView {
         EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
+
+        exportButton = (Button) view.findViewById(R.id.button_export_hike);
 
         Button commentButton = (Button) view.findViewById(R.id.done_edit_comment);
         commentButton.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +178,7 @@ public class HikeInfoView {
                 return;
             }
             displayHike(result);
+            displayedHike = result;
         }
 
         private void setErrorState() {
@@ -188,11 +189,14 @@ public class HikeInfoView {
         private void displayHike(HikeData hikeData) {
             final int ELEVATION_POINT_COUNT = 100;
 
-            List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
-            List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
-            MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
-            MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
-            MapDisplay.setCamera(hikesToDisplay, mapPreview, context);
+            if (mapPreview != null) {
+                List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
+                List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
+                MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
+                MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
+                MapDisplay.setCamera(hikesToDisplay, mapPreview, context);
+            }
+
 
 
             double distance = hikeData.getDistance() / 1000;  // in km
@@ -203,15 +207,15 @@ public class HikeInfoView {
             List<HikePoint> hikePoints = hikeData.getHikePoints();
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
             double lastElapsedTimeInHours = 0;
-            for(int i = 0; i < ELEVATION_POINT_COUNT; ++i) {
-                HikePoint hikePoint = hikePoints.get((i*hikePoints.size()) / ELEVATION_POINT_COUNT);
+            for (int i = 0; i < ELEVATION_POINT_COUNT; ++i) {
+                HikePoint hikePoint = hikePoints.get((i * hikePoints.size()) / ELEVATION_POINT_COUNT);
 
                 final double elapsedTimeInMilliseconds = (hikePoint.getTime().getTime()
                         - hikePoints.get(0).getTime().getTime());
-                final double elapsedTimeInHours = elapsedTimeInMilliseconds / (1000*60*60);
+                final double elapsedTimeInHours = elapsedTimeInMilliseconds / (1000 * 60 * 60);
 
                 // Check that data is in ascending order
-                if(i > 0 && elapsedTimeInHours <= lastElapsedTimeInHours) {
+                if (i > 0 && elapsedTimeInHours <= lastElapsedTimeInHours) {
                     continue;
                 }
                 lastElapsedTimeInHours = elapsedTimeInHours;
@@ -247,17 +251,18 @@ public class HikeInfoView {
                 showNewComment(comment, "");
             }
 
+            exportButton.setVisibility(View.VISIBLE);
             loadImageScrollView();
         }
 
         // create imageviews and add them to the scrollview
-        private void loadImageScrollView(){
+        private void loadImageScrollView() {
 
             // TEMPORARY
             Integer img1 = R.drawable.login_background;
 
             // add imageviews with images to the scrollview
-            for(int i = 0; i<4; i++){
+            for (int i = 0; i < 4; i++) {
 
                 imgLayout.addView(createImageView(img1));
 
@@ -301,6 +306,10 @@ public class HikeInfoView {
 
     public Button getBackButton() {
         return backButton;
+    }
+
+    public Button getExportButton() {
+        return exportButton;
     }
 
     public RatingBar getHikeRatingBar() {
@@ -398,6 +407,10 @@ public class HikeInfoView {
         protected void onPostExecute(UserData userData) {
             showNewComment(newComment, userData.getUserName());
         }
+    }
+
+    public HikeData getDisplayedHike() {
+        return displayedHike;
     }
 
 }

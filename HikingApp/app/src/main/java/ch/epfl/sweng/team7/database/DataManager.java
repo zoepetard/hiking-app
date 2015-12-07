@@ -6,13 +6,37 @@
 package ch.epfl.sweng.team7.database;
 
 import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
@@ -325,6 +349,91 @@ public final class DataManager {
         }
     }
 
+    /**
+     * Method to export the hike as a gpx file to the phone's internal storage
+     *
+     * @param hikeData,context - the hike to be saved, the applications context
+     * @return filepath as a string
+     */
+    public String saveGPX(HikeData hikeData, Context context) throws DataManagerException {
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document doc = documentBuilder.newDocument();
+
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+            String date = format.format(hikeData.getDate());
+
+            // Constructing the xml file by adding and linking elements
+            Element rootElement = doc.createElement("gpx");
+            doc.appendChild(rootElement);
+            rootElement.setAttribute("version", "1.0");
+            rootElement.setAttribute("creator", String.valueOf(hikeData.getOwnerId()));
+            rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
+            rootElement.setAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/0/gpx.xsd");
+
+            Element timeElement = doc.createElement("time");
+            timeElement.appendChild(doc.createTextNode(date));
+            rootElement.appendChild(timeElement);
+
+            Element trackElement = doc.createElement("trk");
+            Element trackName = doc.createElement("name");
+            trackName.appendChild(doc.createTextNode(hikeData.getTitle()));
+            trackElement.appendChild(trackName);
+            rootElement.appendChild(trackElement);
+
+            Element trackSegment = doc.createElement("trkseg");
+            trackElement.appendChild(trackSegment);
+
+            // add the track points to construct the segment
+            for (int i = 0; i < hikeData.getHikePoints().size(); i++) {
+
+                HikePoint hikePoint = hikeData.getHikePoints().get(i);
+
+                Element trackPoint = doc.createElement("trkpt");
+                trackPoint.setAttribute("lat", String.valueOf(hikePoint.getPosition().latitude));
+                trackPoint.setAttribute("lon", String.valueOf(hikePoint.getPosition().longitude));
+
+                Element elevation = doc.createElement("ele");
+                elevation.appendChild(doc.createTextNode(String.valueOf(hikePoint.getElevation())));
+                trackPoint.appendChild(elevation);
+
+                Element pointTime = doc.createElement("time");
+                date = format.format(hikePoint.getTime());
+                pointTime.appendChild(doc.createTextNode(date));
+
+                trackPoint.appendChild(pointTime);
+                trackSegment.appendChild(trackPoint);
+
+            }
+            // transform content into xml and save it to a file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(doc);
+
+            String fileName = "Hike_" + String.valueOf(hikeData.getHikeId() + ".xml");
+            File file = new File(context.getExternalFilesDir(null), fileName);
+
+            Log.d(LOG_FLAG, file.getAbsolutePath());
+            StreamResult hikeStreamResult = new StreamResult(file);
+
+            // format properly before writing content to file
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.transform(domSource, hikeStreamResult);
+
+            return file.getAbsolutePath();
+
+        } catch (ParserConfigurationException e) {
+            Log.d(LOG_FLAG, "Failed to build xml file");
+            throw new DataManagerException(e);
+        } catch (TransformerException e) {
+            Log.d(LOG_FLAG, "Failed to write content to file");
+            throw new DataManagerException(e);
+        }
+    }
 
     /**
      * Creates the LocalCache and DatabaseClient

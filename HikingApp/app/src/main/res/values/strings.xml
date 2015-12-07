@@ -45,6 +45,7 @@
     <string name="button_stop_tracking">Stop</string>
     <string name="button_pause_tracking">Pause</string>
     <string name="button_resume_tracking">Resume</string>>
+    <string name="button_export_hike">Export Hike as GPX</string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
@@ -108,5 +109,8 @@
     <string name="valid_user_name">Please enter a valid user name</string>
     <string name="owner">Owner</string>
     <string name="sample_owner">John Doe</string>
+
+    <string name="export_error">Failed to export hike</string>
+    <string name="export_success">Export successful!</string>
 
 </resources>
