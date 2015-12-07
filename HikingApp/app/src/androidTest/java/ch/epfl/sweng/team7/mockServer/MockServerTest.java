@@ -56,7 +56,7 @@ public class MockServerTest extends TestCase {
         mRawHikeData1.setTitle("Hike1");
         mRawHikeData2.setTitle("Hike2");
 
-        mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com"));
+        mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com", -1));
     }
 
     @Test

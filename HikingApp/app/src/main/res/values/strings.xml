@@ -38,7 +38,7 @@
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
-    <string name="change_name">Change Nickname</string>
+    <string name="change_name">Choose A New Nickname</string>
     <string name="goto_map">Go To Map</string>
     <string name="button_done">Done</string>
     <string name="button_start_tracking">Start</string>
@@ -105,6 +105,11 @@
 
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
+    <string name="user_hikes">Hikes:</string>
+    <string name="change">Change</string>
+    <string name="valid_user_name">Please enter a valid user name</string>
+    <string name="owner">Owner</string>
+    <string name="sample_owner">John Doe</string>
 
     <string name="export_error">Failed to export hike</string>
     <string name="export_success">Export successful!</string>
@@ -114,5 +119,6 @@
 
     <!-- Elevation -->
     <string name="elevation_min_max">Min: %1$s m Max: %2$s m</string>
+    <string name="user_not_found">User Not Found</string>
 
 </resources>

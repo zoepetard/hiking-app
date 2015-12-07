@@ -111,7 +111,7 @@ public class DataManagerTest {
 
         try {
             // TODO this test should be in RawUserDataTest
-            RawUserData rawUserData = new RawUserData(-3, "a", "gmail.com"); // bad data
+            RawUserData rawUserData = new RawUserData(-3, "a", "gmail.com", -1); // bad data
             DataManager dataManager = DataManager.getInstance();
             dataManager.setUserData(rawUserData);
         } catch (IllegalArgumentException e) {
