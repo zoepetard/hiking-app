@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -180,13 +181,14 @@ public class HikeInfoView {
                 List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
                 MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
                 MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
-                MapDisplay.setCamera(hikesToDisplay, mapPreview, context);
+
+                DisplayMetrics display = context.getResources().getDisplayMetrics();
+                int screenHeight = display.heightPixels;
+                int screenWidth = display.widthPixels;
+                MapDisplay.setCamera(hikesToDisplay, mapPreview, screenWidth, screenHeight / 3);
             }
 
-
             double distance = hikeData.getDistance() / 1000;  // in km
-
-
             float rating = (float) hikeData.getRating().getDisplayRating();
             Double elevationMin = hikeData.getMinElevation();
             Double elevationMax = hikeData.getMaxElevation();
