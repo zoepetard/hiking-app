@@ -258,18 +258,17 @@ public final class GPSManager {
      * previous ones.
      */
     private void stopTracking() {
-        mIsTracking = false;
-        mIsPaused = false;
-        mNotification.hide();
-        Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
+        togglePause();
         displaySavePrompt();
-        mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
-        mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
-        mGpsPath = null;
     }
 
     private void resetHikeTracking() {
-        
+        mIsTracking = false;
+        mIsPaused = false;
+        mNotification.hide();
+        mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
+        mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
+        mGpsPath = null;
     }
 
     /**
