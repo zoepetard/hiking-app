@@ -1,8 +1,5 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.content.Context;
-import android.util.DisplayMetrics;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -72,11 +69,8 @@ public class MapDisplay {
         map.getUiSettings().setAllGesturesEnabled(mapClickable);
     }
 
-    public static void setCamera(List<HikeData> hikesToDisplay, GoogleMap map, Context context) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        int screenWidth = metrics.widthPixels;
-        int screenHeight = metrics.heightPixels;
+    public static void setCamera(List<HikeData> hikesToDisplay, GoogleMap map, int mapWidth, int mapHeight) {
         LatLngBounds boundingBox = hikesToDisplay.get(0).getBoundingBox();
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, screenWidth, screenHeight / 3, 60));
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, mapWidth, mapHeight, 60));
     }
 }
