@@ -119,5 +119,6 @@
 
     <!-- Elevation -->
     <string name="elevation_min_max">Min: %1$s m Max: %2$s m</string>
+    <string name="user_not_found">User Not Found</string>
 
 </resources>

@@ -266,6 +266,8 @@ public class UserDataActivity extends FragmentActivity {
                 mUserName.setText(userData.getUserName());
                 mUserEmail.setText(userData.getMailAddress());
                 new GetUserPic().execute(userData.getUserProfilePic());
+            } else {
+                mUserName.setText(R.string.user_not_found);
             }
         }
     }
@@ -302,7 +304,11 @@ public class UserDataActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(Drawable pic) {
-            if (pic != null) mProfilePic.setImageDrawable(pic);
+            if (pic != null) {
+                mProfilePic.setImageDrawable(pic);
+            } else {
+                mProfilePic.setImageResource(R.drawable.login_background);
+            }
         }
     }
 
@@ -327,6 +333,7 @@ public class UserDataActivity extends FragmentActivity {
                 profileSidePanel.setImageDrawable(profilePic);
                 new StoreProfileImage().execute(profilePic);
             }
+            // else don't store the image and don't change pic id in user data
         }
     }
 

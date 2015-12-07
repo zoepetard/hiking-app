@@ -419,7 +419,11 @@ public class LoginActivity extends Activity implements
 
         @Override
         protected void onPostExecute(BitmapDrawable profilePic) {
-            new StoreProfileImage().execute(profilePic);
+            if (profilePic == null) {
+                new StoreUserProfilePic().execute(Long.valueOf(-1));
+            } else {
+                new StoreProfileImage().execute(profilePic);
+            }
         }
     }
 
@@ -438,6 +442,8 @@ public class LoginActivity extends Activity implements
         protected void onPostExecute(Long profilePicId) {
             if (profilePicId != null) {
                 new StoreUserProfilePic().execute(profilePicId);
+            } else {
+                new StoreUserProfilePic().execute(Long.valueOf(-1));
             }
         }
     }
@@ -476,6 +482,8 @@ public class LoginActivity extends Activity implements
             if (userData != null && userData.getUserProfilePic() == -1) {
                 String profilePic = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient).getImage().getUrl();
                 new LoadProfileImage().execute(profilePic);
+            } else {
+                new StoreUserProfilePic().execute(Long.valueOf(-1));
             }
         }
     }
