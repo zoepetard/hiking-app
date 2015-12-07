@@ -70,6 +70,7 @@ public class HikeInfoView {
     private LinearLayout commentList;
     private Button exportButton;
     private HikeData displayedHike;
+    private LinearLayout root;
 
     public HikeInfoView(final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
@@ -352,21 +353,36 @@ public class HikeInfoView {
         View topBar = view.findViewById(R.id.hike_info_top_bar);
         View exportStatusText = view.findViewById(R.id.export_status_text);
 
+        root = (LinearLayout) view.findViewById(R.id.hike_info_root_layout);
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View overlayView = layoutInflater.inflate(R.layout.hike_info_fullscreen, null);
+        backButton = (Button) overlayView.findViewById(R.id.back_button_fullscreen_image);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                root.removeView(overlayView);
+            }
+        });
+
         // Check which view is currently visible and switch
         if (infoView.getVisibility() == View.VISIBLE) {
 
-            infoView.setVisibility(View.GONE);
+            /*infoView.setVisibility(View.GONE);
             topBar.setVisibility(View.GONE);
             exportStatusText.setVisibility(View.GONE);
             containerView.setBackgroundColor(Color.BLACK);
             fullScreenView.setVisibility(View.VISIBLE);
+            */
+            root.addView(overlayView, 0);
+
 
         } else {
-            topBar.setVisibility(View.VISIBLE);
+            /*topBar.setVisibility(View.VISIBLE);
             exportStatusText.setVisibility(View.VISIBLE);
             infoView.setVisibility(View.VISIBLE);
             fullScreenView.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.WHITE);
+            containerView.setBackgroundColor(Color.WHITE);*/
+            root.removeView(overlayView);
 
         }
     }
