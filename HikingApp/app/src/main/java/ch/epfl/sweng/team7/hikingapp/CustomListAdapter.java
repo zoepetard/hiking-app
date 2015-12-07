@@ -32,11 +32,12 @@ public class CustomListAdapter extends BaseAdapter {
     int mapHeight = 0;
     int mapWidth = 0;
 
-    private static LayoutInflater inflater=null;
+    private static LayoutInflater inflater = null;
+
     public CustomListAdapter(HikeListActivity hikeListActivity, List<HikeData> hikes) {
         mHikes = hikes;
         context = hikeListActivity;
-        inflater = ( LayoutInflater )context.
+        inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
