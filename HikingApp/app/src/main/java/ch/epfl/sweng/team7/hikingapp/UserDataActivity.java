@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -32,7 +33,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
@@ -42,7 +48,7 @@ import ch.epfl.sweng.team7.database.UserData;
 
 public class UserDataActivity extends FragmentActivity {
     private final static int SELECT_PICTURE = 1;
-    private final static String EXTRA_HIKE_ID = "userHikeId";
+    public final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
 
     private DataManager mDataManager = DataManager.getInstance();
@@ -219,7 +225,11 @@ public class UserDataActivity extends FragmentActivity {
             View hikeRow = inflater.inflate(R.layout.user_hike_listitem, null);
             TextView hikeDate = (TextView) hikeRow
                     .findViewById(R.id.user_hike_date);
-            hikeDate.setText(hike.getDate().toString());
+            Date date = hike.getDate();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+            String dateString = dateFormat.format(date);
+            hikeDate.setText(dateString);
             TextView hikeName = (TextView) hikeRow
                     .findViewById(R.id.user_hike_name);
             hikeName.setText(hike.getTitle());
@@ -227,7 +237,7 @@ public class UserDataActivity extends FragmentActivity {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
-                    i.putExtra(EXTRA_HIKE_ID, hike.getHikeId());
+                    i.putExtra(EXTRA_HIKE_ID, String.valueOf(hike.getHikeId()));
                     startActivity(i);
                 }
             });

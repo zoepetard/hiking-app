@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class RawHikeComment {
     private final static String LOG_FLAG = "Network_RawHikeComment";
@@ -84,7 +85,8 @@ public class RawHikeComment {
     public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException, ParseException {
         Long dateLongForm = jsonObject.getLong("date");
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Date dateDateForm = new Date(dateLongForm);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+        Date dateDateForm = new Date(dateLongForm * 1000L);
         String date = dateFormat.format(dateDateForm);
         return new RawHikeComment(
                 jsonObject.getLong("comment_id"),

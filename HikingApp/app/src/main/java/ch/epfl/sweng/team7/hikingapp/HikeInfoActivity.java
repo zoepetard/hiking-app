@@ -83,11 +83,15 @@ public final class HikeInfoActivity extends FragmentActivity {
 
     private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
         String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
-        if (hikeIdStr == null && savedInstanceState != null) {
+        String userHikeIdStr = intent.getStringExtra(UserDataActivity.EXTRA_HIKE_ID);
+        if (hikeIdStr == null && userHikeIdStr == null && savedInstanceState != null) {
             hikeId = savedInstanceState.getLong(HIKE_ID);
         } else if (hikeIdStr != null) {
             hikeId = Long.valueOf(hikeIdStr);
+        } else if (userHikeIdStr != null) {
+            hikeId = Long.valueOf(userHikeIdStr);
         }
+        Log.d("id", Long.toString(hikeId));
         View view = findViewById(android.R.id.content);
 
         // load main content into the navigations drawer's framelayout
