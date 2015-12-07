@@ -245,7 +245,6 @@ public class HikeInfoView {
 
             hikeRatingBar.setRating(rating);
 
-            //String elevationString = "Min: " + String.valueOf(elevationMinInteger) + " m  " + "Max: " + String.valueOf(elevationMaxInteger) + " m";
             String elevationString = String.format(context.getResources().getString(R.string.elevation_min_max), elevationMinInteger, elevationMaxInteger);
             hikeElevation.setText(elevationString);
             hikeOwnerId = hikeData.getOwnerId();
