@@ -304,7 +304,7 @@ public final class GPSManager {
      * for the user to edit  some hike settings.
      */
     private void displaySavePrompt() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(mContext.getResources().getString(R.string.prompt_title));
 
         LinearLayout layout = new LinearLayout(mContext);
