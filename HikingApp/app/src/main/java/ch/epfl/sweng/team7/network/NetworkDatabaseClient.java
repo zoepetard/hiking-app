@@ -12,6 +12,7 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -203,8 +204,11 @@ public class NetworkDatabaseClient implements DatabaseClient {
             JSONObject jsonHikeId = new JSONObject(stringHikeData);
             return jsonHikeId.getLong("hike_id");
         } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(LOG_FLAG, "DatabaseClientException in post hike in Network database");
             throw new DatabaseClientException(e);
         } catch (JSONException e) {
+            Log.d(LOG_FLAG, "JSONEXCEPTion in post hike in Network database");
             throw new DatabaseClientException(e);
         }
     }
@@ -508,6 +512,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         checkResponseType(conn, expectedResponseCode, JSON_CONTENT);
 
         InputStream input = conn.getInputStream();
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
         String line;
@@ -515,7 +520,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         while ((line = reader.readLine()) != null) {
             result.append(line + "\n");
         }
-
         conn.disconnect();
         return result.toString();
     }

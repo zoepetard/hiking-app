@@ -143,7 +143,7 @@ public class RawHikeData {
      * Returns the list of annotations
      */
     public ArrayList<Annotation> getAnnotations() {
-        if (mAnnotations.size() < 1){
+        if (mAnnotations == null || mAnnotations.size() < 1){
             return null;
         }else{
             return new ArrayList<>(mAnnotations);
@@ -172,11 +172,7 @@ public class RawHikeData {
 
 
     public void setAnnotations(List<Annotation> annotations){
-        if(annotations.size() < 1){
-            throw new IllegalArgumentException("List of annotations is empty");
-        }
         mAnnotations = annotations;
-
     }
 
     /**
@@ -250,7 +246,6 @@ public class RawHikeData {
             for (int i = 0; i < jsonComments.length(); ++i) {
                 comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
             }
-
             JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
             List<Annotation> annotations = new ArrayList<>();
             for(int i = 0; i < jsonAnnotations.length(); i++){
@@ -261,7 +256,6 @@ public class RawHikeData {
             for(int i = 0; i < jsonAnnotations.length(); i++){
                 annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONObject(i)));
             }
-
             Date date = new Date(jsonObject.getLong("date"));
             RawHikeData rawHikeData = new RawHikeData(
                     jsonObject.getLong("hike_id"),
@@ -270,9 +264,17 @@ public class RawHikeData {
                     hikePoints,
                     comments,
                     jsonObject.getString("title"),
-                    annotations);
+                    null);
             if(jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
+            }
+            if(jsonObject.has("annotations")){
+                JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
+                List<Annotation> annotations = new ArrayList<>();
+                for(int i = 0; i < jsonAnnotations.length(); i++){
+                    annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONObject(i)));
+                }
+                rawHikeData.setAnnotations(annotations);
             }
             return rawHikeData;
 

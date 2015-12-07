@@ -191,7 +191,6 @@ public final class DataManager {
 
     /**
      * Method to post a hike.
-     *
      * @param rawHikeData
      * @throws DataManagerException
      */
@@ -199,6 +198,7 @@ public final class DataManager {
         try {
             return sDatabaseClient.postHike(rawHikeData);
         } catch (DatabaseClientException e) {
+            Log.d(LOG_FLAG, "DatabaseClientException in post hike in Network database");
             throw new DataManagerException(e);
         }
     }

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -66,6 +67,7 @@ public final class GPSManager {
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
     private Annotation annotation;
+
     private List<Annotation> listAnnotations = new ArrayList<>();
 
 
@@ -293,7 +295,6 @@ public final class GPSManager {
         displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
-        mGpsPath = null;
     }
 
 
@@ -356,6 +357,7 @@ public final class GPSManager {
                 //TODO storePictures()
                 storeHike();
                 storePictures(listAnnotations);
+                mGpsPath = null;
             }
         });
         builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
@@ -367,11 +369,11 @@ public final class GPSManager {
      * listeners inside GPSService.
      */
     private void toggleListeners() {
-        if (gpsService != null) {
+        if (mGpsService != null) {
             if (mIsTracking) {
-                gpsService.enableListeners();
+                mGpsService.enableListeners();
             } else {
-                gpsService.disableListeners();
+                mGpsService.disableListeners();
             }
         } else {
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
@@ -383,9 +385,11 @@ public final class GPSManager {
             rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
             rawHikeData.setAnnotations(listAnnotations);
             Log.d(LOG_FLAG, "GPS PATH CONVERTED");
+
             new StoreHikeTask().execute(rawHikeData);
         } catch (Exception e) {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
+            e.printStackTrace();
         }
     }
 
@@ -422,6 +426,7 @@ public final class GPSManager {
             long hikeId;
             DataManager dataManager = DataManager.getInstance();
             try {
+                //dataManager.loginUser(new LoginRequest("bort@googlemail.com", "Bort", ""));
                 hikeId = dataManager.postHike(rawHikeData[0]);
                 rawHikeData[0].setHikeId(hikeId);
                 Log.d(LOG_FLAG, "Hike Post correctly");
@@ -449,7 +454,7 @@ public final class GPSManager {
                 Log.d(LOG_FLAG, "Picture post correctly");
                 return pictureId;
             } catch (DataManagerException e) {
-                Log.d(LOG_FLAG, "Error while posting hike");
+                Log.d(LOG_FLAG, "Error while posting picture");
             }
             return null;
         }

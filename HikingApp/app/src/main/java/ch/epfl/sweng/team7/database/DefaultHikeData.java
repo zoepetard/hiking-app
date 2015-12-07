@@ -79,8 +79,10 @@ public class DefaultHikeData implements HikeData {
 
         List<Annotation> annotations = rawHikeData.getAnnotations();
         mAnnotations = new ArrayList<>();
-        for(Annotation annotation : annotations){
-            mAnnotations.add(annotation);
+        if(annotations != null) {
+            for (Annotation annotation : annotations) {
+                mAnnotations.add(annotation);
+            }
         }
 
         List<Annotation> annotations = rawHikeData.getAnnotations();
