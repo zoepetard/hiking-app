@@ -59,11 +59,11 @@ public class MapActivity extends FragmentActivity {
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     private static final int HIKE_LINE_COLOR = 0xff000066;
-    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
     private  static int mScreenWidth;
     private  static int mScreenHeight;
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
@@ -168,7 +168,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public static LatLngBounds getBounds() {
+    public LatLngBounds getBounds() {
         bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         return bounds;
     }
@@ -180,6 +180,8 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+
+
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
         mScreenWidth = size.x;

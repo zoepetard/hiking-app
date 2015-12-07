@@ -1,12 +1,9 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,8 +12,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -170,8 +165,9 @@ public final class HikeInfoActivity extends FragmentActivity {
     private class MapPreviewClickListener implements GoogleMap.OnMapClickListener {
         @Override
         public void onMapClick(LatLng point) {
-            // segue to map activity!
-
+            Intent intent = new Intent(HikeInfoActivity.this, MapActivity.class);
+            intent.putExtra(HIKE_ID, hikeId);
+            startActivity(intent);
         }
     }
 
