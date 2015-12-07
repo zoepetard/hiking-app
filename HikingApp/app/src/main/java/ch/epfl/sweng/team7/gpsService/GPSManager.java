@@ -304,7 +304,7 @@ public final class GPSManager {
      * for the user to edit  some hike settings.
      */
     private void displaySavePrompt() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(mContext.getResources().getString(R.string.prompt_title));
 
         LinearLayout layout = new LinearLayout(mContext);
@@ -337,9 +337,19 @@ public final class GPSManager {
                 //TODO call storeHike() after issue #86 is fixed
             }
         });
-        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
+        
+        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                displayCancelPrompt();
+            }
+        });
         builder.setCancelable(false);
         builder.show();
+    }
+
+    private void displayCancelPrompt() {
+
     }
 
     /**
