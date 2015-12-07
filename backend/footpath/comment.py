@@ -2,6 +2,7 @@ from google.appengine.ext import ndb
 import json
 import logging
 from user import User
+import time
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ class Comment(ndb.Model):
     hike_id = ndb.IntegerProperty()
     owner_id = ndb.IntegerProperty()
     comment_text = ndb.BlobProperty(indexed=False)
-    date = ndb.IntegerProperty()
+    date = ndb.DateTimeProperty(auto_now_add=True)
     requested_id = -1
 
     def from_json(self, json_string):
@@ -32,7 +33,7 @@ class Comment(ndb.Model):
             'comment_id': self.key.id(),
             'hike_id': self.hike_id,
             'user_id': self.owner_id,
-            'date': self.date,
+            'date': int(time.mktime(self.date.timetuple())),
             'comment_text': self.comment_text,
             'user_name' : user_name
         }
