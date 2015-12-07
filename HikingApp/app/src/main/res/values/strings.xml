@@ -70,7 +70,7 @@
 
     <!-- Save hike prompt -->
     <string name="button_save_hike">Save</string>
-    <string name="button_cancel_save">Cancel</string>
+    <string name="button_cancel_save">Discard</string>
     <string name="prompt_title">Hike finished!</string>
     <string name="prompt_title_hint">Hike name</string>
     <string name="prompt_comment_hint">Drop a comment about this hike</string>
