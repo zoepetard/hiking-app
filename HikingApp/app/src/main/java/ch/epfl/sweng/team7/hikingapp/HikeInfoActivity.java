@@ -29,7 +29,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
-    private final static String HIKE_ID = "hikeID";
+    public final static String HIKE_ID = "hikeID";
     private HikeInfoView hikeInfoView;
 
     @Override

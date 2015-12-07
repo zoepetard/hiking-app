@@ -69,6 +69,7 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+    private List<Polyline> mDisplayedHikes = new ArrayList<>();
 
     private boolean mFollowingUser = false;
 
@@ -180,7 +181,6 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-
 
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
@@ -338,7 +338,7 @@ public class MapActivity extends FragmentActivity {
                             .width(5)
                             .color(HIKE_LINE_COLOR);
         }
-        mMap.addPolyline(polylineOptions);
+        mDisplayedHikes.add(mMap.addPolyline(polylineOptions));
     }
 
     private void onMapClickHelper(LatLng point) {
