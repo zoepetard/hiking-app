@@ -82,13 +82,10 @@ public class RawHikeComment {
     }
 
     public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException, ParseException {
-//        Long dateLongForm = jsonObject.getLong("date");
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-//        Date dateDateForm = new Date(dateLongForm);
-//        String date = dateFormat.format(dateDateForm);
+        Long dateLongForm = jsonObject.getLong("date");
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Date dateNow = new Date();
-        String date = dateFormat.format(dateNow);
+        Date dateDateForm = new Date(dateLongForm);
+        String date = dateFormat.format(dateDateForm);
         return new RawHikeComment(
                 jsonObject.getLong("comment_id"),
                 jsonObject.getLong("hike_id"),

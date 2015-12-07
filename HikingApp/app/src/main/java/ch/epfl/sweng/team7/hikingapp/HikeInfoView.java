@@ -243,7 +243,7 @@ public class HikeInfoView {
             hikeElevation.setText(elevationString);
 
             hikeOwnerId = hikeData.getOwnerId();
-            new ShowOwnerName().execute(hikeOwnerId);
+//            new ShowOwnerName().execute(hikeOwnerId);
 
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
@@ -372,24 +372,24 @@ public class HikeInfoView {
         commentList.addView(commentRow);
     }
 
-    private class ShowOwnerName extends AsyncTask<Long, Void, UserData> {
-
-        @Override
-        protected UserData doInBackground(Long... userIds) {
-            try {
-                Log.d("userid", userIds[0].toString());
-                return dataManager.getUserData(userIds[0]);
-            } catch (DataManagerException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(UserData userData) {
-            hikeOwner.setText(userData.getUserName());
-        }
-    }
+//    private class ShowOwnerName extends AsyncTask<Long, Void, UserData> {
+//
+//        @Override
+//        protected UserData doInBackground(Long... userIds) {
+//            try {
+//                Log.d("userid", userIds[0].toString());
+//                return dataManager.getUserData(userIds[0]);
+//            } catch (DataManagerException e) {
+//                e.printStackTrace();
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(UserData userData) {
+//            hikeOwner.setText(userData.getUserName());
+//        }
+//    }
 
     private class GetUserName extends AsyncTask<Long, Void, UserData> {
 
