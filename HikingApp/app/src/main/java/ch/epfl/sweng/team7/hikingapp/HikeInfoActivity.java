@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -34,11 +35,13 @@ public final class HikeInfoActivity extends FragmentActivity {
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
     private final static String HIKE_ID = "hikeID";
+    private HikeInfoView hikeInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
+
 
         Intent intent = getIntent();
         if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
@@ -93,7 +96,10 @@ public final class HikeInfoActivity extends FragmentActivity {
         mapFragment.getView().setLayoutParams(params);
         GoogleMap mapHikeInfo = mapFragment.getMap();
 
-        final HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
+        View loadingScreen = getLayoutInflater().inflate(R.layout.loading_screen, null);
+        mainContentFrame.addView(loadingScreen);
+
+        hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -105,14 +111,6 @@ public final class HikeInfoActivity extends FragmentActivity {
             }
         });
 
-        // Setting a listener for each imageview.
-        for (int i = 0; i < hikeInfoView.getGalleryImageViews().size(); i++) {
-
-            ImageView imgView = hikeInfoView.getGalleryImageViews().get(i);
-            imgView.setOnClickListener(new ImageViewClickListener());
-        }
-
-        hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
         if (mapHikeInfo != null) {
             mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
@@ -146,6 +144,7 @@ public final class HikeInfoActivity extends FragmentActivity {
                 }
             }
         });
+        mainContentFrame.removeView(loadingScreen);
     }
 
     private class SubmitVoteTask extends AsyncTask<RatingVote, Void, Boolean> {
@@ -168,21 +167,6 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
     }
 
-    private class ImageViewClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-
-            // Update image in full screen view
-            ImageView imgView = (ImageView) v;
-            Drawable drawable = imgView.getDrawable();
-
-            ImageView fullScreenView = (ImageView) findViewById(R.id.image_fullscreen);
-            fullScreenView.setImageDrawable(drawable);
-
-            toggleFullScreen();
-        }
-    }
-
     private class MapPreviewClickListener implements GoogleMap.OnMapClickListener {
         @Override
         public void onMapClick(LatLng point) {
@@ -194,7 +178,7 @@ public final class HikeInfoActivity extends FragmentActivity {
     private class BackButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            toggleFullScreen();
+            hikeInfoView.toggleFullScreen();
         }
     }
 
@@ -230,24 +214,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
     }
 
-    public void toggleFullScreen() {
-        View infoView = findViewById(R.id.info_overview_layout);
-        View fullScreenView = findViewById(R.id.image_fullscreen_layout);
-        View containerView = findViewById(R.id.info_scrollview);
-
-        // Check which view is currently visible and switch
-        if (infoView.getVisibility() == View.VISIBLE) {
-
-            infoView.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.BLACK);
-            fullScreenView.setVisibility(View.VISIBLE);
-
-        } else {
-
-            infoView.setVisibility(View.VISIBLE);
-            fullScreenView.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.WHITE);
-        }
+    public HikeInfoView getHikeInfoView() {
+        return hikeInfoView;
     }
-
 }

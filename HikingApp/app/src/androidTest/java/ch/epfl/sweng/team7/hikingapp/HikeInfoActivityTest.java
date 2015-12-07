@@ -4,12 +4,14 @@ package ch.epfl.sweng.team7.hikingapp;
  * Created by fredrik-eliasson on 08/11/15.
  */
 
+import android.os.Bundle;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 import android.support.test.espresso.contrib.*;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,7 +22,9 @@ import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -112,26 +116,19 @@ public class HikeInfoActivityTest
         hikeInfoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hikeInfoActivity.toggleFullScreen();
-                View infoView = getActivity().findViewById(R.id.info_overview_layout);
-                View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
 
-                if (infoView.getVisibility() == View.VISIBLE) {
-                    fail("infoView should be GONE");
+                hikeInfoActivity.getHikeInfoView().toggleFullScreen();
+
+                View overLay = hikeInfoActivity.getHikeInfoView().getOverlayView();
+
+                if (hikeInfoActivity.getHikeInfoView().getRootLayout().indexOfChild(overLay) != 0) {
+                    fail("fullscreen overlay should be on top of view hierarchy");
                 }
 
-                if (fullScreenView.getVisibility() != View.VISIBLE) {
-                    fail("fullScreenView should be VISIBLE");
-                }
+                hikeInfoActivity.getHikeInfoView().getBackButton().callOnClick();
 
-                hikeInfoActivity.toggleFullScreen();
-
-                if (infoView.getVisibility() != View.VISIBLE) {
-                    fail("infoView should be VISIBLE");
-                }
-
-                if (fullScreenView.getVisibility() == View.VISIBLE) {
-                    fail("fullScreenView should be GONE");
+                if (hikeInfoActivity.getHikeInfoView().getRootLayout().indexOfChild(overLay) == 0) {
+                    fail("fullscreen overlay should not be on top of view hierarchy");
                 }
             }
         });
@@ -143,14 +140,15 @@ public class HikeInfoActivityTest
         hikeInfoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                hikeInfoActivity.toggleFullScreen();
+                HikeInfoView hikeInfoView = hikeInfoActivity.getHikeInfoView();
+                hikeInfoView.toggleFullScreen();
             }
         });
 
         View infoView = getActivity().findViewById(R.id.info_overview_layout);
         View fullScreenView = getActivity().findViewById(R.id.image_fullscreen_layout);
 
-        onView(withId(R.id.back_button_fullscreen_image)).perform(click());
+        hikeInfoActivity.getHikeInfoView().getBackButton().callOnClick();
         if (infoView.getVisibility() != View.VISIBLE) {
             fail("infoView should be VISIBLE");
         }

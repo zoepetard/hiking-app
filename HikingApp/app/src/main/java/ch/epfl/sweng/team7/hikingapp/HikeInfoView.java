@@ -3,6 +3,7 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +26,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,6 +70,8 @@ public class HikeInfoView {
     private LinearLayout commentList;
     private Button exportButton;
     private HikeData displayedHike;
+    private View overlayView;
+    private LinearLayout root;
 
     public HikeInfoView(final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
 
@@ -87,7 +92,7 @@ public class HikeInfoView {
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
-        backButton = (Button) view.findViewById(R.id.back_button_fullscreen_image);
+        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
         fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
 
@@ -103,12 +108,14 @@ public class HikeInfoView {
         // Add adapter and onclickmethods to the nav drawer listview
         NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
 
-        galleryImageViews = new ArrayList<>(4);
+        galleryImageViews = new ArrayList<>();
         /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
         imageViews.size() IS IN HIKEINFOACTIVITY BUT WE IT'S ASYNC SO WE HAVE AN ERROR:
         EITHER WE STORE NUMBER OF IMAGES IN THE SERVER SO WE CAN CREATE A LIST HERE OR
         ACCESS SIZE ONLY IN ASYNC CALL AND ADD LISTENER
          */
+
+        this.view = view;
 
         exportButton = (Button) view.findViewById(R.id.button_export_hike);
 
@@ -134,6 +141,18 @@ public class HikeInfoView {
         });
 
         commentList = (LinearLayout) view.findViewById(R.id.comments_list);
+
+        root = (LinearLayout) view.findViewById(R.id.hike_info_root_layout);
+
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        overlayView = layoutInflater.inflate(R.layout.hike_info_fullscreen, null);
+        backButton = (Button) overlayView.findViewById(R.id.back_button_fullscreen_image);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                root.removeView(overlayView);
+            }
+        });
 
         new GetOneHikeAsync().execute(hikeId);
 
@@ -183,8 +202,11 @@ public class HikeInfoView {
 
             double distance = hikeData.getDistance() / 1000;  // in km
             float rating = (float) hikeData.getRating().getDisplayRating();
-            double elevationMin = hikeData.getMinElevation();
-            double elevationMax = hikeData.getMaxElevation();
+            Double elevationMin = hikeData.getMinElevation();
+            Double elevationMax = hikeData.getMaxElevation();
+
+            Integer elevationMinInteger = elevationMin.intValue();
+            Integer elevationMaxInteger = elevationMax.intValue();
 
             List<HikePoint> hikePoints = hikeData.getHikePoints();
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
@@ -216,14 +238,15 @@ public class HikeInfoView {
 
             hikeName.setText(hikeData.getTitle());
 
-            String distanceString = distance + " km";
+            NumberFormat numberFormat = NumberFormat.getInstance();
+            numberFormat.setMaximumFractionDigits(1);
+            String distanceString = numberFormat.format(distance) + " km";
             hikeDistance.setText(distanceString);
 
             hikeRatingBar.setRating(rating);
 
-            String elevationString = "Min: " + elevationMin + "m  " + "Max: " + elevationMax + "m";
+            String elevationString = String.format(context.getResources().getString(R.string.elevation_min_max), elevationMinInteger, elevationMaxInteger);
             hikeElevation.setText(elevationString);
-
             hikeOwnerId = hikeData.getOwnerId();
 
             List<HikeComment> comments = hikeData.getAllComments();
@@ -243,11 +266,9 @@ public class HikeInfoView {
             Integer img1 = R.drawable.login_background;
 
             // add imageviews with images to the scrollview
-            for (int i = 0; i < 4; i++) {
+            imgLayout.addView(createImageView(img1));
 
-                imgLayout.addView(createImageView(img1));
 
-            }
         }
 
         private View createImageView(Integer img) {
@@ -261,6 +282,8 @@ public class HikeInfoView {
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
             imageView.setImageResource(img);
             galleryImageViews.add(imageView);
+
+            imageView.setOnClickListener(new ImageViewClickListener());
 
             return imageView;
 
@@ -328,6 +351,40 @@ public class HikeInfoView {
 
     public HikeData getDisplayedHike() {
         return displayedHike;
+    }
+
+
+    public void toggleFullScreen() {
+        final View infoView = view.findViewById(R.id.info_overview_layout);
+
+        // Check which view is currently visible and switch
+        if (infoView.getVisibility() == View.VISIBLE) {
+            root.addView(overlayView, 0);
+        } else {
+            root.removeView(overlayView);
+        }
+    }
+
+    public View getOverlayView() {
+        return overlayView;
+    }
+
+    public LinearLayout getRootLayout() {
+        return root;
+    }
+
+    private class ImageViewClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            // Update image in full screen view
+            ImageView imgView = (ImageView) v;
+            Drawable drawable = imgView.getDrawable();
+
+            ImageView fullScreenView = (ImageView) view.findViewById(R.id.image_fullscreen);
+            fullScreenView.setImageDrawable(drawable);
+
+            toggleFullScreen();
+        }
     }
 
 }
