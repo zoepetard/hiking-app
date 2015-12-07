@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.IBinder;
 import android.text.InputType;
@@ -349,7 +350,41 @@ public final class GPSManager {
     }
 
     private void displayCancelPrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("WARNING");
 
+        LinearLayout layout = new LinearLayout(mContext);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        //setup the horizontal separator
+        View lnSeparator = new View(mContext);
+        lnSeparator.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2));
+        lnSeparator.setBackgroundColor(Color.parseColor("#B3B3B3"));
+        layout.addView(lnSeparator);
+
+        //setup the hike title input field
+        TextView warning = new TextView(mContext);
+        warning.setText("\nIf you do this you will lose your hike forever. Do you wish to proceed?");
+        warning.setTypeface(null, Typeface.BOLD);
+        warning.setGravity(View.TEXT_ALIGNMENT_GRAVITY);
+        layout.addView(warning);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Keep tracking", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
     }
 
     /**
