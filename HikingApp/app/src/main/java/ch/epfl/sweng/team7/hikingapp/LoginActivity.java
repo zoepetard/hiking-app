@@ -436,24 +436,26 @@ public class LoginActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Long profilePicId) {
-            new StoreUserProfilePic().execute(profilePicId);
+            if (profilePicId != null) {
+                new StoreUserProfilePic().execute(profilePicId);
+            }
         }
     }
 
-    private class StoreUserProfilePic extends AsyncTask<Long, Void, Integer> {
+    private class StoreUserProfilePic extends AsyncTask<Long, Void, Boolean> {
         @Override
-        protected Integer doInBackground(Long... picIds) {
+        protected Boolean doInBackground(Long... picIds) {
             try {
                 mDataManager.setUserProfilePic(picIds[0], SignedInUser.getInstance().getId());
-                return 1;
+                return true;
             } catch (Exception e) {
                 e.printStackTrace();
-                return -1;
+                return false;
             }
         }
 
         @Override
-        protected void onPostExecute(Integer success) {
+        protected void onPostExecute(Boolean success) {
         }
     }
 
@@ -471,7 +473,7 @@ public class LoginActivity extends Activity implements
 
         @Override
         protected void onPostExecute(UserData userData) {
-            if (userData.getUserProfilePic() == -1) {
+            if (userData != null && userData.getUserProfilePic() == -1) {
                 String profilePic = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient).getImage().getUrl();
                 new LoadProfileImage().execute(profilePic);
             }

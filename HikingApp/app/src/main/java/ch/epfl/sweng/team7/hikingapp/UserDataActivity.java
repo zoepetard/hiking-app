@@ -214,10 +214,12 @@ public class UserDataActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(List<HikeData> hikes) {
-            for (HikeData hike : hikes) {
-                displayHike(hike);
+            if (hikes != null) {
+                for (HikeData hike : hikes) {
+                    displayHike(hike);
+                }
+                mNumHikes.setText(getString(R.string.num_hikes_fmt, hikes.size()));
             }
-            mNumHikes.setText(getString(R.string.num_hikes_fmt, hikes.size()));
         }
 
         private void displayHike(final HikeData hike) {
@@ -268,21 +270,21 @@ public class UserDataActivity extends FragmentActivity {
         }
     }
 
-    private class SaveUserName extends AsyncTask<String, Void, Integer> {
+    private class SaveUserName extends AsyncTask<String, Void, Boolean> {
 
         @Override
-        protected Integer doInBackground(String... userNames) {
+        protected Boolean doInBackground(String... userNames) {
             try {
                 mDataManager.changeUserName(userNames[0], mOwner.getId());
-                return 1;
+                return true;
             } catch (DataManagerException e) {
                 e.printStackTrace();
-                return -1;
+                return false;
             }
         }
 
         @Override
-        protected void onPostExecute(Integer success) {
+        protected void onPostExecute(Boolean success) {
         }
     }
 
@@ -300,7 +302,7 @@ public class UserDataActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(Drawable pic) {
-            mProfilePic.setImageDrawable(pic);
+            if (pic != null) mProfilePic.setImageDrawable(pic);
         }
     }
 
@@ -318,11 +320,13 @@ public class UserDataActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(Drawable profilePic) {
-            Drawable scaledPic = scaleDrawable((BitmapDrawable) profilePic);
-            mProfilePic.setImageDrawable(scaledPic);
-            ImageView profileSidePanel = (ImageView) findViewById(R.id.profile_pic_side_panel);
-            profileSidePanel.setImageDrawable(profilePic);
-            new StoreProfileImage().execute(profilePic);
+            if (profilePic != null) {
+                Drawable scaledPic = scaleDrawable((BitmapDrawable) profilePic);
+                mProfilePic.setImageDrawable(scaledPic);
+                ImageView profileSidePanel = (ImageView) findViewById(R.id.profile_pic_side_panel);
+                profileSidePanel.setImageDrawable(profilePic);
+                new StoreProfileImage().execute(profilePic);
+            }
         }
     }
 
@@ -339,25 +343,27 @@ public class UserDataActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(Long profilePicId) {
-            mUserData.setUserProfilePic(profilePicId);
-            new StoreUserProfilePic().execute(profilePicId);
+            if (profilePicId != null) {
+                mUserData.setUserProfilePic(profilePicId);
+                new StoreUserProfilePic().execute(profilePicId);
+            }
         }
     }
 
-    private class StoreUserProfilePic extends AsyncTask<Long, Void, Integer> {
+    private class StoreUserProfilePic extends AsyncTask<Long, Void, Boolean> {
         @Override
-        protected Integer doInBackground(Long... picIds) {
+        protected Boolean doInBackground(Long... picIds) {
             try {
                 mDataManager.setUserProfilePic(picIds[0], mOwner.getId());
-                return 1;
+                return true;
             } catch (Exception e) {
                 e.printStackTrace();
-                return -1;
+                return false;
             }
         }
 
         @Override
-        protected void onPostExecute(Integer success) {
+        protected void onPostExecute(Boolean success) {
         }
     }
 }
