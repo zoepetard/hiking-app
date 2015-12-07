@@ -155,7 +155,6 @@ public class UserDataActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                finish();
             }
         });
 
@@ -171,6 +170,15 @@ public class UserDataActivity extends FragmentActivity {
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mUserId = intent.getLongExtra(EXTRA_USER_ID, -1);
+        setIntent(intent);
+        new GetUserData().execute(mUserId);
+        new GetUserHikes().execute(mUserId);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -215,6 +223,7 @@ public class UserDataActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(List<HikeData> hikes) {
             if (hikes != null) {
+                mHikeList.removeAllViews();
                 for (HikeData hike : hikes) {
                     displayHike(hike);
                 }

@@ -482,7 +482,7 @@ public class LoginActivity extends Activity implements
             if (userData != null && userData.getUserProfilePic() == -1) {
                 String profilePic = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient).getImage().getUrl();
                 new LoadProfileImage().execute(profilePic);
-            } else {
+            } else if (userData == null){
                 new StoreUserProfilePic().execute(Long.valueOf(-1));
             }
         }
