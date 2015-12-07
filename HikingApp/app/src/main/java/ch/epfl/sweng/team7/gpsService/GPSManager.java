@@ -268,6 +268,10 @@ public final class GPSManager {
         mGpsPath = null;
     }
 
+    private void resetHikeTracking() {
+        
+    }
+
     /**
      * Method called after stopping a hike tracking.
      * This method should take the user to an editable Activity.
