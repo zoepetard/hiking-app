@@ -263,7 +263,7 @@ public class MockServer implements DatabaseClient {
             if(userId <= 0) {
                 userId = postUserData(new RawUserData(-1, loginRequest.toJSON().getString("user_name_hint"),
                         loginRequest.toJSON().getString("mail_address"),
-                        loginRequest.toJSON().getLong("profile_image_id")));
+                        -1));
             }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user_id", userId);

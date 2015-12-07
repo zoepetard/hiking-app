@@ -120,12 +120,14 @@ public class NavigationDrawerListFactory {
 
         @Override
         protected void onPostExecute(UserData userData) {
-            mProfileName.setText(userData.getUserName());
-            String mail = userData.getMailAddress();
-            Integer at = mail.indexOf("@");
-            mProfileEmailName.setText(mail.substring(0, at));
-            mProfileEmailDomain.setText(mail.substring(at));
-            new GetUserPic().execute(userData.getUserProfilePic());
+            if (userData != null) {
+                mProfileName.setText(userData.getUserName());
+                String mail = userData.getMailAddress();
+                Integer at = mail.indexOf("@");
+                mProfileEmailName.setText(mail.substring(0, at));
+                mProfileEmailDomain.setText(mail.substring(at));
+                new GetUserPic().execute(userData.getUserProfilePic());
+            }
         }
     }
 

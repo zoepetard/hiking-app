@@ -259,10 +259,12 @@ public class UserDataActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(UserData userData) {
-            mUserData = userData;
-            mUserName.setText(userData.getUserName());
-            mUserEmail.setText(userData.getMailAddress());
-            new GetUserPic().execute(userData.getUserProfilePic());
+            if (userData != null) {
+                mUserData = userData;
+                mUserName.setText(userData.getUserName());
+                mUserEmail.setText(userData.getMailAddress());
+                new GetUserPic().execute(userData.getUserProfilePic());
+            }
         }
     }
 

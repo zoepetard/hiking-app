@@ -407,7 +407,9 @@ public class HikeInfoView {
 
         @Override
         protected void onPostExecute(UserData userData) {
-            showNewComment(newComment, userData.getUserName());
+            if (userData != null) {
+                showNewComment(newComment, userData.getUserName());
+            }
         }
     }
 
