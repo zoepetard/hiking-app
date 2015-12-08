@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.IBinder;
 import android.text.InputType;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.epfl.sweng.team7.database.DataManager;
@@ -73,14 +75,15 @@ public final class GPSManager {
         if (mGpsService != null) {
             if (!mIsTracking) {
                 startTracking();
+                toggleListeners();
             } else {
                 stopTracking();
             }
-            toggleListeners();
         } else {
             displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
+        ((MapActivity)mContext).updateButtonDisplay();
     }
 
     /**
@@ -92,6 +95,7 @@ public final class GPSManager {
         if (!mIsPaused) {
             mGpsPath.addFootPrint(mLastFootPrint, true);
         }
+        ((MapActivity)mContext).updateButtonDisplay();
     }
 
     /**
@@ -257,14 +261,25 @@ public final class GPSManager {
      * previous ones.
      */
     private void stopTracking() {
+        Log.d(LOG_FLAG, "Hike is begin stopped");
+        if (!mIsPaused) togglePause();
+        displaySavePrompt();
+    }
+
+    /**
+     * Method called to reset all variable variables
+     * as they were before we started tracking.
+     */
+    private void resetHikeTracking() {
+        Log.d(LOG_FLAG, "Hike variables being reset");
         mIsTracking = false;
         mIsPaused = false;
         mNotification.hide();
-        Log.d(LOG_FLAG, "Saving GPSPath to memory: " + mGpsPath.toString());
-        displaySavePrompt();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         mGpsPath = null;
+        toggleListeners();
+        ((MapActivity)mContext).updateButtonDisplay();
     }
 
     /**
@@ -282,6 +297,7 @@ public final class GPSManager {
      * listeners inside GPSService.
      */
     private void toggleListeners() {
+        Log.d(LOG_FLAG, "Listeners being toggled");
         if (mIsTracking) {
             mGpsService.enableListeners();
         } else {
@@ -335,9 +351,54 @@ public final class GPSManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO call storeHike() after issue #86 is fixed
+                resetHikeTracking();
             }
         });
-        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), null);
+        
+        builder.setNegativeButton(mContext.getResources().getString(R.string.button_cancel_save), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                displayCancelPrompt();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    private void displayCancelPrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(mContext.getResources().getString(R.string.warning_title));
+
+        LinearLayout layout = new LinearLayout(mContext);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        //setup the horizontal separator
+        View lnSeparator = new View(mContext);
+        lnSeparator.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2));
+        lnSeparator.setBackgroundColor(Color.parseColor("#B3B3B3"));
+        layout.addView(lnSeparator);
+
+        //setup the hike title input field
+        TextView warning = new TextView(mContext);
+        warning.setText("\n" + mContext.getResources().getString(R.string.warning_description));
+        warning.setTypeface(null, Typeface.BOLD);
+        warning.setGravity(View.TEXT_ALIGNMENT_GRAVITY);
+        layout.addView(warning);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(mContext.getResources().getString(R.string.button_proceed_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                resetHikeTracking();
+            }
+        });
+        builder.setNegativeButton(mContext.getResources().getString(R.string.button_keep_tracking), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                togglePause();
+            }
+        });
         builder.setCancelable(false);
         builder.show();
     }

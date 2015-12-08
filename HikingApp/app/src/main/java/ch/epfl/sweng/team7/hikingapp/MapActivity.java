@@ -418,20 +418,28 @@ public class MapActivity extends FragmentActivity {
         toggleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGps.toggleTracking();
-                Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                updateButtonDisplay();
                 if (mGps.tracking()) {
-                    toggleButton.setText(R.string.button_stop_tracking);
-                    pauseButton.setVisibility(View.VISIBLE);
-                    pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
                     startHikeDisplay();
-                } else {
-                    toggleButton.setText(R.string.button_start_tracking);
-                    pauseButton.setVisibility(View.INVISIBLE);
-                    stopHikeDisplay();
                 }
             }
         });
+    }
+
+    public void updateButtonDisplay() {
+
+        //Start/stop button update
+        Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
+        Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+        if (mGps.tracking()) {
+            toggleButton.setText(R.string.button_stop_tracking);
+            pauseButton.setVisibility(View.VISIBLE);
+            pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+        } else {
+            toggleButton.setText(R.string.button_start_tracking);
+            pauseButton.setVisibility(View.INVISIBLE);
+            stopHikeDisplay();
+        }
     }
 
     private void createPauseTrackingButton() {
@@ -450,8 +458,7 @@ public class MapActivity extends FragmentActivity {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGps.togglePause();
-                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
-                pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                updateButtonDisplay();
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
