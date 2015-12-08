@@ -349,17 +349,14 @@ public class MapActivity extends FragmentActivity {
                         .snippet(hike.getAnnotations().get(i).getAnnotation())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 annotations.add(markerOptions);
-                final Marker textAnnotation = mMap.addMarker(markerOptions);
-                textAnnotation.showInfoWindow();
-                /*
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        textAnnotation.showInfoWindow();
                         return true;
                     }
                 });
-                */
+                final Marker textAnnotation = mMap.addMarker(markerOptions);
+                textAnnotation.showInfoWindow();
             }
 
         }
