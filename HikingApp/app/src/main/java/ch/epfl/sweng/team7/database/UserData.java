@@ -19,10 +19,16 @@ public interface UserData {
      */
     String getUserName();
 
+    void setUserName(String userName);
+
     /**
      * @return user mail address
      */
     String getMailAddress();
+
+    long getUserProfilePic();
+
+    void setUserProfilePic(long picId);
 
     /**
      * @return list of hikes

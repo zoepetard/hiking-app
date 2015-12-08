@@ -1,26 +1,47 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.InstrumentationRegistry;
+import android.test.ActivityInstrumentationTestCase2;
+import android.widget.TextView;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.Before;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import java.math.BigInteger;
 
-public class UserDataTest {
-    @Rule
-    public ActivityTestRule<UserDataActivity> mActivityRule = new ActivityTestRule<>(
-            UserDataActivity.class);
+import ch.epfl.sweng.team7.authentication.LoginRequest;
+import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.DataManager;
+import ch.epfl.sweng.team7.database.UserData;
+import ch.epfl.sweng.team7.mockServer.MockServer;
 
-    @Test
-    public void testDisplayUserData() {
-        // test if it's real data stored in the local cache after
-        // issue #56 is in master for user with this user_id
-        onView(withId(R.id.user_name)).check(matches(withText("Team 7")));
-        onView(withId(R.id.user_email)).check(matches(withText("team7@epfl.ch")));
-        onView(withId(R.id.num_hikes)).check(matches(withText("Number of hikes: 100")));
+public class UserDataTest extends ActivityInstrumentationTestCase2<UserDataActivity> {
+
+    private UserData userData;
+
+    public UserDataTest() {
+        super(UserDataActivity.class);
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
+        DataManager.setDatabaseClient(new MockServer());
+        DataManager dataManager = DataManager.getInstance();
+        userData = dataManager.getUserData(12345);
+    }
+
+    public void testCorrectData() throws Exception {
+        final TextView name = (TextView) getActivity().findViewById(R.id.user_name);
+        final TextView email = (TextView) getActivity().findViewById(R.id.user_email);
+        getInstrumentation().runOnMainSync(new Runnable() {
+            public void run() {
+                name.setText(userData.getUserName());
+                email.setText(userData.getMailAddress());
+            }
+        });
+        assertEquals(name.getText(), "Bort");
+        assertEquals(email.getText(), "bort@googlemail.com");
     }
 }

@@ -15,9 +15,10 @@ public class RawUserData {
     private long mUserId;
     private String mUserName;
     private String mMailAddress;
+    private long mUserProfilePic;
 
 
-    public RawUserData(long userId, String userName, String mailAddress) {
+    public RawUserData(long userId, String userName, String mailAddress, long userProfilePic) {
 
         // Check that are arguments are valid, otherwise throw exception
         if (userId < 0 && userId != USER_ID_UNKNOWN) {
@@ -33,6 +34,7 @@ public class RawUserData {
         mUserId = userId;
         mUserName = userName;
         mMailAddress = mailAddress;
+        mUserProfilePic = userProfilePic;
 
     }
 
@@ -46,6 +48,10 @@ public class RawUserData {
 
     public String getMailAddress() {
         return mMailAddress;
+    }
+
+    public long getUserProfilePic() {
+        return mUserProfilePic;
     }
 
     public void setUserId(long id) {
@@ -65,12 +71,17 @@ public class RawUserData {
         mUserName = userName;
     }
 
+    public void setUserProfilePic(long picId) {
+        mUserProfilePic = picId;
+    }
+
 
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user_id", mUserId);
         jsonObject.put("user_name", mUserName);
         jsonObject.put("mail_address", mMailAddress);
+        jsonObject.put("profile_image_id", mUserProfilePic);
         return jsonObject;
     }
 
@@ -79,8 +90,8 @@ public class RawUserData {
         return new RawUserData(
                 jsonObject.getLong("user_id"),
                 jsonObject.getString("user_name"),
-                jsonObject.getString("mail_address"));
-
+                jsonObject.getString("mail_address"),
+                jsonObject.getLong("profile_image_id"));
     }
 
 }

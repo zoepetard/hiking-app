@@ -358,7 +358,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.setRequestProperty("image_id", Long.toString(imageId));
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
             byte[] outputInBytes = stream.toByteArray();
             conn.connect();
             conn.getOutputStream().write(outputInBytes);

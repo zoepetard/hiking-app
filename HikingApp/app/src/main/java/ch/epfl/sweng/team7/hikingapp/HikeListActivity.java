@@ -3,6 +3,8 @@ package ch.epfl.sweng.team7.hikingapp;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +43,8 @@ public class HikeListActivity extends Activity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList,navDrawerView.getContext());
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
+                navDrawerList, navDrawerView.getContext(), this);
 
         Bundle bound = getIntent().getParcelableExtra(MapActivity.EXTRA_BOUNDS);
         if (bound != null) {
@@ -53,6 +56,15 @@ public class HikeListActivity extends Activity {
             bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
         }
         new GetMultHikeAsync().execute(bounds);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
     }
 
     @Override

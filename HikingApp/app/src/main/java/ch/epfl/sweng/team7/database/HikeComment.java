@@ -17,5 +17,9 @@ public interface HikeComment {
      */
     long getCommentOwnerId();
 
+    String getCommentOwnerName();
+
     String getCommentText();
+
+    String getCommentDate();
 }

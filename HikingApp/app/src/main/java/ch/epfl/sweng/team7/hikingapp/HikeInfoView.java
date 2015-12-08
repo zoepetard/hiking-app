@@ -1,7 +1,9 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -26,9 +28,13 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.text.NumberFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -38,6 +44,7 @@ import ch.epfl.sweng.team7.database.DefaultHikeComment;
 import ch.epfl.sweng.team7.database.HikeComment;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
+import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 
@@ -52,6 +59,7 @@ public class HikeInfoView {
     private long hikeId;
     private long userId;
     private long hikeOwnerId;
+    private TextView hikeOwner;
     private TextView hikeName;
     private TextView hikeDistance;
     private RatingBar hikeRatingBar;
@@ -68,18 +76,29 @@ public class HikeInfoView {
     private ListView navDrawerList;
     private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
+    private HikeComment newComment;
     private Button exportButton;
     private HikeData displayedHike;
     private View overlayView;
     private LinearLayout root;
 
-    public HikeInfoView(final View view, final Context context, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
-
+    public HikeInfoView (final View view, final Activity activity, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
         hikeId = id;
         userId = SignedInUser.getInstance().getId();
 
         // initializing UI element in the layout for the HikeInfoView.
-        this.context = context;
+        this.context = activity.getApplicationContext();
+
+        hikeOwner = (TextView) view.findViewById(R.id.hikeinfo_owner);
+        hikeOwner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, UserDataActivity.class);
+                i.putExtra(UserDataActivity.EXTRA_USER_ID, hikeOwnerId);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                v.getContext().startActivity(i);
+            }
+        });
 
         hikeName = (TextView) view.findViewById(R.id.hikeinfo_name);
 
@@ -106,7 +125,8 @@ public class HikeInfoView {
 
         navDrawerList = (ListView) view.findViewById(R.id.nav_drawer);
         // Add adapter and onclickmethods to the nav drawer listview
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, context);
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
+                navDrawerList, activity, activity);
 
         galleryImageViews = new ArrayList<>();
         /* ABOVE IS A HACK, IMAGES ARE NOT STORED IN THE SERVER YET; RIGHT NOW ACCESS TO
@@ -130,9 +150,10 @@ public class HikeInfoView {
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
                     DefaultHikeComment comment = new DefaultHikeComment(rawHikeComment);
+                    newComment = comment;
                     new PostCommentAsync().execute(rawHikeComment);
                     commentEditText.setText("");
-                    showNewComment(comment);
+                    new GetUserName().execute(userId);
                 } else {
                     new AlertDialog.Builder(v.getContext())
                             .setMessage(R.string.type_comment);
@@ -248,11 +269,12 @@ public class HikeInfoView {
             String elevationString = String.format(context.getResources().getString(R.string.elevation_min_max), elevationMinInteger, elevationMaxInteger);
             hikeElevation.setText(elevationString);
             hikeOwnerId = hikeData.getOwnerId();
+            new ShowOwnerName().execute(hikeOwnerId);
 
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
             for (HikeComment comment : comments) {
-                showNewComment(comment);
+                showNewComment(comment, "");
             }
 
             exportButton.setVisibility(View.VISIBLE);
@@ -333,20 +355,85 @@ public class HikeInfoView {
         return navDrawerList;
     }
 
-    private void showNewComment(HikeComment comment) {
+    private void showNewComment(HikeComment comment, String name) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commentRow = inflater.inflate(R.layout.activity_comment_list_adapter, null);
-        TextView commentId = (TextView) commentRow
-                .findViewById(R.id.comment_userid);
-        Log.d("userId", String.valueOf(userId));
-        Log.d("ownerId", String.valueOf(hikeOwnerId));
-        if (userId == hikeOwnerId) commentId.setTextColor(Color.RED);
-        commentId.setText(String.valueOf(comment.getCommentOwnerId()));
+
+        TextView commentDate = (TextView) commentRow
+                .findViewById(R.id.comment_date);
+        String date;
+        if (comment.getCommentDate() == null) { // new comment
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            Date dateNow = new Date();
+            date = dateFormat.format(dateNow);
+        } else {
+            date = comment.getCommentDate();
+        }
+        commentDate.setText(date);
+
+        TextView commentName = (TextView) commentRow
+                .findViewById(R.id.comment_username);
+        final Long commentOwnerId = comment.getCommentOwnerId();
+        if (commentOwnerId == hikeOwnerId) commentName.setTextColor(Color.RED);
+        if (comment.getCommentOwnerName() == null) { // new comment
+            commentName.setText(name);
+        } else {
+            commentName.setText(comment.getCommentOwnerName());
+        }
+        commentName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), UserDataActivity.class);
+                i.putExtra(UserDataActivity.EXTRA_USER_ID, commentOwnerId);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                v.getContext().startActivity(i);
+            }
+        });
+
         TextView commentText = (TextView) commentRow
                 .findViewById(R.id.comment_display_text);
         commentText.setText(comment.getCommentText());
+
         commentList.addView(commentRow);
+    }
+
+    private class ShowOwnerName extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return dataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            hikeOwner.setText(userData.getUserName());
+        }
+    }
+
+    private class GetUserName extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return dataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            if (userData != null) {
+                showNewComment(newComment, userData.getUserName());
+            }
+        }
     }
 
     public HikeData getDisplayedHike() {

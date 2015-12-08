@@ -58,7 +58,7 @@ public class MockServer implements DatabaseClient {
     public MockServer() throws DatabaseClientException {
         createMockHikeOne();
         mUsers = new ArrayList<>();
-        mUsers.add(new RawUserData(12345, "Bort", "bort@googlemail.com"));
+        mUsers.add(new RawUserData(12345, "Bort", "bort@googlemail.com", -1));
     }
 
     /**
@@ -262,7 +262,8 @@ public class MockServer implements DatabaseClient {
             }
             if(userId <= 0) {
                 userId = postUserData(new RawUserData(-1, loginRequest.toJSON().getString("user_name_hint"),
-                        loginRequest.toJSON().getString("mail_address")));
+                        loginRequest.toJSON().getString("mail_address"),
+                        -1));
             }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user_id", userId);

@@ -496,7 +496,7 @@ public class BackendTest extends TestCase {
      * @return a RawUserData object
      */
     private static RawUserData createUserData() {
-        return new RawUserData(SignedInUser.getInstance().getId(), "Bort", "bort@googlemail.com");
+        return new RawUserData(SignedInUser.getInstance().getId(), "Bort", "bort@googlemail.com", -1);
     }
 
     /**
