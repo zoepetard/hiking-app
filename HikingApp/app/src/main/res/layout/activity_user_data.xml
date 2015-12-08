@@ -7,87 +7,90 @@
     tools:context="ch.epfl.sweng.team7.hikingapp.UserDataActivity">
 
     <Button
+        android:id="@+id/back_button"
         android:layout_width="55dp"
         android:layout_height="50dp"
-        android:text="@string/back"
-        android:id="@+id/back_button"
         android:layout_marginLeft="20dp"
-        android:textSize="12sp"/>
+        android:text="@string/back"
+        android:textSize="12sp" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginTop="10dp"
+        android:background="#2D45A3"
+        android:orientation="vertical">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:id="@+id/profile_pic"
-            android:src="@drawable/login_background"
-            android:clickable="false"
-            android:adjustViewBounds="true"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_marginLeft="20dp"
-            android:scaleType="fitXY"
+            android:layout_marginTop="5dp"
+            android:adjustViewBounds="true"
+            android:clickable="false"
             android:maxHeight="100dp"
-            android:maxWidth="100dp"/>
+            android:maxWidth="100dp"
+            android:scaleType="fitXY" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/name_email">
+            android:id="@+id/name_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Name"
-                android:id="@+id/user_name"
                 android:layout_marginLeft="20dp"
+                android:text="User Name"
+                android:textColor="#fff"
                 android:textSize="30sp" />
 
             <TextView
+                android:id="@+id/user_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Email"
-                android:id="@+id/user_email"
                 android:layout_marginLeft="20dp"
+                android:text="User Email"
+                android:textColor="#fff"
                 android:textSize="20sp" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/num_hikes"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:weightSum="4">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="Nickname"
-            android:id="@+id/nickname"
-            android:layout_marginLeft="20dp"
-            android:textSize="25sp"
-            android:layout_weight="3"/>
-
-        <Button
-            android:id="@+id/change_nickname"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:text="@string/edit_nickname"
-            android:layout_weight="1"
-            android:layout_marginRight="20dp"/>
-    </LinearLayout>
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="# of hikes"
+        android:textSize="25sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="# of hikes"
-        android:id="@+id/num_hikes"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/user_hikes"
         android:textSize="25sp" />
+
+    <ScrollView
+        android:id="@+id/info_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/user_hike_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

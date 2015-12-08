@@ -5,6 +5,8 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,15 @@ public final class HikeInfoActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong(HIKE_ID, hikeId);
         super.onSaveInstanceState(savedInstanceState);
@@ -70,10 +81,13 @@ public final class HikeInfoActivity extends FragmentActivity {
 
     private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
         String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
-        if (hikeIdStr == null && savedInstanceState != null) {
+        String userHikeIdStr = intent.getStringExtra(UserDataActivity.EXTRA_HIKE_ID);
+        if (hikeIdStr == null && userHikeIdStr == null && savedInstanceState != null) {
             hikeId = savedInstanceState.getLong(HIKE_ID);
         } else if (hikeIdStr != null) {
             hikeId = Long.valueOf(hikeIdStr);
+        } else if (userHikeIdStr != null) {
+            hikeId = Long.valueOf(userHikeIdStr);
         }
         View view = findViewById(android.R.id.content);
 

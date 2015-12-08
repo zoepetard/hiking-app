@@ -22,6 +22,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,10 +44,15 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
+import ch.epfl.sweng.team7.database.UserData;
 
 // TODO: test login as part of the integration test
 
@@ -120,17 +128,6 @@ public class LoginActivity extends Activity implements
         if (isSignedIn) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
             if (currentPerson != null) {
-                // Show signed-in user's name
-                String name = currentPerson.getDisplayName();
-
-                // Show users' email address (which requires GET_ACCOUNTS permission)
-                if (checkAccountsPermission()) {
-                    String currentAccount = Plus.AccountApi.getAccountName(sGoogleApiClient);
-                }
-
-                String photoUrl = currentPerson.getImage().getUrl();
-                // TODO: save name, email and photoUrl to server
-
                 Intent i = new Intent(this, MapActivity.class);
                 startActivity(i);
             } else {
@@ -260,9 +257,9 @@ public class LoginActivity extends Activity implements
             if (checkAccountsPermission()) {
                 mailAddress = Plus.AccountApi.getAccountName(sGoogleApiClient);
             }
-        }
 
-        new UserAuthenticator().execute(mailAddress);
+            new UserAuthenticator().execute(mailAddress);
+        }
     }
     // [END on_connected]
 
@@ -287,7 +284,6 @@ public class LoginActivity extends Activity implements
 
                 LoginRequest loginRequest = new LoginRequest(mailAddress[0], userName, "");
                 mDataManager.loginUser(loginRequest);
-
             } catch (DataManagerException e) {
                 Log.d(TAG, "Failed to add new user: " + e.getMessage());
             }
@@ -308,6 +304,8 @@ public class LoginActivity extends Activity implements
 
                 showSignedOutUI();
             }
+
+            new GetUserData().execute(SignedInUser.getInstance().getId());
         }
     }
 
@@ -406,4 +404,87 @@ public class LoginActivity extends Activity implements
         }
     }
     // [END on_sign_out_clicked]
+
+    private class LoadProfileImage extends AsyncTask<String, Void, BitmapDrawable> {
+        @Override
+        protected BitmapDrawable doInBackground(String... urls) {
+            try {
+                InputStream in = new java.net.URL(urls[0]).openStream();
+                return new BitmapDrawable(getResources(), BitmapFactory.decodeStream(in));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(BitmapDrawable profilePic) {
+            if (profilePic == null) {
+                new StoreUserProfilePic().execute(Long.valueOf(-1));
+            } else {
+                new StoreProfileImage().execute(profilePic);
+            }
+        }
+    }
+
+    private class StoreProfileImage extends AsyncTask<Drawable, Void, Long> {
+        @Override
+        protected Long doInBackground(Drawable... photos) {
+            try {
+                return mDataManager.storeImage(photos[0]);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Long profilePicId) {
+            if (profilePicId != null) {
+                new StoreUserProfilePic().execute(profilePicId);
+            } else {
+                new StoreUserProfilePic().execute(Long.valueOf(-1));
+            }
+        }
+    }
+
+    private class StoreUserProfilePic extends AsyncTask<Long, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Long... picIds) {
+            try {
+                mDataManager.setUserProfilePic(picIds[0], SignedInUser.getInstance().getId());
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+        }
+    }
+
+    private class GetUserData extends AsyncTask<Long, Void, UserData> {
+
+        @Override
+        protected UserData doInBackground(Long... userIds) {
+            try {
+                return mDataManager.getUserData(userIds[0]);
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            if (userData != null && userData.getUserProfilePic() == -1) {
+                String profilePic = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient).getImage().getUrl();
+                new LoadProfileImage().execute(profilePic);
+            } else if (userData == null){
+                new StoreUserProfilePic().execute(Long.valueOf(-1));
+            }
+        }
+    }
 }

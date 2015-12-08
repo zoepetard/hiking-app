@@ -5,6 +5,7 @@
  */
 package ch.epfl.sweng.team7.database;
 
+import android.graphics.drawable.Drawable;
 import android.content.Context;
 import android.util.Log;
 
@@ -150,6 +151,18 @@ public final class DataManager {
         return hikeDataList;
     }
 
+    public List<HikeData> getUserHikes(Long userId) throws DataManagerException {
+        List<Long> hikeIds = new ArrayList<>();
+        List<HikeData> hikeDataList = new ArrayList<>();
+        try {
+            hikeIds = sDatabaseClient.getHikeIdsOfUser(userId);
+            hikeDataList = getMultipleHikes(hikeIds);
+        } catch (DatabaseClientException|DataManagerException e) {
+            throw new DataManagerException(e);
+        }
+        return hikeDataList;
+    }
+
     /**
      * Query the server and local cache for hikes corresponding to a given search query
      *
@@ -221,6 +234,22 @@ public final class DataManager {
         return hikeData;
     }
 
+    public long storeImage(Drawable image) throws DataManagerException {
+        try {
+            return sDatabaseClient.postImage(image);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
+    public Drawable getImage(long imageId) throws DataManagerException {
+        try {
+            return sDatabaseClient.getImage(imageId);
+        } catch (DatabaseClientException e) {
+            throw new DataManagerException(e);
+        }
+    }
+
     /**
      * Store user data in database and update local cache
      *
@@ -263,9 +292,16 @@ public final class DataManager {
 
         // get current user data then update the database
         UserData userData = getUserData(userId);
-        RawUserData rawUserData = new RawUserData(userData.getUserId(), newName, userData.getMailAddress());
+        RawUserData rawUserData = new RawUserData(userData.getUserId(), newName, userData.getMailAddress(), userData.getUserProfilePic());
         setUserData(rawUserData);
 
+    }
+
+    public void setUserProfilePic(long newPicId, long userId) throws DataManagerException {
+        UserData userData = getUserData(userId);
+        RawUserData rawUserData = new RawUserData(userData.getUserId(), userData.getUserName(),
+                userData.getMailAddress(), newPicId);
+        setUserData(rawUserData);
     }
 
     /**

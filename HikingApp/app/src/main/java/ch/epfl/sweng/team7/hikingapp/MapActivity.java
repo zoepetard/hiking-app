@@ -9,6 +9,8 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -59,6 +61,7 @@ public class MapActivity extends FragmentActivity {
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
+    private final static String EXTRA_EXIT = "exit";
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
@@ -94,6 +97,10 @@ public class MapActivity extends FragmentActivity {
         setContentView(R.layout.navigation_drawer);
         mGps.startService(this);
 
+        if (getIntent().getBooleanExtra(EXTRA_EXIT, false)) {
+            finish();
+        }
+
         // nav drawer setup
         View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
         FrameLayout mainContentFrame = (FrameLayout) findViewById(R.id.main_content_frame);
@@ -104,7 +111,8 @@ public class MapActivity extends FragmentActivity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
+                navDrawerList, navDrawerView.getContext(), this);
 
         //creates a start/stop tracking button
         createTrackingToggleButton();
@@ -130,6 +138,11 @@ public class MapActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
         mGps.bindService(this);
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
     }
 
     @Override
@@ -148,6 +161,14 @@ public class MapActivity extends FragmentActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         processNewIntent();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(EXTRA_EXIT, true);
+        startActivity(intent);
     }
 
     /**
@@ -445,20 +466,28 @@ public class MapActivity extends FragmentActivity {
         toggleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGps.toggleTracking();
-                Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                updateButtonDisplay();
                 if (mGps.tracking()) {
-                    toggleButton.setText(R.string.button_stop_tracking);
-                    pauseButton.setVisibility(View.VISIBLE);
-                    pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
                     startHikeDisplay();
-                } else {
-                    toggleButton.setText(R.string.button_start_tracking);
-                    pauseButton.setVisibility(View.INVISIBLE);
-                    stopHikeDisplay();
                 }
             }
         });
+    }
+
+    public void updateButtonDisplay() {
+
+        //Start/stop button update
+        Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
+        Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+        if (mGps.tracking()) {
+            toggleButton.setText(R.string.button_stop_tracking);
+            pauseButton.setVisibility(View.VISIBLE);
+            pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+        } else {
+            toggleButton.setText(R.string.button_start_tracking);
+            pauseButton.setVisibility(View.INVISIBLE);
+            stopHikeDisplay();
+        }
     }
 
     private void createPauseTrackingButton() {
@@ -477,8 +506,7 @@ public class MapActivity extends FragmentActivity {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGps.togglePause();
-                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
-                pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                updateButtonDisplay();
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
