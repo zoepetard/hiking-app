@@ -425,7 +425,7 @@ public class MapActivity extends FragmentActivity {
                         startHikeDisplay();
                     }
                 } else {
-                    displayToast("Please enable your GPS connection");
+                    displayToast(getResources().getString(R.string.gps_location_not_enabled));
                 }
             }
         });
