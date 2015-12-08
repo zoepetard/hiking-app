@@ -404,7 +404,8 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+        toggleButton.setBackgroundResource((mGps.tracking()) ? R.drawable.stop : R.drawable.start);
+        //toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
@@ -432,11 +433,14 @@ public class MapActivity extends FragmentActivity {
         Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
         Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
         if (mGps.tracking()) {
-            toggleButton.setText(R.string.button_stop_tracking);
+            toggleButton.setBackgroundResource(R.drawable.stop);
+            //toggleButton.setText(R.string.button_stop_tracking);
             pauseButton.setVisibility(View.VISIBLE);
-            pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+            pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.resume : R.drawable.pause);
+            //pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
         } else {
-            toggleButton.setText(R.string.button_start_tracking);
+            toggleButton.setBackgroundResource(R.drawable.start);
+            //toggleButton.setText(R.string.button_start_tracking);
             pauseButton.setVisibility(View.INVISIBLE);
             stopHikeDisplay();
         }
@@ -444,7 +448,8 @@ public class MapActivity extends FragmentActivity {
 
     private void createPauseTrackingButton() {
         Button pauseButton = new Button(this);
-        pauseButton.setText(R.string.button_pause_tracking);
+        pauseButton.setBackgroundResource(R.drawable.pause);
+        //pauseButton.setText(R.string.button_pause_tracking);
         pauseButton.setId(R.id.button_tracking_pause);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
