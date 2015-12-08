@@ -125,6 +125,9 @@ public class MapActivity extends FragmentActivity {
         //Initializes the BottomInfoView
         createBottomInfoView();
 
+        //setup hike list button
+        setupHikeListButton();
+
         setGoToHikesButtonListener();
 
         mMap.setMyLocationEnabled(true);
@@ -474,6 +477,13 @@ public class MapActivity extends FragmentActivity {
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupHikeListButton() {
+        Button hikeList = (Button) findViewById(R.id.go_hikes_button);
+        hikeList.setBackgroundResource(R.drawable.button_hike_list);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) hikeList.getLayoutParams();
+        setupButtonSize(lp);
     }
 
     private void setupButtonSize(RelativeLayout.LayoutParams lp) {
