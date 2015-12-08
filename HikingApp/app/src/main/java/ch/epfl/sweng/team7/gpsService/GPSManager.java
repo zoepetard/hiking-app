@@ -150,6 +150,10 @@ public final class GPSManager {
         mNotification.setup(context);
     }
 
+    public void stopService() {
+        mContext.stopService(new Intent(mContext, GPSService.class));
+    }
+
     /**
      * Method called to bind GPSService to a certain Context
      *
