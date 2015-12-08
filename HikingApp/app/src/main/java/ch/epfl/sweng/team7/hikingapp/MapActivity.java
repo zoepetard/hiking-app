@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -416,12 +417,7 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.leftMargin = DEFAULT_BUTTON_MARGIN;
-        lp.rightMargin = DEFAULT_BUTTON_MARGIN;
-        lp.bottomMargin = DEFAULT_BUTTON_MARGIN;
-        lp.topMargin = DEFAULT_BUTTON_MARGIN;
+        setupButtonSize(lp);
 
         toggleButton.setLayoutParams(lp);
         layout.addView(toggleButton, lp);
@@ -466,12 +462,7 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.leftMargin = DEFAULT_BUTTON_MARGIN;
-        lp.rightMargin = DEFAULT_BUTTON_MARGIN;
-        lp.bottomMargin = DEFAULT_BUTTON_MARGIN;
-        lp.topMargin = DEFAULT_BUTTON_MARGIN;
+        setupButtonSize(lp);
 
         pauseButton.setLayoutParams(lp);
         layout.addView(pauseButton, lp);
@@ -483,6 +474,15 @@ public class MapActivity extends FragmentActivity {
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupButtonSize(RelativeLayout.LayoutParams lp) {
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
+        lp.leftMargin = DEFAULT_BUTTON_MARGIN;
+        lp.rightMargin = DEFAULT_BUTTON_MARGIN;
+        lp.bottomMargin = DEFAULT_BUTTON_MARGIN;
+        lp.topMargin = DEFAULT_BUTTON_MARGIN;
     }
 
     private void createBottomInfoView() {
