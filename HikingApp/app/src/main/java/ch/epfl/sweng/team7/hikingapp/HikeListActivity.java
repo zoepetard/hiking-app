@@ -8,8 +8,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -21,6 +23,9 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 
 public class HikeListActivity extends Activity {
+
+    private final static int DEFAULT_BUTTON_SIZE = 64;
+    private final static int DEFAULT_BUTTON_MARGIN = 10;
     private DataManager dataManager = DataManager.getInstance();
     private LatLngBounds bounds;
 
@@ -56,6 +61,9 @@ public class HikeListActivity extends Activity {
             bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
         }
         new GetMultHikeAsync().execute(bounds);
+
+        //setup back button
+        setupBackButton();
     }
 
     @Override
@@ -117,5 +125,15 @@ public class HikeListActivity extends Activity {
         CustomListAdapter adapter = new CustomListAdapter(this, results);
         ListView listView = (ListView) findViewById(R.id.hike_list_view);
         listView.setAdapter(adapter);
+    }
+
+    private void setupBackButton() {
+        Button backButton = (Button) findViewById(R.id.back_button);
+        backButton.setText("");
+        backButton.setBackgroundResource(R.drawable.button_back);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
+        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
     }
 }
