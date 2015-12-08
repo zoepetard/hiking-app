@@ -265,6 +265,10 @@ public final class GPSManager {
         displaySavePrompt();
     }
 
+    /**
+     * Method called to reset all variable variables
+     * as they were before we started tracking.
+     */
     private void resetHikeTracking() {
         Log.d(LOG_FLAG, "Hike variables being reset");
         mIsTracking = false;
