@@ -92,7 +92,6 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
-        processNewIntent();
         mGps.startService(this);
 
         // nav drawer setup
@@ -155,28 +154,44 @@ public class MapActivity extends FragmentActivity {
         Intent intent = getIntent();
         boolean displaySingleHike = false;
 
-        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID))
-        {
-            long intentHikeId = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
-            //new DownloadOneHikeAsync().execute(hikeId);
-            //long hikeId = 0;
 
-            for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                if (intentHikeId == displayedHike.second) {
-                    displaySingleHike = true;
-                    //hikeId = displayedHike.second;
-                }
-            }
-            if (displaySingleHike) {
+
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(46.683370, 7.036110))
+        //.title("hi")
+        //.snippet(": " + Long.toString(hikeIdLong)));
+
+        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID)) {
+            String hikeIdStr = intent.getStringExtra(HikeInfoActivity.HIKE_ID);
+            //long hikeIdLong = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
+            //long hikeIdLong = Long.valueOf(hikeIdStr);
+
+            if (hikeIdStr != null) {
+                long intentHikeId = Long.valueOf(hikeIdStr);
+
+                //long intentHikeId = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
                 for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                    if (displayedHike.second != intentHikeId) {
-                        displayedHike.first.remove();
+                    if (intentHikeId == displayedHike.second) {
+                        displaySingleHike = true;
                     }
                 }
-                for (Marker marker : mMarkerByHike.keySet()) {
-                    if (mMarkerByHike.get(marker) != intentHikeId) {
-                        marker.remove();
+                if (displaySingleHike) {
+                    for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                        if (displayedHike.second != intentHikeId) {
+                            displayedHike.first.remove();
+                        }
                     }
+                    for (Marker marker : mMarkerByHike.keySet()) {
+                        if (mMarkerByHike.get(marker) != intentHikeId) {
+                            marker.remove();
+                        }
+                    }
+                    for (HikeData hikeData : mHikesInWindow) {
+                        if (hikeData.getHikeId() == intentHikeId) {
+                            LatLngBounds newBounds = hikeData.getBoundingBox();
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, mScreenHeight, 60));
+                        }
+                    }
+
                 }
             }
         }
@@ -350,7 +365,15 @@ public class MapActivity extends FragmentActivity {
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
-                return onMarkerClickHelper(marker);
+                //remove this!
+                if (marker.getTitle() != null)
+                {
+                    marker.showInfoWindow();
+                    return true;
+                }
+                else {
+                    return onMarkerClickHelper(marker);
+                }
             }
         });
         Marker startMarker = mMap.addMarker(startMarkerOptions);

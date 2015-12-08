@@ -166,7 +166,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         @Override
         public void onMapClick(LatLng point) {
             Intent intent = new Intent(HikeInfoActivity.this, MapActivity.class);
-            intent.putExtra(HIKE_ID, hikeId);
+            intent.putExtra(HIKE_ID, Long.toString(hikeId));
             startActivity(intent);
         }
     }
