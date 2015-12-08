@@ -404,7 +404,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setBackgroundResource((mGps.tracking()) ? R.drawable.stop : R.drawable.start);
+        toggleButton.setBackgroundResource((mGps.tracking()) ? R.drawable.stop : R.drawable.button_start_tracking);
         //toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
@@ -439,7 +439,7 @@ public class MapActivity extends FragmentActivity {
             pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.resume : R.drawable.pause);
             //pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
         } else {
-            toggleButton.setBackgroundResource(R.drawable.start);
+            toggleButton.setBackgroundResource(R.drawable.button_start_tracking);
             //toggleButton.setText(R.string.button_start_tracking);
             pauseButton.setVisibility(View.INVISIBLE);
             stopHikeDisplay();
