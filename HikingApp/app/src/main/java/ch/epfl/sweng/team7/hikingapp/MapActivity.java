@@ -487,10 +487,7 @@ public class MapActivity extends FragmentActivity {
     private void setupButtonSize(RelativeLayout.LayoutParams lp) {
         lp.width = DEFAULT_BUTTON_SIZE;
         lp.height = DEFAULT_BUTTON_SIZE;
-        lp.leftMargin = DEFAULT_BUTTON_MARGIN;
-        lp.rightMargin = DEFAULT_BUTTON_MARGIN;
-        lp.bottomMargin = DEFAULT_BUTTON_MARGIN;
-        lp.topMargin = DEFAULT_BUTTON_MARGIN;
+        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
     }
 
     private void createBottomInfoView() {
