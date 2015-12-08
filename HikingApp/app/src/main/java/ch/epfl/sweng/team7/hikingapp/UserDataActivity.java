@@ -393,7 +393,7 @@ public class UserDataActivity extends FragmentActivity {
         Button backButton = (Button) findViewById(R.id.back_button);
         backButton.setText("");
         backButton.setBackgroundResource(R.drawable.button_back);
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) backButton.getLayoutParams();
         lp.width = DEFAULT_BUTTON_SIZE;
         lp.height = DEFAULT_BUTTON_SIZE;
         lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
