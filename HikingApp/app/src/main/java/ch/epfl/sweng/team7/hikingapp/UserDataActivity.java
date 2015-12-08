@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,9 @@ import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.UserData;
 
 public class UserDataActivity extends FragmentActivity {
+
+    private final static int DEFAULT_BUTTON_SIZE = 64;
+    private final static int DEFAULT_BUTTON_MARGIN = 10;
     private final static int SELECT_PICTURE = 1;
     public final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
@@ -82,6 +86,8 @@ public class UserDataActivity extends FragmentActivity {
         mUserName = (TextView) findViewById(R.id.user_name);
         mUserEmail = (TextView) findViewById(R.id.user_email);
         mNumHikes = (TextView) findViewById(R.id.num_hikes);
+
+        setupBackButton();
 
         mUserName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -381,5 +387,15 @@ public class UserDataActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(Boolean success) {
         }
+    }
+
+    private void setupBackButton() {
+        Button backButton = (Button) findViewById(R.id.back_button);
+        backButton.setText("");
+        backButton.setBackgroundResource(R.drawable.button_back);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
+        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
     }
 }
