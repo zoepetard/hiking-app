@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -55,6 +57,7 @@ import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
+    private final static int DEFAULT_BUTTON_SIZE = 128;
     private final static String LOG_FLAG = "Activity_Map";
     private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
@@ -412,6 +415,8 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
 
         toggleButton.setLayoutParams(lp);
         layout.addView(toggleButton, lp);
@@ -456,6 +461,8 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
 
         pauseButton.setLayoutParams(lp);
         layout.addView(pauseButton, lp);
