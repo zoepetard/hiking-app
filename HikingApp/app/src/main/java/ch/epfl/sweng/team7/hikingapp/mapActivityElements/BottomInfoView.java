@@ -40,9 +40,6 @@ public final class BottomInfoView {
         mapTableLayout.setId(R.id.mapTextTable);
         mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
         mapTableLayout.setBackgroundResource(R.drawable.panel);
-        TableLayout.LayoutParams lp = (TableLayout.LayoutParams) mapTableLayout.getLayoutParams();
-        lp.height = DEFAULT_TABLE_HEIGHT;
-        lp.setMargins(DEFAULT_TABLE_MARGIN, DEFAULT_TABLE_MARGIN, DEFAULT_TABLE_MARGIN, DEFAULT_TABLE_MARGIN);
         mapTableLayout.setVisibility(View.INVISIBLE);
         mTitle = new TextView(context);
         mTitle.setTextSize(DEFAULT_TITLE_SIZE);
