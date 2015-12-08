@@ -74,7 +74,6 @@ public class MapActivity extends FragmentActivity {
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
     private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
-    //private List<Polyline> mDisplayedHikes = new ArrayList<>();
 
     private boolean mFollowingUser = false;
 

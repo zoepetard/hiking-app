@@ -26,7 +26,7 @@ import ch.epfl.sweng.team7.database.HikeData;
  */
 public class CustomListAdapter extends BaseAdapter {
 
-    public static String EXTRA_HIKE_ID =
+    public final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     public final static String HIKE_ID = "hikeID";
@@ -80,39 +80,28 @@ public class CustomListAdapter extends BaseAdapter {
         mapParams.width = mapWidth;
 
         //Display hike details.
-        TextView nameText = (TextView) rowView.findViewById(R.id.nameRow);
-        nameText.setText(hikeData.getTitle());
-        nameText.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener onTextClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onTextClickHelper(v, hikeData);
+                Intent intent = new Intent(v.getContext(), HikeInfoActivity.class);
+                intent.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
+                v.getContext().startActivity(intent);
             }
-        });
+        };
+
+        TextView nameText = (TextView) rowView.findViewById(R.id.nameRow);
+        nameText.setText(hikeData.getTitle());
+        nameText.setOnClickListener(onTextClickListener);
 
         TextView distanceText = (TextView) rowView.findViewById(R.id.distanceRow);
         distanceText.setText(context.getResources().getString(R.string.hikeDistanceText, (long) hikeData.getDistance() / 1000));
-        distanceText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onTextClickHelper(v, hikeData);
-            }
-        });
+        distanceText.setOnClickListener(onTextClickListener);
 
         TextView ratingText = (TextView) rowView.findViewById(R.id.ratingRow);
         ratingText.setText(context.getResources().getString(R.string.hikeRatingText, (long) hikeData.getRating().getDisplayRating()));
-        ratingText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onTextClickHelper(v, hikeData);
-            }
-        });
-        return rowView;
-    }
+        ratingText.setOnClickListener(onTextClickListener);
 
-    private void onTextClickHelper(View v, HikeData hikeData) {
-        Intent intent = new Intent(v.getContext(), HikeInfoActivity.class);
-        intent.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
-        v.getContext().startActivity(intent);
+        return rowView;
     }
 
     class ViewHolder implements OnMapReadyCallback {
