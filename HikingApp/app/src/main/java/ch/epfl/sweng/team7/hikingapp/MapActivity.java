@@ -58,7 +58,7 @@ import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
-    private final static int DEFAULT_BUTTON_SIZE = 128;
+    private final static int DEFAULT_BUTTON_SIZE = 64;
     private final static int DEFAULT_BUTTON_MARGIN = 10;
     private final static String LOG_FLAG = "Activity_Map";
     private final static int DEFAULT_ZOOM = 10;
