@@ -82,8 +82,9 @@
     <string name="prompt_comment_hint">Drop a comment about this hike</string>
 
     <!-- Add annotation prompt -->
-    <string name="add_annotation">Add</string>
+    <string name="add_annotation">Add annotation</string>
     <string name="prompt_add_tile">Annotation</string>
+    <string name="add_picture"> Take a picture</string>
     <string name="prompt_annotation_hint">Drop an annotation of the current point </string>
 
     <!-- Error messages -->

@@ -49,7 +49,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,8 +129,6 @@ public class MapActivity extends FragmentActivity {
 
         //creates a AddAnnotation button
         createAnnotationButton();
-        //creates a Add Picture button
-        createAddPictureButton();
 
         //Initializes the BottomInfoView
         createBottomInfoView();
@@ -488,7 +485,6 @@ public class MapActivity extends FragmentActivity {
         Button pauseButton = new Button(this);
         pauseButton.setText(R.string.button_pause_tracking);
         pauseButton.setId(R.id.button_tracking_pause);
-
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -514,8 +510,9 @@ public class MapActivity extends FragmentActivity {
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL, R.id.button_annotation_create);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
+        //annotationButton.setVisibility(View.GONE);
 
         annotationButton.setLayoutParams(lp);
         layout.addView(annotationButton, lp);
@@ -530,11 +527,6 @@ public class MapActivity extends FragmentActivity {
             }
         });
     }
-
-    private void createAddPictureButton() {
-        Button pictureButton = new Button(this);
-        pictureButton.setText(R.string.button_add_picture);
-        pictureButton.setId(R.id.button_picture);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -584,6 +576,13 @@ public class MapActivity extends FragmentActivity {
             }
         });
         builder.setNegativeButton(this.getResources().getString(R.string.button_cancel_save), null);
+        builder.setNegativeButton(this.getResources().getString(R.string.add_picture), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                startActivityForResult(intent, 0);
+            }
+        });
         builder.show();
     }
 
@@ -708,7 +707,9 @@ public class MapActivity extends FragmentActivity {
                 return false;
             }
         });
+
     }
+}
 
     private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
 
