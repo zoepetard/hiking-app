@@ -17,6 +17,8 @@ import ch.epfl.sweng.team7.hikingapp.R;
 public final class BottomInfoView {
 
     private static BottomInfoView instance = new BottomInfoView();
+    private static final int DEFAULT_TABLE_HEIGHT = 64;
+    private static final int DEFAULT_TABLE_MARGIN = 10;
     private static final float DEFAULT_TITLE_SIZE = 20f;
     private static final int DEFAULT_BG_COLOR = Color.WHITE;
 
@@ -37,6 +39,10 @@ public final class BottomInfoView {
         mapTableLayout = new TableLayout(context);
         mapTableLayout.setId(R.id.mapTextTable);
         mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
+        mapTableLayout.setBackgroundResource(R.drawable.panel);
+        TableLayout.LayoutParams lp = (TableLayout.LayoutParams) mapTableLayout.getLayoutParams();
+        lp.height = DEFAULT_TABLE_HEIGHT;
+        lp.setMargins(DEFAULT_TABLE_MARGIN, DEFAULT_TABLE_MARGIN, DEFAULT_TABLE_MARGIN, DEFAULT_TABLE_MARGIN);
         mapTableLayout.setVisibility(View.INVISIBLE);
         mTitle = new TextView(context);
         mTitle.setTextSize(DEFAULT_TITLE_SIZE);
