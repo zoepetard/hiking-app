@@ -152,6 +152,7 @@ public class MapActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mGps.stopService();
     }
 
     @Override
