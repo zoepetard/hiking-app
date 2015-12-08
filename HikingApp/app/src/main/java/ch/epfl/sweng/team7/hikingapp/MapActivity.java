@@ -188,7 +188,8 @@ public class MapActivity extends FragmentActivity {
                     for (HikeData hikeData : mHikesInWindow) {
                         if (hikeData.getHikeId() == intentHikeId) {
                             LatLngBounds newBounds = hikeData.getBoundingBox();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, mScreenHeight, 60));
+                            int displayHeight = (int)(mScreenHeight * 0.7);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, displayHeight, 30));
                         }
                     }
 
