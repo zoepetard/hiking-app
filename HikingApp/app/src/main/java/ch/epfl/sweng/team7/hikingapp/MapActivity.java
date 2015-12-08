@@ -404,7 +404,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setBackgroundResource((mGps.tracking()) ? R.drawable.stop : R.drawable.button_start_tracking);
+        toggleButton.setBackgroundResource((mGps.tracking()) ? R.drawable.button_stop_tracking : R.drawable.button_start_tracking);
         //toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
@@ -433,10 +433,10 @@ public class MapActivity extends FragmentActivity {
         Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
         Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
         if (mGps.tracking()) {
-            toggleButton.setBackgroundResource(R.drawable.stop);
+            toggleButton.setBackgroundResource(R.drawable.button_stop_tracking);
             //toggleButton.setText(R.string.button_stop_tracking);
             pauseButton.setVisibility(View.VISIBLE);
-            pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.resume : R.drawable.pause);
+            pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.button_resume_tracking : R.drawable.button_pause_tracking);
             //pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
         } else {
             toggleButton.setBackgroundResource(R.drawable.button_start_tracking);
@@ -448,7 +448,7 @@ public class MapActivity extends FragmentActivity {
 
     private void createPauseTrackingButton() {
         Button pauseButton = new Button(this);
-        pauseButton.setBackgroundResource(R.drawable.pause);
+        pauseButton.setBackgroundResource(R.drawable.button_pause_tracking);
         //pauseButton.setText(R.string.button_pause_tracking);
         pauseButton.setId(R.id.button_tracking_pause);
 
