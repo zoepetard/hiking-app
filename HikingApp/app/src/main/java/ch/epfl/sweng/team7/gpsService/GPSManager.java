@@ -74,10 +74,10 @@ public final class GPSManager {
         if (mGpsService != null) {
             if (!mIsTracking) {
                 startTracking();
+                toggleListeners();
             } else {
                 stopTracking();
             }
-            toggleListeners();
         } else {
             displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
@@ -258,17 +258,20 @@ public final class GPSManager {
      * previous ones.
      */
     private void stopTracking() {
-        togglePause();
+        Log.d(LOG_FLAG, "Hike is begin stopped");
+        if (!mIsPaused) togglePause();
         displaySavePrompt();
     }
 
     private void resetHikeTracking() {
+        Log.d(LOG_FLAG, "Hike variables being reset");
         mIsTracking = false;
         mIsPaused = false;
         mNotification.hide();
         mInfoDisplay.releaseLock(BOTTOM_TABLE_ACCESS_ID);
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         mGpsPath = null;
+        toggleListeners();
     }
 
     /**
@@ -286,6 +289,7 @@ public final class GPSManager {
      * listeners inside GPSService.
      */
     private void toggleListeners() {
+        Log.d(LOG_FLAG, "Listeners being toggled");
         if (mIsTracking) {
             mGpsService.enableListeners();
         } else {
@@ -339,6 +343,7 @@ public final class GPSManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //TODO call storeHike() after issue #86 is fixed
+                resetHikeTracking();
             }
         });
         
@@ -377,13 +382,13 @@ public final class GPSManager {
         builder.setPositiveButton(mContext.getResources().getString(R.string.button_proceed_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+                resetHikeTracking();
             }
         });
         builder.setNegativeButton(mContext.getResources().getString(R.string.button_keep_tracking), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+                togglePause();
             }
         });
         builder.setCancelable(false);
