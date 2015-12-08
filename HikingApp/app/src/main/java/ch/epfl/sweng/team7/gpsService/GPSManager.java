@@ -67,8 +67,8 @@ public final class GPSManager {
     private GPSService gpsService;
     private ServiceConnection serviceConnection;
     private Annotation annotation;
-
     private List<Annotation> listAnnotations = new ArrayList<>();
+
 
 
     private RawHikeData rawHikeData;
@@ -203,15 +203,6 @@ public final class GPSManager {
         }
     }
 
-    /**
-     * Method to add annotations
-     *
-     * @param annotation
-     */
-    public void addAnnotation(Annotation annotation) {
-        listAnnotations.add(annotation);
-    }
-
     @Override
     public String toString() {
         String gpsPathInformation = (mIsTracking && !mIsPaused && mGpsPath != null) ? String.format("yes -> %s", mGpsPath.toString()) : "No";
@@ -336,13 +327,13 @@ public final class GPSManager {
         layout.addView(lnSeparator);
 
         //setup the hike title input field
-        EditText hikeTitle = new EditText(mContext);
+        final EditText hikeTitle = new EditText(mContext);
         hikeTitle.setHint(mContext.getResources().getString(R.string.prompt_title_hint));
         hikeTitle.setInputType(InputType.TYPE_CLASS_TEXT);
         layout.addView(hikeTitle);
 
         //setup the hike comment input field
-        EditText hikeComment = new EditText(mContext);
+        final EditText hikeComment = new EditText(mContext);
         hikeComment.setHint(mContext.getResources().getString(R.string.prompt_comment_hint));
         hikeComment.setInputType(InputType.TYPE_CLASS_TEXT);
         hikeComment.setSingleLine(false);
@@ -353,10 +344,8 @@ public final class GPSManager {
         builder.setPositiveButton(mContext.getResources().getString(R.string.button_save_hike), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO call storeHike() after issue #86 is fixed
-                //TODO storePictures()
-                storeHike();
-                storePictures(listAnnotations);
+                storeHike(hikeTitle.getText().toString(), hikeComment.getText().toString());
+                storePictures();
                 mGpsPath = null;
             }
         });
@@ -380,9 +369,10 @@ public final class GPSManager {
         }
     }
 
-    private void storeHike() {
+    private void storeHike(String title, String comment) {
         try {
             rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
+            rawHikeData.setTitle(title);
             rawHikeData.setAnnotations(listAnnotations);
             Log.d(LOG_FLAG, "GPS PATH CONVERTED");
 
@@ -393,10 +383,10 @@ public final class GPSManager {
         }
     }
 
-    private void storePictures(List<Annotation> annotations) {
-        if (annotations != null || annotations.size() > 1) {
-            for (int i = 0; i < annotations.size(); i++) {
-                new StorePictureTask().execute(annotations.get(i));
+    private void storePictures() {
+        if (rawHikeData.getAnnotations() != null || rawHikeData.getAnnotations().size() > 1) {
+            for (int i = 0; i < rawHikeData.getAnnotations().size(); i++) {
+                new StorePictureTask().execute(rawHikeData.getAnnotations().get(i));
             }
         }
     }
@@ -426,7 +416,6 @@ public final class GPSManager {
             long hikeId;
             DataManager dataManager = DataManager.getInstance();
             try {
-                //dataManager.loginUser(new LoginRequest("bort@googlemail.com", "Bort", ""));
                 hikeId = dataManager.postHike(rawHikeData[0]);
                 rawHikeData[0].setHikeId(hikeId);
                 Log.d(LOG_FLAG, "Hike Post correctly");
@@ -448,13 +437,15 @@ public final class GPSManager {
         protected Long doInBackground(Annotation... pictures) {
             long pictureId;
             DataManager dataManager = DataManager.getInstance();
-            try {
-                pictureId = dataManager.postPicture(pictures[0].getPicture());
-                pictures[0].setPicturedId(pictureId);
-                Log.d(LOG_FLAG, "Picture post correctly");
-                return pictureId;
-            } catch (DataManagerException e) {
-                Log.d(LOG_FLAG, "Error while posting picture");
+            if (pictures[0].getPicture() != null){
+                try {
+                    pictureId = dataManager.postPicture(pictures[0].getPicture());
+                    pictures[0].setPicturedId(pictureId);
+                    Log.d(LOG_FLAG, "Picture post correctly");
+                    return pictureId;
+                } catch (DataManagerException e) {
+                    Log.d(LOG_FLAG, "Error while posting picture");
+                }
             }
             return null;
         }
@@ -464,9 +455,7 @@ public final class GPSManager {
 
     }
 
-    public void setAnnotations(ArrayList<Annotation> listAnnotations) {
-        if (rawHikeData != null) {
-            rawHikeData.setAnnotations(listAnnotations);
-        }
+    public void setAnnotations(ArrayList<Annotation> annotations) {
+        listAnnotations = annotations;
     }
 }

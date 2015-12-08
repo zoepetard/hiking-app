@@ -99,7 +99,7 @@ public class DataManagerTest extends InstrumentationTestCase {
             // pass
         }
     }
-    
+
 
     /* TODO add after server side is Implemented
     @Test

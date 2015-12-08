@@ -1,6 +1,7 @@
 package ch.epfl.sweng.team7.database;
 
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -67,12 +68,13 @@ public class Annotation {
      * @return
      * @throws JSONException
      */
-    public static Annotation parseFromJSON(JSONObject jsonObject) throws JSONException {
-        LatLng latLng = new LatLng(jsonObject.getJSONArray("point").getDouble(0), jsonObject.getJSONArray("point").getDouble(1));
-        Date date = new Date(jsonObject.getJSONArray("point").getLong(2));
-        double elevation = jsonObject.getJSONArray("point").getDouble(3);
-        String text = new String(jsonObject.getString("text_annotation"));
-        long pictureId = jsonObject.getLong("picture_id");
+    public static Annotation parseFromJSON(JSONArray jsonObject) throws JSONException {
+        Log.d(LOG_FLAG, jsonObject.toString());
+        LatLng latLng = new LatLng(jsonObject.getDouble(0), jsonObject.getDouble(1));
+        Date date = new Date();
+        double elevation = jsonObject.getDouble(3);
+        String text = new String(jsonObject.get(4).toString());
+        long pictureId = jsonObject.getLong(5);
         Annotation annotation = new Annotation(new RawHikePoint(latLng, date, elevation), text, null);
         annotation.setPicturedId(pictureId);
         return annotation;

@@ -74,8 +74,7 @@ public class MapActivity extends FragmentActivity {
     private final static String LOG_FLAG = "Activity_Map";
     private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
-    private final static String EXTRA_HIKE_ID =
-            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
+    private final static String EXTRA_HIKE_ID = "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
@@ -327,6 +326,7 @@ public class MapActivity extends FragmentActivity {
         for (int i = 0; i < mHikesInWindow.size(); i++) {
             HikeData hike = mHikesInWindow.get(i);
             displayMarkers(hike);
+            displayAnnotations(hike);
             displayHike(hike);
             boundingBoxBuilder.include(hike.getStartLocation());
             boundingBoxBuilder.include(hike.getFinishLocation());
@@ -338,18 +338,10 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void displayMarkers(final HikeData hike) {
-        MarkerOptions startMarkerOptions = new MarkerOptions()
-                .position(hike.getStartLocation())
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
-        MarkerOptions finishMarkerOptions = new MarkerOptions()
-                .position(hike.getFinishLocation())
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
-
-
+    private void displayAnnotations(final HikeData hike) {
         //Display de Annotations
         List<MarkerOptions> annotations = new ArrayList<>();
-        if(hike.getHikePoints() != null || hike.getHikePoints().size() > 1) {
+        if(hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
             for (int i = 0; i < hike.getAnnotations().size(); i++) {
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
@@ -357,12 +349,29 @@ public class MapActivity extends FragmentActivity {
                         .snippet(hike.getAnnotations().get(i).getAnnotation())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 annotations.add(markerOptions);
-                Marker textAnnotation = mMap.addMarker(markerOptions);
+                final Marker textAnnotation = mMap.addMarker(markerOptions);
                 textAnnotation.showInfoWindow();
+                /*
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        textAnnotation.showInfoWindow();
+                        return true;
+                    }
+                });
+                */
             }
 
         }
+    }
 
+    private void displayMarkers(final HikeData hike) {
+        MarkerOptions startMarkerOptions = new MarkerOptions()
+                .position(hike.getStartLocation())
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
+        MarkerOptions finishMarkerOptions = new MarkerOptions()
+                .position(hike.getFinishLocation())
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
@@ -471,6 +480,7 @@ public class MapActivity extends FragmentActivity {
                     toggleButton.setText(R.string.button_start_tracking);
                     pauseButton.setVisibility(View.INVISIBLE);
                     mGps.setAnnotations(mListAnnotations);
+                    Log.d(LOG_FLAG, String.valueOf(mListAnnotations.size()));
                     stopHikeDisplay();
                 }
             }
@@ -573,9 +583,7 @@ public class MapActivity extends FragmentActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String annotation = annotationEditText.getText().toString();
                 addAnnotation(annotation);
-                RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
-                mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
-                Log.d(LOG_FLAG, "Text annotation added to the list" + annotation);
+
             }
         });
         builder.setNegativeButton(this.getResources().getString(R.string.button_cancel_save), null);
@@ -592,8 +600,7 @@ public class MapActivity extends FragmentActivity {
         }else{
             mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
         }
-        mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
-        Log.d(LOG_FLAG, "Text annotation added to the list" + annotation);
+        Log.d(LOG_FLAG, "Text annotation added to the list" + mListAnnotations.get(0).getRawHikePoint().getPosition().toString());
 
     }
 
