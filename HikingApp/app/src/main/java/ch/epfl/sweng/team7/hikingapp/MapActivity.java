@@ -459,8 +459,6 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 mGps.togglePause();
                 updateButtonDisplay();
-                //Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
-                //pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
