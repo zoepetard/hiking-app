@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -65,14 +66,15 @@ public class MapActivity extends FragmentActivity {
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
-    private  static int mScreenWidth;
-    private  static int mScreenHeight;
+    private static int mScreenWidth;
+    private static int mScreenHeight;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+    private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
 
     private boolean mFollowingUser = false;
 
@@ -156,6 +158,13 @@ public class MapActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        processNewIntent();
+    }
+
+    @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MapActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -167,11 +176,11 @@ public class MapActivity extends FragmentActivity {
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
      * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
+     * <p/>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
      * install/update the Google Play services APK on their device.
-     * <p>
+     * <p/>
      * A user can return to this FragmentActivity after following the prompt and correctly
      * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
      * have been completely destroyed during this process (it is likely that it would only be
@@ -199,7 +208,7 @@ public class MapActivity extends FragmentActivity {
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      * just add a marker near Africa.
-     * <p>
+     * <p/>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
@@ -246,6 +255,44 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
+    }
+
+    private void processNewIntent() {
+        Intent intent = getIntent();
+        boolean displaySingleHike = false;
+
+        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID)) {
+            String hikeIdStr = intent.getStringExtra(HikeInfoActivity.HIKE_ID);
+
+            if (hikeIdStr != null) {
+                long intentHikeId = Long.valueOf(hikeIdStr);
+                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                    if (intentHikeId == displayedHike.second) {
+                        displaySingleHike = true;
+                    }
+                }
+                if (displaySingleHike) {
+                    for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                        if (displayedHike.second != intentHikeId) {
+                            displayedHike.first.remove();
+                        }
+                    }
+                    for (Marker marker : mMarkerByHike.keySet()) {
+                        if (mMarkerByHike.get(marker) != intentHikeId) {
+                            marker.remove();
+                        }
+                    }
+                    for (HikeData hikeData : mHikesInWindow) {
+                        if (hikeData.getHikeId() == intentHikeId) {
+                            LatLngBounds newBounds = hikeData.getBoundingBox();
+                            int displayHeight = (int) (mScreenHeight * 0.7);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, displayHeight, 30));
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     private static class DownloadHikeParams {
@@ -356,10 +403,10 @@ public class MapActivity extends FragmentActivity {
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
             polylineOptions.add(hikePoint.getPosition())
-                            .width(5)
-                            .color(HIKE_LINE_COLOR);
+                    .width(5)
+                    .color(HIKE_LINE_COLOR);
         }
-        mMap.addPolyline(polylineOptions);
+        mDisplayedHikes.add(Pair.create(mMap.addPolyline(polylineOptions), hike.getHikeId()));
     }
 
     private void onMapClickHelper(LatLng point) {
@@ -527,10 +574,10 @@ public class MapActivity extends FragmentActivity {
                     // get bounding box
                     Bundle clickedLocationExtras = clickedLocation.getExtras();
                     Object bounds = null;
-                    if(clickedLocationExtras != null) {
+                    if (clickedLocationExtras != null) {
                         bounds = clickedLocationExtras.get(EXTRA_BOUNDS);
                     }
-                    if(bounds != null && bounds instanceof LatLngBounds) {
+                    if (bounds != null && bounds instanceof LatLngBounds) {
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
                         focusOnLatLng(latLng);
@@ -592,7 +639,7 @@ public class MapActivity extends FragmentActivity {
                 Log.d(LOG_FLAG, e.getMessage());
             }
             // check if local results and add to suggestions
-            for(HikeData hikeData : hikeDataList) {
+            for (HikeData hikeData : hikeDataList) {
 
                 Address address = new Address(Locale.ROOT);
 
