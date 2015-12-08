@@ -62,8 +62,8 @@ public class MapActivity extends FragmentActivity {
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
-    private  static int mScreenWidth;
-    private  static int mScreenHeight;
+    private static int mScreenWidth;
+    private static int mScreenHeight;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
@@ -150,63 +150,15 @@ public class MapActivity extends FragmentActivity {
         processNewIntent();
     }
 
-    private void processNewIntent() {
-        Intent intent = getIntent();
-        boolean displaySingleHike = false;
-
-
-
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(46.683370, 7.036110))
-        //.title("hi")
-        //.snippet(": " + Long.toString(hikeIdLong)));
-
-        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID)) {
-            String hikeIdStr = intent.getStringExtra(HikeInfoActivity.HIKE_ID);
-            //long hikeIdLong = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
-            //long hikeIdLong = Long.valueOf(hikeIdStr);
-
-            if (hikeIdStr != null) {
-                long intentHikeId = Long.valueOf(hikeIdStr);
-
-                //long intentHikeId = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
-                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                    if (intentHikeId == displayedHike.second) {
-                        displaySingleHike = true;
-                    }
-                }
-                if (displaySingleHike) {
-                    for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                        if (displayedHike.second != intentHikeId) {
-                            displayedHike.first.remove();
-                        }
-                    }
-                    for (Marker marker : mMarkerByHike.keySet()) {
-                        if (mMarkerByHike.get(marker) != intentHikeId) {
-                            marker.remove();
-                        }
-                    }
-                    for (HikeData hikeData : mHikesInWindow) {
-                        if (hikeData.getHikeId() == intentHikeId) {
-                            LatLngBounds newBounds = hikeData.getBoundingBox();
-                            int displayHeight = (int)(mScreenHeight * 0.7);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, displayHeight, 30));
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
      * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
+     * <p/>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
      * install/update the Google Play services APK on their device.
-     * <p>
+     * <p/>
      * A user can return to this FragmentActivity after following the prompt and correctly
      * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
      * have been completely destroyed during this process (it is likely that it would only be
@@ -234,26 +186,22 @@ public class MapActivity extends FragmentActivity {
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      * just add a marker near Africa.
-     * <p>
+     * <p/>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        mScreenWidth = size.x;
+        mScreenHeight = size.y;
 
-        //if (!displaySingleHike) {
+        mUserLocation = getUserPosition();
+        LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
 
-            Point size = new Point();
-            getWindowManager().getDefaultDisplay().getSize(size);
-            mScreenWidth = size.x;
-            mScreenHeight = size.y;
-
-            mUserLocation = getUserPosition();
-            LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
-
-            List<HikeData> hikesFound = new ArrayList<>();
-            boolean firstHike = true;
-            new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, initialBounds, firstHike));
-        //}
+        List<HikeData> hikesFound = new ArrayList<>();
+        boolean firstHike = true;
+        new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, initialBounds, firstHike));
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -285,6 +233,44 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
+    }
+
+    private void processNewIntent() {
+        Intent intent = getIntent();
+        boolean displaySingleHike = false;
+
+        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID)) {
+            String hikeIdStr = intent.getStringExtra(HikeInfoActivity.HIKE_ID);
+
+            if (hikeIdStr != null) {
+                long intentHikeId = Long.valueOf(hikeIdStr);
+                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                    if (intentHikeId == displayedHike.second) {
+                        displaySingleHike = true;
+                    }
+                }
+                if (displaySingleHike) {
+                    for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                        if (displayedHike.second != intentHikeId) {
+                            displayedHike.first.remove();
+                        }
+                    }
+                    for (Marker marker : mMarkerByHike.keySet()) {
+                        if (mMarkerByHike.get(marker) != intentHikeId) {
+                            marker.remove();
+                        }
+                    }
+                    for (HikeData hikeData : mHikesInWindow) {
+                        if (hikeData.getHikeId() == intentHikeId) {
+                            LatLngBounds newBounds = hikeData.getBoundingBox();
+                            int displayHeight = (int) (mScreenHeight * 0.7);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, displayHeight, 30));
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     private static class DownloadHikeParams {
@@ -366,15 +352,7 @@ public class MapActivity extends FragmentActivity {
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
-                //remove this!
-                if (marker.getTitle() != null)
-                {
-                    marker.showInfoWindow();
-                    return true;
-                }
-                else {
-                    return onMarkerClickHelper(marker);
-                }
+                return onMarkerClickHelper(marker);
             }
         });
         Marker startMarker = mMap.addMarker(startMarkerOptions);
@@ -403,8 +381,8 @@ public class MapActivity extends FragmentActivity {
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
             polylineOptions.add(hikePoint.getPosition())
-                            .width(5)
-                            .color(HIKE_LINE_COLOR);
+                    .width(5)
+                    .color(HIKE_LINE_COLOR);
         }
         mDisplayedHikes.add(Pair.create(mMap.addPolyline(polylineOptions), hike.getHikeId()));
     }
@@ -563,10 +541,10 @@ public class MapActivity extends FragmentActivity {
                     // get bounding box
                     Bundle clickedLocationExtras = clickedLocation.getExtras();
                     Object bounds = null;
-                    if(clickedLocationExtras != null) {
+                    if (clickedLocationExtras != null) {
                         bounds = clickedLocationExtras.get(EXTRA_BOUNDS);
                     }
-                    if(bounds != null && bounds instanceof LatLngBounds) {
+                    if (bounds != null && bounds instanceof LatLngBounds) {
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
                         focusOnLatLng(latLng);
@@ -623,7 +601,7 @@ public class MapActivity extends FragmentActivity {
                 Log.d(LOG_FLAG, e.getMessage());
             }
             // check if local results and add to suggestions
-            for(HikeData hikeData : hikeDataList) {
+            for (HikeData hikeData : hikeDataList) {
 
                 Address address = new Address(Locale.ROOT);
 

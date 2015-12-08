@@ -13,6 +13,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.util.Arrays;
@@ -27,6 +28,8 @@ public class CustomListAdapter extends BaseAdapter {
 
     public static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
+
+    public final static String HIKE_ID = "hikeID";
     HikeListActivity context;
     List<HikeData> mHikes;
     int mapHeight = 0;
@@ -79,23 +82,37 @@ public class CustomListAdapter extends BaseAdapter {
         //Display hike details.
         TextView nameText = (TextView) rowView.findViewById(R.id.nameRow);
         nameText.setText(hikeData.getTitle());
-
-        TextView distanceText = (TextView) rowView.findViewById(R.id.distanceRow);
-        distanceText.setText(context.getResources().getString(R.string.hikeDistanceText, (long) hikeData.getDistance() / 1000));
-
-        TextView ratingText = (TextView) rowView.findViewById(R.id.ratingRow);
-        ratingText.setText(context.getResources().getString(R.string.hikeRatingText, (long) hikeData.getRating().getDisplayRating()));
-
-        rowView.setOnClickListener(new View.OnClickListener() {
+        nameText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), HikeInfoActivity.class);
-                i.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
-                rowView.getContext().startActivity(i);
+                onTextClickHelper(v, hikeData);
             }
         });
 
+        TextView distanceText = (TextView) rowView.findViewById(R.id.distanceRow);
+        distanceText.setText(context.getResources().getString(R.string.hikeDistanceText, (long) hikeData.getDistance() / 1000));
+        distanceText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTextClickHelper(v, hikeData);
+            }
+        });
+
+        TextView ratingText = (TextView) rowView.findViewById(R.id.ratingRow);
+        ratingText.setText(context.getResources().getString(R.string.hikeRatingText, (long) hikeData.getRating().getDisplayRating()));
+        ratingText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTextClickHelper(v, hikeData);
+            }
+        });
         return rowView;
+    }
+
+    private void onTextClickHelper(View v, HikeData hikeData) {
+        Intent intent = new Intent(v.getContext(), HikeInfoActivity.class);
+        intent.putExtra(EXTRA_HIKE_ID, Long.toString(hikeData.getHikeId()));
+        v.getContext().startActivity(intent);
     }
 
     class ViewHolder implements OnMapReadyCallback {
@@ -112,6 +129,7 @@ public class CustomListAdapter extends BaseAdapter {
             MapDisplay.displayMarkers(hikesToDisplay, map);
             MapDisplay.setOnMapClick(false, displayedHikes, map);
             MapDisplay.setCamera(hikesToDisplay, map, mapWidth, mapHeight);
+            googleMap.setOnMapClickListener(new MapPreviewClickListener());
         }
 
         public void initializeMapView(HikeData hikeData) {
@@ -123,6 +141,13 @@ public class CustomListAdapter extends BaseAdapter {
             }
         }
 
+        private class MapPreviewClickListener implements GoogleMap.OnMapClickListener {
+            @Override
+            public void onMapClick(LatLng point) {
+                Intent intent = new Intent(mapView.getContext(), MapActivity.class);
+                intent.putExtra(HIKE_ID, Long.toString(mHikeData.getHikeId()));
+                mapView.getContext().startActivity(intent);
+            }
+        }
     }
-
 }
