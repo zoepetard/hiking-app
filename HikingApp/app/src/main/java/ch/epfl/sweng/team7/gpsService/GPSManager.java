@@ -82,6 +82,7 @@ public final class GPSManager {
             displayToastMessage(mContext.getResources().getString(R.string.gps_service_access_failure));
             Log.d(LOG_FLAG, "Could not access GPSService (null)");
         }
+        ((MapActivity)mContext).updateButtonDisplay();
     }
 
     /**
@@ -93,6 +94,7 @@ public final class GPSManager {
         if (!mIsPaused) {
             mGpsPath.addFootPrint(mLastFootPrint, true);
         }
+        ((MapActivity)mContext).updateButtonDisplay();
     }
 
     /**
@@ -272,6 +274,7 @@ public final class GPSManager {
         mInfoDisplay.hide(BOTTOM_TABLE_ACCESS_ID);
         mGpsPath = null;
         toggleListeners();
+        ((MapActivity)mContext).updateButtonDisplay();
     }
 
     /**
