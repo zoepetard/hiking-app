@@ -58,6 +58,7 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static int DEFAULT_BUTTON_SIZE = 128;
+    private final static int DEFAULT_BUTTON_MARGIN = 10;
     private final static String LOG_FLAG = "Activity_Map";
     private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
@@ -417,6 +418,10 @@ public class MapActivity extends FragmentActivity {
         lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         lp.width = DEFAULT_BUTTON_SIZE;
         lp.height = DEFAULT_BUTTON_SIZE;
+        lp.leftMargin = DEFAULT_BUTTON_MARGIN;
+        lp.rightMargin = DEFAULT_BUTTON_MARGIN;
+        lp.bottomMargin = DEFAULT_BUTTON_MARGIN;
+        lp.topMargin = DEFAULT_BUTTON_MARGIN;
 
         toggleButton.setLayoutParams(lp);
         layout.addView(toggleButton, lp);
@@ -463,6 +468,10 @@ public class MapActivity extends FragmentActivity {
         lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
         lp.width = DEFAULT_BUTTON_SIZE;
         lp.height = DEFAULT_BUTTON_SIZE;
+        lp.leftMargin = DEFAULT_BUTTON_MARGIN;
+        lp.rightMargin = DEFAULT_BUTTON_MARGIN;
+        lp.bottomMargin = DEFAULT_BUTTON_MARGIN;
+        lp.topMargin = DEFAULT_BUTTON_MARGIN;
 
         pauseButton.setLayoutParams(lp);
         layout.addView(pauseButton, lp);
