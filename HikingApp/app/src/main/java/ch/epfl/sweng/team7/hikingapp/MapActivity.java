@@ -481,6 +481,7 @@ public class MapActivity extends FragmentActivity {
 
     private void setupHikeListButton() {
         Button hikeList = (Button) findViewById(R.id.go_hikes_button);
+        hikeList.setText("");
         hikeList.setBackgroundResource(R.drawable.button_hike_list);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) hikeList.getLayoutParams();
         setupButtonSize(lp);
