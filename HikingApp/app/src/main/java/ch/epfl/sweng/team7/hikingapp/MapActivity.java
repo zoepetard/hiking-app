@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -69,7 +70,8 @@ public class MapActivity extends FragmentActivity {
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
-    private List<Polyline> mDisplayedHikes = new ArrayList<>();
+    private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
+    //private List<Polyline> mDisplayedHikes = new ArrayList<>();
 
     private boolean mFollowingUser = false;
 
@@ -182,18 +184,50 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        mScreenWidth = size.x;
-        mScreenHeight = size.y;
+        Intent intent = getIntent();
+        boolean displaySingleHike = false;
 
-        mUserLocation = getUserPosition();
-        LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
+        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID))
+        {
+            long intentHikeId = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
+            //new DownloadOneHikeAsync().execute(hikeId);
+            long hikeId = 1;
 
-        List<HikeData> hikesFound = new ArrayList<>();
-        boolean firstHike = true;
-        new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, initialBounds, firstHike));
+            for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                if (intentHikeId == displayedHike.second) {
+                    displaySingleHike = true;
+                    hikeId = displayedHike.second;
+                }
+            }
+            if (displaySingleHike) {
+                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                    if (displayedHike.second != hikeId) {
+                        displayedHike.first.remove();
+                    }
+                }
+                for (Marker marker : mMarkerByHike.keySet()) {
+                    if (mMarkerByHike.get(marker) != hikeId) {
+                        marker.remove();
+                    }
+                }
+            }
+        }
+
+        if (!displaySingleHike) {
+
+            Point size = new Point();
+            getWindowManager().getDefaultDisplay().getSize(size);
+            mScreenWidth = size.x;
+            mScreenHeight = size.y;
+
+            mUserLocation = getUserPosition();
+            LatLngBounds initialBounds = guessNewLatLng(mUserLocation, mUserLocation, 0.5);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(initialBounds, mScreenWidth, mScreenHeight, 30));
+
+            List<HikeData> hikesFound = new ArrayList<>();
+            boolean firstHike = true;
+            new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, initialBounds, firstHike));
+        }
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -338,7 +372,7 @@ public class MapActivity extends FragmentActivity {
                             .width(5)
                             .color(HIKE_LINE_COLOR);
         }
-        mDisplayedHikes.add(mMap.addPolyline(polylineOptions));
+        mDisplayedHikes.add(Pair.create(mMap.addPolyline(polylineOptions), hike.getHikeId()));
     }
 
     private void onMapClickHelper(LatLng point) {
