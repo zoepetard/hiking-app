@@ -92,6 +92,7 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
+        processNewIntent();
         mGps.startService(this);
 
         // nav drawer setup
@@ -143,6 +144,44 @@ public class MapActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        processNewIntent();
+    }
+
+    private void processNewIntent() {
+        Intent intent = getIntent();
+        boolean displaySingleHike = false;
+
+        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID))
+        {
+            long intentHikeId = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
+            //new DownloadOneHikeAsync().execute(hikeId);
+            //long hikeId = 0;
+
+            for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                if (intentHikeId == displayedHike.second) {
+                    displaySingleHike = true;
+                    //hikeId = displayedHike.second;
+                }
+            }
+            if (displaySingleHike) {
+                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
+                    if (displayedHike.second != intentHikeId) {
+                        displayedHike.first.remove();
+                    }
+                }
+                for (Marker marker : mMarkerByHike.keySet()) {
+                    if (mMarkerByHike.get(marker) != intentHikeId) {
+                        marker.remove();
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -184,36 +223,7 @@ public class MapActivity extends FragmentActivity {
      */
     private void setUpMap() {
 
-        Intent intent = getIntent();
-        boolean displaySingleHike = false;
-
-        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID))
-        {
-            long intentHikeId = (long) intent.getDoubleExtra(HikeInfoActivity.HIKE_ID, 0);
-            //new DownloadOneHikeAsync().execute(hikeId);
-            long hikeId = 1;
-
-            for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                if (intentHikeId == displayedHike.second) {
-                    displaySingleHike = true;
-                    hikeId = displayedHike.second;
-                }
-            }
-            if (displaySingleHike) {
-                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                    if (displayedHike.second != hikeId) {
-                        displayedHike.first.remove();
-                    }
-                }
-                for (Marker marker : mMarkerByHike.keySet()) {
-                    if (mMarkerByHike.get(marker) != hikeId) {
-                        marker.remove();
-                    }
-                }
-            }
-        }
-
-        if (!displaySingleHike) {
+        //if (!displaySingleHike) {
 
             Point size = new Point();
             getWindowManager().getDefaultDisplay().getSize(size);
@@ -227,7 +237,7 @@ public class MapActivity extends FragmentActivity {
             List<HikeData> hikesFound = new ArrayList<>();
             boolean firstHike = true;
             new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, initialBounds, firstHike));
-        }
+        //}
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
