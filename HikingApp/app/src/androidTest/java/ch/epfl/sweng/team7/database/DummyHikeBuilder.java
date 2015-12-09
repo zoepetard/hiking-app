@@ -9,8 +9,8 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 
 public class DummyHikeBuilder {
     private static final String PROPER_JSON_ONEHIKE = "{\n"
-            + "  \"hike_id\": 168,\n"
-            + "  \"owner_id\": 153,\n"
+            + "  \"hike_id\": %d,\n"
+            + "  \"owner_id\": %d,\n"
             + "  \"date\": 123201,\n"
             + "  \"hike_data\": [\n"
             + "    [0.0, 0.0, 123201, 1.0],\n"

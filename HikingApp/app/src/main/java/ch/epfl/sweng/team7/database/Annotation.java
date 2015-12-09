@@ -71,7 +71,7 @@ public class Annotation {
     public static Annotation parseFromJSON(JSONArray jsonObject) throws JSONException {
         Log.d(LOG_FLAG, jsonObject.toString());
         LatLng latLng = new LatLng(jsonObject.getDouble(0), jsonObject.getDouble(1));
-        Date date = new Date();
+        Date date = new Date(jsonObject.getLong(2));
         double elevation = jsonObject.getDouble(3);
         String text = new String(jsonObject.get(4).toString());
         long pictureId = jsonObject.getLong(5);
