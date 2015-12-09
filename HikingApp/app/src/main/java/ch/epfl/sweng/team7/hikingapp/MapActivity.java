@@ -49,6 +49,7 @@ import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
+import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
@@ -610,6 +611,18 @@ public class MapActivity extends FragmentActivity {
     private void displayToast(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    private class GetOwnerFromHike extends AsyncTask<HikeData, Void, UserData> {
+        @Override
+        protected UserData doInBackground(HikeData... hikes) {
+            try {
+                return DataManager.getInstance().getUserData(hikes[0].getOwnerId());
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
     private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
