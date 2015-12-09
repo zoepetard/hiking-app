@@ -1,5 +1,7 @@
 package ch.epfl.sweng.team7.database;
 
+import java.util.Date;
+
 import ch.epfl.sweng.team7.network.RawHikeComment;
 
 public class DefaultHikeComment implements HikeComment {
@@ -11,7 +13,7 @@ public class DefaultHikeComment implements HikeComment {
     private final long mCommentOwnerId;
     private final String mCommentOwnerName;
     private final String mCommentText;
-    private final String mCommentDate;
+    private final Date mCommentDate;
 
     public DefaultHikeComment(RawHikeComment rawHikeComment) {
         mCommentId = rawHikeComment.getCommentId();
@@ -49,7 +51,7 @@ public class DefaultHikeComment implements HikeComment {
     }
 
     @Override
-    public String getCommentDate() {
+    public Date getCommentDate() {
         return mCommentDate;
     }
 }

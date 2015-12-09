@@ -279,17 +279,7 @@ public class HikeInfoView {
             commentList.removeAllViews();
             Comparator<HikeComment> comparator = new Comparator<HikeComment>() {
                 public int compare(HikeComment c1, HikeComment c2) {
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                    dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
-                    Date date1 = null;
-                    Date date2 = null;
-                    try {
-                        date1 = dateFormat.parse(c1.getCommentDate());
-                        date2 = dateFormat.parse(c2.getCommentDate());
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    return date1.compareTo(date2);
+                    return c1.getCommentDate().compareTo(c2.getCommentDate());
                 }
             };
             Collections.sort(comments, comparator);
@@ -382,15 +372,16 @@ public class HikeInfoView {
 
         TextView commentDate = (TextView) commentRow
                 .findViewById(R.id.comment_date);
-        String date;
+        Date date;
         if (comment.getCommentDate() == null) { // new comment
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-            Date dateNow = new Date();
-            date = dateFormat.format(dateNow);
+            date = new Date();
         } else {
             date = comment.getCommentDate();
         }
-        commentDate.setText(date);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+        String dateString = dateFormat.format(date);
+        commentDate.setText(dateString);
 
         TextView commentName = (TextView) commentRow
                 .findViewById(R.id.comment_username);
