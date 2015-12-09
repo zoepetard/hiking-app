@@ -436,21 +436,41 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void displayHikeInfo(final HikeData hike) {
-        UserData user = (UserData)(new GetOwnerFromHike().execute(hike));
-        mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-        mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, user.getUserName()));
-        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-        mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
-                intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
-                startActivity(intent);
+    private class GetOwnerFromHike extends AsyncTask<HikeData, Void, UserData> {
+        @Override
+        protected UserData doInBackground(HikeData... hikes) {
+            try {
+                return DataManager.getInstance().getUserData(hikes[0].getOwnerId());
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
             }
-        });
+        }
+    }
 
-        mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
+    private class DisplayHikeInfo extends AsyncTask<HikeData, Void, Void> {
+        @Override
+        protected Void doInBackground(HikeData... hikes){
+            final HikeData hike = hikes[0];
+            try {
+                UserData user = DataManager.getInstance().getUserData(hike.getOwnerId());
+                mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+                mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+                mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, user.getUserName()));
+                mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+                mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                        intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
+                        startActivity(intent);
+                    }
+                });
+                mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, "Could not display hike information");
+            }
+            return null;
+        }
     }
 
     private void createTrackingToggleButton() {
@@ -612,18 +632,6 @@ public class MapActivity extends FragmentActivity {
     private void displayToast(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();
-    }
-
-    private class GetOwnerFromHike extends AsyncTask<HikeData, Void, UserData> {
-        @Override
-        protected UserData doInBackground(HikeData... hikes) {
-            try {
-                return DataManager.getInstance().getUserData(hikes[0].getOwnerId());
-            } catch (DataManagerException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
     }
 
     private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
