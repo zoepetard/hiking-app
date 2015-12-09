@@ -717,6 +717,7 @@ public class MapActivity extends FragmentActivity {
     public void stopHikeDisplay() {
         //TODO do something when we stop hiking..?
         mPolyRef.remove();
+        onCameraChangeHelper();
     }
 
 
