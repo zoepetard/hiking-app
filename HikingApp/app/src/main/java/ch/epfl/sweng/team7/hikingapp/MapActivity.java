@@ -466,7 +466,7 @@ public class MapActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(UserData userData) {
             if (userData != null) {
-                mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
+                mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, hike.getTitle());
                 mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
                 mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, userData.getUserName()));
                 mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
