@@ -586,9 +586,11 @@ public class MapActivity extends FragmentActivity {
 
     private void addPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
+        if (mListAnnotations.size() > 0) {
             if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 mListAnnotations.get(mListAnnotations.size() - 1).setPicture(drawable);
-            } else{
+            }
+        } else {
             mListAnnotations.add(new Annotation(rawHikePoint, null, drawable));
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
