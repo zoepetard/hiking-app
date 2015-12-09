@@ -20,7 +20,7 @@ public final class BottomInfoView {
     private static final int DEFAULT_TABLE_HEIGHT = 64;
     private static final int DEFAULT_TABLE_MARGIN = 10;
     private static final float DEFAULT_TITLE_SIZE = 20f;
-    private static final int DEFAULT_BG_COLOR = Color.WHITE;
+    private static final int DEFAULT_BG_COLOR = 0xff7f7f7f;
 
     private Context mContext;
     private TableLayout mapTableLayout;
@@ -39,7 +39,7 @@ public final class BottomInfoView {
         mapTableLayout = new TableLayout(context);
         mapTableLayout.setId(R.id.mapTextTable);
         mapTableLayout.setBackgroundColor(DEFAULT_BG_COLOR);
-        mapTableLayout.setBackgroundResource(R.drawable.panel);
+        //mapTableLayout.setBackgroundResource(R.drawable.panel);
         mapTableLayout.setVisibility(View.INVISIBLE);
         mTitle = new TextView(context);
         mTitle.setTextSize(DEFAULT_TITLE_SIZE);
