@@ -26,7 +26,7 @@
 
     <!-- Strings related to hike display -->
     <string name="hikeNumberText">Hike #%1$d</string>
-    <string name="hikeOwnerText">Owner: %1$d</string>
+    <string name="hikeOwnerText">Owner: %1$s</string>
     <string name="hikeDistanceText">Distance: %1$d km</string>
     <string name="hikeRatingText">Rating: %1$d</string>
     <string name="hikeTimeText">Time: %1$d</string>
