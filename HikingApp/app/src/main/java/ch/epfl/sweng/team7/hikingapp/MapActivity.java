@@ -471,6 +471,7 @@ public class MapActivity extends FragmentActivity {
                     updateButtonDisplay();
                     if (mGps.tracking()) {
                         startHikeDisplay();
+                        Log.d(LOG_FLAG, "Starting hike disply");
                     }
                 } else {
                     displayToast(getResources().getString(R.string.gps_location_not_enabled));
