@@ -596,7 +596,7 @@ public class MapActivity extends FragmentActivity {
         } else {
             mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
         }
-        Log.d(LOG_FLAG, "Text annotation added to the list" + mListAnnotations.get(0).getRawHikePoint().getPosition().toString());
+        Log.d(LOG_FLAG, "Text annotation added to the list" + mListAnnotations.get(0).getAnnotation());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
