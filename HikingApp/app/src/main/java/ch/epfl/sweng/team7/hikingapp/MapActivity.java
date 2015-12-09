@@ -448,15 +448,27 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private class DisplayHikeInfo extends AsyncTask<HikeData, Void, Void> {
+    private class DisplayHikeInfo extends AsyncTask<HikeData, Void, UserData> {
+
+        HikeData hike = null;
+
         @Override
-        protected Void doInBackground(HikeData... hikes){
-            final HikeData hike = hikes[0];
+        protected UserData doInBackground(HikeData... hikes){
+            hike = hikes[0];
             try {
-                UserData user = DataManager.getInstance().getUserData(hike.getOwnerId());
+                return DataManager.getInstance().getUserData(hikes[0].getOwnerId());
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, "Could not display hike information");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            if (userData != null) {
                 mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
                 mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-                mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, user.getUserName()));
+                mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, userData.getUserName()));
                 mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
                 mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
                     public void onClick(View view) {
@@ -466,10 +478,7 @@ public class MapActivity extends FragmentActivity {
                     }
                 });
                 mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
-            } catch (DataManagerException e) {
-                Log.d(LOG_FLAG, "Could not display hike information");
             }
-            return null;
         }
     }
 
