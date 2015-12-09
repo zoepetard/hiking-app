@@ -448,6 +448,21 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
+    private class Tuple<X, Y> {
+        private final X mMember1;
+        private final Y mMember2;
+        public Tuple(X x, Y y) {
+            mMember1 = x;
+            mMember2 = y;
+        }
+        public X getmMember1() {
+            return mMember1;
+        }
+        public Y getmMember2() {
+            return mMember2;
+        }
+    }
+
     private class DisplayHikeInfo extends AsyncTask<HikeData, Void, UserData> {
 
         HikeData hike = null;
