@@ -232,7 +232,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onMapClick(LatLng point) {
                 mSearchView.onActionViewCollapsed(); // remove focus from searchview
-                if (mPrevPolyRef != null) mPrevPolyRef.setColor(HIKE_LINE_COLOR);
+                changePolyColor(mPrevPolyRef, 0);
                 onMapClickHelper(point);
             }
         });
@@ -378,9 +378,9 @@ public class MapActivity extends FragmentActivity {
             public boolean onMarkerClick(Marker marker) {
                 for (DisplayedHike displayedHike : mDisplayedHikes) {
                     if (marker.equals(displayedHike.getStartMarker()) || marker.equals(displayedHike.getFinishMarker())) {
-                        displayedHike.getPolyline().setColor(HIKE_LINE_COLOR_SELECTED);
 
-                        if (mPrevPolyRef != null) mPrevPolyRef.setColor(HIKE_LINE_COLOR);
+                        changePolyColor(displayedHike.getPolyline(), 1);
+                        changePolyColor(mPrevPolyRef, 0);
                         mPrevPolyRef = displayedHike.getPolyline();
                         Log.d(LOG_FLAG, "Setting color of hike to selected");
                     }
@@ -482,7 +482,7 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(UserData userData) {
-            if (mPrevPolyRef != null) mPrevPolyRef.setColor(HIKE_LINE_COLOR);
+            changePolyColor(mPrevPolyRef, 0);
             if (userData != null) {
                 mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, hike.getTitle());
                 mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
