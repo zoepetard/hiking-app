@@ -616,7 +616,7 @@ public class MapActivity extends FragmentActivity {
                     if (bounds != null && bounds instanceof LatLngBounds) {
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
-                        focusOnLatLng(latLng);
+                        focusOnLatLng(latLng, 10);
                     }
 
                     // load hikes at new location
@@ -737,6 +737,13 @@ public class MapActivity extends FragmentActivity {
     public void focusOnLatLng(LatLng latLng) {
         if (latLng != null) {
             CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
+            mMap.animateCamera(target);
+        }
+    }
+
+    public void focusOnLatLng(LatLng latLng, int zoom) {
+        if (latLng != null) {
+            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
             mMap.animateCamera(target);
         }
     }
