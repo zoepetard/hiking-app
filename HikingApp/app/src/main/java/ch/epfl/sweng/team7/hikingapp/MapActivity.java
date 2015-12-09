@@ -233,6 +233,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onMapClick(LatLng point) {
                 mSearchView.onActionViewCollapsed(); // remove focus from searchview
+                if (mPrevPolyRef != null) mPrevPolyRef.setColor(HIKE_LINE_COLOR);
                 onMapClickHelper(point);
             }
         });
