@@ -40,10 +40,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
@@ -73,8 +71,9 @@ public class MapActivity extends FragmentActivity {
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
-    private Map<Marker, Long> mMarkerByHike = new HashMap<>();
-    private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
+    //private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+    //private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
+    private List<DisplayedHike> mDisplayedHikes = new ArrayList<>();
 
     private boolean mFollowingUser = false;
 
@@ -266,20 +265,17 @@ public class MapActivity extends FragmentActivity {
 
             if (hikeIdStr != null) {
                 long intentHikeId = Long.valueOf(hikeIdStr);
-                for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                    if (intentHikeId == displayedHike.second) {
+                for (DisplayedHike displayedHike : mDisplayedHikes) {
+                    if (intentHikeId == displayedHike.getId()) {
                         displaySingleHike = true;
                     }
                 }
                 if (displaySingleHike) {
-                    for (Pair<Polyline, Long> displayedHike : mDisplayedHikes) {
-                        if (displayedHike.second != intentHikeId) {
-                            displayedHike.first.remove();
-                        }
-                    }
-                    for (Marker marker : mMarkerByHike.keySet()) {
-                        if (mMarkerByHike.get(marker) != intentHikeId) {
-                            marker.remove();
+                    for (DisplayedHike displayedHike : mDisplayedHikes) {
+                        if (displayedHike.getId() != intentHikeId) {
+                            displayedHike.getPolyline().remove();
+                            displayedHike.getStartMarker().remove();
+                            displayedHike.getFinishMarker().remove();
                         }
                     }
                     for (HikeData hikeData : mHikesInWindow) {
@@ -352,8 +348,9 @@ public class MapActivity extends FragmentActivity {
 
         for (int i = 0; i < mHikesInWindow.size(); i++) {
             HikeData hike = mHikesInWindow.get(i);
-            displayMarkers(hike);
-            displayHike(hike);
+            Polyline polyline = displayHike(hike);
+            Pair<Marker, Marker> markers = displayMarkers(hike);
+            mDisplayedHikes.add(new DisplayedHike(hike.getHikeId(), polyline, markers.first, markers.second));
             boundingBoxBuilder.include(hike.getStartLocation());
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
@@ -364,7 +361,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void displayMarkers(final HikeData hike) {
+    private Pair<Marker, Marker> displayMarkers(final HikeData hike) {
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
@@ -380,25 +377,26 @@ public class MapActivity extends FragmentActivity {
         Marker startMarker = mMap.addMarker(startMarkerOptions);
         Marker finishMarker = mMap.addMarker(finishMarkerOptions);
 
-        mMarkerByHike.put(startMarker, hike.getHikeId());
-        mMarkerByHike.put(finishMarker, hike.getHikeId());
+        return Pair.create(startMarker, finishMarker);
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
-        if (mMarkerByHike.containsKey(marker)) {
-            long hikeId = mMarkerByHike.get(marker);
-            try {
-                displayHikeInfo(mDataManager.getHike(hikeId));
-            } catch (DataManagerException e) {
-                e.printStackTrace();
+        for (DisplayedHike displayedHike : mDisplayedHikes) {
+            if (marker.equals(displayedHike.getStartMarker())
+                    || marker.equals(displayedHike.getFinishMarker())) {
+                long hikeId = displayedHike.getId();
+                try {
+                    displayHikeInfo(mDataManager.getHike(hikeId));
+                } catch (DataManagerException e) {
+                    e.printStackTrace();
+                }
+                return true;
             }
-            return true;
         }
-
         return true;
     }
 
-    private void displayHike(final HikeData hike) {
+    private Polyline displayHike(final HikeData hike) {
         PolylineOptions polylineOptions = new PolylineOptions();
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
@@ -406,7 +404,7 @@ public class MapActivity extends FragmentActivity {
                     .width(5)
                     .color(HIKE_LINE_COLOR);
         }
-        mDisplayedHikes.add(Pair.create(mMap.addPolyline(polylineOptions), hike.getHikeId()));
+        return mMap.addPolyline(polylineOptions);
     }
 
     private void onMapClickHelper(LatLng point) {
