@@ -140,9 +140,9 @@ public class RawHikeData {
      * Returns the list of annotations
      */
     public ArrayList<Annotation> getAnnotations() {
-        if (mAnnotations == null || mAnnotations.size() < 1){
+        if (mAnnotations == null || mAnnotations.size() < 1) {
             return null;
-        }else{
+        } else {
             return new ArrayList<>(mAnnotations);
         }
     }
@@ -168,7 +168,7 @@ public class RawHikeData {
     }
 
 
-    public void setAnnotations(List<Annotation> annotations){
+    public void setAnnotations(List<Annotation> annotations) {
         mAnnotations = annotations;
     }
 
@@ -202,20 +202,19 @@ public class RawHikeData {
 
     private JSONArray parseCommentsList(List<RawHikeComment> comments) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i < comments.size(); ++i) {
+        for (int i = 0; i < comments.size(); ++i) {
             jsonArray.put(comments.get(i).toJSON());
         }
         return jsonArray;
     }
 
     /**
-     *
      * @param mAnnotations
      * @return a JSON array of the input
      */
     private JSONArray parseAnnotations(List<Annotation> mAnnotations) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i < mAnnotations.size(); ++i) {
+        for (int i = 0; i < mAnnotations.size(); ++i) {
             jsonArray.put(mAnnotations.get(i).toJSON());
         }
         return jsonArray;
@@ -243,16 +242,6 @@ public class RawHikeData {
             for (int i = 0; i < jsonComments.length(); ++i) {
                 comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
             }
-            JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
-            List<Annotation> annotations = new ArrayList<>();
-            for(int i = 0; i < jsonAnnotations.length(); i++){
-                annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONObject(i)));
-            }
-            JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
-            List<Annotation> annotations = new ArrayList<>();
-            for(int i = 0; i < jsonAnnotations.length(); i++){
-                annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONObject(i)));
-            }
             Date date = new Date(jsonObject.getLong("date"));
             RawHikeData rawHikeData = new RawHikeData(
                     jsonObject.getLong("hike_id"),
@@ -262,13 +251,13 @@ public class RawHikeData {
                     comments,
                     jsonObject.getString("title"),
                     null);
-            if(jsonObject.has("rating")) {
+            if (jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
             }
-            if(jsonObject.has("annotations")){
+            if (jsonObject.has("annotations")) {
                 JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
                 List<Annotation> annotations = new ArrayList<>();
-                for(int i = 0; i < jsonAnnotations.length(); i++){
+                for (int i = 0; i < jsonAnnotations.length(); i++) {
                     annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
                 }
                 rawHikeData.setAnnotations(annotations);
@@ -329,8 +318,8 @@ public class RawHikeData {
                     Log.e(LOG_FLAG, "parseFromGPXDocument failed: " + e.getMessage());
                 }
             }
-
-        } catch(Exception e) {
+            
+        } catch (Exception e) {
             // Parsing should be very forgiving and ignore any exception.
             Log.e(LOG_FLAG, e.getMessage());
             throw new HikeParseException(e);
@@ -338,10 +327,9 @@ public class RawHikeData {
         return new RawHikeData(HIKE_ID_UNKNOWN, SignedInUser.getInstance().getId(), hikePoints.get(0).getTime(), hikePoints, comments, title, null);
     }
 
-    public void setTitle(String newTitle){
+    public void setTitle(String newTitle) {
         mTitle = newTitle;
     }
-
 
 
 }
