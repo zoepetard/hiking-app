@@ -64,7 +64,7 @@ public class MapActivity extends FragmentActivity {
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     private final static String EXTRA_EXIT = "exit";
     private static final int HIKE_LINE_COLOR = 0xff000066;
-    private static final int HIKE_LINE_COLOR_SELECTED = Color.CYAN;
+    private static final int HIKE_LINE_COLOR_SELECTED = Color.RED;
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
     private static int mScreenWidth;
@@ -376,6 +376,15 @@ public class MapActivity extends FragmentActivity {
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
+                for (DisplayedHike displayedHike : mDisplayedHikes) {
+                    if (marker.equals(displayedHike.getStartMarker()) || marker.equals(displayedHike.getFinishMarker())) {
+                        displayedHike.getPolyline().setColor(HIKE_LINE_COLOR_SELECTED);
+
+                        if (mPrevPolyRef != null) mPrevPolyRef.setColor(HIKE_LINE_COLOR);
+                        mPrevPolyRef = displayedHike.getPolyline();
+                        Log.d(LOG_FLAG, "Setting color of hike to selected");
+                    }
+                }
                 return onMarkerClickHelper(marker);
             }
         });
@@ -383,6 +392,11 @@ public class MapActivity extends FragmentActivity {
         Marker finishMarker = mMap.addMarker(finishMarkerOptions);
 
         return Pair.create(startMarker, finishMarker);
+    }
+
+    private void changePolyColor(Polyline polyline, int mode) {
+        int color = (mode == 0) ? HIKE_LINE_COLOR : HIKE_LINE_COLOR_SELECTED;
+        if (polyline != null) polyline.setColor(color);
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
