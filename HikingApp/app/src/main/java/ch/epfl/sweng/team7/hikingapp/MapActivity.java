@@ -437,9 +437,10 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayHikeInfo(final HikeData hike) {
+        UserData user = (UserData)(new GetOwnerFromHike().execute(hike));
         mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
         mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
+        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, user.getUserName()));
         mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
         mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
             public void onClick(View view) {
