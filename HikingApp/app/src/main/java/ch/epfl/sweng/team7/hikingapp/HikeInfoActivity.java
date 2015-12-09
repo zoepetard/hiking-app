@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +34,10 @@ import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.network.RatingVote;
 
 public final class HikeInfoActivity extends FragmentActivity {
+
+    private final static int DEFAULT_BUTTON_SIZE = 64;
+    private final static int DEFAULT_BUTTON_MARGIN = 10;
+
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
@@ -51,6 +56,9 @@ public final class HikeInfoActivity extends FragmentActivity {
         } else {
             loadStaticHike(intent, savedInstanceState);
         }
+
+        //setup back button
+        setupBackButton();
     }
 
     @Override
@@ -226,6 +234,16 @@ public final class HikeInfoActivity extends FragmentActivity {
                 exportStatusText.setText(getResources().getString(R.string.export_error));
             }
         }
+    }
+
+    private void setupBackButton() {
+        Button backButton = (Button) findViewById(R.id.back_button);
+        backButton.setText("");
+        backButton.setBackgroundResource(R.drawable.button_back);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
+        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
     }
 
     public HikeInfoView getHikeInfoView() {
