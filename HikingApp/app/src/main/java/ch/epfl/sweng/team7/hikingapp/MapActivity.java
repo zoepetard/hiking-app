@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
@@ -65,6 +66,7 @@ public class MapActivity extends FragmentActivity {
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     private final static String EXTRA_EXIT = "exit";
     private static final int HIKE_LINE_COLOR = 0xff000066;
+    private static final int HIKE_LINE_COLOR_SELECTED = Color.CYAN;
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
     private static int mScreenWidth;
@@ -80,6 +82,7 @@ public class MapActivity extends FragmentActivity {
     private boolean mFollowingUser = false;
 
     private Polyline mPolyRef;
+    private Polyline mPrevPolyRef = null;
     private PolylineOptions mCurHike;
 
     private SearchView mSearchView;
