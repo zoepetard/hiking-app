@@ -244,10 +244,10 @@ public class MapActivity extends FragmentActivity {
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                if (mFollowingUser) {
+                if (mGps.tracking()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    focusOnLatLng(latLng);
-                    if (mGps.tracking() && !mGps.paused()) {
+                    if (mFollowingUser) focusOnLatLng(latLng);
+                    if (!mGps.paused()) {
                         List<LatLng> points = mPolyRef.getPoints();
                         points.add(latLng);
                         mPolyRef.setPoints(points);
@@ -491,7 +491,6 @@ public class MapActivity extends FragmentActivity {
         } else {
             toggleButton.setText(R.string.button_start_tracking);
             pauseButton.setVisibility(View.INVISIBLE);
-            stopHikeDisplay();
         }
     }
 
@@ -714,8 +713,9 @@ public class MapActivity extends FragmentActivity {
         mPolyRef = mMap.addPolyline(mCurHike);
     }
 
-    private void stopHikeDisplay() {
+    public void stopHikeDisplay() {
         //TODO do something when we stop hiking..?
+        mPolyRef.remove();
     }
 
 
