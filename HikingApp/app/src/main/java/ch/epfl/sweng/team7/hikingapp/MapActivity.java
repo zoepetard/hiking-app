@@ -396,7 +396,18 @@ public class MapActivity extends FragmentActivity {
 
     private void changePolyColor(Polyline polyline, int mode) {
         int color = (mode == 0) ? HIKE_LINE_COLOR : HIKE_LINE_COLOR_SELECTED;
-        if (polyline != null) polyline.setColor(color);
+        if (polyline != null) {
+            //TODO change polyline color
+        }
+    }
+
+    private DisplayedHike getDisplayedHike(Polyline polyline) {
+        for (DisplayedHike hike : mDisplayedHikes) {
+            if (hike.getPolyline().equals(polyline)) {
+                return hike;
+            }
+        }
+        return null;
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
