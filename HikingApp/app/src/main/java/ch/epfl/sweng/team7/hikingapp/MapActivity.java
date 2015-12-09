@@ -15,11 +15,8 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.text.InputType;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -95,7 +92,7 @@ public class MapActivity extends FragmentActivity {
     private SuggestionAdapter mSuggestionAdapter;
     private Geocoder mGeocoder;
     private ImageView mImageView;
-    private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
+    private ArrayList<Annotation> mListAnnotations = null;
 
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -458,16 +455,16 @@ public class MapActivity extends FragmentActivity {
                 mGps.toggleTracking();
                 Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
                 Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+                Button addAnnotation = (Button) findViewById(R.id.button_annotation_create);
                 if (mGps.tracking()) {
                     toggleButton.setText(R.string.button_stop_tracking);
                     pauseButton.setVisibility(View.VISIBLE);
+                    addAnnotation.setVisibility(View.VISIBLE);
                     pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
                     startHikeDisplay();
                 } else {
                     toggleButton.setText(R.string.button_start_tracking);
                     pauseButton.setVisibility(View.INVISIBLE);
-                    mGps.setAnnotations(mListAnnotations);
-                    Log.d(LOG_FLAG, String.valueOf(mListAnnotations.size()));
                     stopHikeDisplay();
                 }
             }
@@ -505,7 +502,7 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
-        annotationButton.setVisibility(View.GONE);
+        annotationButton.setVisibility(View.INVISIBLE);
 
         annotationButton.setLayoutParams(lp);
         layout.addView(annotationButton, lp);
@@ -565,11 +562,12 @@ public class MapActivity extends FragmentActivity {
 
     private void addAnnotation(String annotation) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
-        if (mListAnnotations.size() > 0) {
+        if (mListAnnotations != null && mListAnnotations.size() > 0) {
             if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 mListAnnotations.get(mListAnnotations.size() - 1).setText(annotation);
             }
         } else {
+            mListAnnotations = new ArrayList<>();
             mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
         }
         Log.d(LOG_FLAG, "Text annotation added to the list" + mListAnnotations.get(0).getAnnotation());
@@ -586,11 +584,12 @@ public class MapActivity extends FragmentActivity {
 
     private void addPicture(Drawable drawable) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
-        if (mListAnnotations.size() > 0) {
+        if (mListAnnotations != null && mListAnnotations.size() > 0) {
             if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 mListAnnotations.get(mListAnnotations.size() - 1).setPicture(drawable);
             }
         } else {
+            mListAnnotations = new ArrayList<>();
             mListAnnotations.add(new Annotation(rawHikePoint, null, drawable));
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());

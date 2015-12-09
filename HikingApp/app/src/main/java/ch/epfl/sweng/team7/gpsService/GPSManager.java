@@ -332,7 +332,7 @@ public final class GPSManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 storeHike(hikeTitle.getText().toString(), hikeComment.getText().toString());
-                storePictures();
+                //storePictures();
                 mGpsPath = null;
             }
         });
@@ -362,7 +362,6 @@ public final class GPSManager {
             mRawHikeData.setTitle(title);
             mRawHikeData.setAnnotations(mListAnnotations);
             Log.d(LOG_FLAG, "GPS PATH CONVERTED");
-
             new StoreHikeTask().execute(mRawHikeData);
         } catch (Exception e) {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
@@ -371,15 +370,13 @@ public final class GPSManager {
     }
 
     private void storePictures() {
+        Log.d (LOG_FLAG, mRawHikeData.getAnnotations().toString());
         if (mRawHikeData.getAnnotations() != null || mRawHikeData.getAnnotations().size() > 0) {
             for (int i = 0; i < mRawHikeData.getAnnotations().size(); i++) {
                 new StorePictureTask().execute(mRawHikeData.getAnnotations().get(i));
             }
         }
     }
-
-    
-
 
     /**
      * Asynchronous task to make the post request to the server.
