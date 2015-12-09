@@ -76,7 +76,7 @@
     <string name="prompt_comment_hint">Drop a comment about this hike</string>
 
     <!-- Cancel hike prompt -->
-    <string name="button_proceed_cancel">Proceed</string>
+    <string name="button_proceed_cancel">Discard</string>
     <string name="button_keep_tracking">Keep Tracking</string>
     <string name="warning_title">Warning</string>
     <string name="warning_description">If you do this you will lose your hike forever. Do you wish to proceed?</string>
