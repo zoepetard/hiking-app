@@ -468,6 +468,7 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(UserData userData) {
+            if (mPrevPolyRef != null) mPrevPolyRef.setColor(HIKE_LINE_COLOR);
             if (userData != null) {
                 mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, hike.getTitle());
                 mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
