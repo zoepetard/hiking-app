@@ -85,11 +85,6 @@ public class DefaultHikeData implements HikeData {
             }
         }
 
-        List<Annotation> annotations = rawHikeData.getAnnotations();
-        mAnnotations = new ArrayList<>();
-        for(Annotation annotation : annotations){
-            mAnnotations.add(annotation);
-        }
 
         mDistance = calculateDistance(rawHikePoints);
         mBoundingBox = calculateBoundingBox(rawHikePoints);

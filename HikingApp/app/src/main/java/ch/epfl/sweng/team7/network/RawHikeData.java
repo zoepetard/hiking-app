@@ -281,7 +281,6 @@ public class RawHikeData {
         List<RawHikePoint> hikePoints = new ArrayList<>();
         List<RawHikeComment> comments = new ArrayList<>();
         String title = "";
-        List<Annotation> annotations = new ArrayList<>();
         try {
             // Normalization
             doc.getDocumentElement().normalize();

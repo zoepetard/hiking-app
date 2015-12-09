@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -18,17 +17,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
-
 import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.gpsService.NotificationHandler.NotificationHandler;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
@@ -39,7 +33,6 @@ import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.RawHikeData;
-import ch.epfl.sweng.team7.network.RawHikePoint;
 
 /**
  * Class used to read device's GPS-related information
@@ -64,14 +57,8 @@ public final class GPSManager {
 
     private GPSService mGpsService;
     private ServiceConnection mServiceConnection;
-    private GPSService gpsService;
-    private ServiceConnection serviceConnection;
-    private Annotation annotation;
-    private List<Annotation> listAnnotations = new ArrayList<>();
-
-
-
-    private RawHikeData rawHikeData;
+    private List<Annotation> mListAnnotations = new ArrayList<>();
+    private RawHikeData mRawHikeData;
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -392,18 +379,6 @@ public final class GPSManager {
     }
 
     
-    public void createPicture(Drawable drawable) {
-        RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mLastFootPrint);
-        if(listAnnotations.size() > 0) {
-            if (listAnnotations.get(listAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
-                listAnnotations.get(listAnnotations.size() - 1).setPicture(drawable);
-            }
-        }else{
-            annotation = new Annotation(rawHikePoint, null, drawable);
-            listAnnotations.add(annotation);
-        }
-        Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
-    }
 
 
     /**

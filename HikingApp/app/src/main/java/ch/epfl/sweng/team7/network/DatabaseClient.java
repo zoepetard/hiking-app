@@ -188,12 +188,6 @@ public interface DatabaseClient {
      * @throws DatabaseClientException
      */
     void deleteComment(long commentId) throws DatabaseClientException;
-<<<<<<< HEAD
-    
-=======
-
-
->>>>>>> Refactored as suggested in comments
     /**
      * Post a vote about a hike.
      */

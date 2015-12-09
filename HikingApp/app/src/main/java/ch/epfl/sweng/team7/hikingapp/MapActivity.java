@@ -1,5 +1,6 @@
 package ch.epfl.sweng.team7.hikingapp;
 
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,17 +15,15 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.view.KeyEvent;
-import android.view.View;
-
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -34,6 +33,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -96,8 +96,6 @@ public class MapActivity extends FragmentActivity {
     private Geocoder mGeocoder;
     private ImageView mImageView;
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
-    private ImageView imageView;
-    private final EditText annotationText = new EditText(this);
 
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
@@ -259,11 +257,6 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
-
-        //TODO These are the bounds that should be changed to center on user's location.
-        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
-
-        new DownloadHikeList().execute(bounds);
     }
 
     private static class DownloadHikeParams {
@@ -520,29 +513,12 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 if (mGps.tracking()) {
                     displayAddAnnotationPrompt();
-                    annotationText.setVisibility(View.VISIBLE);
-                    Log.d(LOG_FLAG, "Set EDIT TEXT VISIBLE");
-
                 }
             }
         });
     }
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
-        pictureButton.setLayoutParams(lp);
-        layout.addView(pictureButton, lp);
-        pictureButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (mGps.tracking()) {
-                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                    startActivityForResult(intent, 0);
-                    annotationText.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-    }
+
 
     private void displayAddAnnotationPrompt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -706,9 +682,12 @@ public class MapActivity extends FragmentActivity {
                 return false;
             }
         });
-
     }
-}
+
+    private void displayToast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
 
     private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
 
@@ -783,16 +762,16 @@ public class MapActivity extends FragmentActivity {
             }
             mSuggestionAdapter.notifyDataSetChanged();
         }
-
+    }
 
     private LatLng getUserPosition() {
         if (mGps.enabled()) {
             GeoCoords userGeoCoords = mGps.getCurrentCoords();
             return userGeoCoords.toLatLng();
         } else {
-            double switzerlandLatitude = 46.4;
-            double switzerlandLongitude = 6.4;
-            return new LatLng(switzerlandLatitude, switzerlandLongitude);
+            double epflLatitude = 46.519244;
+            double epflLongitude = 6.569287;
+            return new LatLng(epflLatitude, epflLongitude);
         }
     }
 
