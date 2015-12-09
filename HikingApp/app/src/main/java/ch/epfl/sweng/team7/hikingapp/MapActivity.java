@@ -336,10 +336,6 @@ public class MapActivity extends FragmentActivity {
             if (hikesFound != null) {
                 if (hikesFound.size() > 0) {
                     displayMap(hikesFound, oldBounds, firstHike);
-                } else {
-                    LatLngBounds newBounds = guessNewLatLng(oldBounds.southwest, oldBounds.northeast, 0.5);
-                    //new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, newBounds, firstHike));
-                    // TODO(zoe) implement alternative to infinte recursion
                 }
             }
         }
