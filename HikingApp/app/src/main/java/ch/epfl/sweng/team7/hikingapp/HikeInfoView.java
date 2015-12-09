@@ -29,13 +29,17 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.text.NumberFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
@@ -273,6 +277,22 @@ public class HikeInfoView {
 
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
+            Comparator<HikeComment> comparator = new Comparator<HikeComment>() {
+                public int compare(HikeComment c1, HikeComment c2) {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+                    Date date1 = null;
+                    Date date2 = null;
+                    try {
+                        date1 = dateFormat.parse(c1.getCommentDate());
+                        date2 = dateFormat.parse(c2.getCommentDate());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return date1.compareTo(date2);
+                }
+            };
+            Collections.sort(comments, comparator);
             for (HikeComment comment : comments) {
                 showNewComment(comment, "");
             }
