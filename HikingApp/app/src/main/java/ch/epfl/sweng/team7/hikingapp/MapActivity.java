@@ -336,10 +336,6 @@ public class MapActivity extends FragmentActivity {
             if (hikesFound != null) {
                 if (hikesFound.size() > 0) {
                     displayMap(hikesFound, oldBounds, firstHike);
-                } else {
-                    LatLngBounds newBounds = guessNewLatLng(oldBounds.southwest, oldBounds.northeast, 0.5);
-                    //new DownloadHikeList().execute(new DownloadHikeParams(hikesFound, newBounds, firstHike));
-                    // TODO(zoe) implement alternative to infinte recursion
                 }
             }
         }
@@ -692,9 +688,9 @@ public class MapActivity extends FragmentActivity {
             GeoCoords userGeoCoords = mGps.getCurrentCoords();
             return userGeoCoords.toLatLng();
         } else {
-            double switzerlandLatitude = 46.4;
-            double switzerlandLongitude = 6.4;
-            return new LatLng(switzerlandLatitude, switzerlandLongitude);
+            double epflLatitude = 46.519244;
+            double epflLongitude = 6.569287;
+            return new LatLng(epflLatitude, epflLongitude);
         }
     }
 
