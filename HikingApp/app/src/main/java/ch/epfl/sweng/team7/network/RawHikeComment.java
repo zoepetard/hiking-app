@@ -22,7 +22,7 @@ public class RawHikeComment {
     private long mCommentOwnerId;
     private String mCommentOwnerName;
     private String mCommentText;
-    private String mCommentDate;
+    private Date mCommentDate;
 
     public RawHikeComment(long commentId, long commentHikeId, long commentOwnerId,
                           String commentText) {
@@ -33,7 +33,7 @@ public class RawHikeComment {
     }
 
     public RawHikeComment(long commentId, long commentHikeId, long commentOwnerId,
-                          String commentOwnerName, String commentText, String commentDate) {
+                          String commentOwnerName, String commentText, Date commentDate) {
         mCommentId = commentId;
         mCommentHikeId = commentHikeId;
         mCommentOwnerId = commentOwnerId;
@@ -62,7 +62,7 @@ public class RawHikeComment {
         return mCommentText;
     }
 
-    public String getCommentDate() {
+    public Date getCommentDate() {
         return mCommentDate;
     }
 
@@ -84,10 +84,7 @@ public class RawHikeComment {
 
     public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException, ParseException {
         Long dateLongForm = jsonObject.getLong("date");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
-        Date dateDateForm = new Date(dateLongForm * 1000L);
-        String date = dateFormat.format(dateDateForm);
+        Date date = new Date(dateLongForm * 1000L);
         return new RawHikeComment(
                 jsonObject.getLong("comment_id"),
                 jsonObject.getLong("hike_id"),

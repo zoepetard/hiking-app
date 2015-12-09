@@ -29,13 +29,17 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.text.NumberFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
@@ -273,6 +277,12 @@ public class HikeInfoView {
 
             List<HikeComment> comments = hikeData.getAllComments();
             commentList.removeAllViews();
+            Comparator<HikeComment> comparator = new Comparator<HikeComment>() {
+                public int compare(HikeComment c1, HikeComment c2) {
+                    return c1.getCommentDate().compareTo(c2.getCommentDate());
+                }
+            };
+            Collections.sort(comments, comparator);
             for (HikeComment comment : comments) {
                 showNewComment(comment, "");
             }
@@ -362,15 +372,16 @@ public class HikeInfoView {
 
         TextView commentDate = (TextView) commentRow
                 .findViewById(R.id.comment_date);
-        String date;
+        Date date;
         if (comment.getCommentDate() == null) { // new comment
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-            Date dateNow = new Date();
-            date = dateFormat.format(dateNow);
+            date = new Date();
         } else {
             date = comment.getCommentDate();
         }
-        commentDate.setText(date);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+        String dateString = dateFormat.format(date);
+        commentDate.setText(dateString);
 
         TextView commentName = (TextView) commentRow
                 .findViewById(R.id.comment_username);

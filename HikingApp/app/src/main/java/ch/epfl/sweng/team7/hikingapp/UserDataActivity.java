@@ -36,6 +36,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -224,6 +226,12 @@ public class UserDataActivity extends FragmentActivity {
         protected void onPostExecute(List<HikeData> hikes) {
             if (hikes != null) {
                 mHikeList.removeAllViews();
+                Comparator<HikeData> comparator = new Comparator<HikeData>() {
+                    public int compare(HikeData h1, HikeData h2) {
+                        return h1.getDate().compareTo(h2.getDate());
+                    }
+                };
+                Collections.sort(hikes, comparator);
                 for (HikeData hike : hikes) {
                     displayHike(hike);
                 }
