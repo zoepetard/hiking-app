@@ -43,6 +43,7 @@ android {
         compile 'com.google.android.gms:play-services-location:8.3.0'
         compile 'com.google.android.gms:play-services-identity:8.3.0'
         compile 'com.google.android.gms:play-services-plus:8.3.0'
+        compile 'com.google.maps.android:android-maps-utils:0.4'
         
         compile 'com.jjoe64:graphview:4.0.1'
     

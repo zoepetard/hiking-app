@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class MapActivity extends FragmentActivity {
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
     private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
+    private ClusterManager<MapClusterItem> mClusterManager;
 
     private boolean mFollowingUser = false;
 
@@ -345,6 +347,7 @@ public class MapActivity extends FragmentActivity {
 
         mHikesInWindow = hikesFound;
         LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
+        setUpClusterer();
 
         for (int i = 0; i < mHikesInWindow.size(); i++) {
             HikeData hike = mHikesInWindow.get(i);
@@ -367,6 +370,9 @@ public class MapActivity extends FragmentActivity {
         MarkerOptions finishMarkerOptions = new MarkerOptions()
                 .position(hike.getFinishLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
+
+        MapClusterItem clusterMarker = new MapClusterItem(hike.getHikeLocation().latitude, hike.getHikeLocation().longitude);
+        mClusterManager.addItem(clusterMarker);
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
@@ -392,6 +398,26 @@ public class MapActivity extends FragmentActivity {
         }
 
         return true;
+    }
+
+    private void setUpClusterer() {
+        // Declare a variable for the cluster manager.
+
+
+        // Position the map.
+        //getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<MapClusterItem>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        //addItems();
     }
 
     private void displayHike(final HikeData hike) {
