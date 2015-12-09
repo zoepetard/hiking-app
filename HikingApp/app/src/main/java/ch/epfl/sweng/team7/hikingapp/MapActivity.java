@@ -469,7 +469,7 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.enabled()) {
                     mGps.toggleTracking();
                     updateButtonDisplay();
-                    if (mGps.tracking()) {
+                    if (mGps.tracking() && !mGps.paused()) {
                         startHikeDisplay();
                         Log.d(LOG_FLAG, "Starting hike display");
                     }
