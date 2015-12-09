@@ -33,7 +33,7 @@
     <string name="defaultNotificationTitle">Tracking a hike</string>
     <string name="defaultNotificationContent">Click here to check on your progress</string>
     <string name="timeElapsedInfo">\t%d s</string>
-    <string name="distanceToStart">\t%f m travelled</string>
+    <string name="distanceToStart">\t%d m travelled</string>
 
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
