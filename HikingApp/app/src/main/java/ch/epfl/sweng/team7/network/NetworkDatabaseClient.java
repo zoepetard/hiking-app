@@ -325,14 +325,8 @@ public class NetworkDatabaseClient implements DatabaseClient {
         }
     }
 
-    @Override
-    public RawUserData fetchUserData(String mailAddress) throws DatabaseClientException {
-        return null;
-    }
-
     /**
      * Get an image from the database
-     *
      * @param imageId the database key of the image
      * @return the image
      * @throws DatabaseClientException
@@ -417,8 +411,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Post a comment to the database
      * @param comment the comment to be posted
-     * @param
-     * //TODO(runjie) iss107 add class Comment and pass comment as a parameter
      * @return the database key of that comment
      * @throws DatabaseClientException
      */

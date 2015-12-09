@@ -74,12 +74,13 @@ public class MapActivity extends FragmentActivity {
     private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
     private final static String EXTRA_HIKE_ID = "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
+    private final static String OPEN_CAMERA = "android.media.action.IMAGE_CAPTURE";
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
-    private  static int mScreenWidth;
-    private  static int mScreenHeight;
+    private static int mScreenWidth;
+    private static int mScreenHeight;
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
@@ -97,6 +98,7 @@ public class MapActivity extends FragmentActivity {
     private ArrayList<Annotation> mListAnnotations = new ArrayList<>();
     private ImageView imageView;
     private final EditText annotationText = new EditText(this);
+
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
     private static int MAX_SEARCH_SUGGESTIONS = 10;
@@ -156,8 +158,6 @@ public class MapActivity extends FragmentActivity {
     }
 
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -180,11 +180,11 @@ public class MapActivity extends FragmentActivity {
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
      * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
+     * <p/>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
      * install/update the Google Play services APK on their device.
-     * <p>
+     * <p/>
      * A user can return to this FragmentActivity after following the prompt and correctly
      * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
      * have been completely destroyed during this process (it is likely that it would only be
@@ -212,7 +212,7 @@ public class MapActivity extends FragmentActivity {
     /**
      * This is where we can add markers or lines, add listeners or move the camera. In this case, we
      * just add a marker near Africa.
-     * <p>
+     * <p/>
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
@@ -259,11 +259,11 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
+
         //TODO These are the bounds that should be changed to center on user's location.
         LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -179), new LatLng(90, 179));
 
         new DownloadHikeList().execute(bounds);
-
     }
 
     private static class DownloadHikeParams {
@@ -338,7 +338,7 @@ public class MapActivity extends FragmentActivity {
     private void displayAnnotations(final HikeData hike) {
         //Display de Annotations
         List<MarkerOptions> annotations = new ArrayList<>();
-        if(hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
+        if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
             for (int i = 0; i < hike.getAnnotations().size(); i++) {
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
@@ -399,8 +399,8 @@ public class MapActivity extends FragmentActivity {
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
             polylineOptions.add(hikePoint.getPosition())
-                            .width(5)
-                            .color(HIKE_LINE_COLOR);
+                    .width(5)
+                    .color(HIKE_LINE_COLOR);
         }
         mMap.addPolyline(polylineOptions);
     }
@@ -531,7 +531,6 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
-
         pictureButton.setLayoutParams(lp);
         layout.addView(pictureButton, lp);
         pictureButton.setOnClickListener(new View.OnClickListener() {
@@ -544,6 +543,7 @@ public class MapActivity extends FragmentActivity {
             }
         });
     }
+
     private void displayAddAnnotationPrompt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(this.getResources().getString(R.string.prompt_add_tile));
@@ -579,7 +579,7 @@ public class MapActivity extends FragmentActivity {
         builder.setNegativeButton(this.getResources().getString(R.string.add_picture), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                Intent intent = new Intent(OPEN_CAMERA);
                 startActivityForResult(intent, 0);
             }
         });
@@ -589,19 +589,18 @@ public class MapActivity extends FragmentActivity {
 
     private void addAnnotation(String annotation) {
         RawHikePoint rawHikePoint = GPSPathConverter.getHikePointsFromGeoCoords(mGps.getCurrentCoords());
-        if(mListAnnotations.size() > 0) {
+        if (mListAnnotations.size() > 0) {
             if (mListAnnotations.get(mListAnnotations.size() - 1).getRawHikePoint().getPosition().equals(rawHikePoint.getPosition())) {
                 mListAnnotations.get(mListAnnotations.size() - 1).setText(annotation);
             }
-        }else{
+        } else {
             mListAnnotations.add(new Annotation(rawHikePoint, annotation, null));
         }
         Log.d(LOG_FLAG, "Text annotation added to the list" + mListAnnotations.get(0).getRawHikePoint().getPosition().toString());
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0  && resultCode == RESULT_OK) {
+        if (requestCode == 0 && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             mImageView = new ImageView(this);
             mImageView.setImageBitmap(photo);
@@ -676,10 +675,10 @@ public class MapActivity extends FragmentActivity {
                     // get bounding box
                     Bundle clickedLocationExtras = clickedLocation.getExtras();
                     Object bounds = null;
-                    if(clickedLocationExtras != null) {
+                    if (clickedLocationExtras != null) {
                         bounds = clickedLocationExtras.get(EXTRA_BOUNDS);
                     }
-                    if(bounds != null && bounds instanceof LatLngBounds) {
+                    if (bounds != null && bounds instanceof LatLngBounds) {
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
                         focusOnLatLng(latLng);
@@ -738,7 +737,7 @@ public class MapActivity extends FragmentActivity {
                 Log.d(LOG_FLAG, e.getMessage());
             }
             // check if local results and add to suggestions
-            for(HikeData hikeData : hikeDataList) {
+            for (HikeData hikeData : hikeDataList) {
 
                 Address address = new Address(Locale.ROOT);
 
@@ -784,7 +783,7 @@ public class MapActivity extends FragmentActivity {
             }
             mSuggestionAdapter.notifyDataSetChanged();
         }
-    }
+
 
     private LatLng getUserPosition() {
         if (mGps.enabled()) {

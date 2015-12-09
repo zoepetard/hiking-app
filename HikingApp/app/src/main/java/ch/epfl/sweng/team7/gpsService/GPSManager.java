@@ -371,12 +371,12 @@ public final class GPSManager {
 
     private void storeHike(String title, String comment) {
         try {
-            rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
-            rawHikeData.setTitle(title);
-            rawHikeData.setAnnotations(listAnnotations);
+            mRawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
+            mRawHikeData.setTitle(title);
+            mRawHikeData.setAnnotations(mListAnnotations);
             Log.d(LOG_FLAG, "GPS PATH CONVERTED");
 
-            new StoreHikeTask().execute(rawHikeData);
+            new StoreHikeTask().execute(mRawHikeData);
         } catch (Exception e) {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
             e.printStackTrace();
@@ -384,9 +384,9 @@ public final class GPSManager {
     }
 
     private void storePictures() {
-        if (rawHikeData.getAnnotations() != null || rawHikeData.getAnnotations().size() > 1) {
-            for (int i = 0; i < rawHikeData.getAnnotations().size(); i++) {
-                new StorePictureTask().execute(rawHikeData.getAnnotations().get(i));
+        if (mRawHikeData.getAnnotations() != null || mRawHikeData.getAnnotations().size() > 0) {
+            for (int i = 0; i < mRawHikeData.getAnnotations().size(); i++) {
+                new StorePictureTask().execute(mRawHikeData.getAnnotations().get(i));
             }
         }
     }
@@ -456,6 +456,6 @@ public final class GPSManager {
     }
 
     public void setAnnotations(ArrayList<Annotation> annotations) {
-        listAnnotations = annotations;
+        mListAnnotations = annotations;
     }
 }

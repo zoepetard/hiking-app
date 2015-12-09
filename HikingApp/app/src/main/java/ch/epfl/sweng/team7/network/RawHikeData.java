@@ -26,11 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-
 import ch.epfl.sweng.team7.database.Annotation;
-import ch.epfl.sweng.team7.database.HikePoint;
 
 
 /**
@@ -338,7 +335,6 @@ public class RawHikeData {
             Log.e(LOG_FLAG, e.getMessage());
             throw new HikeParseException(e);
         }
-
         return new RawHikeData(HIKE_ID_UNKNOWN, SignedInUser.getInstance().getId(), hikePoints.get(0).getTime(), hikePoints, comments, title, null);
     }
 

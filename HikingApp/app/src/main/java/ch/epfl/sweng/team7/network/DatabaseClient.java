@@ -13,7 +13,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.List;
 
-
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 
 
@@ -114,6 +113,7 @@ public interface DatabaseClient {
 
     /**
      * Log user into the server, i.e. get user profile information
+     *
      * @param loginRequest
      * @throws DatabaseClientException
      */
@@ -129,9 +129,13 @@ public interface DatabaseClient {
 
     /**
      * Get an image from the database
+     *
      * @param imageId the database key of the image
      * @return the image
+<<<<<<< HEAD
      * @throws DatabaseClientException
+=======
+>>>>>>> Refactored as suggested in comments
      */
 
     Drawable getImage(long imageId) throws DatabaseClientException;
@@ -140,6 +144,7 @@ public interface DatabaseClient {
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
@@ -148,6 +153,7 @@ public interface DatabaseClient {
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
@@ -157,6 +163,7 @@ public interface DatabaseClient {
 
     /**
      * Delete an image from the database
+     *
      * @param imageId the database key of the image
      * @throws DatabaseClientException
      */
@@ -164,7 +171,11 @@ public interface DatabaseClient {
 
     /**
      * Post a comment to the database
+<<<<<<< HEAD
      * @param
+=======
+     * @param comment of the hike
+>>>>>>> Refactored as suggested in comments
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
@@ -172,11 +183,17 @@ public interface DatabaseClient {
 
     /**
      * Delete a comment from the database
+     *
      * @param commentId the database key of the comment
      * @throws DatabaseClientException
      */
     void deleteComment(long commentId) throws DatabaseClientException;
+<<<<<<< HEAD
     
+=======
+
+
+>>>>>>> Refactored as suggested in comments
     /**
      * Post a vote about a hike.
      */

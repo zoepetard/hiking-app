@@ -75,7 +75,6 @@ public class MapDisplay {
     }
 
     public static void displayAnnotations(List<HikeData> hikesToDisplay, GoogleMap map) {
-        //Display de Annotations
         for (HikeData hike : hikesToDisplay) {
             List<MarkerOptions> annotations = new ArrayList<>();
             if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
