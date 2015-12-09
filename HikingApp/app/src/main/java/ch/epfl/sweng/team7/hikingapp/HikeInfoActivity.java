@@ -59,6 +59,9 @@ public final class HikeInfoActivity extends FragmentActivity {
 
         //setup back button
         setupBackButton();
+
+        //setup export button
+        setupExportButton();
     }
 
     @Override
@@ -240,6 +243,16 @@ public final class HikeInfoActivity extends FragmentActivity {
         Button backButton = (Button) findViewById(R.id.back_button);
         backButton.setText("");
         backButton.setBackgroundResource(R.drawable.button_back);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
+        lp.width = DEFAULT_BUTTON_SIZE;
+        lp.height = DEFAULT_BUTTON_SIZE;
+        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
+    }
+
+    private void setupExportButton() {
+        Button backButton = (Button) findViewById(R.id.button_export_hike);
+        backButton.setText("");
+        backButton.setBackgroundResource(R.drawable.button_export);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
         lp.width = DEFAULT_BUTTON_SIZE;
         lp.height = DEFAULT_BUTTON_SIZE;
