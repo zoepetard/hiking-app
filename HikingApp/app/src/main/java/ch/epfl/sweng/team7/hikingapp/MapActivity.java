@@ -505,7 +505,7 @@ public class MapActivity extends FragmentActivity {
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.button_annotation_create);
-        //annotationButton.setVisibility(View.GONE);
+        annotationButton.setVisibility(View.GONE);
 
         annotationButton.setLayoutParams(lp);
         layout.addView(annotationButton, lp);
