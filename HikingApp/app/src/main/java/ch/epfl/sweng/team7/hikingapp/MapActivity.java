@@ -455,10 +455,10 @@ public class MapActivity extends FragmentActivity {
             mMember1 = x;
             mMember2 = y;
         }
-        public X getmMember1() {
+        public X getMember1() {
             return mMember1;
         }
-        public Y getmMember2() {
+        public Y getMember2() {
             return mMember2;
         }
     }
