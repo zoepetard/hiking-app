@@ -151,6 +151,13 @@ public final class GPSManager {
     }
 
     /**
+     * Method called to stop the GPSService.
+     */
+    public void stopService() {
+        mContext.stopService(new Intent(mContext, GPSService.class));
+    }
+
+    /**
      * Method called to bind GPSService to a certain Context
      *
      * @param context Context to which the GPSService will be bound to

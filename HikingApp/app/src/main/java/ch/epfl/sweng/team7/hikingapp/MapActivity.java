@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -153,6 +154,7 @@ public class MapActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mGps.stopService();
     }
 
     @Override
@@ -464,10 +466,14 @@ public class MapActivity extends FragmentActivity {
 
         toggleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mGps.toggleTracking();
-                updateButtonDisplay();
-                if (mGps.tracking()) {
-                    startHikeDisplay();
+                if (mGps.enabled()) {
+                    mGps.toggleTracking();
+                    updateButtonDisplay();
+                    if (mGps.tracking()) {
+                        startHikeDisplay();
+                    }
+                } else {
+                    displayToast(getResources().getString(R.string.gps_location_not_enabled));
                 }
             }
         });
@@ -599,6 +605,11 @@ public class MapActivity extends FragmentActivity {
                 return false;
             }
         });
+    }
+
+    private void displayToast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     private class HikeSearcher extends AsyncTask<SearchHikeParams, Void, Boolean> {
