@@ -389,7 +389,7 @@ public class MapActivity extends FragmentActivity {
         if (mMarkerByHike.containsKey(marker)) {
             long hikeId = mMarkerByHike.get(marker);
             try {
-                displayHikeInfo(mDataManager.getHike(hikeId));
+                new DisplayHikeInfo().execute(mDataManager.getHike(hikeId));
             } catch (DataManagerException e) {
                 e.printStackTrace();
             }
@@ -427,7 +427,7 @@ public class MapActivity extends FragmentActivity {
                     double distance = distanceBetween[0];
 
                     if (distance < shortestDistance) {
-                        displayHikeInfo(hike);
+                        new DisplayHikeInfo().execute(hike);
                         return;
                     }
                 }
