@@ -95,6 +95,9 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
 
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+    <string name="number_of_hikes"># of hikes</string>
 
     <string name="hike_name">Hike Name</string>
     <string name="distance">Distance</string>
@@ -122,7 +125,7 @@
     <string name="export_success">Export successful!</string>
 
     <!-- Static TextView Strings -->
-    <string name="loading_string">Loading...</string>
+    <string name="loading_string">Loading…</string>
 
     <!-- Elevation -->
     <string name="elevation_min_max">Min: %1$s m Max: %2$s m</string>

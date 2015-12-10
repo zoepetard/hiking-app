@@ -17,7 +17,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Back"
+                android:text="@string/back"
                 android:id="@+id/back_button_fullscreen_image"
                 android:layout_marginBottom="20dp"
                 android:background="#000000"

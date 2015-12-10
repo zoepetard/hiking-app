@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="User Name"
+                android:text="@string/user_name"
                 android:textColor="#fff"
                 android:textSize="30sp" />
 
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="User Email"
+                android:text="@string/user_email"
                 android:textColor="#fff"
                 android:textSize="20sp" />
 
@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="30dp"
-        android:text="# of hikes"
+        android:text="@string/number_of_hikes"
         android:textSize="25sp" />
 
     <TextView
