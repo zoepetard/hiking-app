@@ -75,8 +75,8 @@ public class MockServerTest extends TestCase {
         listRawHikes = mMockServer.fetchMultipleHikes(postHikeIds);
         long hike1 = listRawHikes.get(0).getHikeId();
         long hike2 = listRawHikes.get(1).getHikeId();
-        assertEquals(new Long(hike1), postHikeIds.get(0));
-        assertEquals(new Long(hike2), postHikeIds.get(1));
+        assertEquals(Long.valueOf(hike1), postHikeIds.get(0));
+        assertEquals(Long.valueOf(hike2), postHikeIds.get(1));
         assertTrue(!listRawHikes.isEmpty());
 
     }

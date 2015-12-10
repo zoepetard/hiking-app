@@ -17,7 +17,7 @@ public class Rating {
         mCount = count;
         // A negative rating denotes "not voted yet"
         if(userRating >= 0) {
-            mUserRating = new Float(userRating);
+            mUserRating = Float.valueOf(userRating);
         } else {
             mUserRating = null;
         }
@@ -53,7 +53,7 @@ public class Rating {
      * while data is sent to the server at the same time.
      */
     public void update(RatingVote vote) {
-        mUserRating = new Float(vote.getRating());
+        mUserRating = Float.valueOf(vote.getRating());
     }
 
     public static Rating parseFromJSON(JSONObject jsonObject) throws JSONException {
