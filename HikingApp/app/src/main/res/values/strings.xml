@@ -26,7 +26,7 @@
 
     <!-- Strings related to hike display -->
     <string name="hikeNumberText">Hike #%1$d</string>
-    <string name="hikeOwnerText">Owner: %1$d</string>
+    <string name="hikeOwnerText">Owner: %1$s</string>
     <string name="hikeDistanceText">Distance: %1$d km</string>
     <string name="hikeRatingText">Rating: %1$d</string>
     <string name="hikeTimeText">Time: %1$d</string>
@@ -76,7 +76,7 @@
     <string name="prompt_comment_hint">Drop a comment about this hike</string>
 
     <!-- Cancel hike prompt -->
-    <string name="button_proceed_cancel">Proceed</string>
+    <string name="button_proceed_cancel">Discard</string>
     <string name="button_keep_tracking">Keep Tracking</string>
     <string name="warning_title">Warning</string>
     <string name="warning_description">If you do this you will lose your hike forever. Do you wish to proceed?</string>
@@ -86,6 +86,7 @@
     <string name="gps_service_access_failure">Could not access gps service</string>
     <string name="gps_location_updates_failure">Could not request location updates</string>
     <string name="sign_in_error_connecting_to_server">Error while connecting to the server</string>
+    <string name="gps_location_not_enabled">Please enable your GPS connection</string>
 
     <string name="back">BACK</string>
     <string name="go_hikes">Hikes</string>
