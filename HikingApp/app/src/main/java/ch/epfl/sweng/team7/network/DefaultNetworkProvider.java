@@ -7,10 +7,6 @@
 
 package ch.epfl.sweng.team7.network;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -23,19 +19,11 @@ import java.net.URL;
 public class DefaultNetworkProvider implements NetworkProvider {
 
     private final static String LOG_FLAG = "Network_DefaultNetworkProvider";
-    private Context mContext = null;
 
     /**
      * The default constructor.
      */
     public DefaultNetworkProvider() {
-    }
-
-    /**
-     * To check network availability, we need a valid context
-     */
-    public DefaultNetworkProvider(Context context) {
-        mContext = context;
     }
 
     /**
@@ -47,16 +35,6 @@ public class DefaultNetworkProvider implements NetworkProvider {
      */
     @Override
     public HttpURLConnection getConnection(URL url) throws IOException {
-        if(mContext != null && !isNetworkAvailable()) {
-            throw new IOException("Network unavailable");
-        }
         return (HttpURLConnection) url.openConnection();
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
