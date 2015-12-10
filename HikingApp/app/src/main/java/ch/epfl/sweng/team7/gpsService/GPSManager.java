@@ -287,6 +287,7 @@ public final class GPSManager {
         mGpsPath = null;
         toggleListeners();
         ((MapActivity)mContext).updateButtonDisplay();
+        ((MapActivity)mContext).stopHikeDisplay();
     }
 
     /**

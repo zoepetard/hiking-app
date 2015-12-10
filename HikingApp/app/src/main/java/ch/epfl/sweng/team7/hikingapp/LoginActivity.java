@@ -292,20 +292,21 @@ public class LoginActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Void retVar) {
+            new GetUserData().execute(SignedInUser.getInstance().getId());
+        }
+    }
 
-            if(SignedInUser.getInstance().getLoggedIn()) {
-                showSignedInUI();
-            } else {
+    private void showUI() {
+        if(SignedInUser.getInstance().getLoggedIn()) {
+            showSignedInUI();
+        } else {
 
-                if (sGoogleApiClient.isConnected()) {
-                    Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
-                    sGoogleApiClient.disconnect();
-                }
-
-                showSignedOutUI();
+            if (sGoogleApiClient.isConnected()) {
+                Plus.AccountApi.clearDefaultAccount(sGoogleApiClient);
+                sGoogleApiClient.disconnect();
             }
 
-            new GetUserData().execute(SignedInUser.getInstance().getId());
+            showSignedOutUI();
         }
     }
 
@@ -462,6 +463,7 @@ public class LoginActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Boolean success) {
+            showUI();
         }
     }
 
@@ -484,6 +486,8 @@ public class LoginActivity extends Activity implements
                 new LoadProfileImage().execute(profilePic);
             } else if (userData == null){
                 new StoreUserProfilePic().execute(Long.valueOf(-1));
+            } else {
+                showUI();
             }
         }
     }
