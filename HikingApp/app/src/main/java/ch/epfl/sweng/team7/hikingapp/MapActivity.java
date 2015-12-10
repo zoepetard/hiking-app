@@ -81,15 +81,13 @@ public class MapActivity extends FragmentActivity {
     private final static String EXTRA_EXIT = "exit";
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static final int HIKE_LINE_COLOR_SELECTED = Color.RED;
-    private static LatLngBounds bounds;
     private static LatLng mUserLocation;
     private static int mScreenWidth;
     private static int mScreenHeight;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-
-    private GPSManager mGps = GPSManager.getInstance();
-    private BottomInfoView mBottomTable = BottomInfoView.getInstance();
+    private final GPSManager mGps = GPSManager.getInstance();
+    private final BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
@@ -100,7 +98,6 @@ public class MapActivity extends FragmentActivity {
     private boolean mFollowingUser = false;
     private Polyline mPolyRef;
     private Polyline mPrevPolyRef = null;
-    private PolylineOptions mCurHike;
     private SearchView mSearchView;
     private ListView mSuggestionListView;
     private List<Address> mSuggestionList = new ArrayList<>();
@@ -111,8 +108,8 @@ public class MapActivity extends FragmentActivity {
 
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
-    private static int MAX_SEARCH_SUGGESTIONS = 10;
-    private static int MIN_QUERY_LENGTH_FOR_SUGGESTIONS = 3;
+    private static final int MAX_SEARCH_SUGGESTIONS = 10;
+    private static final int MIN_QUERY_LENGTH_FOR_SUGGESTIONS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +148,6 @@ public class MapActivity extends FragmentActivity {
         createBottomInfoView();
 
         setGoToHikesButtonListener();
-
 
         setUpSearchView();
 
@@ -242,9 +238,8 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public LatLngBounds getBounds() {
-        bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-        return bounds;
+    private LatLngBounds getBounds() {
+        return mMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
     /**
@@ -290,6 +285,9 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if (mFollowingUser) focusOnLatLng(latLng);
+                    if(mPolyRef == null) {
+                        startHikeDisplay();
+                    }
                     if (!mGps.paused()) {
                         List<LatLng> points = mPolyRef.getPoints();
                         points.add(latLng);
@@ -410,16 +408,15 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayAnnotations(final HikeData hike) {
-        //Display de Annotations
-        List<MarkerOptions> annotations = new ArrayList<>();
-        if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
-            for (int i = 0; i < hike.getAnnotations().size(); i++) {
-                Log.d(LOG_FLAG, hike.getAnnotations().get(i).getAnnotation().toString());
-                if (!hike.getAnnotations().get(i).getAnnotation().toString().equals(null) ) {
+
+        if (hike.getAnnotations() != null) {
+            List<MarkerOptions> annotations = new ArrayList<>();
+            for (Annotation annotation : hike.getAnnotations()) {
+                if (annotation.getAnnotation() != null) {
                     MarkerOptions markerOptions = new MarkerOptions()
-                            .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
+                            .position(annotation.getRawHikePoint().getPosition())
                             .title("Annotation")
-                            .snippet(hike.getAnnotations().get(i).getAnnotation())
+                            .snippet(annotation.getAnnotation())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     annotations.add(markerOptions);
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -937,14 +934,14 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public void focusOnLatLng(LatLng latLng) {
+    private void focusOnLatLng(LatLng latLng) {
         if (latLng != null) {
             CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
             mMap.animateCamera(target);
         }
     }
 
-    public void focusOnLatLng(LatLng latLng, int zoom) {
+    private void focusOnLatLng(LatLng latLng, int zoom) {
         if (latLng != null) {
             CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
             mMap.animateCamera(target);
@@ -956,7 +953,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void startHikeDisplay() {
-        mCurHike = new PolylineOptions();
+        PolylineOptions mCurHike = new PolylineOptions();
         mPolyRef = mMap.addPolyline(mCurHike);
     }
 

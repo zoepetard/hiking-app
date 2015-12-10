@@ -1,40 +1,23 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.google.android.gms.maps.model.LatLngBounds;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.UserData;
-
-import static android.support.v4.app.ActivityCompat.startActivity;
 
 /** Class that creates a listview for the navigation drawer */
 public class NavigationDrawerListFactory {
@@ -46,7 +29,7 @@ public class NavigationDrawerListFactory {
     private TextView mProfileName;
     private TextView mProfileEmailName;
     private TextView mProfileEmailDomain;
-    private DataManager mDataManager = DataManager.getInstance();
+    private final DataManager mDataManager = DataManager.getInstance();
 
     public NavigationDrawerListFactory(ListView navDrawerList, final Context context,
                                        final Activity activity) {
@@ -101,7 +84,7 @@ public class NavigationDrawerListFactory {
 
     private void loadNavDrawerItems(ListView navDrawerList) {
         String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_LOGOUT};
-        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<>(
                 mContext, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
     }

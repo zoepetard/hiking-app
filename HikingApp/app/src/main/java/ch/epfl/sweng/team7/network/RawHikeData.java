@@ -20,7 +20,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,7 +121,7 @@ public class RawHikeData {
      * Returns a list of the hike points.
      */
     public List<RawHikePoint> getHikePoints() {
-        return new ArrayList<RawHikePoint>(mHikePoints);
+        return new ArrayList<>(mHikePoints);
     }
 
     public List<RawHikeComment> getAllComments() {
@@ -199,26 +198,32 @@ public class RawHikeData {
         return jsonArray;
     }
 
+    /**
+     * @return a JSON array of the input comments,
+     * or an empty array if comments are null
+     */
     private JSONArray parseCommentsList(List<RawHikeComment> comments) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < comments.size(); ++i) {
-            jsonArray.put(comments.get(i).toJSON());
+        if(comments != null) {
+            for (RawHikeComment comment : comments) {
+                jsonArray.put(comment.toJSON());
+            }
         }
         return jsonArray;
     }
 
     /**
-     * @param mAnnotations
-     * @return a JSON array of the input
+     * @return a JSON array of the input annotations,
+     * or an empty array if annotations are null
      */
-    private JSONArray parseAnnotations(List<Annotation> mAnnotations) throws JSONException {
+    private JSONArray parseAnnotations(List<Annotation> annotations) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        if (mAnnotations != null) {
-            for (int i = 0; i < mAnnotations.size(); ++i) {
-                jsonArray.put(mAnnotations.get(i).toJSON());
+        if (annotations != null) {
+            for (Annotation annotation : annotations) {
+                jsonArray.put(annotation.toJSON());
             }
-            return jsonArray;
-        } return null;
+        }
+        return jsonArray;
     }
 
     /**
@@ -270,8 +275,6 @@ public class RawHikeData {
             throw new HikeParseException("Invalid hike structure: " + e.getMessage());
         } catch (NullPointerException e) {
             throw new HikeParseException("Invalid hike structure");
-        } catch (ParseException e) {
-            throw new HikeParseException(e);
         }
     }
 
@@ -282,7 +285,7 @@ public class RawHikeData {
 
         List<RawHikePoint> hikePoints = new ArrayList<>();
         List<RawHikeComment> comments = new ArrayList<>();
-        String title = "";
+        String title;
         try {
             // Normalization
             doc.getDocumentElement().normalize();

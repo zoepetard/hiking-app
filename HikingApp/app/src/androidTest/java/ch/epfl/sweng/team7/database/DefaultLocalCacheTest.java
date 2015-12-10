@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 /** Tests the local cache for hikes */
@@ -15,8 +14,7 @@ public class DefaultLocalCacheTest {
 
     @Test
     public void testDefaultLocalCacheCanBeCreated() {
-        LocalCache lc = new DefaultLocalCache();
-        assertFalse("Local Cache Not Created.", lc == null);
+        new DefaultLocalCache();
     }
 
     @Test

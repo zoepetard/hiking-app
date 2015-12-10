@@ -18,6 +18,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
+ * Reads gpx files from the phone's SD card and posts them to the database.
+ * Used to populate the database with some sample hikes after a server reset.
+ *
  * Created by simon on 11/13/15.
  */
 class PopulateDatabase {

@@ -27,8 +27,7 @@ public class DummyHikeBuilder {
     public static RawHikeData buildRawHikeData(long hikeId) throws HikeParseException {
         try {
             String properJsonOneHike = String.format(PROPER_JSON_ONEHIKE, hikeId, SignedInUser.getInstance().getId());
-            RawHikeData rawHikeData = RawHikeData.parseFromJSON(new JSONObject(properJsonOneHike));
-            return rawHikeData;
+            return RawHikeData.parseFromJSON(new JSONObject(properJsonOneHike));
         } catch(JSONException e) {
             throw new HikeParseException(e);
         }

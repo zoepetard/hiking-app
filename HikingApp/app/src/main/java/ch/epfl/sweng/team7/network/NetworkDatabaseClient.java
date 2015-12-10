@@ -12,7 +12,6 @@ package ch.epfl.sweng.team7.network;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -202,12 +201,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             JSONObject jsonHikeId = new JSONObject(stringHikeData);
             return jsonHikeId.getLong("hike_id");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d(LOG_FLAG, "DatabaseClientException in post hike in Network database");
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
-            Log.d(LOG_FLAG, "JSONEXCEPTion in post hike in Network database");
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -228,9 +222,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_OK);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -251,9 +243,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.getOutputStream().write(outputInBytes);
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("user_id");
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -273,9 +263,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonUserData = new JSONObject(stringUserData);
             return RawUserData.parseFromJSON(jsonUserData);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
         }
     }
@@ -285,7 +273,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Log user into the server, i.e. get user profile information
      *
-     * @param loginRequest
      * @throws DatabaseClientException
      */
 
@@ -317,9 +304,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_OK);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -368,9 +353,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.getOutputStream().write(outputInBytes);
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("image_id");
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -464,7 +447,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
-        return;
     }
 
     /**
@@ -509,7 +491,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         String line;
         StringBuilder result = new StringBuilder();
         while ((line = reader.readLine()) != null) {
-            result.append(line + "\n");
+            result.append(line).append("\n");
         }
         conn.disconnect();
         return result.toString();

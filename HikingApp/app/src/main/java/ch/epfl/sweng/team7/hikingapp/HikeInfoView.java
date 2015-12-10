@@ -11,15 +11,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -29,10 +26,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.text.NumberFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,7 +50,7 @@ import ch.epfl.sweng.team7.network.RawHikeComment;
  * Class which controls and updates the visual part of the view, not the interaction
  */
 public class HikeInfoView {
-    private DataManager dataManager = DataManager.getInstance();
+    private final DataManager dataManager = DataManager.getInstance();
 
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 
@@ -73,12 +67,9 @@ public class HikeInfoView {
     private Context context;
     private ArrayList<ImageView> galleryImageViews; // make ImageViews accessible in controller.
     private Button backButton;
-    private ImageView fullScreenImage;
     private GoogleMap mapPreview;
     private GraphView hikeGraph;
-    private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
-    private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
     private HikeComment newComment;
     private Button exportButton;
@@ -115,15 +106,9 @@ public class HikeInfoView {
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
-        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
-
-        fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
-
         mapPreview = mapHikeInfo;
 
         hikeGraph = (GraphView) view.findViewById(R.id.hike_graph);
-
-        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
         exportButton = (Button) view.findViewById(R.id.button_export_hike);
 
@@ -153,8 +138,7 @@ public class HikeInfoView {
                     RawHikeComment rawHikeComment = new RawHikeComment(
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
-                    DefaultHikeComment comment = new DefaultHikeComment(rawHikeComment);
-                    newComment = comment;
+                    newComment = new DefaultHikeComment(rawHikeComment);
                     new PostCommentAsync().execute(rawHikeComment);
                     commentEditText.setText("");
                     new GetUserName().execute(userId);
@@ -379,7 +363,7 @@ public class HikeInfoView {
         } else {
             date = comment.getCommentDate();
         }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
         String dateString = dateFormat.format(date);
         commentDate.setText(dateString);

@@ -17,15 +17,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.mockServer.MockServer;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
-
-import static java.lang.Thread.sleep;
 
 
 /**
@@ -36,7 +33,6 @@ public class DataManagerTest extends InstrumentationTestCase {
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
     private static final LatLng DEBUG_LOC_SAOTOME = new LatLng(0.362365, 6.558835);
     private long mNewHikeId, mNewHikeId2;
-    private GPSManager gpsManager;
 
     @Rule
     public ActivityTestRule<MapActivity> mActivityRule = new ActivityTestRule<>(

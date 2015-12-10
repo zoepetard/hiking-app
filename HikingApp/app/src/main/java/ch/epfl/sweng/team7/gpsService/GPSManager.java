@@ -402,7 +402,7 @@ public final class GPSManager {
 
         //setup the hike title input field
         TextView warning = new TextView(mContext);
-        warning.setText("\n" + mContext.getResources().getString(R.string.warning_description));
+        warning.setText(mContext.getResources().getString(R.string.warning_description));
         warning.setTypeface(null, Typeface.BOLD);
         warning.setGravity(View.TEXT_ALIGNMENT_GRAVITY);
         layout.addView(warning);

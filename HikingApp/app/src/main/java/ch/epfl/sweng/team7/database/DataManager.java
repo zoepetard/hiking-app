@@ -147,10 +147,9 @@ public final class DataManager {
     }
 
     public List<HikeData> getUserHikes(Long userId) throws DataManagerException {
-        List<Long> hikeIds = new ArrayList<>();
-        List<HikeData> hikeDataList = new ArrayList<>();
+        List<HikeData> hikeDataList;
         try {
-            hikeIds = sDatabaseClient.getHikeIdsOfUser(userId);
+            List<Long> hikeIds = sDatabaseClient.getHikeIdsOfUser(userId);
             hikeDataList = getMultipleHikes(hikeIds);
         } catch (DatabaseClientException|DataManagerException e) {
             throw new DataManagerException(e);
@@ -200,7 +199,7 @@ public final class DataManager {
 
     /**
      * Method to post a hike.
-     * @param rawHikeData
+     * @param rawHikeData the hike to post
      * @throws DataManagerException
      */
     public long postHike(RawHikeData rawHikeData) throws DataManagerException {
@@ -348,9 +347,9 @@ public final class DataManager {
 
     /**
      * Method to fetch pictures from the server
-     * @param pictureId
-     * @return
-     * @throws DataManagerException
+     * @param pictureId the database ID of the picture
+     * @return a picture
+     * @throws DatabaseClientException
      */
     public Drawable getPicture(long pictureId) throws DatabaseClientException {
         // Check if PictureAnnotation is cached

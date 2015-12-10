@@ -25,6 +25,9 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
+ * This is a local implementation of the DatabaseClient, which is used in testing
+ * to make sure that tests do not depend on a working online server.
+ *
  * Created by pablo on 6/11/15.
  */
 public class MockServer implements DatabaseClient {
@@ -95,7 +98,6 @@ public class MockServer implements DatabaseClient {
      * Return the hikeIds of hikes that are in the given window
      *
      * @param bounds Boundaries (window) of the
-     * @return
      * @throws DatabaseClientException
      */
     @Override
@@ -186,7 +188,7 @@ public class MockServer implements DatabaseClient {
     /**
      * Post user data to the data base
      *
-     * @param rawUserData object conatining id,user name and mail address
+     * @param rawUserData object containing id, user name and mail address
      * @return user id
      * @throws DatabaseClientException if post is unsuccessful
      */
@@ -246,7 +248,7 @@ public class MockServer implements DatabaseClient {
     /**
      * Log user into the server, i.e. get user profile information
      *
-     * @param loginRequest
+     * @param loginRequest a login request
      * @throws DatabaseClientException
      */
     public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {

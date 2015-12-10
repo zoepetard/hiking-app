@@ -45,8 +45,6 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
@@ -90,7 +88,7 @@ public class LoginActivity extends Activity implements
     private boolean mShouldResolve = false;
     // [END resolution_variables]
 
-    DataManager mDataManager = DataManager.getInstance();
+    private final DataManager mDataManager = DataManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,6 +274,10 @@ public class LoginActivity extends Activity implements
         protected Void doInBackground(String... mailAddress) {
 
             try {
+                if(!sGoogleApiClient.isConnected()) {
+                    Log.i(TAG, "Authentication failed: Google API Client not connected.");
+                    return null;
+                }
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
                 String userName = mailAddress[0];
                 if (currentPerson != null) {
@@ -421,7 +423,7 @@ public class LoginActivity extends Activity implements
         @Override
         protected void onPostExecute(BitmapDrawable profilePic) {
             if (profilePic == null) {
-                new StoreUserProfilePic().execute(Long.valueOf(-1));
+                new StoreUserProfilePic().execute(-1L);
             } else {
                 new StoreProfileImage().execute(profilePic);
             }
@@ -444,7 +446,7 @@ public class LoginActivity extends Activity implements
             if (profilePicId != null) {
                 new StoreUserProfilePic().execute(profilePicId);
             } else {
-                new StoreUserProfilePic().execute(Long.valueOf(-1));
+                new StoreUserProfilePic().execute(-1L);
             }
         }
     }
@@ -485,7 +487,7 @@ public class LoginActivity extends Activity implements
                 String profilePic = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient).getImage().getUrl();
                 new LoadProfileImage().execute(profilePic);
             } else if (userData == null){
-                new StoreUserProfilePic().execute(Long.valueOf(-1));
+                new StoreUserProfilePic().execute(-1L);
             } else {
                 showUI();
             }

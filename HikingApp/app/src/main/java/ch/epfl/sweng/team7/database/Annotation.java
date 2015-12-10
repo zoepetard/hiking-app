@@ -7,13 +7,15 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
 
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
 /**
+ * The annotation class stores an annotation to a hike,
+ * which can be text or an image (by image id)
+ *
  * Created by pablo on 23/11/15.
  */
 public class Annotation {
@@ -65,7 +67,6 @@ public class Annotation {
      * Method to convert JsonObject into annotation
      *
      * @param jsonObject [Point[lat, long, date, elevation], text, pictureID]
-     * @return
      * @throws JSONException
      */
     public static Annotation parseFromJSON(JSONArray jsonObject) throws JSONException {
@@ -73,7 +74,7 @@ public class Annotation {
         LatLng latLng = new LatLng(jsonObject.getDouble(0), jsonObject.getDouble(1));
         Date date = new Date();
         double elevation = jsonObject.getDouble(3);
-        String text = new String(jsonObject.get(4).toString());
+        String text = jsonObject.getString(4);
         long pictureId = jsonObject.getLong(5);
         Annotation annotation = new Annotation(new RawHikePoint(latLng, date, elevation), text, null);
         annotation.setPicturedId(pictureId);

@@ -14,10 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 
 /**
+ * The MapDisplay draws hike on a map, wherever a map with hikes is used.
+ *
  * Created by zoepetard on 26/11/15.
  */
 public class MapDisplay {
@@ -76,13 +79,13 @@ public class MapDisplay {
 
     public static void displayAnnotations(List<HikeData> hikesToDisplay, GoogleMap map) {
         for (HikeData hike : hikesToDisplay) {
-            List<MarkerOptions> annotations = new ArrayList<>();
-            if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
-                for (int i = 0; i < hike.getAnnotations().size(); i++) {
+            if (hike.getAnnotations() != null) {
+                List<MarkerOptions> annotations = new ArrayList<>();
+                for (Annotation annotation : hike.getAnnotations()) {
                     MarkerOptions markerOptions = new MarkerOptions()
-                            .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
+                            .position(annotation.getRawHikePoint().getPosition())
                             .title("Annotation")
-                            .snippet(hike.getAnnotations().get(i).getAnnotation())
+                            .snippet(annotation.getAnnotation())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     annotations.add(markerOptions);
                     final Marker textAnnotation = map.addMarker(markerOptions);
