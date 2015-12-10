@@ -110,6 +110,6 @@ public class GPSPathTest {
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp2), true);
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp3), true);
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp4));
-        assertEquals(gpsPath.timeElapsedInSeconds(), 2);
+        assertEquals(gpsPath.timeElapsedInSeconds(), 1);
     }
 }
