@@ -8,13 +8,20 @@ import com.google.maps.android.clustering.ClusterItem;
  */
 public class MapClusterItem implements ClusterItem {
     private final LatLng mPosition;
+    private final String mStartOrFinish;
 
-    public MapClusterItem(double lat, double lng) {
+    public MapClusterItem(double lat, double lng, String startOrFinish) {
         mPosition = new LatLng(lat, lng);
+        mStartOrFinish = startOrFinish;
     }
 
     @Override
     public LatLng getPosition() {
         return mPosition;
     }
+
+    public String getStartOrFinish() {
+        return mStartOrFinish;
+    }
+
 }

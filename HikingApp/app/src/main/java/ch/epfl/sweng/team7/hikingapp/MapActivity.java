@@ -29,12 +29,10 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.ClusterManager;
@@ -77,6 +75,7 @@ public class MapActivity extends FragmentActivity {
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
     private List<Pair<Polyline, Long>> mDisplayedHikes = new ArrayList<>();
     private ClusterManager<MapClusterItem> mClusterManager;
+    private MapClusterRenderer mMapClusterRenderer;
 
     private boolean mFollowingUser = false;
 
@@ -325,7 +324,6 @@ public class MapActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(DownloadHikeParams postExecuteParams) {
-
             // Fixes bug #114: On error, doInBackground will abort with null
             if (postExecuteParams == null) {
                 return;
@@ -344,7 +342,6 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayMap(List<HikeData> hikesFound, LatLngBounds bounds, boolean firstHike) {
-
         mHikesInWindow = hikesFound;
         LatLngBounds.Builder boundingBoxBuilder = new LatLngBounds.Builder();
         setUpClusterer();
@@ -363,30 +360,41 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void displayMarkers(final HikeData hike) {
-        MarkerOptions startMarkerOptions = new MarkerOptions()
-                .position(hike.getStartLocation())
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
-        MarkerOptions finishMarkerOptions = new MarkerOptions()
-                .position(hike.getFinishLocation())
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_finish_hike));
+    private void setUpClusterer() {
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<MapClusterItem>(this, mMap);
+        mMapClusterRenderer = new MapClusterRenderer(this, mMap, mClusterManager);
+        mClusterManager.setRenderer(mMapClusterRenderer);
 
-        MapClusterItem clusterMarker = new MapClusterItem(hike.getHikeLocation().latitude, hike.getHikeLocation().longitude);
-        mClusterManager.addItem(clusterMarker);
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraChangeListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        mClusterManager.getMarkerCollection().setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
             public boolean onMarkerClick(Marker marker) {
                 return onMarkerClickHelper(marker);
             }
         });
-        Marker startMarker = mMap.addMarker(startMarkerOptions);
-        Marker finishMarker = mMap.addMarker(finishMarkerOptions);
+    }
+
+    private void displayMarkers(final HikeData hike) {
+        MapClusterItem clusterStartMarker = new MapClusterItem(hike.getStartLocation().latitude, hike.getStartLocation().longitude, "start");
+        mClusterManager.addItem(clusterStartMarker);
+
+        MapClusterItem clusterFinishMarker = new MapClusterItem(hike.getFinishLocation().latitude, hike.getFinishLocation().longitude, "finish");
+        mClusterManager.addItem(clusterFinishMarker);
+
+        Marker startMarker = mMapClusterRenderer.getMarker(clusterStartMarker);
+        Marker finishMarker = mMapClusterRenderer.getMarker(clusterFinishMarker);
 
         mMarkerByHike.put(startMarker, hike.getHikeId());
         mMarkerByHike.put(finishMarker, hike.getHikeId());
     }
 
-    private boolean onMarkerClickHelper(Marker marker) {
+    public boolean onMarkerClickHelper(Marker marker) {
         if (mMarkerByHike.containsKey(marker)) {
             long hikeId = mMarkerByHike.get(marker);
             try {
@@ -396,28 +404,7 @@ public class MapActivity extends FragmentActivity {
             }
             return true;
         }
-
         return true;
-    }
-
-    private void setUpClusterer() {
-        // Declare a variable for the cluster manager.
-
-
-        // Position the map.
-        //getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
-
-        // Initialize the manager with the context and the map.
-        // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<MapClusterItem>(this, mMap);
-
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-        mMap.setOnCameraChangeListener(mClusterManager);
-        mMap.setOnMarkerClickListener(mClusterManager);
-
-        // Add cluster items (markers) to the cluster manager.
-        //addItems();
     }
 
     private void displayHike(final HikeData hike) {
