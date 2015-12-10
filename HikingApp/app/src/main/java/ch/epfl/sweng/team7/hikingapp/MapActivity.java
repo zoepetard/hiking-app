@@ -152,24 +152,26 @@ public class MapActivity extends FragmentActivity {
 
         setGoToHikesButtonListener();
 
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         setUpSearchView();
 
         mGeocoder = new Geocoder(this);
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null;
-            }
+        if(mMap != null) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
 
-            @Override
-            public View getInfoContents(Marker marker) {
-                return null;
-            }
-        });
+                @Override
+                public View getInfoContents(Marker marker) {
+                    return null;
+                }
+            });
+        }
     }
 
 
