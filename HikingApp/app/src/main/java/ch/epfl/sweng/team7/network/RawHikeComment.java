@@ -3,7 +3,6 @@ package ch.epfl.sweng.team7.network;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.util.Date;
 
 public class RawHikeComment {
@@ -75,7 +74,7 @@ public class RawHikeComment {
         return jsonObject;
     }
 
-    public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException, ParseException {
+    public static RawHikeComment parseFromJSON(JSONObject jsonObject) throws JSONException {
         Long dateLongForm = jsonObject.getLong("date");
         Date date = new Date(dateLongForm * 1000L);
         return new RawHikeComment(
