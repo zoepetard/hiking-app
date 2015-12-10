@@ -91,7 +91,7 @@ public class GPSPathTest {
     public void testTimeFromStartWithoutPause() {
         gpsPath = new GPSPath();
         long timestamp1 = 0;
-        long timestamp2 = 1;
+        long timestamp2 = 1000;
         GeoCoords coords = new GeoCoords(0, 0, 0);
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp1));
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp2));
