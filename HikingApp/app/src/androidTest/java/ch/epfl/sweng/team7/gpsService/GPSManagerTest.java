@@ -35,10 +35,11 @@ public class GPSManagerTest {
     }
 
     @Test
-    public void testInitialValues() {
-        assertEquals(gpsManager.paused(), false);
-        assertEquals(gpsManager.tracking(), false);
-        assertEquals(gpsManager.enabled(), false);
+    public void testBooleanValues() {
+        if (!gpsManager.enabled()) {
+            assertEquals(gpsManager.paused(), false);
+            assertEquals(gpsManager.tracking(), false);
+        }
     }
 
     private boolean locationUpdate() {
