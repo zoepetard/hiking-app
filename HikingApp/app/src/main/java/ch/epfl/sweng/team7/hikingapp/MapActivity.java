@@ -49,14 +49,13 @@ import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 
 import static android.location.Location.distanceBetween;
 
 public class MapActivity extends FragmentActivity {
 
-    private final static int DEFAULT_BUTTON_SIZE = 64;
-    private final static int DEFAULT_BUTTON_MARGIN = 10;
     private final static String LOG_FLAG = "Activity_Map";
     private final static int DEFAULT_ZOOM = 10;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
@@ -485,9 +484,9 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void setupButtonSize(RelativeLayout.LayoutParams lp) {
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
+        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 
     private void createBottomInfoView() {
