@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(AndroidJUnit4.class)
 public class GPSManagerTest {
 
@@ -25,5 +27,12 @@ public class GPSManagerTest {
     public void testNullLocationParameter() {
         gpsManager.updateCurrentLocation(null);
         gpsManager.getCurrentCoords();
+    }
+
+    @Test
+    public void testInitialValues() {
+        assertEquals(gpsManager.paused(), false);
+        assertEquals(gpsManager.tracking(), false);
+        assertEquals(gpsManager.enabled(), false);
     }
 }
