@@ -239,8 +239,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private LatLngBounds getBounds() {
-        LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-        return bounds;
+        return mMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
     /**
