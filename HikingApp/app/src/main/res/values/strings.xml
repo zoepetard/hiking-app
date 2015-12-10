@@ -3,18 +3,10 @@
     <string name="title_activity_map">Map</string>
     <string name="title_activity_hike_list">HikeListActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
-    <string name="back_to_map">"Back to map</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
     <!-- Sign-in status messages -->
-    <string name="signed_in_fmt">Signed in as: %s</string>
-    <string name="signing_in">Signing in…</string>
-    <string name="signed_out">Signed out</string>
-    <string name="signed_in_err">"Error: please check logs."</string>
     <string name="error_null_person">
         Error: Plus.PeopleApi.getCurrentPerson returned null. Ensure that the Google+ API is
         enabled for your project, you have a properly configured google-services.json file
@@ -36,11 +28,7 @@
     <string name="distanceToStart">\t%f m travelled</string>
 
     <!-- Button labels -->
-    <string name="sign_out">Sign Out</string>
-    <string name="disconnect">Disconnect</string>
     <string name="change_name">Choose A New Nickname</string>
-    <string name="goto_map">Go To Map</string>
-    <string name="button_done">Done</string>
     <string name="button_start_tracking">Start</string>
     <string name="button_stop_tracking">Stop</string>
     <string name="button_pause_tracking">Pause</string>
@@ -52,14 +40,11 @@
 
     <!-- Rationale for asking for Contacts -->
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
-    <string name="title_activity_change_nickname">ChangeNicknameActivity</string>
 
-    <string name="edit_nickname">Change nickname</string>
     <string name="title_activity_hike_info">HikeInfoActivity</string>
     <string name="title_activity_user_data">UserDataActivity</string>
 
     <string name="num_hikes_fmt">Number of hikes: %d</string>
-    <string name="nickname_fmt">Nickname: %s</string>
 
     <!-- IDs -->
     <item name="button_tracking_toggle" type="id" />
@@ -102,7 +87,6 @@
     <string name="profile_picture">Profile Picture</string>
     <string name="picture">Picture</string>
 
-    <string name="hike_name">Hike Name</string>
     <string name="distance">Distance</string>
     <string name="sample_distance">10 km</string>
     <string name="elevation">Elevation</string>
