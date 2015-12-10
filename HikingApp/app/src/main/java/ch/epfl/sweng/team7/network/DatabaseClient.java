@@ -114,7 +114,7 @@ public interface DatabaseClient {
     /**
      * Log user into the server, i.e. get user profile information
      *
-     * @param loginRequest
+     * @param loginRequest according to LoginRequest class description
      * @throws DatabaseClientException
      */
     void loginUser(LoginRequest loginRequest) throws DatabaseClientException;

@@ -92,7 +92,8 @@ public class DefaultHikeData implements HikeData {
     }
 
     /**
-     * @param newTitle
+     * Set the title of a hike
+     * @param newTitle the new title
      */
     @Override
     public void setTitle(String newTitle) {

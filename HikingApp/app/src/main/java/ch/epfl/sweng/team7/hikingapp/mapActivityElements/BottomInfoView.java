@@ -55,8 +55,7 @@ public final class BottomInfoView {
     }
 
     /**
-     * Metod called to hide the information table
-     * @param entity
+     * Method called to hide the information table
      */
     public void hide(int entity) {
         if (permissionGranted(entity)) {
@@ -145,7 +144,6 @@ public final class BottomInfoView {
     /**
      * Method called to release a lock on this information table,
      * meaning all other entities will be, again, able to edit its values.
-     * @param entity
      */
     public void releaseLock(int entity) {
         if (permissionGranted(entity)) {

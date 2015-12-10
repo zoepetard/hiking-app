@@ -9,13 +9,8 @@ import java.util.List;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
-import ch.epfl.sweng.team7.network.RawHikeComment;
-
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
-
 import ch.epfl.sweng.team7.network.RawHikeComment;
-import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
-
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -29,8 +24,6 @@ public class GPSPathConverter {
 
     /**
      * Method to adapt the GPSPath to RawHikeData
-     *
-     * @param gpsPath
      */
     public static RawHikeData toRawHikeData(GPSPath gpsPath) throws Exception {
         //The date of the hike is the time stamp of the first FootPrint
@@ -48,8 +41,6 @@ public class GPSPathConverter {
 
     /**
      * Method to convert the FootPrints into HikePoints
-     *
-     * @param gpsPath
      */
     private static List<RawHikePoint> getHikePointsFromGPS(GPSPath gpsPath) {
         List<RawHikePoint> hikePoints = new ArrayList<>();
@@ -63,9 +54,7 @@ public class GPSPathConverter {
     }
 
     /**
-     * Method to create a rawHikePOints
-     * @param geoCoords
-     * @return
+     * Method to create a rawHikePoints
      */
     public static RawHikePoint getHikePointsFromGeoCoords(GeoCoords geoCoords){
         if(geoCoords != null){

@@ -200,7 +200,7 @@ public final class DataManager {
 
     /**
      * Method to post a hike.
-     * @param rawHikeData
+     * @param rawHikeData the hike to post
      * @throws DataManagerException
      */
     public long postHike(RawHikeData rawHikeData) throws DataManagerException {
@@ -348,9 +348,9 @@ public final class DataManager {
 
     /**
      * Method to fetch pictures from the server
-     * @param pictureId
-     * @return
-     * @throws DataManagerException
+     * @param pictureId the database ID of the picture
+     * @return a picture
+     * @throws DatabaseClientException
      */
     public Drawable getPicture(long pictureId) throws DatabaseClientException {
         // Check if PictureAnnotation is cached

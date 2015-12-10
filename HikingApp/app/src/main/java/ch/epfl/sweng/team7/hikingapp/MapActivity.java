@@ -408,16 +408,15 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void displayAnnotations(final HikeData hike) {
-        //Display de Annotations
+
         List<MarkerOptions> annotations = new ArrayList<>();
         if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
-            for (int i = 0; i < hike.getAnnotations().size(); i++) {
-                Log.d(LOG_FLAG, hike.getAnnotations().get(i).getAnnotation().toString());
-                if (!hike.getAnnotations().get(i).getAnnotation().toString().equals(null) ) {
+            for (Annotation annotation : hike.getAnnotations()) {
+                if (annotation.getAnnotation() != null) {
                     MarkerOptions markerOptions = new MarkerOptions()
-                            .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
+                            .position(annotation.getRawHikePoint().getPosition())
                             .title("Annotation")
-                            .snippet(hike.getAnnotations().get(i).getAnnotation())
+                            .snippet(annotation.getAnnotation())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     annotations.add(markerOptions);
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

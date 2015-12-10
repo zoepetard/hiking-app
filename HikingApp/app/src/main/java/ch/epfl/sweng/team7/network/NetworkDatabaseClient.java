@@ -273,7 +273,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
     /**
      * Log user into the server, i.e. get user profile information
      *
-     * @param loginRequest
      * @throws DatabaseClientException
      */
 

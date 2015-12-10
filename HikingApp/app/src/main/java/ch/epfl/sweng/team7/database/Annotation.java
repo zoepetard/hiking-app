@@ -67,7 +67,6 @@ public class Annotation {
      * Method to convert JsonObject into annotation
      *
      * @param jsonObject [Point[lat, long, date, elevation], text, pictureID]
-     * @return
      * @throws JSONException
      */
     public static Annotation parseFromJSON(JSONArray jsonObject) throws JSONException {
