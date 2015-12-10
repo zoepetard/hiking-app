@@ -84,7 +84,6 @@ public class GPSPathTest {
         GeoCoords coords2 = new GeoCoords(2, 1, 1);
         gpsPath.addFootPrint(new GPSFootPrint(coords1, 0));
         gpsPath.addFootPrint(new GPSFootPrint(coords2, 0));
-        Log.d("GPSManagerTest", "" + gpsPath.distanceToStart());
         assertEquals(gpsPath.distanceToStart(), 110575, 0.1f);
     }
 }
