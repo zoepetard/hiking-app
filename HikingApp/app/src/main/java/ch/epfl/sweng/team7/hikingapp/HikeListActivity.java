@@ -21,11 +21,10 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 
 public class HikeListActivity extends Activity {
 
-    private final static int DEFAULT_BUTTON_SIZE = 64;
-    private final static int DEFAULT_BUTTON_MARGIN = 10;
     private DataManager dataManager = DataManager.getInstance();
     private LatLngBounds bounds;
 
@@ -132,8 +131,8 @@ public class HikeListActivity extends Activity {
         backButton.setText("");
         backButton.setBackgroundResource(R.drawable.button_back);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
+        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 }
