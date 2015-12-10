@@ -97,4 +97,19 @@ public class GPSPathTest {
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp2));
         assertEquals(gpsPath.timeElapsedInSeconds(), 1);
     }
+
+    @Test
+    public void testTimeFromStartWithPause() {
+        gpsPath = new GPSPath();
+        long timestamp1 = 0;
+        long timestamp2 = 1000;
+        long timestamp3 = 2000;
+        long timestamp4 = 3000;
+        GeoCoords coords = new GeoCoords(0, 0, 0);
+        gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp1));
+        gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp2), true);
+        gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp3), true);
+        gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp4));
+        assertEquals(gpsPath.timeElapsedInSeconds(), 2);
+    }
 }
