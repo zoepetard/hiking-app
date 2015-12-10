@@ -51,7 +51,7 @@ public class GPSPathTest {
     }
 
     @Test
-    public void testCutBiggerThanSize() {
+    public void testCutBiggerThanSizeBefore() {
         gpsPath = new GPSPath();
         GeoCoords coords = new GeoCoords(0, 0, 0);
         for (int i = 0; i < 4; i++) {
