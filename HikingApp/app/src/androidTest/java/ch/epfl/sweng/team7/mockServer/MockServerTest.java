@@ -44,17 +44,11 @@ public class MockServerTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         mMockServer = new MockServer();
-        List<Long> mHikeIds = new ArrayList<>();
         listRawHikes = new ArrayList<>();
-        long id1 = 1;
-        long id2 = 2;
-        mHikeIds.add(id1);
-        mHikeIds.add(id2);
         mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData1.setTitle("Hike1");
         mRawHikeData2.setTitle("Hike2");
-
         mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com", -1));
     }
 
@@ -90,7 +84,6 @@ public class MockServerTest extends TestCase {
 
     @Test
     public void testFetchUserById() throws Exception {
-        long id = 1;
         RawUserData rawUserData = mMockServer.fetchUserData(mUserBortId);
         assertEquals("Wrong mail address", rawUserData.getMailAddress(), "bort@googlemail.com");
         assertEquals("Wrong user name", rawUserData.getUserName(), "bort");
