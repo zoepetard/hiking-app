@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.gpsService.containers;
 
 import static org.junit.Assert.*;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,10 +80,11 @@ public class GPSPathTest {
     @Test
     public void testDistanceToStart() {
         gpsPath = new GPSPath();
-        GeoCoords coords1 = new GeoCoords(0, 0, 0);
-        GeoCoords coords2 = new GeoCoords(1, 0, 0);
+        GeoCoords coords1 = new GeoCoords(1, 1, 1);
+        GeoCoords coords2 = new GeoCoords(2, 1, 1);
         gpsPath.addFootPrint(new GPSFootPrint(coords1, 0));
         gpsPath.addFootPrint(new GPSFootPrint(coords2, 0));
-        assertEquals(gpsPath.distanceToStart(), 1, 0.0001f);
+        Log.d("GPSManagerTest", "" + gpsPath.distanceToStart());
+        assertEquals(gpsPath.distanceToStart(), 110575, 0.1f);
     }
 }
