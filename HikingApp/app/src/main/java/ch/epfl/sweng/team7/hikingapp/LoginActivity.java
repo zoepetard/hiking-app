@@ -88,7 +88,7 @@ public class LoginActivity extends Activity implements
     private boolean mShouldResolve = false;
     // [END resolution_variables]
 
-    DataManager mDataManager = DataManager.getInstance();
+    private DataManager mDataManager = DataManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

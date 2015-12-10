@@ -1,17 +1,10 @@
 package ch.epfl.sweng.team7.network;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class RawHikeComment {
     private final static String LOG_FLAG = "Network_RawHikeComment";

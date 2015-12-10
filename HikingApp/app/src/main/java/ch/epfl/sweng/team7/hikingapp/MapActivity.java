@@ -199,7 +199,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public LatLngBounds getBounds() {
+    private LatLngBounds getBounds() {
         LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         return bounds;
     }
@@ -753,14 +753,14 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public void focusOnLatLng(LatLng latLng) {
+    private void focusOnLatLng(LatLng latLng) {
         if (latLng != null) {
             CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
             mMap.animateCamera(target);
         }
     }
 
-    public void focusOnLatLng(LatLng latLng, int zoom) {
+    private void focusOnLatLng(LatLng latLng, int zoom) {
         if (latLng != null) {
             CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
             mMap.animateCamera(target);

@@ -46,7 +46,7 @@ public class UserDataActivity extends FragmentActivity {
     public final static String EXTRA_USER_ID = "userProfileId";
 
     private DataManager mDataManager = DataManager.getInstance();
-    SignedInUser mOwner = SignedInUser.getInstance();
+    private SignedInUser mOwner = SignedInUser.getInstance();
 
     private UserData mUserData;
     private Long mUserId; // not necessarily the one logged in, but the one whose profile is display
