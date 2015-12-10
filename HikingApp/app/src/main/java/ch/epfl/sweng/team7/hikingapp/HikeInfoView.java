@@ -29,7 +29,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -375,7 +374,7 @@ public class HikeInfoView {
         } else {
             date = comment.getCommentDate();
         }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
         String dateString = dateFormat.format(date);
         commentDate.setText(dateString);
