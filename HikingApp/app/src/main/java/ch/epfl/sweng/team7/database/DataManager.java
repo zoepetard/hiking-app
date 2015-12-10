@@ -147,10 +147,9 @@ public final class DataManager {
     }
 
     public List<HikeData> getUserHikes(Long userId) throws DataManagerException {
-        List<Long> hikeIds = new ArrayList<>();
-        List<HikeData> hikeDataList = new ArrayList<>();
+        List<HikeData> hikeDataList;
         try {
-            hikeIds = sDatabaseClient.getHikeIdsOfUser(userId);
+            List<Long> hikeIds = sDatabaseClient.getHikeIdsOfUser(userId);
             hikeDataList = getMultipleHikes(hikeIds);
         } catch (DatabaseClientException|DataManagerException e) {
             throw new DataManagerException(e);
