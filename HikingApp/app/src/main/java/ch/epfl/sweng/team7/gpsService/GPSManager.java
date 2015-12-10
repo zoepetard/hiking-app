@@ -434,6 +434,7 @@ public final class GPSManager {
             mRawHikeData.setAnnotations(mListAnnotations);
             Log.d(LOG_FLAG, "GPS PATH CONVERTED");
             new StoreHikeTask().execute(mRawHikeData);
+            mListAnnotations = null;
         } catch (Exception e) {
             displayToastMessage("Gps path cannot be converted to RawHikeData");
             e.printStackTrace();

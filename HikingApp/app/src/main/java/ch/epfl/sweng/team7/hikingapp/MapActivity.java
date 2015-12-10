@@ -599,6 +599,7 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.enabled()) {
                     mGps.toggleTracking();
                     mGps.setAnnotations(mListAnnotations);
+                    mListAnnotations = null;
                     updateButtonDisplay();
                     if (mGps.tracking() && !mGps.paused()) {
                         startHikeDisplay();
