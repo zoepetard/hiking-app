@@ -5,48 +5,31 @@ package ch.epfl.sweng.team7.hikingapp;
  */
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.contrib.DrawerActions;
 import android.test.ActivityInstrumentationTestCase2;
-import android.support.test.espresso.contrib.*;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.junit.Before;
 import org.w3c.dom.Document;
-import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 
 import java.io.File;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.dom.DOMSource;
 
-import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
-import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.DefaultHikeData;
-import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.network.RawHikeData;
-import ch.epfl.sweng.team7.network.RawUserData;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
 public class HikeInfoActivityTest
