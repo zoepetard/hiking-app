@@ -409,8 +409,8 @@ public class MapActivity extends FragmentActivity {
 
     private void displayAnnotations(final HikeData hike) {
 
-        List<MarkerOptions> annotations = new ArrayList<>();
-        if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
+        if (hike.getAnnotations() != null) {
+            List<MarkerOptions> annotations = new ArrayList<>();
             for (Annotation annotation : hike.getAnnotations()) {
                 if (annotation.getAnnotation() != null) {
                     MarkerOptions markerOptions = new MarkerOptions()
