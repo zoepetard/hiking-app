@@ -16,7 +16,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -58,6 +62,7 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
+import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
@@ -68,23 +73,33 @@ import static android.location.Location.distanceBetween;
 public class MapActivity extends FragmentActivity {
 
     private final static String LOG_FLAG = "Activity_Map";
-    private final static int DEFAULT_ZOOM = 10;
+    private final static int DEFAULT_ZOOM = 15;
     private final static int BOTTOM_TABLE_ACCESS_ID = 1;
-    private final static String EXTRA_HIKE_ID = "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
     private final static String OPEN_CAMERA = "android.media.action.IMAGE_CAPTURE";
+    private final static String EXTRA_HIKE_ID =
+            "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
+    private final static String EXTRA_EXIT = "exit";
     private static final int HIKE_LINE_COLOR = 0xff000066;
-    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private static final int HIKE_LINE_COLOR_SELECTED = Color.RED;
     private static LatLngBounds bounds;
     private static LatLng mUserLocation;
     private static int mScreenWidth;
     private static int mScreenHeight;
+
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+
     private GPSManager mGps = GPSManager.getInstance();
     private BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private Map<Marker, Long> mMarkerByHike = new HashMap<>();
+
+    private List<DisplayedHike> mDisplayedHikes = new ArrayList<>();
+
+
     private boolean mFollowingUser = false;
     private Polyline mPolyRef;
+    private Polyline mPrevPolyRef = null;
     private PolylineOptions mCurHike;
     private SearchView mSearchView;
     private ListView mSuggestionListView;
@@ -105,6 +120,10 @@ public class MapActivity extends FragmentActivity {
         setContentView(R.layout.navigation_drawer);
         mGps.startService(this);
 
+        if (getIntent().getBooleanExtra(EXTRA_EXIT, false)) {
+            finish();
+        }
+
 
         // nav drawer setup
         View navDrawerView = getLayoutInflater().inflate(R.layout.navigation_drawer, null);
@@ -116,7 +135,8 @@ public class MapActivity extends FragmentActivity {
 
         // load items into the Navigation drawer and add listeners
         ListView navDrawerList = (ListView) findViewById(R.id.nav_drawer);
-        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(navDrawerList, navDrawerView.getContext());
+        NavigationDrawerListFactory navDrawerListFactory = new NavigationDrawerListFactory(
+                navDrawerList, navDrawerView.getContext(), this);
 
         //creates a start/stop tracking button
         createTrackingToggleButton();
@@ -158,6 +178,11 @@ public class MapActivity extends FragmentActivity {
         super.onResume();
         setUpMapIfNeeded();
         mGps.bindService(this);
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
     }
 
     @Override
@@ -169,6 +194,22 @@ public class MapActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mGps.stopService();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        processNewIntent();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(EXTRA_EXIT, true);
+        startActivity(intent);
     }
 
     /**
@@ -199,7 +240,7 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    public static LatLngBounds getBounds() {
+    public LatLngBounds getBounds() {
         bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         return bounds;
     }
@@ -228,6 +269,7 @@ public class MapActivity extends FragmentActivity {
             @Override
             public void onMapClick(LatLng point) {
                 mSearchView.onActionViewCollapsed(); // remove focus from searchview
+                changePolyColor(mPrevPolyRef, 0);
                 onMapClickHelper(point);
             }
         });
@@ -243,10 +285,10 @@ public class MapActivity extends FragmentActivity {
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                if (mFollowingUser) {
+                if (mGps.tracking()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    focusOnLatLng(latLng);
-                    if (mGps.tracking() && !mGps.paused()) {
+                    if (mFollowingUser) focusOnLatLng(latLng);
+                    if (!mGps.paused()) {
                         List<LatLng> points = mPolyRef.getPoints();
                         points.add(latLng);
                         mPolyRef.setPoints(points);
@@ -254,6 +296,41 @@ public class MapActivity extends FragmentActivity {
                 }
             }
         });
+    }
+
+    private void processNewIntent() {
+        Intent intent = getIntent();
+        boolean displaySingleHike = false;
+
+        if (intent != null && intent.hasExtra(HikeInfoActivity.HIKE_ID)) {
+            String hikeIdStr = intent.getStringExtra(HikeInfoActivity.HIKE_ID);
+
+            if (hikeIdStr != null) {
+                long intentHikeId = Long.valueOf(hikeIdStr);
+                for (DisplayedHike displayedHike : mDisplayedHikes) {
+                    if (intentHikeId == displayedHike.getId()) {
+                        displaySingleHike = true;
+                    }
+                }
+                if (displaySingleHike) {
+                    for (DisplayedHike displayedHike : mDisplayedHikes) {
+                        if (displayedHike.getId() != intentHikeId) {
+                            displayedHike.getPolyline().remove();
+                            displayedHike.getStartMarker().remove();
+                            displayedHike.getFinishMarker().remove();
+                        }
+                    }
+                    for (HikeData hikeData : mHikesInWindow) {
+                        if (hikeData.getHikeId() == intentHikeId) {
+                            LatLngBounds newBounds = hikeData.getBoundingBox();
+                            int displayHeight = (int) (mScreenHeight * 0.7);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(newBounds, mScreenWidth, displayHeight, 30));
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     private static class DownloadHikeParams {
@@ -312,9 +389,14 @@ public class MapActivity extends FragmentActivity {
 
         for (int i = 0; i < mHikesInWindow.size(); i++) {
             HikeData hike = mHikesInWindow.get(i);
+
             displayMarkers(hike);
             displayAnnotations(hike);
             displayHike(hike);
+
+            Polyline polyline = displayHike(hike);
+            Pair<Marker, Marker> markers = displayMarkers(hike);
+            mDisplayedHikes.add(new DisplayedHike(hike.getHikeId(), polyline, markers.first, markers.second));
             boundingBoxBuilder.include(hike.getStartLocation());
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
@@ -330,26 +412,30 @@ public class MapActivity extends FragmentActivity {
         List<MarkerOptions> annotations = new ArrayList<>();
         if (hike.getAnnotations() != null || hike.getAnnotations().size() != 0) {
             for (int i = 0; i < hike.getAnnotations().size(); i++) {
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
-                        .title("Annotation")
-                        .snippet(hike.getAnnotations().get(i).getAnnotation())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                annotations.add(markerOptions);
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        return true;
-                    }
-                });
-                final Marker textAnnotation = mMap.addMarker(markerOptions);
-                textAnnotation.showInfoWindow();
+                Log.d(LOG_FLAG, hike.getAnnotations().get(i).getAnnotation().toString());
+                if (!hike.getAnnotations().get(i).getAnnotation().toString().equals(null) ) {
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(hike.getAnnotations().get(i).getRawHikePoint().getPosition())
+                            .title("Annotation")
+                            .snippet(hike.getAnnotations().get(i).getAnnotation())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    annotations.add(markerOptions);
+                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+                            return true;
+                        }
+                    });
+                    final Marker textAnnotation = mMap.addMarker(markerOptions);
+                    textAnnotation.showInfoWindow();
+                }
             }
-
         }
     }
 
-    private void displayMarkers(final HikeData hike) {
+
+    private Pair<Marker, Marker> displayMarkers(final HikeData hike) {
+
         MarkerOptions startMarkerOptions = new MarkerOptions()
                 .position(hike.getStartLocation())
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
@@ -359,6 +445,15 @@ public class MapActivity extends FragmentActivity {
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
+                for (DisplayedHike displayedHike : mDisplayedHikes) {
+                    if (marker.equals(displayedHike.getStartMarker()) || marker.equals(displayedHike.getFinishMarker())) {
+
+                        changePolyColor(displayedHike.getPolyline(), 1);
+                        changePolyColor(mPrevPolyRef, 0);
+                        mPrevPolyRef = displayedHike.getPolyline();
+                        Log.d(LOG_FLAG, "Setting color of hike to selected");
+                    }
+                }
                 return onMarkerClickHelper(marker);
             }
         });
@@ -366,25 +461,43 @@ public class MapActivity extends FragmentActivity {
         Marker startMarker = mMap.addMarker(startMarkerOptions);
         Marker finishMarker = mMap.addMarker(finishMarkerOptions);
 
-        mMarkerByHike.put(startMarker, hike.getHikeId());
-        mMarkerByHike.put(finishMarker, hike.getHikeId());
+        return Pair.create(startMarker, finishMarker);
+    }
+
+    private void changePolyColor(Polyline polyline, int mode) {
+        int color = (mode == 0) ? HIKE_LINE_COLOR : HIKE_LINE_COLOR_SELECTED;
+        if (polyline != null) {
+            //TODO change polyline color
+        }
+    }
+
+    private DisplayedHike getDisplayedHike(Polyline polyline) {
+        for (DisplayedHike hike : mDisplayedHikes) {
+            if (hike.getPolyline().equals(polyline)) {
+                return hike;
+            }
+        }
+        return null;
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
-        if (mMarkerByHike.containsKey(marker)) {
-            long hikeId = mMarkerByHike.get(marker);
-            try {
-                displayHikeInfo(mDataManager.getHike(hikeId));
-            } catch (DataManagerException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
 
+        for (DisplayedHike displayedHike : mDisplayedHikes) {
+            if (marker.equals(displayedHike.getStartMarker())
+                    || marker.equals(displayedHike.getFinishMarker())) {
+                long hikeId = displayedHike.getId();
+                try {
+                    new DisplayHikeInfo().execute(mDataManager.getHike(hikeId));
+                } catch (DataManagerException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+        }
         return true;
     }
 
-    private void displayHike(final HikeData hike) {
+    private Polyline displayHike(final HikeData hike) {
         PolylineOptions polylineOptions = new PolylineOptions();
         List<HikePoint> databaseHikePoints = hike.getHikePoints();
         for (HikePoint hikePoint : databaseHikePoints) {
@@ -392,7 +505,7 @@ public class MapActivity extends FragmentActivity {
                     .width(5)
                     .color(HIKE_LINE_COLOR);
         }
-        mMap.addPolyline(polylineOptions);
+        return mMap.addPolyline(polylineOptions);
     }
 
     private void onMapClickHelper(LatLng point) {
@@ -412,7 +525,7 @@ public class MapActivity extends FragmentActivity {
                     double distance = distanceBetween[0];
 
                     if (distance < shortestDistance) {
-                        displayHikeInfo(hike);
+                        new DisplayHikeInfo().execute(hike);
                         return;
                     }
                 }
@@ -421,20 +534,51 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
-    private void displayHikeInfo(final HikeData hike) {
-        mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeNumberText, hike.getHikeId()));
-        mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
-        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, hike.getOwnerId()));
-        mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
-        mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
-                intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
-                startActivity(intent);
+    private class GetOwnerFromHike extends AsyncTask<HikeData, Void, UserData> {
+        @Override
+        protected UserData doInBackground(HikeData... hikes) {
+            try {
+                return DataManager.getInstance().getUserData(hikes[0].getOwnerId());
+            } catch (DataManagerException e) {
+                e.printStackTrace();
+                return null;
             }
-        });
+        }
+    }
 
-        mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
+    private class DisplayHikeInfo extends AsyncTask<HikeData, Void, UserData> {
+
+        HikeData hike = null;
+
+        @Override
+        protected UserData doInBackground(HikeData... hikes){
+            hike = hikes[0];
+            try {
+                return DataManager.getInstance().getUserData(hikes[0].getOwnerId());
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, "Could not display hike information");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(UserData userData) {
+            changePolyColor(mPrevPolyRef, 0);
+            if (userData != null) {
+                mBottomTable.setTitle(BOTTOM_TABLE_ACCESS_ID, hike.getTitle());
+                mBottomTable.clearInfoLines(BOTTOM_TABLE_ACCESS_ID);
+                mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeOwnerText, userData.getUserName()));
+                mBottomTable.addInfoLine(BOTTOM_TABLE_ACCESS_ID, getResources().getString(R.string.hikeDistanceText, (long) hike.getDistance() / 1000));
+                mBottomTable.setOnClickListener(BOTTOM_TABLE_ACCESS_ID, new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Intent intent = new Intent(view.getContext(), HikeInfoActivity.class);
+                        intent.putExtra(EXTRA_HIKE_ID, Long.toString(hike.getHikeId()));
+                        startActivity(intent);
+                    }
+                });
+                mBottomTable.show(BOTTOM_TABLE_ACCESS_ID);
+            }
+        }
     }
 
     private void createTrackingToggleButton() {
@@ -452,24 +596,37 @@ public class MapActivity extends FragmentActivity {
 
         toggleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mGps.toggleTracking();
-                Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
-                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
-                Button addAnnotation = (Button) findViewById(R.id.button_annotation_create);
-                if (mGps.tracking()) {
-                    toggleButton.setText(R.string.button_stop_tracking);
-                    pauseButton.setVisibility(View.VISIBLE);
-                    addAnnotation.setVisibility(View.VISIBLE);
-                    pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
-                    startHikeDisplay();
+                if (mGps.enabled()) {
+                    mGps.toggleTracking();
+                    updateButtonDisplay();
+                    if (mGps.tracking() && !mGps.paused()) {
+                        startHikeDisplay();
+                        Log.d(LOG_FLAG, "Starting hike display");
+                    }
                 } else {
-                    toggleButton.setText(R.string.button_start_tracking);
-                    pauseButton.setVisibility(View.INVISIBLE);
-                    addAnnotation.setVisibility(View.INVISIBLE);
-                    stopHikeDisplay();
+                    displayToast(getResources().getString(R.string.gps_location_not_enabled));
+
                 }
             }
         });
+    }
+
+    public void updateButtonDisplay() {
+
+        //Start/stop button update
+        Button toggleButton = (Button) findViewById(R.id.button_tracking_toggle);
+        Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
+        Button addAnnotationButton = (Button) findViewById(R.id.button_annotation_create);
+        if (mGps.tracking()) {
+            toggleButton.setText(R.string.button_stop_tracking);
+            pauseButton.setVisibility(View.VISIBLE);
+            addAnnotationButton.setVisibility(View.VISIBLE);
+            pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+        } else {
+            toggleButton.setText(R.string.button_start_tracking);
+            pauseButton.setVisibility(View.INVISIBLE);
+            addAnnotationButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void createPauseTrackingButton() {
@@ -487,8 +644,7 @@ public class MapActivity extends FragmentActivity {
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGps.togglePause();
-                Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
-                pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
+                updateButtonDisplay();
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
@@ -659,7 +815,7 @@ public class MapActivity extends FragmentActivity {
                     if (bounds != null && bounds instanceof LatLngBounds) {
                         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds((LatLngBounds) bounds, 60));
                     } else {
-                        focusOnLatLng(latLng);
+                        focusOnLatLng(latLng, 10);
                     }
 
                     // load hikes at new location
@@ -784,6 +940,13 @@ public class MapActivity extends FragmentActivity {
         }
     }
 
+    public void focusOnLatLng(LatLng latLng, int zoom) {
+        if (latLng != null) {
+            CameraUpdate target = CameraUpdateFactory.newLatLngZoom(latLng, zoom);
+            mMap.animateCamera(target);
+        }
+    }
+
     public void startFollowingUser() {
         mFollowingUser = true;
     }
@@ -793,8 +956,9 @@ public class MapActivity extends FragmentActivity {
         mPolyRef = mMap.addPolyline(mCurHike);
     }
 
-    private void stopHikeDisplay() {
-        //TODO do something when we stop hiking..?
+    public void stopHikeDisplay() {
+        mPolyRef.remove();
+        onCameraChangeHelper();
     }
 
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HikingApp</string>
+    <string name="app_name">Footpath</string>
     <string name="title_activity_map">Map</string>
     <string name="title_activity_hike_list">HikeListActivity</string>
 
@@ -26,7 +26,7 @@
 
     <!-- Strings related to hike display -->
     <string name="hikeNumberText">Hike #%1$d</string>
-    <string name="hikeOwnerText">Owner: %1$d</string>
+    <string name="hikeOwnerText">Owner: %1$s</string>
     <string name="hikeDistanceText">Distance: %1$d km</string>
     <string name="hikeRatingText">Rating: %1$d</string>
     <string name="hikeTimeText">Time: %1$d</string>
@@ -38,7 +38,7 @@
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
-    <string name="change_name">Change Nickname</string>
+    <string name="change_name">Choose A New Nickname</string>
     <string name="goto_map">Go To Map</string>
     <string name="button_done">Done</string>
     <string name="button_start_tracking">Start</string>
@@ -76,10 +76,11 @@
 
     <!-- Save hike prompt -->
     <string name="button_save_hike">Save</string>
-    <string name="button_cancel_save">Cancel</string>
+    <string name="button_cancel_save">Discard</string>
     <string name="prompt_title">Hike finished!</string>
     <string name="prompt_title_hint">Hike name</string>
     <string name="prompt_comment_hint">Drop a comment about this hike</string>
+
 
     <!-- Add annotation prompt -->
     <string name="add_annotation">Add annotation</string>
@@ -87,11 +88,19 @@
     <string name="add_picture"> Take a picture</string>
     <string name="prompt_annotation_hint">Drop an annotation of the current point </string>
 
+    <!-- Cancel hike prompt -->
+    <string name="button_proceed_cancel">Discard</string>
+    <string name="button_keep_tracking">Keep Tracking</string>
+    <string name="warning_title">Warning</string>
+    <string name="warning_description">If you do this you will lose your hike forever. Do you wish to proceed?</string>
+
+
     <!-- Error messages -->
     <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
     <string name="gps_service_access_failure">Could not access gps service</string>
     <string name="gps_location_updates_failure">Could not request location updates</string>
     <string name="sign_in_error_connecting_to_server">Error while connecting to the server</string>
+    <string name="gps_location_not_enabled">Please enable your GPS connection</string>
 
     <string name="back">BACK</string>
     <string name="go_hikes">Hikes</string>
@@ -99,6 +108,7 @@
     <string name="new_profile">Choose a new profile picture</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
+
 
     <string name="hike_name">Hike Name</string>
     <string name="distance">Distance</string>
@@ -117,8 +127,20 @@
 
     <string name="search_no_results">No results</string>
     <string name="search_error">An error occurred</string>
+    <string name="user_hikes">Hikes:</string>
+    <string name="change">Change</string>
+    <string name="valid_user_name">Please enter a valid user name</string>
+    <string name="owner">Owner</string>
+    <string name="sample_owner">John Doe</string>
 
     <string name="export_error">Failed to export hike</string>
     <string name="export_success">Export successful!</string>
+
+    <!-- Static TextView Strings -->
+    <string name="loading_string">Loading...</string>
+
+    <!-- Elevation -->
+    <string name="elevation_min_max">Min: %1$s m Max: %2$s m</string>
+    <string name="user_not_found">User Not Found</string>
 
 </resources>

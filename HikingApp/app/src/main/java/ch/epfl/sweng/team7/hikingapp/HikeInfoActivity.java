@@ -1,13 +1,12 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -33,18 +31,29 @@ public final class HikeInfoActivity extends FragmentActivity {
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
-    private final static String HIKE_ID = "hikeID";
+    public final static String HIKE_ID = "hikeID";
+    private HikeInfoView hikeInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigation_drawer);
 
+
         Intent intent = getIntent();
         if (intent.getBooleanExtra(GPSManager.NEW_HIKE, false)) {
             displayEditableHike(intent);
         } else {
             loadStaticHike(intent, savedInstanceState);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
 
@@ -72,10 +81,13 @@ public final class HikeInfoActivity extends FragmentActivity {
 
     private void loadStaticHike(Intent intent, Bundle savedInstanceState) {
         String hikeIdStr = intent.getStringExtra(HikeListActivity.EXTRA_HIKE_ID);
-        if (hikeIdStr == null && savedInstanceState != null) {
+        String userHikeIdStr = intent.getStringExtra(UserDataActivity.EXTRA_HIKE_ID);
+        if (hikeIdStr == null && userHikeIdStr == null && savedInstanceState != null) {
             hikeId = savedInstanceState.getLong(HIKE_ID);
         } else if (hikeIdStr != null) {
             hikeId = Long.valueOf(hikeIdStr);
+        } else if (userHikeIdStr != null) {
+            hikeId = Long.valueOf(userHikeIdStr);
         }
         View view = findViewById(android.R.id.content);
 
@@ -93,7 +105,10 @@ public final class HikeInfoActivity extends FragmentActivity {
         mapFragment.getView().setLayoutParams(params);
         GoogleMap mapHikeInfo = mapFragment.getMap();
 
-        final HikeInfoView hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
+        View loadingScreen = getLayoutInflater().inflate(R.layout.loading_screen, null);
+        mainContentFrame.addView(loadingScreen);
+
+        hikeInfoView = new HikeInfoView(view, this, hikeId, mapHikeInfo);
 
         // set listener methods for UI elements in HikeInfoView
         hikeInfoView.getHikeRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -105,14 +120,6 @@ public final class HikeInfoActivity extends FragmentActivity {
             }
         });
 
-        // Setting a listener for each imageview.
-        for (int i = 0; i < hikeInfoView.getGalleryImageViews().size(); i++) {
-
-            ImageView imgView = hikeInfoView.getGalleryImageViews().get(i);
-            imgView.setOnClickListener(new ImageViewClickListener());
-        }
-
-        hikeInfoView.getBackButton().setOnClickListener(new BackButtonClickListener());
 
         if (mapHikeInfo != null) {
             mapHikeInfo.setOnMapClickListener(new MapPreviewClickListener());
@@ -146,6 +153,7 @@ public final class HikeInfoActivity extends FragmentActivity {
                 }
             }
         });
+        mainContentFrame.removeView(loadingScreen);
     }
 
     private class SubmitVoteTask extends AsyncTask<RatingVote, Void, Boolean> {
@@ -168,33 +176,19 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
     }
 
-    private class ImageViewClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-
-            // Update image in full screen view
-            ImageView imgView = (ImageView) v;
-            Drawable drawable = imgView.getDrawable();
-
-            ImageView fullScreenView = (ImageView) findViewById(R.id.image_fullscreen);
-            fullScreenView.setImageDrawable(drawable);
-
-            toggleFullScreen();
-        }
-    }
-
     private class MapPreviewClickListener implements GoogleMap.OnMapClickListener {
         @Override
         public void onMapClick(LatLng point) {
-            // segue to map activity!
-
+            Intent intent = new Intent(HikeInfoActivity.this, MapActivity.class);
+            intent.putExtra(HIKE_ID, Long.toString(hikeId));
+            startActivity(intent);
         }
     }
 
     private class BackButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            toggleFullScreen();
+            hikeInfoView.toggleFullScreen();
         }
     }
 
@@ -230,24 +224,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
     }
 
-    public void toggleFullScreen() {
-        View infoView = findViewById(R.id.info_overview_layout);
-        View fullScreenView = findViewById(R.id.image_fullscreen_layout);
-        View containerView = findViewById(R.id.info_scrollview);
-
-        // Check which view is currently visible and switch
-        if (infoView.getVisibility() == View.VISIBLE) {
-
-            infoView.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.BLACK);
-            fullScreenView.setVisibility(View.VISIBLE);
-
-        } else {
-
-            infoView.setVisibility(View.VISIBLE);
-            fullScreenView.setVisibility(View.GONE);
-            containerView.setBackgroundColor(Color.WHITE);
-        }
+    public HikeInfoView getHikeInfoView() {
+        return hikeInfoView;
     }
-
 }

@@ -101,6 +101,25 @@ public class DataManagerTest extends InstrumentationTestCase {
     }
 
 
+
+    @Test
+    public void testFailedToPostUserData() throws Exception {
+        boolean exceptionIsThrown = false;
+
+        try {
+            // TODO this test should be in RawUserDataTest
+            RawUserData rawUserData = new RawUserData(-3, "a", "gmail.com", -1); // bad data
+            DataManager dataManager = DataManager.getInstance();
+            dataManager.setUserData(rawUserData);
+        } catch (IllegalArgumentException e) {
+            exceptionIsThrown = true;
+        }
+
+        assertEquals("Exception wasn't thrown + ", true, exceptionIsThrown);
+
+
+    }
+
     /* TODO add after server side is Implemented
     @Test
     public void testGetUserData() throws Exception {

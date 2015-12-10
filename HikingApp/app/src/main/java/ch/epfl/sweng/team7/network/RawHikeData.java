@@ -20,6 +20,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -270,6 +271,8 @@ public class RawHikeData {
             throw new HikeParseException("Invalid hike structure: " + e.getMessage());
         } catch (NullPointerException e) {
             throw new HikeParseException("Invalid hike structure");
+        } catch (ParseException e) {
+            throw new HikeParseException(e);
         }
     }
 
