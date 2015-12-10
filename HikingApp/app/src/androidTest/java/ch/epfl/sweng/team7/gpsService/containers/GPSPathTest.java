@@ -49,4 +49,17 @@ public class GPSPathTest {
         gpsPath.removeFootPrintsAfter(2);
         assertEquals(gpsPath.getFootPrintCount(), 2);
     }
+
+    @Test
+    public void testCutBiggerThanSize() {
+        gpsPath = new GPSPath();
+        GeoCoords coords = new GeoCoords(0, 0, 0);
+        for (int i = 0; i < 4; i++) {
+            gpsPath.addFootPrint(new GPSFootPrint(coords, 0));
+        }
+        long sizeBefore = gpsPath.getFootPrintCount();
+        gpsPath.removeFootPrintsBefore((int)sizeBefore+1);
+        long sizeAfter = gpsPath.getFootPrintCount();
+        assertEquals(sizeAfter, sizeBefore);
+    }
 }
