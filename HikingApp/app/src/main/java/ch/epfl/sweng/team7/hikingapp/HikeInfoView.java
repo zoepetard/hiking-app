@@ -11,10 +11,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -108,15 +106,9 @@ public class HikeInfoView {
         // Image Gallery
         imgLayout = (LinearLayout) view.findViewById(R.id.image_layout);
 
-        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
-
-        fullScreenImage = (ImageView) view.findViewById(R.id.image_fullscreen);
-
         mapPreview = mapHikeInfo;
 
         hikeGraph = (GraphView) view.findViewById(R.id.hike_graph);
-
-        imageScrollView = (HorizontalScrollView) view.findViewById(R.id.imageScrollView);
 
         exportButton = (Button) view.findViewById(R.id.button_export_hike);
 
