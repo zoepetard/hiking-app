@@ -27,4 +27,15 @@ public class GPSPathTest {
         gpsPath.addFootPrint(null);
         assertEquals(0, gpsPath.getFootPrintCount());
     }
+
+    @Test
+    public void testFootPrintBegCut() {
+        gpsPath = new GPSPath();
+        GeoCoords coords = new GeoCoords(0, 0, 0);
+        for (int i = 0; i < 4; i++) {
+            gpsPath.addFootPrint(new GPSFootPrint(coords, 0));
+        }
+        gpsPath.removeFootPrintsBefore(2);
+        assertEquals(gpsPath.getFootPrintCount(), 2);
+    }
 }
