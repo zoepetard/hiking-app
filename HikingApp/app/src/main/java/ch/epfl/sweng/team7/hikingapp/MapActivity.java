@@ -598,6 +598,7 @@ public class MapActivity extends FragmentActivity {
             public void onClick(View v) {
                 if (mGps.enabled()) {
                     mGps.toggleTracking();
+                    mGps.setAnnotations(mListAnnotations);
                     updateButtonDisplay();
                     if (mGps.tracking() && !mGps.paused()) {
                         startHikeDisplay();

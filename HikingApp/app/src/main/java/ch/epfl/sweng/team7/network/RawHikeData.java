@@ -142,13 +142,11 @@ public class RawHikeData {
      */
     public ArrayList<Annotation> getAnnotations() {
         if (mAnnotations == null || mAnnotations.size() < 1) {
-            return null;
+            return new ArrayList<>();
         } else {
             return new ArrayList<>(mAnnotations);
         }
     }
-
-
 
     /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
@@ -215,12 +213,13 @@ public class RawHikeData {
      */
     private JSONArray parseAnnotations(List<Annotation> mAnnotations) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < mAnnotations.size(); ++i) {
-            jsonArray.put(mAnnotations.get(i).toJSON());
-        }
-        return jsonArray;
+        if (mAnnotations != null) {
+            for (int i = 0; i < mAnnotations.size(); ++i) {
+                jsonArray.put(mAnnotations.get(i).toJSON());
+            }
+            return jsonArray;
+        } return null;
     }
-
 
     /**
      * Creates a new RawHikeData object by parsing a JSON object in the format

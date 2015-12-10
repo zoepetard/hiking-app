@@ -299,7 +299,6 @@ public final class GPSManager {
         ((MapActivity)mContext).stopHikeDisplay();
     }
 
-
     /**
      * Method called after stopping a hike tracking.
      * This method should take the user to an editable Activity.
@@ -372,9 +371,8 @@ public final class GPSManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 storeHike(hikeTitle.getText().toString(), hikeComment.getText().toString());
-                //storePictures();
+                storePictures();
                 mGpsPath = null;
-                //TODO call storeHike() after issue #86 is fixed
                 resetHikeTracking();
             }
         });
