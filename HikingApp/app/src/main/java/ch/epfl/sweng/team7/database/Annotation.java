@@ -7,13 +7,15 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
 
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
 /**
+ * The annotation class stores an annotation to a hike,
+ * which can be text or an image (by image id)
+ *
  * Created by pablo on 23/11/15.
  */
 public class Annotation {
