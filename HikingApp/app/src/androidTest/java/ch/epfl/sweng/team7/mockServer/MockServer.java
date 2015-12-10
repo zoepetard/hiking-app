@@ -186,7 +186,7 @@ public class MockServer implements DatabaseClient {
     /**
      * Post user data to the data base
      *
-     * @param rawUserData object conatining id,user name and mail address
+     * @param rawUserData object containing id, user name and mail address
      * @return user id
      * @throws DatabaseClientException if post is unsuccessful
      */
