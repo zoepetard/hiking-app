@@ -50,7 +50,8 @@ public final class GPSPath {
     }
 
     /**
-     * Method called to remove all FootPrints before a certain index.
+     * Method called to remove all FootPrints before, but not including,
+     * a certain index.
      * @param index index until which all FootPrints will be removed.
      */
     public void removeFootPrintsBefore(int index) {
@@ -60,7 +61,7 @@ public final class GPSPath {
     }
 
     /**
-     * Method called to remove all FootPrints after a certain index.
+     * Method called to remove all FootPrints after, and including, a certain index.
      * @param index index after which all FootPrints will be removed.
      */
     public void removeFootPrintsAfter(int index) {
