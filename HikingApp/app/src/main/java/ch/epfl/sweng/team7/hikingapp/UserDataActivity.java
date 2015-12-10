@@ -46,11 +46,10 @@ import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.UserData;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 
 public class UserDataActivity extends FragmentActivity {
 
-    private final static int DEFAULT_BUTTON_SIZE = 64;
-    private final static int DEFAULT_BUTTON_MARGIN = 10;
     private final static int SELECT_PICTURE = 1;
     public final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
@@ -394,8 +393,8 @@ public class UserDataActivity extends FragmentActivity {
         backButton.setText("");
         backButton.setBackgroundResource(R.drawable.button_back);
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
+        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 }
