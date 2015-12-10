@@ -16,6 +16,8 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
+ * Test for the MockServer
+ *
  * Created by pablo on 8/11/15.
  */
 @RunWith(AndroidJUnit4.class)

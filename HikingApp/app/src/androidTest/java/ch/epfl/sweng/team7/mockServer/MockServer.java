@@ -25,6 +25,9 @@ import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
+ * This is a local implementation of the DatabaseClient, which is used in testing
+ * to make sure that tests do not depend on a working online server.
+ *
  * Created by pablo on 6/11/15.
  */
 public class MockServer implements DatabaseClient {

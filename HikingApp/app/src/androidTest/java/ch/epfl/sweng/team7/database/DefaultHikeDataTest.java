@@ -1,4 +1,6 @@
 /**
+ * Testing function for the default hike data
+ *
  * Created by zoepetard on 09/11/15.
  */
 

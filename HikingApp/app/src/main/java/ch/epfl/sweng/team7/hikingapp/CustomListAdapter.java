@@ -22,6 +22,7 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.HikeData;
 
 /**
+ * The CustomListAdapter displays hikes in the hike list in a standardized format.
  * Created by zoepetard on 06/12/15.
  */
 public class CustomListAdapter extends BaseAdapter {

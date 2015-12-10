@@ -1,6 +1,8 @@
 package ch.epfl.sweng.team7.network;
 
 /**
+ * Test of RawHikeData
+ *
  * Created by simon on 11/27/15.
  */
 

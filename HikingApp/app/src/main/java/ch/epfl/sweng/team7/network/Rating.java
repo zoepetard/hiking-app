@@ -4,6 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * The rating for a hike, storing both the average rating
+ * and the rating chosen by the signed in user.
+ *
  * Created by simon on 11/29/15.
  */
 public class Rating {

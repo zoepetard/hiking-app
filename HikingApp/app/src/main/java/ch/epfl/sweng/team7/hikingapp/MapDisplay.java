@@ -19,6 +19,8 @@ import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 
 /**
+ * The MapDisplay draws hike on a map, wherever a map with hikes is used.
+ *
  * Created by zoepetard on 26/11/15.
  */
 public class MapDisplay {

@@ -1,6 +1,8 @@
 package ch.epfl.sweng.team7.hikingapp;
 
 /**
+ * Test for the HikeInfoActivity
+ *
  * Created by fredrik-eliasson on 08/11/15.
  */
 
