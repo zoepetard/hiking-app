@@ -406,6 +406,7 @@ public final class GPSManager {
      * Asynchronous task to make the post request to the server.
      */
     private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
+        @Override
         protected Long doInBackground(Annotation... pictures) {
             long pictureId;
             DataManager dataManager = DataManager.getInstance();

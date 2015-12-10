@@ -465,6 +465,7 @@ public class MapActivity extends FragmentActivity {
                 } else {
                     toggleButton.setText(R.string.button_start_tracking);
                     pauseButton.setVisibility(View.INVISIBLE);
+                    addAnnotation.setVisibility(View.INVISIBLE);
                     stopHikeDisplay();
                 }
             }

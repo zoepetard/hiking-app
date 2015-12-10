@@ -129,13 +129,9 @@ public interface DatabaseClient {
 
     /**
      * Get an image from the database
-     *
      * @param imageId the database key of the image
      * @return the image
-<<<<<<< HEAD
      * @throws DatabaseClientException
-=======
->>>>>>> Refactored as suggested in comments
      */
 
     Drawable getImage(long imageId) throws DatabaseClientException;
@@ -171,11 +167,7 @@ public interface DatabaseClient {
 
     /**
      * Post a comment to the database
-<<<<<<< HEAD
-     * @param
-=======
      * @param comment of the hike
->>>>>>> Refactored as suggested in comments
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
