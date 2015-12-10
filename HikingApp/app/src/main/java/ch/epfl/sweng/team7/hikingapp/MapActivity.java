@@ -354,6 +354,8 @@ public class MapActivity extends FragmentActivity {
             boundingBoxBuilder.include(hike.getFinishLocation());
         }
 
+
+
         if (firstHike) {
             boundingBoxBuilder.include(mUserLocation);
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBoxBuilder.build(), mScreenWidth, mScreenHeight, 30));
@@ -371,20 +373,16 @@ public class MapActivity extends FragmentActivity {
         // manager.
         mMap.setOnCameraChangeListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
-
-        mClusterManager.getMarkerCollection().setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return onMarkerClickHelper(marker);
-            }
-        });
+        
     }
 
     private void displayMarkers(final HikeData hike) {
         MapClusterItem clusterStartMarker = new MapClusterItem(hike.getStartLocation().latitude, hike.getStartLocation().longitude, "start");
-        mClusterManager.addItem(clusterStartMarker);
+
 
         MapClusterItem clusterFinishMarker = new MapClusterItem(hike.getFinishLocation().latitude, hike.getFinishLocation().longitude, "finish");
+
+        mClusterManager.addItem(clusterStartMarker);
         mClusterManager.addItem(clusterFinishMarker);
 
         Marker startMarker = mMapClusterRenderer.getMarker(clusterStartMarker);
@@ -754,7 +752,6 @@ public class MapActivity extends FragmentActivity {
     }
 
     private class SearchHikeParams {
-
         String mQuery;
         boolean mIsDoneTyping;
 
@@ -763,5 +760,4 @@ public class MapActivity extends FragmentActivity {
             mIsDoneTyping = isDoneTyping;
         }
     }
-
 }
