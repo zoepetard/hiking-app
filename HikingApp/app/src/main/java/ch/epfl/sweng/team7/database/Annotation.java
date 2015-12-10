@@ -74,7 +74,7 @@ public class Annotation {
         LatLng latLng = new LatLng(jsonObject.getDouble(0), jsonObject.getDouble(1));
         Date date = new Date();
         double elevation = jsonObject.getDouble(3);
-        String text = new String(jsonObject.get(4).toString());
+        String text = jsonObject.getString(4);
         long pictureId = jsonObject.getLong(5);
         Annotation annotation = new Annotation(new RawHikePoint(latLng, date, elevation), text, null);
         annotation.setPicturedId(pictureId);
