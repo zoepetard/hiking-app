@@ -86,4 +86,14 @@ public class GPSPathTest {
         gpsPath.addFootPrint(new GPSFootPrint(coords2, 0));
         assertEquals(gpsPath.distanceToStart(), 110575, 0.1f);
     }
+
+    @Test
+    public void testTimeFromStartWithoutPause() {
+        gpsPath = new GPSPath();
+        long timestamp1 = 0;
+        long timestamp2 = 1;
+        GeoCoords coords = new GeoCoords(0, 0, 0);
+        gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp1));
+        gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp2));
+    }
 }
