@@ -33,7 +33,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.HikeData;
 
 
 /**
@@ -460,7 +459,6 @@ public class NetworkDatabaseClient implements DatabaseClient {
         } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
-        return;
     }
 
     /**

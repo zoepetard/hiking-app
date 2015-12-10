@@ -146,8 +146,7 @@ public class HikeInfoView {
                     RawHikeComment rawHikeComment = new RawHikeComment(
                             RawHikeComment.COMMENT_ID_UNKNOWN,
                             hikeId, userId, commentText);
-                    DefaultHikeComment comment = new DefaultHikeComment(rawHikeComment);
-                    newComment = comment;
+                    newComment = new DefaultHikeComment(rawHikeComment);
                     new PostCommentAsync().execute(rawHikeComment);
                     commentEditText.setText("");
                     new GetUserName().execute(userId);
