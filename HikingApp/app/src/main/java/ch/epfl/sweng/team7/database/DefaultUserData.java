@@ -22,7 +22,7 @@ public class DefaultUserData implements UserData {
         mUserName = rawUserData.getUserName();
         mMailAddress = rawUserData.getMailAddress();
         mUserProfilePic = rawUserData.getUserProfilePic();
-        mHikeList = new ArrayList<Long>();
+        mHikeList = new ArrayList<>();
 
     }
 

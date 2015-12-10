@@ -84,7 +84,7 @@ public class NavigationDrawerListFactory {
 
     private void loadNavDrawerItems(ListView navDrawerList) {
         String[] listViewItems = {LIST_ITEM_ACCOUNT, LIST_ITEM_LOGOUT};
-        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> navDrawerAdapter = new ArrayAdapter<>(
                 mContext, android.R.layout.simple_list_item_1, listViewItems);
         navDrawerList.setAdapter(navDrawerAdapter);
     }

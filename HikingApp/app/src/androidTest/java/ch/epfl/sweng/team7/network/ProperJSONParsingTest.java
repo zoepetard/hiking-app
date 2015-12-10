@@ -44,25 +44,25 @@ public class ProperJSONParsingTest {
 
     @Before
     public void setUp() throws Exception {
-        properHikePointsX = new ArrayList<Double>();
+        properHikePointsX = new ArrayList<>();
         properHikePointsX.add(0.0);
         properHikePointsX.add(0.1);
         properHikePointsX.add(0.2);
         properHikePointsX.add(0.3);
         properHikePointsX.add(0.4);
-        properHikePointsY = new ArrayList<Double>();
+        properHikePointsY = new ArrayList<>();
         properHikePointsY.add(0.0);
         properHikePointsY.add(0.1);
         properHikePointsY.add(0.0);
         properHikePointsY.add(89.9);
         properHikePointsY.add(0.0);
-        properHikePointsZ = new ArrayList<Double>();
+        properHikePointsZ = new ArrayList<>();
         properHikePointsZ.add(1.0);
         properHikePointsZ.add(2.0);
         properHikePointsZ.add(1.1);
         properHikePointsZ.add(1.2);
         properHikePointsZ.add(2.0);
-        properHikePointsT = new ArrayList<Long>();
+        properHikePointsT = new ArrayList<>();
         properHikePointsT.add(123201L);
         properHikePointsT.add(123202L);
         properHikePointsT.add(123203L);

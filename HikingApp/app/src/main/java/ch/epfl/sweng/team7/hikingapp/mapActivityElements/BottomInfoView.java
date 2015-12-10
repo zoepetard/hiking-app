@@ -40,7 +40,7 @@ public final class BottomInfoView {
         mapTableLayout.setVisibility(View.INVISIBLE);
         mTitle = new TextView(context);
         mTitle.setTextSize(DEFAULT_TITLE_SIZE);
-        mInfoLines = new ArrayList<TextView>();
+        mInfoLines = new ArrayList<>();
 
         mapTableLayout.addView(mTitle);
     }

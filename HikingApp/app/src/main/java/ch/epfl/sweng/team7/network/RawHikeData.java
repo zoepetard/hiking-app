@@ -113,7 +113,7 @@ public class RawHikeData {
      * Returns a list of the hike points.
      */
     public List<RawHikePoint> getHikePoints() {
-        return new ArrayList<RawHikePoint>(mHikePoints);
+        return new ArrayList<>(mHikePoints);
     }
 
     public List<RawHikeComment> getAllComments() {
