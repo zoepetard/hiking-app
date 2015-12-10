@@ -200,9 +200,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringHikeData = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             JSONObject jsonHikeId = new JSONObject(stringHikeData);
             return jsonHikeId.getLong("hike_id");
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -223,9 +221,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_OK);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -246,9 +242,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.getOutputStream().write(outputInBytes);
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("user_id");
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -268,9 +262,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             String stringUserData = fetchResponse(conn, HttpURLConnection.HTTP_OK);
             JSONObject jsonUserData = new JSONObject(stringUserData);
             return RawUserData.parseFromJSON(jsonUserData);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException("Couldn't retrieve user data: " + e.getMessage());
         }
     }
@@ -310,9 +302,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.connect();
             conn.getOutputStream().write(outputInBytes);
             fetchResponse(conn, HttpURLConnection.HTTP_OK);
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
@@ -362,9 +352,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
             conn.getOutputStream().write(outputInBytes);
             String serverResponse = fetchResponse(conn, HttpURLConnection.HTTP_CREATED);
             return new JSONObject(serverResponse).getLong("image_id");
-        } catch (IOException e) {
-            throw new DatabaseClientException(e);
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             throw new DatabaseClientException(e);
         }
     }
