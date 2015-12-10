@@ -2,6 +2,7 @@ package ch.epfl.sweng.team7.gpsService;
 
 import android.location.Location;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -9,7 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class GPSManagerTest {
@@ -21,15 +25,13 @@ public class GPSManagerTest {
         gpsManager = GPSManager.getInstance();
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testNullPositionInitialization() {
-        gpsManager.getCurrentCoords();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testNullLocationParameter() {
+    @Test
+    public void testEqualityAfterBeforeNullArg() {
+        assertTrue(locationUpdate());
+        GeoCoords prevLocation = gpsManager.getCurrentCoords();
         gpsManager.updateCurrentLocation(null);
-        gpsManager.getCurrentCoords();
+        GeoCoords afterLocation = gpsManager.getCurrentCoords();
+        assertEquals(prevLocation, afterLocation);
     }
 
     @Test
@@ -39,12 +41,11 @@ public class GPSManagerTest {
         assertEquals(gpsManager.enabled(), false);
     }
 
-    @Test
-    public void testLocationUpdate() {
+    private boolean locationUpdate() {
         Location newLocation = new Location("");
         newLocation.setLatitude(10);
         newLocation.setLongitude(10);
         gpsManager.updateCurrentLocation(newLocation);
-        assertEquals(gpsManager.getCurrentCoords().toLatLng(), new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
+        return gpsManager.getCurrentCoords().toLatLng().equals(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
     }
 }
