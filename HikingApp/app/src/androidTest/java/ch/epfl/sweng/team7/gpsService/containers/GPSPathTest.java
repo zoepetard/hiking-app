@@ -95,5 +95,6 @@ public class GPSPathTest {
         GeoCoords coords = new GeoCoords(0, 0, 0);
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp1));
         gpsPath.addFootPrint(new GPSFootPrint(coords, timestamp2));
+        assertEquals(gpsPath.timeElapsedInSeconds(), 1);
     }
 }
