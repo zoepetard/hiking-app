@@ -99,6 +99,9 @@
     <string name="user_email">User Email</string>
     <string name="number_of_hikes"># of hikes</string>
 
+    <string name="profile_picture">Profile Picture</string>
+    <string name="picture">Picture</string>
+
     <string name="hike_name">Hike Name</string>
     <string name="distance">Distance</string>
     <string name="sample_distance">10 km</string>

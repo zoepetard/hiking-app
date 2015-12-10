@@ -31,7 +31,8 @@
             android:clickable="false"
             android:maxHeight="100dp"
             android:maxWidth="100dp"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            android:contentDescription="@string/profile_picture" />
 
         <LinearLayout
             android:id="@+id/name_email"
