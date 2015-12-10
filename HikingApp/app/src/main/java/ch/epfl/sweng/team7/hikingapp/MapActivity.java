@@ -124,9 +124,11 @@ public class MapActivity extends FragmentActivity {
 
         setGoToHikesButtonListener();
 
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
+        if(mMap != null) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
+        
         setUpSearchView();
 
         mGeocoder = new Geocoder(this);
