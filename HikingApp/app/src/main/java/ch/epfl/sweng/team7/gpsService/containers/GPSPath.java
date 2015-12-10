@@ -65,7 +65,7 @@ public final class GPSPath {
      */
     public void removeFootPrintsAfter(int index) {
         if (path != null && index < path.size() && index >= 0) {
-            path = path.subList(index, path.size()-1);
+            path = path.subList(index, path.size());
         }
     }
 
