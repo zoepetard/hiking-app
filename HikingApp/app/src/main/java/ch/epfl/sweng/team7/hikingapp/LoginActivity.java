@@ -274,6 +274,10 @@ public class LoginActivity extends Activity implements
         protected Void doInBackground(String... mailAddress) {
 
             try {
+                if(!sGoogleApiClient.isConnected()) {
+                    Log.i(TAG, "Authentication failed: Google API Client not connected.");
+                    return null;
+                }
                 Person currentPerson = Plus.PeopleApi.getCurrentPerson(sGoogleApiClient);
                 String userName = mailAddress[0];
                 if (currentPerson != null) {
