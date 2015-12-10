@@ -15,6 +15,7 @@ import java.util.List;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 
+
 /**
  * A client object to a hikingapp(footpath) server that abstracts the underlying
  * communication protocol and data formats.
@@ -26,8 +27,8 @@ public interface DatabaseClient {
      * @param hikeId The numeric ID of one hike in the database
      * @return A {@link RawHikeData} object encapsulating one hike
      * @throws DatabaseClientException in case the hike could not be
-     * retrieved for any reason external to the application (network failure, etc.)
-     * or the hikeId did not match a valid hike.
+     *                                 retrieved for any reason external to the application (network failure, etc.)
+     *                                 or the hikeId did not match a valid hike.
      */
 
     RawHikeData fetchSingleHike(long hikeId) throws DatabaseClientException;
@@ -112,6 +113,7 @@ public interface DatabaseClient {
 
     /**
      * Log user into the server, i.e. get user profile information
+     *
      * @param loginRequest
      * @throws DatabaseClientException
      */
@@ -131,27 +133,33 @@ public interface DatabaseClient {
      * @return the image
      * @throws DatabaseClientException
      */
+
     Drawable getImage(long imageId) throws DatabaseClientException;
+
+
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
-     * @param imageId the ID of the image if it should be changed
      * @return the database key of that image
      * @throws DatabaseClientException
      */
-    long postImage(Drawable drawable, long imageId) throws DatabaseClientException;
+    long postImage(Drawable drawable, long id) throws DatabaseClientException;
 
     /**
      * Post an image to the database
+     *
      * @param drawable an image, here as drawable
      * @return the database key of that image
      * @throws DatabaseClientException
      */
     long postImage(Drawable drawable) throws DatabaseClientException;
 
+
     /**
      * Delete an image from the database
+     *
      * @param imageId the database key of the image
      * @throws DatabaseClientException
      */
@@ -159,7 +167,7 @@ public interface DatabaseClient {
 
     /**
      * Post a comment to the database
-     * @param comment the comment to be posted
+     * @param comment of the hike
      * @return the database key of that comment
      * @throws DatabaseClientException
      */
@@ -167,14 +175,15 @@ public interface DatabaseClient {
 
     /**
      * Delete a comment from the database
+     *
      * @param commentId the database key of the comment
      * @throws DatabaseClientException
      */
     void deleteComment(long commentId) throws DatabaseClientException;
-
     /**
      * Post a vote about a hike.
      */
     void postVote(RatingVote vote) throws DatabaseClientException;
+
 
 }

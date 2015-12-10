@@ -35,6 +35,9 @@
     <string name="button_resume_tracking">Resume</string>>
     <string name="button_export_hike">Export Hike as GPX</string>
 
+
+    <string name="button_create_annotation">Add Annotation</string>>
+    <string name="button_add_picture">Add Picture</string>>
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
 
@@ -52,6 +55,9 @@
     <item name="feedback_notification" type="id" />
     <item name="mapTextTable" type="id" />
     <item name="button_save_hike" type="id" />
+    <item name="button_annotation_create" type="id" />
+    <item name="button_picture" type="id" />
+    <item name="annotation_text" type="id" />
 
     <!-- Save hike prompt -->
     <string name="button_save_hike">Save</string>
@@ -60,11 +66,19 @@
     <string name="prompt_title_hint">Hike name</string>
     <string name="prompt_comment_hint">Drop a comment about this hike</string>
 
+
+    <!-- Add annotation prompt -->
+    <string name="add_annotation">Add annotation</string>
+    <string name="prompt_add_tile">Annotation</string>
+    <string name="add_picture"> Take a picture</string>
+    <string name="prompt_annotation_hint">Drop an annotation of the current point </string>
+
     <!-- Cancel hike prompt -->
     <string name="button_proceed_cancel">Discard</string>
     <string name="button_keep_tracking">Keep Tracking</string>
     <string name="warning_title">Warning</string>
     <string name="warning_description">\nIf you do this you will lose your hike forever. Do you really wish to discard the hike?</string>
+
 
     <!-- Error messages -->
     <string name="gps_service_connection_dropped">Connection to gps service was dropped</string>
@@ -93,6 +107,7 @@
     <string name="sample_elavation">Max: 2000m Min: 1000m</string>
     <string name="rating">Rating</string>
     <string name="selete_pic">Select Picture</string>
+    <string name="Add" />
 
     <string name="comments">Comments</string>
     <string name="button_comment">Comment</string>

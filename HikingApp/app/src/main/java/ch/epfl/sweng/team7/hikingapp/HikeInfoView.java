@@ -201,6 +201,7 @@ public class HikeInfoView {
                 List<HikeData> hikesToDisplay = Arrays.asList(hikeData);
                 List<Polyline> displayedHikes = MapDisplay.displayHikes(hikesToDisplay, mapPreview);
                 MapDisplay.displayMarkers(hikesToDisplay, mapPreview);
+                MapDisplay.displayAnnotations(hikesToDisplay, mapPreview);
                 MapDisplay.setOnMapClick(false, displayedHikes, mapPreview);
 
                 DisplayMetrics display = context.getResources().getDisplayMetrics();

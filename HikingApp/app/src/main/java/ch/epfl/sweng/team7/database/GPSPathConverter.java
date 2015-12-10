@@ -6,9 +6,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.gpsService.containers.GPSFootPrint;
 import ch.epfl.sweng.team7.gpsService.containers.GPSPath;
 import ch.epfl.sweng.team7.network.RawHikeComment;
+
+import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+
+import ch.epfl.sweng.team7.network.RawHikeComment;
+import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -30,10 +37,10 @@ public class GPSPathConverter {
         if (gpsPath.getFootPrintCount() > 0) {
             Date hikeDate = new Date(gpsPath.getPath().get(FIRST_FOOT_PRINT).getTimeStamp());
             List<RawHikePoint> rawHikePoints = getHikePointsFromGPS(gpsPath);
-            //Waiting for #iss56, by now is 0 by default
-            long ownerId = 0;
+            long ownerId = SignedInUser.getInstance().getId();
             List<RawHikeComment> newHikeComments = new ArrayList<>();
-            return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, newHikeComments, "");
+            List<Annotation> annotations = null;
+            return new RawHikeData(RawHikeData.HIKE_ID_UNKNOWN, ownerId, hikeDate, rawHikePoints, newHikeComments, "", annotations);
         } else {
             throw new ArrayIndexOutOfBoundsException("GPS path is empty");
         }
@@ -53,5 +60,22 @@ public class GPSPathConverter {
             hikePoints.add(new RawHikePoint(position, date, elevation));
         }
         return hikePoints;
+    }
+
+    /**
+     * Method to create a rawHikePOints
+     * @param geoCoords
+     * @return
+     */
+    public static RawHikePoint getHikePointsFromGeoCoords(GeoCoords geoCoords){
+        if(geoCoords != null){
+            //Get the actual date
+            Date date = new Date();
+            LatLng position = geoCoords.toLatLng();
+            Double elevation = geoCoords.getAltitude();
+            return new RawHikePoint(position, date, elevation);
+        }else{
+            throw new NullPointerException("No footprint to add to the picture");
+        }
     }
 }
