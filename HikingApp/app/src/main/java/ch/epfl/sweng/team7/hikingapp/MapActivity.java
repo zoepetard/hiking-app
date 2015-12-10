@@ -249,6 +249,9 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if (mFollowingUser) focusOnLatLng(latLng);
+                    if(mPolyRef == null) {
+                        startHikeDisplay();
+                    }
                     if (!mGps.paused()) {
                         List<LatLng> points = mPolyRef.getPoints();
                         points.add(latLng);
