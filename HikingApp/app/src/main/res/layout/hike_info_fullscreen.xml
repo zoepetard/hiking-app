@@ -40,7 +40,6 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:contentDescription="@string/picture" />
         </LinearLayout>
@@ -58,7 +57,7 @@
                 android:textColor="#FFFFFF"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_gravity="left|bottom"
+                android:layout_gravity="start|bottom"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true" />
         </RelativeLayout>
