@@ -35,7 +35,6 @@ import java.util.Map;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
 import ch.epfl.sweng.team7.authentication.SignedInUser;
-import ch.epfl.sweng.team7.database.HikeData;
 
 /**
  * Class to get and post hikes in the server
