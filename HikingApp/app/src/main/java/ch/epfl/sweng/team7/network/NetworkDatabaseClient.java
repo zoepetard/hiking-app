@@ -491,7 +491,7 @@ public class NetworkDatabaseClient implements DatabaseClient {
         String line;
         StringBuilder result = new StringBuilder();
         while ((line = reader.readLine()) != null) {
-            result.append(line + "\n");
+            result.append(line).append("\n");
         }
         conn.disconnect();
         return result.toString();
