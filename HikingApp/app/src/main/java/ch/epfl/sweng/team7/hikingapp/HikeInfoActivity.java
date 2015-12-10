@@ -31,12 +31,10 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 import ch.epfl.sweng.team7.network.RatingVote;
 
 public final class HikeInfoActivity extends FragmentActivity {
-
-    private final static int DEFAULT_BUTTON_SIZE = 64;
-    private final static int DEFAULT_BUTTON_MARGIN = 10;
 
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
@@ -244,9 +242,9 @@ public final class HikeInfoActivity extends FragmentActivity {
         backButton.setText("");
         backButton.setBackgroundResource(R.drawable.button_back);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
+        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 
     private void setupExportButton() {
@@ -254,9 +252,9 @@ public final class HikeInfoActivity extends FragmentActivity {
         backButton.setText("");
         backButton.setBackgroundResource(R.drawable.button_export);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = DEFAULT_BUTTON_SIZE;
-        lp.height = DEFAULT_BUTTON_SIZE;
-        lp.setMargins(DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN, DEFAULT_BUTTON_MARGIN);
+        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 
     public HikeInfoView getHikeInfoView() {
