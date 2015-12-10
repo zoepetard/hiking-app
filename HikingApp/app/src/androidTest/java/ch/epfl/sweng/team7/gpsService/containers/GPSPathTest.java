@@ -71,8 +71,18 @@ public class GPSPathTest {
             gpsPath.addFootPrint(new GPSFootPrint(coords, 0));
         }
         long sizeBefore = gpsPath.getFootPrintCount();
-        gpsPath.removeFootPrintsAfter((int)sizeBefore+1);
+        gpsPath.removeFootPrintsAfter((int) sizeBefore + 1);
         long sizeAfter = gpsPath.getFootPrintCount();
         assertEquals(sizeAfter, sizeBefore);
+    }
+
+    @Test
+    public void testDistanceToStart() {
+        gpsPath = new GPSPath();
+        GeoCoords coords1 = new GeoCoords(0, 0, 0);
+        GeoCoords coords2 = new GeoCoords(1, 0, 0);
+        gpsPath.addFootPrint(new GPSFootPrint(coords1, 0));
+        gpsPath.addFootPrint(new GPSFootPrint(coords2, 0));
+        assertEquals(gpsPath.distanceToStart(), 1, 0.0001f);
     }
 }
