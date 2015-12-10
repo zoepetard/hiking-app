@@ -96,7 +96,6 @@ public class MockServer implements DatabaseClient {
      * Return the hikeIds of hikes that are in the given window
      *
      * @param bounds Boundaries (window) of the
-     * @return
      * @throws DatabaseClientException
      */
     @Override
@@ -247,7 +246,7 @@ public class MockServer implements DatabaseClient {
     /**
      * Log user into the server, i.e. get user profile information
      *
-     * @param loginRequest
+     * @param loginRequest a login request
      * @throws DatabaseClientException
      */
     public void loginUser(LoginRequest loginRequest) throws DatabaseClientException {
