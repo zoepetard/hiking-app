@@ -198,26 +198,32 @@ public class RawHikeData {
         return jsonArray;
     }
 
+    /**
+     * @return a JSON array of the input comments,
+     * or an empty array if comments are null
+     */
     private JSONArray parseCommentsList(List<RawHikeComment> comments) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < comments.size(); ++i) {
-            jsonArray.put(comments.get(i).toJSON());
+        if(comments != null) {
+            for (RawHikeComment comment : comments) {
+                jsonArray.put(comment.toJSON());
+            }
         }
         return jsonArray;
     }
 
     /**
-     * @param mAnnotations
-     * @return a JSON array of the input
+     * @return a JSON array of the input annotations,
+     * or an empty array if annotations are null
      */
-    private JSONArray parseAnnotations(List<Annotation> mAnnotations) throws JSONException {
+    private JSONArray parseAnnotations(List<Annotation> annotations) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        if (mAnnotations != null) {
-            for (int i = 0; i < mAnnotations.size(); ++i) {
-                jsonArray.put(mAnnotations.get(i).toJSON());
+        if (annotations != null) {
+            for (Annotation annotation : annotations) {
+                jsonArray.put(annotation.toJSON());
             }
-            return jsonArray;
-        } return null;
+        }
+        return jsonArray;
     }
 
     /**
