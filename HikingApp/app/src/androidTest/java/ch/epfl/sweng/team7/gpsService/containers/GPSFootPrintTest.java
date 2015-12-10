@@ -23,4 +23,11 @@ public class GPSFootPrintTest {
         GPSFootPrint footPrint = new GPSFootPrint(newCoords, 0);
         assertEquals(footPrint.getGeoCoords(), newCoords);
     }
+
+    @Test
+    public void testTimeStampEquality() {
+        GeoCoords newCoords = new GeoCoords(10, 0, 0);
+        GPSFootPrint footPrint = new GPSFootPrint(newCoords, 0);
+        assertEquals(footPrint.getTimeStamp(), 0);
+    }
 }
