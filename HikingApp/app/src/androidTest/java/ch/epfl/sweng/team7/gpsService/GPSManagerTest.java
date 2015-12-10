@@ -1,6 +1,9 @@
 package ch.epfl.sweng.team7.gpsService;
 
+import android.location.Location;
 import android.support.test.runner.AndroidJUnit4;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,5 +37,14 @@ public class GPSManagerTest {
         assertEquals(gpsManager.paused(), false);
         assertEquals(gpsManager.tracking(), false);
         assertEquals(gpsManager.enabled(), false);
+    }
+
+    @Test
+    public void testLocationUpdate() {
+        Location newLocation = new Location("");
+        newLocation.setLatitude(10);
+        newLocation.setLongitude(10);
+        gpsManager.updateCurrentLocation(newLocation);
+        assertEquals(gpsManager.getCurrentCoords().toLatLng(), new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
     }
 }
