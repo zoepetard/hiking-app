@@ -21,7 +21,6 @@ import ch.epfl.sweng.team7.network.RawUserData;
 @RunWith(AndroidJUnit4.class)
 public class MockServerTest extends TestCase {
     private MockServer mMockServer;
-    private List<Long> mHikeIds;
     private List<RawHikeData> listRawHikes;
     private RawHikeData mRawHikeData1, mRawHikeData2;
     private long mUserBortId;
@@ -45,7 +44,7 @@ public class MockServerTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         mMockServer = new MockServer();
-        mHikeIds = new ArrayList<>();
+        List<Long> mHikeIds = new ArrayList<>();
         listRawHikes = new ArrayList<>();
         long id1 = 1;
         long id2 = 2;

@@ -22,7 +22,6 @@ import ch.epfl.sweng.team7.database.HikeData;
 
 public class HikeListActivity extends Activity {
     private DataManager dataManager = DataManager.getInstance();
-    private LatLngBounds bounds;
 
     private final static String LOG_FLAG = "Activity_HikeList";
     public final static String EXTRA_HIKE_ID =
@@ -47,6 +46,7 @@ public class HikeListActivity extends Activity {
                 navDrawerList, navDrawerView.getContext(), this);
 
         Bundle bound = getIntent().getParcelableExtra(MapActivity.EXTRA_BOUNDS);
+        LatLngBounds bounds;
         if (bound != null) {
             LatLng sw = bound.getParcelable("sw");
             LatLng ne = bound.getParcelable("ne");

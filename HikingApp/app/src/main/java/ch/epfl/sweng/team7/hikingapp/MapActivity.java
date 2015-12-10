@@ -65,7 +65,6 @@ public class MapActivity extends FragmentActivity {
     private final static String EXTRA_EXIT = "exit";
     private static final int HIKE_LINE_COLOR = 0xff000066;
     private static final int HIKE_LINE_COLOR_SELECTED = Color.RED;
-    private static LatLngBounds bounds;
     private static LatLng mUserLocation;
     private static int mScreenWidth;
     private static int mScreenHeight;
@@ -80,7 +79,6 @@ public class MapActivity extends FragmentActivity {
 
     private Polyline mPolyRef;
     private Polyline mPrevPolyRef = null;
-    private PolylineOptions mCurHike;
 
     private SearchView mSearchView;
     private ListView mSuggestionListView;
@@ -89,8 +87,8 @@ public class MapActivity extends FragmentActivity {
     private Geocoder mGeocoder;
     public final static String EXTRA_BOUNDS =
             "ch.epfl.sweng.team7.hikingapp.BOUNDS";
-    private static int MAX_SEARCH_SUGGESTIONS = 10;
-    private static int MIN_QUERY_LENGTH_FOR_SUGGESTIONS = 3;
+    private static final int MAX_SEARCH_SUGGESTIONS = 10;
+    private static final int MIN_QUERY_LENGTH_FOR_SUGGESTIONS = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,7 +200,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     public LatLngBounds getBounds() {
-        bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
         return bounds;
     }
 
@@ -774,7 +772,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private void startHikeDisplay() {
-        mCurHike = new PolylineOptions();
+        PolylineOptions mCurHike = new PolylineOptions();
         mPolyRef = mMap.addPolyline(mCurHike);
     }
 

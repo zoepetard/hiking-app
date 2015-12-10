@@ -69,12 +69,9 @@ public class HikeInfoView {
     private Context context;
     private ArrayList<ImageView> galleryImageViews; // make ImageViews accessible in controller.
     private Button backButton;
-    private ImageView fullScreenImage;
     private GoogleMap mapPreview;
     private GraphView hikeGraph;
-    private HorizontalScrollView imageScrollView;
     private ListView navDrawerList;
-    private ArrayAdapter<String> navDrawerAdapter;
     private LinearLayout commentList;
     private HikeComment newComment;
     private Button exportButton;
