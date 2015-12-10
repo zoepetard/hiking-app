@@ -30,7 +30,7 @@ public class CustomListAdapter extends BaseAdapter {
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
     private final static String HIKE_ID = "hikeID";
-    private HikeListActivity context;
+    private final HikeListActivity context;
     private List<HikeData> mHikes;
     private int mapHeight = 0;
     private int mapWidth = 0;

@@ -69,8 +69,8 @@ public class MapActivity extends FragmentActivity {
     private static int mScreenWidth;
     private static int mScreenHeight;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GPSManager mGps = GPSManager.getInstance();
-    private BottomInfoView mBottomTable = BottomInfoView.getInstance();
+    private final GPSManager mGps = GPSManager.getInstance();
+    private final BottomInfoView mBottomTable = BottomInfoView.getInstance();
     private DataManager mDataManager = DataManager.getInstance();
     private List<HikeData> mHikesInWindow;
     private List<DisplayedHike> mDisplayedHikes = new ArrayList<>();

@@ -50,7 +50,7 @@ import ch.epfl.sweng.team7.network.RawHikeComment;
  * Class which controls and updates the visual part of the view, not the interaction
  */
 public class HikeInfoView {
-    private DataManager dataManager = DataManager.getInstance();
+    private final DataManager dataManager = DataManager.getInstance();
 
     private final static String LOG_FLAG = "Activity_HikeInfoView";
 

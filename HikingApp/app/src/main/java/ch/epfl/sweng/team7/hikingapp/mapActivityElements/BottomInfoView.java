@@ -16,7 +16,7 @@ import ch.epfl.sweng.team7.hikingapp.R;
  */
 public final class BottomInfoView {
 
-    private static BottomInfoView instance = new BottomInfoView();
+    private static final BottomInfoView instance = new BottomInfoView();
     private static final float DEFAULT_TITLE_SIZE = 20f;
     private static final int DEFAULT_BG_COLOR = Color.WHITE;
 
