@@ -28,21 +28,20 @@ import ch.epfl.sweng.team7.network.RawUserData;
  * Created by pablo on 6/11/15.
  */
 public class MockServer implements DatabaseClient {
-
     private static final String PROPER_JSON_ONEHIKE = "{\n"
             + "  \"hike_id\": 1,\n"
-            + "  \"owner_id\": 48,\n"
+            + "  \"owner_id\": 153,\n"
             + "  \"date\": 123201,\n"
             + "  \"hike_data\": [\n"
-            + "    [0.0, 0.0, 123201, 0.5],\n"
-            + "    [0.1, 0.1, 123202, 0.6],\n"
-            + "    [0.2, 0.0, 123203, 0.7],\n"
-            + "    [0.3,89.9, 123204, 0.8],\n"
-            + "    [0.4, 0.0, 123205, 0.9]\n"
+            + "    [0.0, 0.0, 123201, 1.0],\n"
+            + "    [0.1, 0.1, 123202, 2.0],\n"
+            + "    [0.2, 0.0, 123203, 1.1],\n"
+            + "    [0.3,89.9, 123204, 1.2],\n"
+            + "    [0.4, 0.0, 123205, 2.0]\n"
             + "  ],\n"
             + "  \"comments\": [\n"
             + "  ],\n"
-            + "  \"title\": \"test\"\n"
+            + "  \"title\": \"test hike title\"\n"
             + "}\n";
     //Same as DefaultLocalCache
     private final int HIKES_CACHE_MAX_SIZE = 100;
@@ -321,7 +320,6 @@ public class MockServer implements DatabaseClient {
 
     /**
      * Post a comment to the database
-     * @param comment the comment to be posted
      * @return the database key of that comment
      * @throws DatabaseClientException
      */

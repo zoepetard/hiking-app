@@ -27,7 +27,10 @@ public class DefaultHikeData implements HikeData {
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
     private final List<HikePoint> mHikePoints;
+
     private final List<HikeComment> mComments;
+
+    private final List<Annotation> mAnnotations;
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -36,6 +39,7 @@ public class DefaultHikeData implements HikeData {
     private final ElevationBounds mElevationBounds;
     private final Rating mRating;
     private String mTitle;
+
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -52,11 +56,21 @@ public class DefaultHikeData implements HikeData {
             mHikePoints.add(new DefaultHikePoint(rawHikePoint));
         }
 
+
         List<RawHikeComment> rawHikeComments = rawHikeData.getAllComments();
         mComments = new ArrayList<>();
         for (RawHikeComment rawHikeComment : rawHikeComments) {
             mComments.add(new DefaultHikeComment(rawHikeComment));
         }
+
+        List<Annotation> annotations = rawHikeData.getAnnotations();
+        mAnnotations = new ArrayList<>();
+        if(annotations != null) {
+            for (Annotation annotation : annotations) {
+                mAnnotations.add(annotation);
+            }
+        }
+
 
         mDistance = calculateDistance(rawHikePoints);
         mBoundingBox = calculateBoundingBox(rawHikePoints);
@@ -65,12 +79,14 @@ public class DefaultHikeData implements HikeData {
         mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
         mElevationBounds = calculateElevationBounds(rawHikePoints);
 
+
         // Hike rating is optional in RawHikeData, but this class is guaranteed to have it.
         if (rawHikeData.getRating() != null) {
             mRating = rawHikeData.getRating();
         } else {
             mRating = new Rating();
         }
+
 
         mTitle = rawHikeData.getTitle();
     }
@@ -183,9 +199,17 @@ public class DefaultHikeData implements HikeData {
         return mFinishLocation;
     }
 
+
+
     public String getTitle() {
         return mTitle;
     }
+
+
+
+
+    public List<Annotation> getAnnotations() { return mAnnotations; }
+
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;

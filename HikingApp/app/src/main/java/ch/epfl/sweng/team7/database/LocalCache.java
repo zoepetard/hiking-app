@@ -5,6 +5,10 @@
  */
 package ch.epfl.sweng.team7.database;
 
+
+
+import android.graphics.drawable.Drawable;
+
 import java.util.List;
 
 /**
@@ -33,7 +37,15 @@ interface LocalCache {
 
     UserData getUserData(long userId);
 
-    void removeHike(long hikeId);
 
+    void removeHike(long hikeId);
+    
     List<Long> searchHike(String query);
+
+    Drawable getPicture(long pictureId);
+
+
+    void putPicture(Drawable picture, long pictureId);
+
 }
+

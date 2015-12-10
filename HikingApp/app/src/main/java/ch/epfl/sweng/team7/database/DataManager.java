@@ -5,8 +5,8 @@
  */
 package ch.epfl.sweng.team7.database;
 
-import android.graphics.drawable.Drawable;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -15,13 +15,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,7 +32,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.DatabaseClient;
 import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.DefaultNetworkProvider;
@@ -205,7 +200,6 @@ public final class DataManager {
 
     /**
      * Method to post a hike.
-     *
      * @param rawHikeData
      * @throws DataManagerException
      */
@@ -213,6 +207,7 @@ public final class DataManager {
         try {
             return sDatabaseClient.postHike(rawHikeData);
         } catch (DatabaseClientException e) {
+            Log.d(LOG_FLAG, "DatabaseClientException in post hike in Network database");
             throw new DataManagerException(e);
         }
     }
@@ -306,7 +301,7 @@ public final class DataManager {
 
     /**
      * Retrieve a user data object from cache or database
-     * TODO server side needs to be implemented before this can work correctly
+     *
      *
      * @param userId - id assigned to identify user
      * @return UserData object
@@ -332,6 +327,7 @@ public final class DataManager {
     /**
      * Login for the user with the server.
      */
+
     public void loginUser(LoginRequest loginRequest) throws DataManagerException {
         try {
             sDatabaseClient.loginUser(loginRequest);
@@ -349,13 +345,30 @@ public final class DataManager {
         }
     }
 
+
+    /**
+     * Method to fetch pictures from the server
+     * @param pictureId
+     * @return
+     * @throws DataManagerException
+     */
+    public Drawable getPicture(long pictureId) throws DatabaseClientException {
+        // Check if PictureAnnotation is cached
+        Drawable picture = sLocalCache.getPicture(pictureId);
+        if (picture != null) {
+            return picture;
+        }
+        return sDatabaseClient.getImage(pictureId);
+    }
+
     /**
      * Method to export the hike as a gpx file to the phone's internal storage
-     *
      * @param hikeData,context - the hike to be saved, the applications context
      * @return filepath as a string
      */
+
     public String saveGPX(HikeData hikeData, Context context) throws DataManagerException {
+
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -404,6 +417,7 @@ public final class DataManager {
                 date = format.format(hikePoint.getTime());
                 pointTime.appendChild(doc.createTextNode(date));
 
+
                 trackPoint.appendChild(pointTime);
                 trackSegment.appendChild(trackPoint);
 
@@ -431,6 +445,14 @@ public final class DataManager {
             throw new DataManagerException(e);
         } catch (TransformerException e) {
             Log.d(LOG_FLAG, "Failed to write content to file");
+            throw new DataManagerException(e);
+        }
+    }
+
+    public long postPicture(Drawable picture) throws DataManagerException {
+        try {
+            return sDatabaseClient.postImage(picture);
+        } catch (DatabaseClientException e) {
             throw new DataManagerException(e);
         }
     }

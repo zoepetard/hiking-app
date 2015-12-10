@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.Annotation;
+
 
 /**
  * Encapsulates the data of a hike, as represented in the backend server.
@@ -46,6 +48,7 @@ public class RawHikeData {
     private List<RawHikeComment> mComments;
     private Rating mRating;
     private String mTitle;
+    private List<Annotation> mAnnotations;
 
     /**
      * Creates a new RawHikeData instance from the data provided as arguments.
@@ -56,8 +59,11 @@ public class RawHikeData {
      * @param hikePoints the list of points on this hike, must be >= 1 point
      * @throws IllegalArgumentException
      */
+
+
     public RawHikeData(long hikeId, long ownerId, Date date, List<RawHikePoint> hikePoints,
-                       List<RawHikeComment> comments, String title) {
+                       List<RawHikeComment> comments, String title, List<Annotation> annotations) {
+
 
         // Argument checks
         if (hikeId < 0 && hikeId != HIKE_ID_UNKNOWN) {
@@ -75,6 +81,7 @@ public class RawHikeData {
         if (hikePoints.size() < 1) {
             throw new IllegalArgumentException("Hike must contain at least one point");
         }
+        //No check on annotations cause a hike it not always have annotations.
 
         mHikeId = hikeId;
         mOwnerId = ownerId;
@@ -87,6 +94,7 @@ public class RawHikeData {
         }
         mRating = new Rating();
         mTitle = title;
+        mAnnotations = annotations;
     }
 
     /**
@@ -130,6 +138,17 @@ public class RawHikeData {
     }
 
     /**
+     * Returns the list of annotations
+     */
+    public ArrayList<Annotation> getAnnotations() {
+        if (mAnnotations == null || mAnnotations.size() < 1) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(mAnnotations);
+        }
+    }
+
+    /**
      * Sets the Hike ID. This function will usually be called after a hike has been posted
      * and the server has assigned a new hike ID.
      *
@@ -147,6 +166,11 @@ public class RawHikeData {
         mRating = rating;
     }
 
+
+    public void setAnnotations(List<Annotation> annotations) {
+        mAnnotations = annotations;
+    }
+
     /**
      * @return a JSON object representing this hike
      * @throws JSONException
@@ -159,6 +183,7 @@ public class RawHikeData {
         jsonObject.put("hike_data", parseHikePointsList(mHikePoints));
         jsonObject.put("comments", parseCommentsList(mComments));
         jsonObject.put("title", mTitle);
+        jsonObject.put("annotations", parseAnnotations(mAnnotations));
         return jsonObject;
     }
 
@@ -176,10 +201,24 @@ public class RawHikeData {
 
     private JSONArray parseCommentsList(List<RawHikeComment> comments) throws JSONException {
         JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i < comments.size(); ++i) {
+        for (int i = 0; i < comments.size(); ++i) {
             jsonArray.put(comments.get(i).toJSON());
         }
         return jsonArray;
+    }
+
+    /**
+     * @param mAnnotations
+     * @return a JSON array of the input
+     */
+    private JSONArray parseAnnotations(List<Annotation> mAnnotations) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        if (mAnnotations != null) {
+            for (int i = 0; i < mAnnotations.size(); ++i) {
+                jsonArray.put(mAnnotations.get(i).toJSON());
+            }
+            return jsonArray;
+        } return null;
     }
 
     /**
@@ -190,8 +229,7 @@ public class RawHikeData {
      * @return a new RawHikeData object.
      * @throws JSONException in case of malformed JSON.
      */
-    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException {
-
+    public static RawHikeData parseFromJSON(JSONObject jsonObject) throws HikeParseException, JSONException {
         try {
             JSONArray jsonHikePoints = jsonObject.getJSONArray("hike_data");
             List<RawHikePoint> hikePoints = new ArrayList<>();
@@ -204,7 +242,6 @@ public class RawHikeData {
             for (int i = 0; i < jsonComments.length(); ++i) {
                 comments.add(RawHikeComment.parseFromJSON(jsonComments.getJSONObject(i)));
             }
-
             Date date = new Date(jsonObject.getLong("date"));
             RawHikeData rawHikeData = new RawHikeData(
                     jsonObject.getLong("hike_id"),
@@ -212,11 +249,21 @@ public class RawHikeData {
                     date,
                     hikePoints,
                     comments,
-                    jsonObject.getString("title"));
-            if(jsonObject.has("rating")) {
+                    jsonObject.getString("title"),
+                    null);
+            if (jsonObject.has("rating")) {
                 rawHikeData.setRating(Rating.parseFromJSON(jsonObject.getJSONObject("rating")));
             }
+            if (jsonObject.has("annotations")) {
+                JSONArray jsonAnnotations = jsonObject.getJSONArray("annotations");
+                List<Annotation> annotations = new ArrayList<>();
+                for (int i = 0; i < jsonAnnotations.length(); i++) {
+                    annotations.add(Annotation.parseFromJSON(jsonAnnotations.getJSONArray(i)));
+                }
+                rawHikeData.setAnnotations(annotations);
+            }
             return rawHikeData;
+
         } catch (JSONException e) {
             throw new HikeParseException(e);
         } catch (IllegalArgumentException e) {
@@ -236,7 +283,6 @@ public class RawHikeData {
         List<RawHikePoint> hikePoints = new ArrayList<>();
         List<RawHikeComment> comments = new ArrayList<>();
         String title = "";
-
         try {
             // Normalization
             doc.getDocumentElement().normalize();
@@ -273,17 +319,18 @@ public class RawHikeData {
                     Log.e(LOG_FLAG, "parseFromGPXDocument failed: " + e.getMessage());
                 }
             }
+            
         } catch (Exception e) {
             // Parsing should be very forgiving and ignore any exception.
             Log.e(LOG_FLAG, e.getMessage());
             throw new HikeParseException(e);
         }
-
-        return new RawHikeData(HIKE_ID_UNKNOWN, SignedInUser.getInstance().getId(), hikePoints.get(0).getTime(), hikePoints, comments, title);
+        return new RawHikeData(HIKE_ID_UNKNOWN, SignedInUser.getInstance().getId(), hikePoints.get(0).getTime(), hikePoints, comments, title, null);
     }
 
-    public void setTitle(String newTitle){
+    public void setTitle(String newTitle) {
         mTitle = newTitle;
     }
+
 
 }

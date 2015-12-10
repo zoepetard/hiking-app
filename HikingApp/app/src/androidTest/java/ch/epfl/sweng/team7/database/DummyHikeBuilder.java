@@ -8,7 +8,6 @@ import ch.epfl.sweng.team7.network.HikeParseException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
 public class DummyHikeBuilder {
-
     private static final String PROPER_JSON_ONEHIKE = "{\n"
             + "  \"hike_id\": %d,\n"
             + "  \"owner_id\": %d,\n"

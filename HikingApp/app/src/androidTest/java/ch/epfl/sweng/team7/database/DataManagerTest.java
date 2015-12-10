@@ -1,12 +1,15 @@
 package ch.epfl.sweng.team7.database;
 
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.InstrumentationTestCase;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -14,25 +17,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.mockServer.MockServer;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 import ch.epfl.sweng.team7.network.RawUserData;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.fail;
+import static java.lang.Thread.sleep;
 
 
 /**
  * Tests the local cache for hikes
  */
 @RunWith(AndroidJUnit4.class)
-public class DataManagerTest {
+public class DataManagerTest extends InstrumentationTestCase {
     private static final LatLng DEBUG_LOC_ACCRA = new LatLng(5.615986, -0.171533);
     private static final LatLng DEBUG_LOC_SAOTOME = new LatLng(0.362365, 6.558835);
     private long mNewHikeId, mNewHikeId2;
+    private GPSManager gpsManager;
+
+    @Rule
+    public ActivityTestRule<MapActivity> mActivityRule = new ActivityTestRule<>(
+            MapActivity.class);
 
     @Before
     public void setUp() throws Exception {
@@ -41,8 +49,8 @@ public class DataManagerTest {
         newHikePoints.add(new RawHikePoint(new LatLng(2., 10.), new Date(), 0.0));
         newHikePoints.add(new RawHikePoint(new LatLng(2., 11.), new Date(), 0.0));
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData newHike = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
-        RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "");
+        RawHikeData newHike = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "", null);
+        RawHikeData newHike2 = new RawHikeData(-1, 15, new Date(), newHikePoints, newHikeComments, "", null);
         mNewHikeId = mockServer.postHike(newHike);
         DataManager.setDatabaseClient(mockServer);
         newHike2.setTitle("Hike2");
@@ -70,17 +78,7 @@ public class DataManagerTest {
         assertEquals(mNewHikeId, hikeDatas.get(0).getHikeId());
     }
 
-    @Test
-    public void testPostHike() throws Exception {
-        List<RawHikePoint> newHikePoints = new ArrayList<>();
-        newHikePoints.add(new RawHikePoint(new LatLng(3., 12.), new Date(), 0.0));
-        newHikePoints.add(new RawHikePoint(new LatLng(4., 13.), new Date(), 0.0));
-        List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData hike = new RawHikeData(11, 15, new Date(), newHikePoints, newHikeComments, "");
-        assertEquals(DataManager.getInstance().getHike(mNewHikeId2).getHikeId(), hike.getHikeId());
-
-    }
-
+    
     @Test
     public void testSearchHikes() throws DataManagerException {
         DataManager dataManager = DataManager.getInstance();
@@ -88,12 +86,10 @@ public class DataManagerTest {
 
         assertEquals("Hike not found", hikeDataList.get(0).getTitle(), "Hike2");
 
-
     }
 
     @Test
     public void testFailedToFetchUserData() throws DataManagerException {
-
         try {
             DataManager dataManager = DataManager.getInstance();
             long unknownId = -1;
@@ -103,6 +99,7 @@ public class DataManagerTest {
             // pass
         }
     }
+
 
 
     @Test
