@@ -51,8 +51,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         }
 
         GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back, 0);
-
-        setupExportButton();
+        GUIProperties.setupButton(this, R.id.button_export_hike, R.drawable.button_export, 0);
     }
 
     @Override
@@ -229,16 +228,6 @@ public final class HikeInfoActivity extends FragmentActivity {
                 exportStatusText.setText(getResources().getString(R.string.export_error));
             }
         }
-    }
-
-    private void setupExportButton() {
-        Button backButton = (Button) findViewById(R.id.button_export_hike);
-        backButton.setText("");
-        backButton.setBackgroundResource(R.drawable.button_export);
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
-        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
-        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 
     public HikeInfoView getHikeInfoView() {
