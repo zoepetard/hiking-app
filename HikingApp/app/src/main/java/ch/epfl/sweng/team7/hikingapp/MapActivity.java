@@ -420,16 +420,9 @@ public class MapActivity extends FragmentActivity {
                             .position(annotation.getRawHikePoint().getPosition())
                             .title("Annotation")
                             .snippet(annotation.getAnnotation())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_annotate_hike));
                     annotations.add(markerOptions);
-                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker marker) {
-                            return true;
-                        }
-                    });
-                    final Marker textAnnotation = mMap.addMarker(markerOptions);
-                    textAnnotation.showInfoWindow();
+                    mMap.addMarker(markerOptions);
                 }
             }
         }
@@ -483,7 +476,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
-
+        marker.showInfoWindow();
         for (DisplayedHike displayedHike : mDisplayedHikes) {
             if (marker.equals(displayedHike.getStartMarker())
                     || marker.equals(displayedHike.getFinishMarker())) {
