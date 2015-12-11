@@ -130,7 +130,7 @@
     <string name="loading_string">Loading…</string>
 
     <!-- Elevation -->
-    <string name="elevation_min_max">Min: %1$s m Max: %2$s m</string>
+    <string name="elevation_min_max">Min: %1$sm&#160;&#160;&#160;&#160;&#160;&#160;Max: %2$sm</string>
     <string name="user_not_found">User Not Found</string>
 
 </resources>
