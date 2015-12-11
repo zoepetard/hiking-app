@@ -1,6 +1,5 @@
 package ch.epfl.sweng.team7.hikingapp.guiProperties;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.Button;
