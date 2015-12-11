@@ -59,7 +59,7 @@ public class HikeListActivity extends Activity {
             }
         }
         new GetMultHikeAsync().execute(bounds);
-        
+
         setupBackButton();
     }
 
