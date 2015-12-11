@@ -8,8 +8,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -19,8 +21,10 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 
 public class HikeListActivity extends Activity {
+
     private final DataManager dataManager = DataManager.getInstance();
 
     private final static String LOG_FLAG = "Activity_HikeList";
@@ -55,6 +59,8 @@ public class HikeListActivity extends Activity {
             }
         }
         new GetMultHikeAsync().execute(bounds);
+
+        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back, 0);
     }
 
     @Override

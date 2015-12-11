@@ -6,20 +6,19 @@
     android:orientation="vertical"
     tools:context="ch.epfl.sweng.team7.hikingapp.UserDataActivity">
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="55dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:text="@string/back"
-        android:textSize="12sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:background="#2D45A3"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="@string/back"
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/profile_pic"

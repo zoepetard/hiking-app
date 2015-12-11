@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -25,9 +26,11 @@ import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 import ch.epfl.sweng.team7.network.RatingVote;
 
 public final class HikeInfoActivity extends FragmentActivity {
+
     private long hikeId;
     private SignedInUser mUser = SignedInUser.getInstance();
     private final static String LOG_FLAG = "Activity_HikeInfo";
@@ -46,6 +49,9 @@ public final class HikeInfoActivity extends FragmentActivity {
         } else {
             loadStaticHike(intent, savedInstanceState);
         }
+
+        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back, 0);
+        GUIProperties.setupButton(this, R.id.button_export_hike, R.drawable.button_export, 0);
     }
 
     @Override
