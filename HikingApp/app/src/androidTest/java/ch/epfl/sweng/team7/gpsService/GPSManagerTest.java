@@ -2,7 +2,6 @@ package ch.epfl.sweng.team7.gpsService;
 
 import android.location.Location;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
