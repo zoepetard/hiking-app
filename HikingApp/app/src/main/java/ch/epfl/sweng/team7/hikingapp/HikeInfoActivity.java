@@ -50,7 +50,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             loadStaticHike(intent, savedInstanceState);
         }
 
-        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back);
+        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back, 0);
 
         setupExportButton();
     }

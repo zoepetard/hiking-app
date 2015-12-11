@@ -80,7 +80,7 @@ public class UserDataActivity extends FragmentActivity {
         mUserEmail = (TextView) findViewById(R.id.user_email);
         mNumHikes = (TextView) findViewById(R.id.num_hikes);
 
-        setupBackButton();
+        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back, 1);
 
         mUserName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -386,15 +386,5 @@ public class UserDataActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(Boolean success) {
         }
-    }
-
-    private void setupBackButton() {
-        Button backButton = (Button) findViewById(R.id.back_button);
-        backButton.setText("");
-        backButton.setBackgroundResource(R.drawable.button_back);
-        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
-        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
-        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 }
