@@ -61,6 +61,7 @@ public class MapDisplay {
 
             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 public boolean onMarkerClick(Marker marker) {
+                    marker.showInfoWindow();
                     return true;
                 }
             });
@@ -88,8 +89,7 @@ public class MapDisplay {
                             .snippet(annotation.getAnnotation())
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_annotate_hike));
                     annotations.add(markerOptions);
-                    final Marker textAnnotation = map.addMarker(markerOptions);
-                    textAnnotation.showInfoWindow();
+                    map.addMarker(markerOptions);
                 }
             }
         }
