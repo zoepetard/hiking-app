@@ -37,9 +37,9 @@ public class GPSFootPrintTest {
         GeoCoords newCoords = new GeoCoords(10, 0, 0);
         GPSFootPrint footPrint = new GPSFootPrint(newCoords, 0);
         Location converted = footPrint.toLocation();
-        assert (converted.getLatitude() == 10);
-        assert (converted.getLongitude() == 0);
-        assert (converted.getAltitude() == 0);
-        assert (converted.getTime() == 0);
+        assertEquals((int)converted.getLatitude(), 10);
+        assertEquals((int)converted.getLongitude(), 0);
+        assertEquals((int)converted.getAltitude(), 0);
+        assertEquals((int)converted.getTime(), 0);
     }
 }
