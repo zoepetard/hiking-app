@@ -387,6 +387,10 @@ public final class GPSManager {
         builder.show();
     }
 
+    /**
+     * Method called to display a hike discard confirmation
+     * prompt for the user.
+     */
     private void displayCancelPrompt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(mContext.getResources().getString(R.string.warning_title));
