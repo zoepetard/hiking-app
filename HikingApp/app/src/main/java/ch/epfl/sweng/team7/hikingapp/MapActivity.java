@@ -627,7 +627,6 @@ public class MapActivity extends FragmentActivity {
             pauseButton.setVisibility(View.VISIBLE);
             pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.button_resume_tracking : R.drawable.button_pause_tracking);
             addAnnotationButton.setVisibility(View.VISIBLE);
-            pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
         } else {
             toggleButton.setBackgroundResource(R.drawable.button_start_tracking);
             pauseButton.setVisibility(View.INVISIBLE);
