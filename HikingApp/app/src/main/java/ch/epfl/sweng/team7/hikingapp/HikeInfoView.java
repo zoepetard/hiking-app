@@ -287,7 +287,7 @@ public class HikeInfoView {
         // create imageviews and add them to the scrollview
         private void loadImageScrollView() {
 
-            // TODO REMOVE TEST IMAGE
+            // STATIC image
             Drawable testImage = view.getContext().getApplicationContext().getDrawable(R.drawable.login_background);
             hikePictureList.add(testImage);
 
