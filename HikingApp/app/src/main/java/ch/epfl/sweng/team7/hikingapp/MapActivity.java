@@ -671,7 +671,7 @@ public class MapActivity extends FragmentActivity {
         lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
         lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
-    
+
     private void createAnnotationButton() {
         final Button annotationButton = new Button(this);
         annotationButton.setText(R.string.button_create_annotation);
