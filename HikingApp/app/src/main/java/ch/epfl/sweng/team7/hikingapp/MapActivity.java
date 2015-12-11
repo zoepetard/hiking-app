@@ -147,9 +147,8 @@ public class MapActivity extends FragmentActivity {
 
         //Initializes the BottomInfoView
         createBottomInfoView();
-
-        //setup hike list button
-        setupHikeListButton();
+        
+        GUIProperties.setupButton(this, R.id.go_hikes_button, R.drawable.button_hike_list, 0);
 
         setGoToHikesButtonListener();
 
