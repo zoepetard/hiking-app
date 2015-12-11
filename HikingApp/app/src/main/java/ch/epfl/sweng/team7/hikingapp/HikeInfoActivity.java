@@ -50,7 +50,7 @@ public final class HikeInfoActivity extends FragmentActivity {
             loadStaticHike(intent, savedInstanceState);
         }
 
-        setupBackButton();
+        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back);
 
         setupExportButton();
     }
@@ -229,16 +229,6 @@ public final class HikeInfoActivity extends FragmentActivity {
                 exportStatusText.setText(getResources().getString(R.string.export_error));
             }
         }
-    }
-
-    private void setupBackButton() {
-        Button backButton = (Button) findViewById(R.id.back_button);
-        backButton.setText("");
-        backButton.setBackgroundResource(R.drawable.button_back);
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
-        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
-        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
-        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 
     private void setupExportButton() {
