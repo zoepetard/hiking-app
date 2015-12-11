@@ -35,7 +35,7 @@ public class GPSManagerTest {
     }
 
     @Test
-    public void testBooleanValues() {
+    public void testDisabledGPSStatusVariables() {
         if (!gpsManager.enabled()) {
             assertEquals(gpsManager.paused(), false);
             assertEquals(gpsManager.tracking(), false);
