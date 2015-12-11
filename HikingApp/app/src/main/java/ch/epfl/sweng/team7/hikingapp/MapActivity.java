@@ -147,7 +147,7 @@ public class MapActivity extends FragmentActivity {
 
         //Initializes the BottomInfoView
         createBottomInfoView();
-        
+
         GUIProperties.setupButton(this, R.id.go_hikes_button, R.drawable.button_hike_list, 0);
 
         setGoToHikesButtonListener();
@@ -655,14 +655,6 @@ public class MapActivity extends FragmentActivity {
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
-    }
-
-    private void setupHikeListButton() {
-        Button hikeList = (Button) findViewById(R.id.go_hikes_button);
-        hikeList.setText("");
-        hikeList.setBackgroundResource(R.drawable.button_hike_list);
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) hikeList.getLayoutParams();
-        setupButtonSize(lp);
     }
 
     private void setupButtonSize(RelativeLayout.LayoutParams lp) {
