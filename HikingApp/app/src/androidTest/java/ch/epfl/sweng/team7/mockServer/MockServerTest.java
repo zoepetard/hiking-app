@@ -16,12 +16,13 @@ import ch.epfl.sweng.team7.network.RawHikeData;
 import ch.epfl.sweng.team7.network.RawUserData;
 
 /**
+ * Test for the MockServer
+ *
  * Created by pablo on 8/11/15.
  */
 @RunWith(AndroidJUnit4.class)
 public class MockServerTest extends TestCase {
     private MockServer mMockServer;
-    private List<Long> mHikeIds;
     private List<RawHikeData> listRawHikes;
     private RawHikeData mRawHikeData1, mRawHikeData2;
     private long mUserBortId;
@@ -45,17 +46,11 @@ public class MockServerTest extends TestCase {
     @Before
     public void setUp() throws Exception {
         mMockServer = new MockServer();
-        mHikeIds = new ArrayList<>();
         listRawHikes = new ArrayList<>();
-        long id1 = 1;
-        long id2 = 2;
-        mHikeIds.add(id1);
-        mHikeIds.add(id2);
         mRawHikeData1 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData2 = RawHikeData.parseFromJSON(new JSONObject(PROPER_JSON_ONEHIKE));
         mRawHikeData1.setTitle("Hike1");
         mRawHikeData2.setTitle("Hike2");
-
         mUserBortId = mMockServer.postUserData(new RawUserData(-1, "bort", "bort@googlemail.com", -1));
     }
 
@@ -75,8 +70,8 @@ public class MockServerTest extends TestCase {
         listRawHikes = mMockServer.fetchMultipleHikes(postHikeIds);
         long hike1 = listRawHikes.get(0).getHikeId();
         long hike2 = listRawHikes.get(1).getHikeId();
-        assertEquals(new Long(hike1), postHikeIds.get(0));
-        assertEquals(new Long(hike2), postHikeIds.get(1));
+        assertEquals(Long.valueOf(hike1), postHikeIds.get(0));
+        assertEquals(Long.valueOf(hike2), postHikeIds.get(1));
         assertTrue(!listRawHikes.isEmpty());
 
     }
@@ -91,7 +86,6 @@ public class MockServerTest extends TestCase {
 
     @Test
     public void testFetchUserById() throws Exception {
-        long id = 1;
         RawUserData rawUserData = mMockServer.fetchUserData(mUserBortId);
         assertEquals("Wrong mail address", rawUserData.getMailAddress(), "bort@googlemail.com");
         assertEquals("Wrong user name", rawUserData.getUserName(), "bort");

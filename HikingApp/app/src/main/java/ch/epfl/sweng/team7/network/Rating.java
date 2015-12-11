@@ -4,6 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * The rating for a hike, storing both the average rating
+ * and the rating chosen by the signed in user.
+ *
  * Created by simon on 11/29/15.
  */
 public class Rating {
@@ -17,7 +20,7 @@ public class Rating {
         mCount = count;
         // A negative rating denotes "not voted yet"
         if(userRating >= 0) {
-            mUserRating = new Float(userRating);
+            mUserRating = userRating;
         } else {
             mUserRating = null;
         }
@@ -53,7 +56,7 @@ public class Rating {
      * while data is sent to the server at the same time.
      */
     public void update(RatingVote vote) {
-        mUserRating = new Float(vote.getRating());
+        mUserRating = vote.getRating();
     }
 
     public static Rating parseFromJSON(JSONObject jsonObject) throws JSONException {

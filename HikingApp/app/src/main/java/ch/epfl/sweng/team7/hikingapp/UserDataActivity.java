@@ -1,26 +1,20 @@
 package ch.epfl.sweng.team7.hikingapp;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -34,9 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,8 +48,8 @@ public class UserDataActivity extends FragmentActivity {
     public final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
 
-    private DataManager mDataManager = DataManager.getInstance();
-    SignedInUser mOwner = SignedInUser.getInstance();
+    private final DataManager mDataManager = DataManager.getInstance();
+    private final SignedInUser mOwner = SignedInUser.getInstance();
 
     private UserData mUserData;
     private Long mUserId; // not necessarily the one logged in, but the one whose profile is display
@@ -250,7 +242,7 @@ public class UserDataActivity extends FragmentActivity {
             TextView hikeDate = (TextView) hikeRow
                     .findViewById(R.id.user_hike_date);
             Date date = hike.getDate();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT);
             dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
             String dateString = dateFormat.format(date);
             hikeDate.setText(dateString);

@@ -4,6 +4,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 
 /**
+ * Data container for a hike displayed on a map.
+ *
  * Created by zoepetard on 09/12/15.
  */
 public class DisplayedHike {

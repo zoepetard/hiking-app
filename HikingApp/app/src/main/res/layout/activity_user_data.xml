@@ -24,13 +24,14 @@
             android:id="@+id/profile_pic"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
             android:adjustViewBounds="true"
             android:clickable="false"
             android:maxHeight="100dp"
             android:maxWidth="100dp"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            android:contentDescription="@string/profile_picture" />
 
         <LinearLayout
             android:id="@+id/name_email"
@@ -42,8 +43,8 @@
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="User Name"
+                android:layout_marginStart="20dp"
+                android:text="@string/user_name"
                 android:textColor="#fff"
                 android:textSize="30sp" />
 
@@ -51,8 +52,8 @@
                 android:id="@+id/user_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="User Email"
+                android:layout_marginStart="20dp"
+                android:text="@string/user_email"
                 android:textColor="#fff"
                 android:textSize="20sp" />
 
@@ -64,15 +65,15 @@
         android:id="@+id/num_hikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:text="# of hikes"
+        android:text="@string/number_of_hikes"
         android:textSize="25sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:text="@string/user_hikes"
         android:textSize="25sp" />
@@ -87,7 +88,7 @@
             android:id="@+id/user_hike_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:orientation="vertical">
         </LinearLayout>
     </ScrollView>

@@ -14,10 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.HikePoint;
 
 /**
+ * The MapDisplay draws hike on a map, wherever a map with hikes is used.
+ *
  * Created by zoepetard on 26/11/15.
  */
 public class MapDisplay {
@@ -26,13 +29,13 @@ public class MapDisplay {
 
     public static List<Polyline> displayHikes(List<HikeData> hikesToDisplay, GoogleMap map) {
         List<Polyline> displayedHikes = new ArrayList<>();
-        for (HikeData hike: hikesToDisplay) {
+        for (HikeData hike : hikesToDisplay) {
             PolylineOptions polylineOptions = new PolylineOptions();
             List<HikePoint> databaseHikePoints = hike.getHikePoints();
             for (HikePoint hikePoint : databaseHikePoints) {
                 polylineOptions.add(hikePoint.getPosition())
-                                .width(5)
-                                .color(HIKE_LINE_COLOR);
+                        .width(5)
+                        .color(HIKE_LINE_COLOR);
             }
             Polyline polyline = map.addPolyline(polylineOptions);
             displayedHikes.add(polyline);
@@ -42,7 +45,7 @@ public class MapDisplay {
 
     public static Map<Marker, Long> displayMarkers(List<HikeData> hikesToDisplay, GoogleMap map) {
         Map<Marker, Long> markerByHike = new HashMap<>();
-        for (HikeData hike: hikesToDisplay) {
+        for (HikeData hike : hikesToDisplay) {
             MarkerOptions startMarkerOptions = new MarkerOptions()
                     .position(hike.getStartLocation())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_start_hike));
@@ -72,5 +75,23 @@ public class MapDisplay {
     public static void setCamera(List<HikeData> hikesToDisplay, GoogleMap map, int mapWidth, int mapHeight) {
         LatLngBounds boundingBox = hikesToDisplay.get(0).getBoundingBox();
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(boundingBox, mapWidth, mapHeight, 60));
+    }
+
+    public static void displayAnnotations(List<HikeData> hikesToDisplay, GoogleMap map) {
+        for (HikeData hike : hikesToDisplay) {
+            if (hike.getAnnotations() != null) {
+                List<MarkerOptions> annotations = new ArrayList<>();
+                for (Annotation annotation : hike.getAnnotations()) {
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(annotation.getRawHikePoint().getPosition())
+                            .title("Annotation")
+                            .snippet(annotation.getAnnotation())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    annotations.add(markerOptions);
+                    final Marker textAnnotation = map.addMarker(markerOptions);
+                    textAnnotation.showInfoWindow();
+                }
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ import ch.epfl.sweng.team7.hikingapp.R;
 
 public class NotificationHandler {
 
-    private static NotificationHandler instance = new NotificationHandler();
+    private static final NotificationHandler instance = new NotificationHandler();
 
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNotificationManager;
