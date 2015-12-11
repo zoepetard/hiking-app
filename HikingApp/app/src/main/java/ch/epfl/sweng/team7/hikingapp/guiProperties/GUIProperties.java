@@ -15,7 +15,7 @@ public final class GUIProperties {
         Button backButton = (Button) ((Activity)context).findViewById(buttonId);
         backButton.setText("");
         backButton.setBackgroundResource(backgroundResource);
-        if (layoutType == "Relative") {
+        if (layoutType.equals("Relative")) {
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
             lp.width = DEFAULT_BUTTON_SIZE;
             lp.height = DEFAULT_BUTTON_SIZE;
