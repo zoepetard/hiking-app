@@ -89,13 +89,13 @@ public final class GPSPath {
      * Method called to get the distance between the first
      * and the last FootPrints stored.
      */
-    public float distanceToStart() {
+    public int distanceToStart() {
         if (path.size() >= 2) {
             Location startLoc = path.get(0).toLocation();
             Location lastLoc = path.get(path.size() - 1).toLocation();
-            return (startLoc.distanceTo(lastLoc));
+            return (int)(startLoc.distanceTo(lastLoc));
         } else {
-            return 0f;
+            return 0;
         }
     }
 

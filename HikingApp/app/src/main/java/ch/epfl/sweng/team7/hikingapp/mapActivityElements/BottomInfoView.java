@@ -16,9 +16,10 @@ import ch.epfl.sweng.team7.hikingapp.R;
  */
 public final class BottomInfoView {
 
+    private static final int DEFAULT_TEXT_COLOR = Color.WHITE;
     private static final BottomInfoView instance = new BottomInfoView();
     private static final float DEFAULT_TITLE_SIZE = 20f;
-    private static final int DEFAULT_BG_COLOR = Color.WHITE;
+    private static final int DEFAULT_BG_COLOR = 0xff7f7f7f;
 
     private Context mContext;
     private TableLayout mapTableLayout;
@@ -40,7 +41,8 @@ public final class BottomInfoView {
         mapTableLayout.setVisibility(View.INVISIBLE);
         mTitle = new TextView(context);
         mTitle.setTextSize(DEFAULT_TITLE_SIZE);
-        mInfoLines = new ArrayList<>();
+        mTitle.setTextColor(DEFAULT_TEXT_COLOR);
+        mInfoLines = new ArrayList<TextView>();
 
         mapTableLayout.addView(mTitle);
     }
@@ -88,6 +90,7 @@ public final class BottomInfoView {
     public void setTitle(int entity, String title) {
         if (permissionGranted(entity)) {
             mTitle.setText(title);
+            mTitle.setTextColor(DEFAULT_TEXT_COLOR);
         }
     }
 
@@ -100,6 +103,7 @@ public final class BottomInfoView {
         if (permissionGranted(entity)) {
             try {
                 mInfoLines.get(index).setText(infoMessage);
+                mInfoLines.get(index).setTextColor(DEFAULT_TEXT_COLOR);
             } catch (Exception e) {
             }
         }
@@ -113,6 +117,7 @@ public final class BottomInfoView {
         if (permissionGranted(entity)) {
             TextView infoView = new TextView(mContext);
             infoView.setText(infoMessage);
+            infoView.setTextColor(DEFAULT_TEXT_COLOR);
             mInfoLines.add(infoView);
             mapTableLayout.addView(infoView);
         }

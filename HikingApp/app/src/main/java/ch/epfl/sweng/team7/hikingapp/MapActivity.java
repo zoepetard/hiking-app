@@ -65,6 +65,7 @@ import ch.epfl.sweng.team7.database.HikePoint;
 import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.gpsService.GPSManager;
 import ch.epfl.sweng.team7.gpsService.containers.coordinates.GeoCoords;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
 import ch.epfl.sweng.team7.network.RawHikePoint;
 
@@ -146,6 +147,8 @@ public class MapActivity extends FragmentActivity {
 
         //Initializes the BottomInfoView
         createBottomInfoView();
+
+        GUIProperties.setupButton(this, R.id.go_hikes_button, R.drawable.button_hike_list, 0);
 
         setGoToHikesButtonListener();
 
@@ -285,7 +288,7 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if (mFollowingUser) focusOnLatLng(latLng);
-                    if(mPolyRef == null) {
+                    if (mPolyRef == null) {
                         startHikeDisplay();
                     }
                     if (!mGps.paused()) {
@@ -417,16 +420,9 @@ public class MapActivity extends FragmentActivity {
                             .position(annotation.getRawHikePoint().getPosition())
                             .title("Annotation")
                             .snippet(annotation.getAnnotation())
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_annotate_hike));
                     annotations.add(markerOptions);
-                    mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker marker) {
-                            return true;
-                        }
-                    });
-                    final Marker textAnnotation = mMap.addMarker(markerOptions);
-                    textAnnotation.showInfoWindow();
+                    mMap.addMarker(markerOptions);
                 }
             }
         }
@@ -480,7 +476,7 @@ public class MapActivity extends FragmentActivity {
     }
 
     private boolean onMarkerClickHelper(Marker marker) {
-
+        marker.showInfoWindow();
         for (DisplayedHike displayedHike : mDisplayedHikes) {
             if (marker.equals(displayedHike.getStartMarker())
                     || marker.equals(displayedHike.getFinishMarker())) {
@@ -582,13 +578,14 @@ public class MapActivity extends FragmentActivity {
 
     private void createTrackingToggleButton() {
         Button toggleButton = new Button(this);
-        toggleButton.setText((mGps.tracking()) ? R.string.button_stop_tracking : R.string.button_start_tracking);
+        toggleButton.setBackgroundResource((mGps.tracking()) ? R.drawable.button_stop_tracking : R.drawable.button_start_tracking);
         toggleButton.setId(R.id.button_tracking_toggle);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        setupButtonSize(lp);
 
         toggleButton.setLayoutParams(lp);
         layout.addView(toggleButton, lp);
@@ -619,12 +616,12 @@ public class MapActivity extends FragmentActivity {
         Button pauseButton = (Button) findViewById(R.id.button_tracking_pause);
         Button addAnnotationButton = (Button) findViewById(R.id.button_annotation_create);
         if (mGps.tracking()) {
-            toggleButton.setText(R.string.button_stop_tracking);
+            toggleButton.setBackgroundResource(R.drawable.button_stop_tracking);
             pauseButton.setVisibility(View.VISIBLE);
+            pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.button_resume_tracking : R.drawable.button_pause_tracking);
             addAnnotationButton.setVisibility(View.VISIBLE);
-            pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
         } else {
-            toggleButton.setText(R.string.button_start_tracking);
+            toggleButton.setBackgroundResource(R.drawable.button_start_tracking);
             pauseButton.setVisibility(View.INVISIBLE);
             addAnnotationButton.setVisibility(View.INVISIBLE);
         }
@@ -632,12 +629,13 @@ public class MapActivity extends FragmentActivity {
 
     private void createPauseTrackingButton() {
         Button pauseButton = new Button(this);
-        pauseButton.setText(R.string.button_pause_tracking);
+        pauseButton.setBackgroundResource(R.drawable.button_pause_tracking);
         pauseButton.setId(R.id.button_tracking_pause);
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.mapLayout);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp.addRule(RelativeLayout.LEFT_OF, R.id.button_tracking_toggle);
+        setupButtonSize(lp);
 
         pauseButton.setLayoutParams(lp);
         layout.addView(pauseButton, lp);
@@ -649,6 +647,12 @@ public class MapActivity extends FragmentActivity {
             }
         });
         pauseButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void setupButtonSize(RelativeLayout.LayoutParams lp) {
+        lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
+        lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
     }
 
     private void createAnnotationButton() {

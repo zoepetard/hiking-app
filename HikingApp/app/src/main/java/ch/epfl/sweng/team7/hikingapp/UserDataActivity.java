@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +40,10 @@ import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.database.UserData;
+import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 
 public class UserDataActivity extends FragmentActivity {
+
     private final static int SELECT_PICTURE = 1;
     public final static String EXTRA_HIKE_ID = "userHikeId";
     public final static String EXTRA_USER_ID = "userProfileId";
@@ -76,6 +79,8 @@ public class UserDataActivity extends FragmentActivity {
         mUserName = (TextView) findViewById(R.id.user_name);
         mUserEmail = (TextView) findViewById(R.id.user_email);
         mNumHikes = (TextView) findViewById(R.id.num_hikes);
+
+        GUIProperties.setupButton(this, R.id.back_button, R.drawable.button_back, 1);
 
         mUserName.setOnClickListener(new View.OnClickListener() {
             @Override
