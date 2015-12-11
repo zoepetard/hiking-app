@@ -5,7 +5,9 @@
  */
 package ch.epfl.sweng.team7.database;
 
+
 import java.util.ArrayList;
+import android.graphics.drawable.Drawable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +20,7 @@ class DefaultLocalCache implements LocalCache {
     private final int HIKES_CACHE_MAX_SIZE = 100;//TODO this should be higher
     private final HashMap<Long, HikeData> mHikesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
     private final HashMap<Long, UserData> mUsersCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
-
+    private final HashMap<Long, Drawable> mPicturesCache = new FixedSizeHashMap<>(HIKES_CACHE_MAX_SIZE);
 
     public boolean hasHike(long hikeId) {
         return mHikesCache.containsKey(hikeId);
@@ -56,6 +58,19 @@ class DefaultLocalCache implements LocalCache {
     public UserData getUserData(long userId) {
         return mUsersCache.get(userId);
     }
+    
+    public Drawable getPicture(long pictureId) { return mPicturesCache.get(pictureId); }
+
+    @Override
+    public void putPicture(Drawable picture, long id) {
+        if (picture != null) {
+            mPicturesCache.put(id, picture);
+        }
+    }
+    
+
+
+
 
     private class FixedSizeHashMap<K, V> extends LinkedHashMap<K, V> {
         private final int MAX_ENTRIES;

@@ -44,7 +44,7 @@ public class GPSPathConverterTest {
         rawHikePoints = new ArrayList<>();
         rawHikePoints.add(new RawHikePoint(startLocation, new Date(100), 0));
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints, newHikeComments, "");
+        mRawHikeDataOriginal = new RawHikeData(hikeId, ownerId, date1, rawHikePoints, newHikeComments, "", null);
         mRawHikeDataConverted = GPSPathConverter.toRawHikeData(mGPSPath);
     }
     @Test

@@ -51,5 +51,12 @@
         android:visibility="gone"
         android:background="#ffffff"
         android:alpha="0.7" />
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>

@@ -16,7 +16,7 @@ import ch.epfl.sweng.team7.hikingapp.R;
  */
 public final class BottomInfoView {
 
-    private static BottomInfoView instance = new BottomInfoView();
+    private static final BottomInfoView instance = new BottomInfoView();
     private static final float DEFAULT_TITLE_SIZE = 20f;
     private static final int DEFAULT_BG_COLOR = Color.WHITE;
 
@@ -40,7 +40,7 @@ public final class BottomInfoView {
         mapTableLayout.setVisibility(View.INVISIBLE);
         mTitle = new TextView(context);
         mTitle.setTextSize(DEFAULT_TITLE_SIZE);
-        mInfoLines = new ArrayList<TextView>();
+        mInfoLines = new ArrayList<>();
 
         mapTableLayout.addView(mTitle);
     }
@@ -55,8 +55,7 @@ public final class BottomInfoView {
     }
 
     /**
-     * Metod called to hide the information table
-     * @param entity
+     * Method called to hide the information table
      */
     public void hide(int entity) {
         if (permissionGranted(entity)) {
@@ -145,7 +144,6 @@ public final class BottomInfoView {
     /**
      * Method called to release a lock on this information table,
      * meaning all other entities will be, again, able to edit its values.
-     * @param entity
      */
     public void releaseLock(int entity) {
         if (permissionGranted(entity)) {

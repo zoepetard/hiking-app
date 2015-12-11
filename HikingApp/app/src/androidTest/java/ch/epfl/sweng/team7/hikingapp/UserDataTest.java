@@ -6,10 +6,6 @@ import android.widget.TextView;
 
 import org.junit.Before;
 
-import java.math.BigInteger;
-
-import ch.epfl.sweng.team7.authentication.LoginRequest;
-import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.UserData;
 import ch.epfl.sweng.team7.mockServer.MockServer;

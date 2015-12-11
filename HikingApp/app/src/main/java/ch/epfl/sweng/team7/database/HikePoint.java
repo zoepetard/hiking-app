@@ -13,4 +13,5 @@ public interface HikePoint {
     LatLng getPosition();
     double getElevation();
     Date getTime();
+
 }

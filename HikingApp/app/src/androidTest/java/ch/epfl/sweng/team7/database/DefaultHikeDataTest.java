@@ -1,4 +1,6 @@
 /**
+ * Testing function for the default hike data
+ *
  * Created by zoepetard on 09/11/15.
  */
 
@@ -38,8 +40,10 @@ public class DefaultHikeDataTest {
         rawHikePoints.add(new RawHikePoint(new LatLng(10, 10), new Date(1000102), 3.0));
         rawHikePoints.add(new RawHikePoint(finishLocation, new Date(1000103), 2.0));
         List<RawHikeComment> newHikeComments = new ArrayList<>();
-        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints, newHikeComments, "");
+        RawHikeData rawHikeData = new RawHikeData(hikeId, ownerId, date, rawHikePoints, newHikeComments, "", null);
         mDefaultHikeData = new DefaultHikeData(rawHikeData);
+
+
     }
 
     @Test

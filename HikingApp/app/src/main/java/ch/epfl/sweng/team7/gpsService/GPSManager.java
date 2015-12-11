@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.text.InputType;
 import android.util.Log;
@@ -18,6 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.GPSPathConverter;
@@ -29,7 +34,6 @@ import ch.epfl.sweng.team7.hikingapp.HikeInfoActivity;
 import ch.epfl.sweng.team7.hikingapp.MapActivity;
 import ch.epfl.sweng.team7.hikingapp.R;
 import ch.epfl.sweng.team7.hikingapp.mapActivityElements.BottomInfoView;
-import ch.epfl.sweng.team7.network.DatabaseClientException;
 import ch.epfl.sweng.team7.network.RawHikeData;
 
 /**
@@ -52,8 +56,11 @@ public final class GPSManager {
 
     //GPS service communication
     private Context mContext;
+
     private GPSService mGpsService;
     private ServiceConnection mServiceConnection;
+    private List<Annotation> mListAnnotations = new ArrayList<>();
+    private RawHikeData mRawHikeData;
 
     private NotificationHandler mNotification;
     private BottomInfoView mInfoDisplay;
@@ -100,6 +107,7 @@ public final class GPSManager {
 
     /**
      * Method called to check on gps status
+     *
      * @return true if it is enabled, false otherwise
      */
     public boolean enabled() {
@@ -207,6 +215,7 @@ public final class GPSManager {
 
     /**
      * Called by the GPSService to access the Context of the app.
+     *
      * @return Context
      */
     protected Context getContext() {
@@ -287,17 +296,20 @@ public final class GPSManager {
         mGpsPath = null;
         toggleListeners();
         ((MapActivity)mContext).updateButtonDisplay();
+        ((MapActivity)mContext).stopHikeDisplay();
     }
 
     /**
      * Method called after stopping a hike tracking.
      * This method should take the user to an editable Activity.
      */
+
     private void goToHikeEditor() {
         Intent intent = new Intent(mContext, HikeInfoActivity.class);
         intent.putExtra(GPSManager.NEW_HIKE, true);
         mContext.startActivity(intent);
     }
+
 
     /**
      * Method used to turn on/off the location
@@ -311,6 +323,7 @@ public final class GPSManager {
             mGpsService.disableListeners();
         }
     }
+
 
     /**
      * Method called internally to give feedback to the user
@@ -340,13 +353,13 @@ public final class GPSManager {
         layout.addView(lnSeparator);
 
         //setup the hike title input field
-        EditText hikeTitle = new EditText(mContext);
+        final EditText hikeTitle = new EditText(mContext);
         hikeTitle.setHint(mContext.getResources().getString(R.string.prompt_title_hint));
         hikeTitle.setInputType(InputType.TYPE_CLASS_TEXT);
         layout.addView(hikeTitle);
 
         //setup the hike comment input field
-        EditText hikeComment = new EditText(mContext);
+        final EditText hikeComment = new EditText(mContext);
         hikeComment.setHint(mContext.getResources().getString(R.string.prompt_comment_hint));
         hikeComment.setInputType(InputType.TYPE_CLASS_TEXT);
         hikeComment.setSingleLine(false);
@@ -357,7 +370,9 @@ public final class GPSManager {
         builder.setPositiveButton(mContext.getResources().getString(R.string.button_save_hike), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //TODO call storeHike() after issue #86 is fixed
+                storeHike(hikeTitle.getText().toString(), hikeComment.getText().toString());
+                storePictures();
+                mGpsPath = null;
                 resetHikeTracking();
             }
         });
@@ -391,7 +406,7 @@ public final class GPSManager {
 
         //setup the hike title input field
         TextView warning = new TextView(mContext);
-        warning.setText("\n" + mContext.getResources().getString(R.string.warning_description));
+        warning.setText(mContext.getResources().getString(R.string.warning_description));
         warning.setTypeface(null, Typeface.BOLD);
         warning.setGravity(View.TEXT_ALIGNMENT_GRAVITY);
         layout.addView(warning);
@@ -408,40 +423,88 @@ public final class GPSManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 togglePause();
+
             }
         });
         builder.setCancelable(false);
         builder.show();
     }
 
-    /**
-     * Method called to store recorded hike
-     */
-    private void storeHike() {
-        RawHikeData rawHikeData = null;
+
+    private void storeHike(String title, String comment) {
         try {
-            rawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
+            mRawHikeData = GPSPathConverter.toRawHikeData(mGpsPath);
+            mRawHikeData.setTitle(title);
+            mRawHikeData.setAnnotations(mListAnnotations);
+            Log.d(LOG_FLAG, "GPS PATH CONVERTED");
+            new StoreHikeTask().execute(mRawHikeData);
+            mListAnnotations = null;
         } catch (Exception e) {
-            //TODO
+            displayToastMessage("Gps path cannot be converted to RawHikeData");
+            e.printStackTrace();
         }
-        try {
-            storeHikeInDB(rawHikeData);
-        } catch (DatabaseClientException e) {
-            //TODO, we need the button to store hikes to show the error message to the user.
+    }
+
+    private void storePictures() {
+        Log.d (LOG_FLAG, mRawHikeData.getAnnotations().toString());
+        if (mRawHikeData.getAnnotations() != null || mRawHikeData.getAnnotations().size() > 0) {
+            for (int i = 0; i < mRawHikeData.getAnnotations().size(); i++) {
+                new StorePictureTask().execute(mRawHikeData.getAnnotations().get(i));
+            }
         }
     }
 
     /**
-     * Method to store in DB the RawHikeData converted from the GPS object
-     *
-     * @param rawHikeData
+     * Asynchronous task to make the post request to the server.
      */
-    private void storeHikeInDB(RawHikeData rawHikeData) throws DatabaseClientException {
-        DataManager dataManager = DataManager.getInstance();
-        try {
-            dataManager.postHike(rawHikeData);
-        } catch (DataManagerException e) {
-            //TODO
+
+    private class StoreHikeTask extends AsyncTask<RawHikeData, Long, Long> {
+        @Override
+        protected Long doInBackground(RawHikeData... rawHikeData) {
+            long hikeId;
+            DataManager dataManager = DataManager.getInstance();
+            try {
+                hikeId = dataManager.postHike(rawHikeData[0]);
+                rawHikeData[0].setHikeId(hikeId);
+                Log.d(LOG_FLAG, "Hike Post correctly");
+                return hikeId;
+            } catch (DataManagerException e) {
+                Log.d(LOG_FLAG, "Error while posting hike");
+            }
+            return null;
         }
+
+        protected void onPostExecute(Long... hikeId) {
+        }
+    }
+
+    /**
+     * Asynchronous task to make the post request to the server.
+     */
+    private class StorePictureTask extends AsyncTask<Annotation, Long, Long> {
+        @Override
+        protected Long doInBackground(Annotation... pictures) {
+            long pictureId;
+            DataManager dataManager = DataManager.getInstance();
+            if (pictures[0].getPicture() != null){
+                try {
+                    pictureId = dataManager.postPicture(pictures[0].getPicture());
+                    pictures[0].setPicturedId(pictureId);
+                    Log.d(LOG_FLAG, "Picture post correctly");
+                    return pictureId;
+                } catch (DataManagerException e) {
+                    Log.d(LOG_FLAG, "Error while posting picture");
+                }
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Long... hikeId) {
+        }
+
+    }
+
+    public void setAnnotations(ArrayList<Annotation> annotations) {
+        mListAnnotations = annotations;
     }
 }

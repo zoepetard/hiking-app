@@ -22,6 +22,7 @@ import java.util.List;
 import ch.epfl.sweng.team7.database.HikeData;
 
 /**
+ * The CustomListAdapter displays hikes in the hike list in a standardized format.
  * Created by zoepetard on 06/12/15.
  */
 public class CustomListAdapter extends BaseAdapter {
@@ -29,11 +30,11 @@ public class CustomListAdapter extends BaseAdapter {
     public final static String EXTRA_HIKE_ID =
             "ch.epfl.sweng.team7.hikingapp.HIKE_ID";
 
-    public final static String HIKE_ID = "hikeID";
-    HikeListActivity context;
-    List<HikeData> mHikes;
-    int mapHeight = 0;
-    int mapWidth = 0;
+    private final static String HIKE_ID = "hikeID";
+    private final HikeListActivity context;
+    private List<HikeData> mHikes;
+    private int mapHeight = 0;
+    private int mapWidth = 0;
 
     private static LayoutInflater inflater = null;
 

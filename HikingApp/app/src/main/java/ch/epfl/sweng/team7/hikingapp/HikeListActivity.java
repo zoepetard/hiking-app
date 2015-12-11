@@ -21,8 +21,7 @@ import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.HikeData;
 
 public class HikeListActivity extends Activity {
-    private DataManager dataManager = DataManager.getInstance();
-    private LatLngBounds bounds;
+    private final DataManager dataManager = DataManager.getInstance();
 
     private final static String LOG_FLAG = "Activity_HikeList";
     public final static String EXTRA_HIKE_ID =
@@ -47,13 +46,13 @@ public class HikeListActivity extends Activity {
                 navDrawerList, navDrawerView.getContext(), this);
 
         Bundle bound = getIntent().getParcelableExtra(MapActivity.EXTRA_BOUNDS);
+        LatLngBounds bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
         if (bound != null) {
             LatLng sw = bound.getParcelable("sw");
             LatLng ne = bound.getParcelable("ne");
-            bounds = new LatLngBounds(sw, ne);
-        } else {
-            // display all hikes if no bounds specified
-            bounds = new LatLngBounds(new LatLng(-90, -180), new LatLng(90, 179));
+            if(sw != null && ne != null) {
+                bounds = new LatLngBounds(sw, ne);
+            }
         }
         new GetMultHikeAsync().execute(bounds);
     }

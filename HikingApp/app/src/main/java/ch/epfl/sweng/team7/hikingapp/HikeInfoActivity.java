@@ -68,7 +68,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         //TODO set it to editable
 
         Button saveButton = new Button(this);
-        saveButton.setText("Save");
+        saveButton.setText(R.string.button_save_hike);
         saveButton.setId(R.id.button_save_hike);
         //TODO add click listener to saveButton
 

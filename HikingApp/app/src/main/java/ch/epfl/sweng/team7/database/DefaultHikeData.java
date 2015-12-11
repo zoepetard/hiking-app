@@ -8,24 +8,10 @@ package ch.epfl.sweng.team7.database;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import ch.epfl.sweng.team7.authentication.SignedInUser;
 import ch.epfl.sweng.team7.network.Rating;
 import ch.epfl.sweng.team7.network.RawHikeComment;
 import ch.epfl.sweng.team7.network.RawHikeData;
@@ -41,7 +27,10 @@ public class DefaultHikeData implements HikeData {
     private final long mOwnerId;   // Database user ID of owner
     private final Date mDate;      // A UTC time stamp
     private final List<HikePoint> mHikePoints;
+
     private final List<HikeComment> mComments;
+
+    private final List<Annotation> mAnnotations;
     private final double mDistance;
     private final LatLngBounds mBoundingBox;
     private final LatLng mHikeLocation;
@@ -50,6 +39,7 @@ public class DefaultHikeData implements HikeData {
     private final ElevationBounds mElevationBounds;
     private final Rating mRating;
     private String mTitle;
+
 
     /**
      * A HikeData object is created from a RawHikeData, but calculates much more information
@@ -66,11 +56,21 @@ public class DefaultHikeData implements HikeData {
             mHikePoints.add(new DefaultHikePoint(rawHikePoint));
         }
 
+
         List<RawHikeComment> rawHikeComments = rawHikeData.getAllComments();
         mComments = new ArrayList<>();
         for (RawHikeComment rawHikeComment : rawHikeComments) {
             mComments.add(new DefaultHikeComment(rawHikeComment));
         }
+
+        List<Annotation> annotations = rawHikeData.getAnnotations();
+        mAnnotations = new ArrayList<>();
+        if(annotations != null) {
+            for (Annotation annotation : annotations) {
+                mAnnotations.add(annotation);
+            }
+        }
+
 
         mDistance = calculateDistance(rawHikePoints);
         mBoundingBox = calculateBoundingBox(rawHikePoints);
@@ -79,6 +79,7 @@ public class DefaultHikeData implements HikeData {
         mFinishLocation = rawHikePoints.get(rawHikePoints.size() - 1).getPosition();
         mElevationBounds = calculateElevationBounds(rawHikePoints);
 
+
         // Hike rating is optional in RawHikeData, but this class is guaranteed to have it.
         if (rawHikeData.getRating() != null) {
             mRating = rawHikeData.getRating();
@@ -86,11 +87,13 @@ public class DefaultHikeData implements HikeData {
             mRating = new Rating();
         }
 
+
         mTitle = rawHikeData.getTitle();
     }
 
     /**
-     * @param newTitle
+     * Set the title of a hike
+     * @param newTitle the new title
      */
     @Override
     public void setTitle(String newTitle) {
@@ -197,9 +200,17 @@ public class DefaultHikeData implements HikeData {
         return mFinishLocation;
     }
 
+
+
     public String getTitle() {
         return mTitle;
     }
+
+
+
+
+    public List<Annotation> getAnnotations() { return mAnnotations; }
+
 
     private double calculateDistance(List<RawHikePoint> rawHikePoints) {
         double distance = 0;
