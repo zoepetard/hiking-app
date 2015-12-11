@@ -49,7 +49,7 @@ public final class HikeInfoActivity extends FragmentActivity {
         } else {
             loadStaticHike(intent, savedInstanceState);
         }
-        
+
         setupBackButton();
 
         setupExportButton();

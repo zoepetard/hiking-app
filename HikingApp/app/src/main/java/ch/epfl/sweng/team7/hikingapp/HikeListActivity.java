@@ -24,13 +24,8 @@ import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 
 public class HikeListActivity extends Activity {
-<<<<<<< HEAD
-
-    private DataManager dataManager = DataManager.getInstance();
-    private LatLngBounds bounds;
-=======
+    
     private final DataManager dataManager = DataManager.getInstance();
->>>>>>> 2dca04b7b76a6331ca6b78c24b4240448b11eccc
 
     private final static String LOG_FLAG = "Activity_HikeList";
     public final static String EXTRA_HIKE_ID =
