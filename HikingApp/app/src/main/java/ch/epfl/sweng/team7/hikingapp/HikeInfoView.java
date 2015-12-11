@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import ch.epfl.sweng.team7.authentication.SignedInUser;
+import ch.epfl.sweng.team7.database.Annotation;
 import ch.epfl.sweng.team7.database.DataManager;
 import ch.epfl.sweng.team7.database.DataManagerException;
 import ch.epfl.sweng.team7.database.DefaultHikeComment;
@@ -76,6 +77,8 @@ public class HikeInfoView {
     private HikeData displayedHike;
     private View overlayView;
     private LinearLayout root;
+    private ArrayList<Drawable> hikePictureList;
+
 
     public HikeInfoView (final View view, final Activity activity, long id, GoogleMap mapHikeInfo) {  // add model as argument when creating that
         hikeId = id;
@@ -272,6 +275,11 @@ public class HikeInfoView {
                 showNewComment(comment, "");
             }
 
+            hikePictureList = new ArrayList<>();
+            for(Annotation annotation: hikeData.getAnnotations()) {
+                hikePictureList.add(annotation.getPicture());
+            }
+
             exportButton.setVisibility(View.VISIBLE);
             loadImageScrollView();
         }
@@ -279,16 +287,18 @@ public class HikeInfoView {
         // create imageviews and add them to the scrollview
         private void loadImageScrollView() {
 
-            // TEMPORARY
-            Integer img1 = R.drawable.login_background;
+            // STATIC image
+            Drawable testImage = view.getContext().getApplicationContext().getDrawable(R.drawable.login_background);
+            hikePictureList.add(testImage);
 
-            // add imageviews with images to the scrollview
-            imgLayout.addView(createImageView(img1));
-
+            for(Drawable drawable : hikePictureList) {
+                // add imageviews with images to the scrollview
+                imgLayout.addView(createImageView(drawable));
+            }
 
         }
 
-        private View createImageView(Integer img) {
+        private View createImageView(Drawable img) {
 
             // creating an ImageView and applying layout parameters
             ImageView imageView = new ImageView(context.getApplicationContext());
@@ -297,7 +307,7 @@ public class HikeInfoView {
             layoutParams.setMargins(10, 10, 10, 10); // Margin around each image
             imageView.setLayoutParams(layoutParams);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE); // scaling down image to fit inside view
-            imageView.setImageResource(img);
+            imageView.setImageDrawable(img);
             galleryImageViews.add(imageView);
 
             imageView.setOnClickListener(new ImageViewClickListener());
