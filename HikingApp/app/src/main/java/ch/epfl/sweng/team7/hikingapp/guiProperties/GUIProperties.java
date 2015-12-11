@@ -10,11 +10,11 @@ public final class GUIProperties {
     public static final int DEFAULT_BUTTON_SIZE = 64;
     public static final int DEFAULT_BUTTON_MARGIN = 10;
 
-    public static void setupButton(Context context, int buttonId, int backgroundResource, String layoutType) {
+    public static void setupButton(Context context, int buttonId, int backgroundResource, int layoutType) {
         Button backButton = (Button) ((Activity)context).findViewById(buttonId);
         backButton.setText("");
         backButton.setBackgroundResource(backgroundResource);
-        if (layoutType.equals("Relative")) {
+        if (layoutType == 0) {
             RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) backButton.getLayoutParams();
             lp.width = DEFAULT_BUTTON_SIZE;
             lp.height = DEFAULT_BUTTON_SIZE;
