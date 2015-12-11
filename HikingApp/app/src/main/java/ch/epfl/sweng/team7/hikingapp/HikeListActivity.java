@@ -24,7 +24,7 @@ import ch.epfl.sweng.team7.database.HikeData;
 import ch.epfl.sweng.team7.hikingapp.guiProperties.GUIProperties;
 
 public class HikeListActivity extends Activity {
-    
+
     private final DataManager dataManager = DataManager.getInstance();
 
     private final static String LOG_FLAG = "Activity_HikeList";
@@ -59,8 +59,7 @@ public class HikeListActivity extends Activity {
             }
         }
         new GetMultHikeAsync().execute(bounds);
-
-        //setup back button
+        
         setupBackButton();
     }
 
