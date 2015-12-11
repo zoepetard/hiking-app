@@ -289,7 +289,7 @@ public class MapActivity extends FragmentActivity {
                 if (mGps.tracking()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     if (mFollowingUser) focusOnLatLng(latLng);
-                    if(mPolyRef == null) {
+                    if (mPolyRef == null) {
                         startHikeDisplay();
                     }
                     if (!mGps.paused()) {
@@ -626,12 +626,9 @@ public class MapActivity extends FragmentActivity {
         if (mGps.tracking()) {
             toggleButton.setBackgroundResource(R.drawable.button_stop_tracking);
             pauseButton.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
             pauseButton.setBackgroundResource((mGps.paused()) ? R.drawable.button_resume_tracking : R.drawable.button_pause_tracking);
-=======
             addAnnotationButton.setVisibility(View.VISIBLE);
             pauseButton.setText((mGps.paused()) ? R.string.button_resume_tracking : R.string.button_pause_tracking);
->>>>>>> 2dca04b7b76a6331ca6b78c24b4240448b11eccc
         } else {
             toggleButton.setBackgroundResource(R.drawable.button_start_tracking);
             pauseButton.setVisibility(View.INVISIBLE);
@@ -660,7 +657,7 @@ public class MapActivity extends FragmentActivity {
         });
         pauseButton.setVisibility(View.INVISIBLE);
     }
-    
+
     private void setupHikeListButton() {
         Button hikeList = (Button) findViewById(R.id.go_hikes_button);
         hikeList.setText("");
@@ -673,7 +670,8 @@ public class MapActivity extends FragmentActivity {
         lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
         lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
         lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
-
+    }
+    
     private void createAnnotationButton() {
         final Button annotationButton = new Button(this);
         annotationButton.setText(R.string.button_create_annotation);
