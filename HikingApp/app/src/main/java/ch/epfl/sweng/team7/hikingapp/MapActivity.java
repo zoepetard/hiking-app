@@ -660,8 +660,7 @@ public class MapActivity extends FragmentActivity {
         });
         pauseButton.setVisibility(View.INVISIBLE);
     }
-
-<<<<<<< HEAD
+    
     private void setupHikeListButton() {
         Button hikeList = (Button) findViewById(R.id.go_hikes_button);
         hikeList.setText("");
@@ -674,7 +673,7 @@ public class MapActivity extends FragmentActivity {
         lp.width = GUIProperties.DEFAULT_BUTTON_SIZE;
         lp.height = GUIProperties.DEFAULT_BUTTON_SIZE;
         lp.setMargins(GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN, GUIProperties.DEFAULT_BUTTON_MARGIN);
-=======
+
     private void createAnnotationButton() {
         final Button annotationButton = new Button(this);
         annotationButton.setText(R.string.button_create_annotation);
@@ -775,7 +774,6 @@ public class MapActivity extends FragmentActivity {
             mListAnnotations.add(new Annotation(rawHikePoint, null, drawable));
         }
         Log.d(LOG_FLAG, "Picture annotation added to the list" + drawable.toString());
->>>>>>> 2dca04b7b76a6331ca6b78c24b4240448b11eccc
     }
 
     private void createBottomInfoView() {
